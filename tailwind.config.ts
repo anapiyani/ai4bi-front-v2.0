@@ -1,18 +1,126 @@
-import type { Config } from "tailwindcss";
+import type { Config } from "tailwindcss"
 
-export default {
+const config = {
+  darkMode: ["class"],
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    './pages/**/*.{ts,tsx}',
+    './components/**/*.{ts,tsx}',
+    './app/**/*.{ts,tsx}',
+    './src/**/*.{ts,tsx}',
   ],
+  prefix: "",
   theme: {
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+        // for future use
+        "sm": "640px",
+        "md": "768px",
+        "lg": "1024px",
+        "xl": "1280px",
+      },
+    },
     extend: {
+      backgroundImage: {
+        "main-gradient": "linear-gradient(180deg, #155A9E 0%, #007FAA 100%);",
+        "overlay-alert": "linear-gradient(180deg, #155A9E 0%, #007FAA 100%);",
+        "main-pattern": "url('/assets/bg.png')",
+      },
+      width: {
+        '68': '16.5rem',
+        '156': '39rem',
+        '115': "28.75rem",
+        '120': '30rem',
+        '160': '40rem',
+        '52': '13rem',
+        '30': '7.5rem',
+        '27': '6.75rem',
+      },
+      maxWidth: {
+        'auth-form': '33rem',
+      },
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "#155A9E",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "#007FAA",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+        'bi-gray': '#555E68',
+        'sec-txt': '#32383E',
+        'dark-gray': "#616671",
+        "lightest-gray": "#ECEFF3",
+        'bi-black': "#171A1C",
+        'bi-just-gray': "#8A909B",
+        'hover-primary': "#E3EFFB",
+        'hover-error': "#FFD0CD",
+        'error': "#B3261E",
+        'dark-accent': "#0A3F73",
+        "active-participant": "rgba(200, 244, 173)",
+        "fixed-price": "rgba(255, 230, 128, 0.6)",
+        "botEvent": "rgba(0, 127, 170, 1)"
+      },
+      borderOpacity: {
+        '64': '0.64',
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      borderColor: {
+        "outline-button": 'rgba(21, 90, 158, 0.4)',
+        "outline-button-error": 'rgba(240, 152, 152, 1)'
+      },
+      keyframes: {
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+      },
+      boxShadow: {
+        'auction-list': '0px 1px 4px 0px #0000001A',
       },
     },
   },
-  plugins: [],
-} satisfies Config;
+  plugins: [require("tailwindcss-animate")],
+} satisfies Config
+
+export default config
