@@ -48,16 +48,16 @@ const config = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#155A9E",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT: "#0F172A",
+          foreground: "#F8FAFC",
         },
         secondary: {
-          DEFAULT: "#007FAA",
-          foreground: "hsl(var(--secondary-foreground))",
+          DEFAULT: "#F1F5F9",
+          foreground: "#0F172A",
         },
         destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+          DEFAULT: "#DC2626",
+          foreground: "#F8FAFC",
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",
