@@ -1,5 +1,9 @@
 {
 	"dashboard": {
-		"title": "Home"
+		"title": "Home",
+		"accept": "Accept",
+		"decline": "Decline",
+		"understood": "Understood",
+		"reschedule": "Reschedule"
 	}
 }

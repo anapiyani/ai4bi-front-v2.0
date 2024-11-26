@@ -1,5 +1,9 @@
 {
 	"dashboard": {
-		"title": "Главная"
+		"title": "Главная",
+		"accept": "Принять",
+		"decline": "Отказаться",
+		"understood": "Понятно",
+		"reschedule": "Перенести"
 	}
 }

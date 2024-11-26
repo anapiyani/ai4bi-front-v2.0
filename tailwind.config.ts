@@ -42,10 +42,10 @@ const config = {
         'auth-form': '33rem',
       },
       colors: {
-        border: "hsl(var(--border))",
+        border: "#E2E8F0",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
+        background: "#FFFFFF",
         foreground: "hsl(var(--foreground))",
         primary: {
           DEFAULT: "#0F172A",
@@ -77,6 +77,7 @@ const config = {
         },
         'bi-gray': '#555E68',
         'sec-txt': '#32383E',
+        "muted-foreground": "#64748B",
         'dark-gray': "#616671",
         "lightest-gray": "#ECEFF3",
         'bi-black': "#171A1C",

@@ -1,5 +1,9 @@
 {
 	"dashboard": {
-		"title": "Басты бет"
+		"title": "Басты бет",
+		"accept": "Қабылдау",
+		"decline": "Қабылданбайды",
+		"understood": "Түсінікті",
+		"reschedule": "Жылжыту"
 	}
 }
