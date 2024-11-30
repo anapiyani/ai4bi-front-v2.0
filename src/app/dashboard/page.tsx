@@ -10,7 +10,7 @@ const Dashboard = () => {
   return (
     <div className="flex w-full h-screen justify-center items-center">
       <div className='w-1/3'>
-        <BotVisualizer type="speaking" stream={null}  />
+        <BotVisualizer type="listening" stream={null} />
       </div>
     </div>
   )  

@@ -1,7 +1,9 @@
+import botListening from "@/public/assets/bot/botListening.json"
+import botProgress from "@/public/assets/bot/botProgess.json"
+import lottie from 'lottie-web'
 import { useEffect, useRef } from 'react'
-
 interface AudioVisualizerProps {
-	type?: "speaking" | "progress" | "default"
+	type?: "speaking" | "progress" | "default" | "listening"
   stream: MediaStream | null
   small?: boolean
 }
@@ -143,13 +145,8 @@ const BotVisualizer = ({ type = "default", stream, small = false }: AudioVisuali
 						}
 					}, [stream, small])
 					
-				
-					const containerClasses = small
-						? "w-[76px] h-[76px] bg-gradient-to-r from-[#0284C7] to-[#77BAAA] overflow-hidden rounded-lg"
-						: "w-full h-20 flex justify-center items-center bg-gradient-to-r from-[#0284C7] to-[#77BAAA] overflow-hidden rounded-lg"
-				
 					return (
-						<div className={containerClasses}>
+						<div className={"flex justify-center items-center bg-gradient-to-r from-[#0284C7] to-[#77BAAA] overflow-hidden p-px rounded-lg " + (small ? "w-[76px] h-[76px]" : "w-full h-20")}>
 							<canvas ref={canvasRef} className="w-full h-full" />
 						</div>
 					)
@@ -158,12 +155,52 @@ const BotVisualizer = ({ type = "default", stream, small = false }: AudioVisuali
 			return <BotSpeaking stream={stream} small={small} />;
 		case "progress":
 			const BotProgress = ({ small }: { small?: boolean }) => {
+				const lottieRef = useRef<HTMLDivElement>(null)
+
+				useEffect(() => {
+					const instance = lottie.loadAnimation({
+						container: lottieRef.current as Element,
+						renderer: 'svg',
+						loop: true,
+						autoplay: true,
+						animationData: botProgress
+					})
+
+					return () => instance.destroy()
+				}, [])
+
 				return (
-					<div>Progress</div>
+					<div className={"flex justify-center items-center bg-gradient-to-r from-[#0284C7] to-[#77BAAA] overflow-hidden p-px rounded-lg " + (small ? "w-[76px] h-[76px]" : "w-full h-20")}>
+						<div ref={lottieRef} className={small ? "w-[76px] h-[76px]" : "w-full h-40"}></div>
+					</div>
 				)
 			}
-
 			return <BotProgress small={small} />;
+		case "listening":
+			const BotListening = ({ small }: { small?: boolean }) => {
+				const lottieRef = useRef<HTMLDivElement>(null)
+
+				useEffect(() => {
+					const instance = lottie.loadAnimation({
+						container: lottieRef.current as Element,
+						renderer: 'svg',
+						loop: true,
+						autoplay: true,
+						animationData: botListening
+					})
+
+					instance.resize();
+					return () => instance.destroy()
+				})
+
+				return (
+					<div className={"flex justify-center items-center bg-gradient-to-r from-[#0284C7] to-[#77BAAA] overflow-hidden p-px rounded-lg " + (small ? "w-[76px] h-[76px]" : "w-full h-20")}>
+						<div ref={lottieRef} className={small ? "w-[76px] h-[76px]" : "w-full h-[306px]"}></div>
+					</div>
+				)
+			}
+			return <BotListening small={small} />;
+		case "default":
 		default:
 			const BotDefault = ({ small }: { small?: boolean }) => {
 				return (
