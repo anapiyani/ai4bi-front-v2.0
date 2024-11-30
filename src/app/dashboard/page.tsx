@@ -1,7 +1,8 @@
 "use client"
 
 import { useTranslations } from 'next-intl'
-import BotMutedVisualizer from '../components/Bot/BotMutedVisualizer'
+import BotVisualizer from '../components/Bot/BotVisualizer'
+
 
 
 const Dashboard = () => {
@@ -9,7 +10,7 @@ const Dashboard = () => {
   return (
     <div className="flex w-full h-screen justify-center items-center">
       <div className='w-1/3'>
-        <BotMutedVisualizer />
+        <BotVisualizer type="speaking" stream={null}  />
       </div>
     </div>
   )  
