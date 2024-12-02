@@ -14,6 +14,13 @@
 		"chat-mode": "Қатысу режимі",
 		"exit-chat-mode": "Қатысу режимінен шығу",
 		"technical-council": "Техникалық кеңес",
-		"leave-technical-council": "Техникалық кеңестен шығу"
+		"leave-technical-council": "Техникалық кеңестен шығу",
+		"stay": "Қалу",
+		"exit": "Шығу",
+		"leave-chat-mode": "Чат режимінен шығу?",
+		"leave-chat-mode-description": "Сіз Bnect платформасына қайта ораласыз.",
+		"exit-auction": "Тендерден шығу?",
+		"description-exit-auction": "Қазір шығып кетсеңіз, сіз тендерге орала алмайсыз.",
+		"leave-technical-council-description": "Сіз чат режиміне ораласыз, ол жалғасып жатқан кезде техникалық кеңеске қайта кіре аласыз."
 	}
 }

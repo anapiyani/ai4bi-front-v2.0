@@ -42,7 +42,7 @@ const HeaderButtons = () => {
 			onClick={onClick}
 		>
 			{text}
-			<Icons.Close />
+			<Icons.HeaderClose />
 		</Button>
 	)
 

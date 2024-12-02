@@ -1,3 +1,4 @@
+
 const Icons = {
 	Radio: () => {
 		return <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -27,10 +28,17 @@ const Icons = {
 			</svg>
 		)
 	},
-	Close: () => {
+	HeaderClose: () => {
 		return (
 			<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
 				<path d="M11 1.00004L1 11M0.999958 1L10.9999 11" stroke="#F8FAFC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+			</svg>
+		)
+	},
+	Close: () => {
+		return (
+			<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M13.5 4.50004L4.5 13.5M4.49996 4.5L13.4999 13.5" stroke="#64748B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 			</svg>
 		)
 	},

@@ -14,6 +14,13 @@
 		"chat-mode": "Режим чата",
 		"exit-chat-mode": "Выйти из режима чата",
 		"technical-council": "Технический совет",
-		"leave-technical-council": "Покинуть тех. совет"
+		"leave-technical-council": "Покинуть тех. совет",
+		"stay": "Остаться",
+		"exit": "Выйти",
+		"leave-chat-mode": "Выйти из режима чата?",
+		"leave-chat-mode-description": "Вы вернетесь на платформу Bnect.",
+		"exit-auction": "Покинуть тендер?",
+		"description-exit-auction": "Вы не сможете вернуться в тендер, если покинете его сейчас.",
+		"leave-technical-council-description": "Вы вернетесь в режим чата, вы сможете войти в технический совет, пока он длится."
 	}
 }
