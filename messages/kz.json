@@ -4,6 +4,16 @@
 		"accept": "Қабылдау",
 		"decline": "Қабылданбайды",
 		"understood": "Түсінікті",
-		"reschedule": "Жылжыту"
+		"reschedule": "Жылжыту",
+		"auction-in-progress": "Тендер жүргізіліп жатыр",
+		"about-auction": "Тендер туралы",
+		"audio": "Аудио",
+		"leave-auction": "Тендерден шығу",
+		"auction-results": "Тендер нәтижелері",
+		"go-back-chat-mode": "Қайта қайтару",
+		"chat-mode": "Қатысу режимі",
+		"exit-chat-mode": "Қатысу режимінен шығу",
+		"technical-council": "Техникалық кеңес",
+		"leave-technical-council": "Техникалық кеңестен шығу"
 	}
 }
