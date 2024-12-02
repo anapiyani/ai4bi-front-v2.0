@@ -4,6 +4,16 @@
 		"accept": "Accept",
 		"decline": "Decline",
 		"understood": "Understood",
-		"reschedule": "Reschedule"
+		"reschedule": "Reschedule",
+		"auction-in-progress": "Auction in progress",
+		"about-auction": "About auction",
+		"audio": "Audio",
+		"leave-auction": "Leave auction",
+		"auction-results": "Auction results",
+		"go-back-chat-mode": "Go back to chat mode",
+		"chat-mode": "Chat mode",
+		"exit-chat-mode": "Exit chat mode",
+		"technical-council": "Technical council",
+		"leave-technical-council": "Leave technical council"
 	}
 }

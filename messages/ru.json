@@ -4,6 +4,16 @@
 		"accept": "Принять",
 		"decline": "Отказаться",
 		"understood": "Понятно",
-		"reschedule": "Перенести"
+		"reschedule": "Перенести",
+		"auction-in-progress": "Тендер в процессе",
+		"about-auction": "О тендере",
+		"audio": "Аудио",
+		"leave-auction": "Покинуть тендер",
+		"auction-results": "Итоги тендера",
+		"go-back-chat-mode": "Вернуться в режим чата",
+		"chat-mode": "Режим чата",
+		"exit-chat-mode": "Выйти из режима чата",
+		"technical-council": "Технический совет",
+		"leave-technical-council": "Покинуть тех. совет"
 	}
 }

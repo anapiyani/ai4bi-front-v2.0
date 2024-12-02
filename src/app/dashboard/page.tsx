@@ -1,16 +1,26 @@
 "use client"
 
 import { useTranslations } from 'next-intl'
-import BotVisualizer from '../components/Bot/BotVisualizer'
-
+import Header from '../components/Headers/Headers'
+import { HeaderType } from '../types/types'
 
 
 const Dashboard = () => {
   const t = useTranslations("dashboard")
   return (
-    <div className="flex w-full h-screen justify-center items-center">
-      <div className='w-1/3'>
-        <BotVisualizer type="listening" stream={null} />
+    <div className="flex w-full h-screen">
+      <div className='w-full'>
+        <Header type="technical-council" t={t} handlers={{
+          infoButtonClick: () => {
+            console.log('Info button clicked')
+          },
+          audioButtonClick: () => {
+            console.log('Audio button clicked')
+          },  
+          exitButtonClick: (type: HeaderType) => {
+            console.log(`Exiting ${type} mode`)
+          }
+        }} />
       </div>
     </div>
   )  
