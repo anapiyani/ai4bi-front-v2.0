@@ -6,7 +6,6 @@ import Header from '../components/Headers/Headers'
 import { PopUpFactory } from '../components/PopUp/PopUp'
 import { HeaderType } from '../types/types'
 
-
 const Dashboard = () => {
   const t = useTranslations("dashboard")
   const [popup, setPopup] = useState<string | null>(null)

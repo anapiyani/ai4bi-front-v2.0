@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { useTranslations } from 'next-intl'
 import { PopUpHandlers } from '../../types/types'
 import Icons from '../Icons'
-import AuctionPopUp from './AuctionPopUp'
+import AuctionPopup from './AuctionPopup'
 import ChatModePopup from './ChatModePopup'
 import TechnicalCouncilPopup from './TechnicalCouncilPopup'
 
@@ -53,7 +53,7 @@ const PopUp = ({open, title, description, t, handlers}: PopUpProps) => {
 const PopUpFactory = ({type, handlers}: PopUpFactoryProps) => {
 	switch (type) {
 		case "auction":
-			return <AuctionPopUp {...handlers} />
+			return <AuctionPopup {...handlers} />
 		case "technical-council":
 			return <TechnicalCouncilPopup {...handlers} />
 		case "chat":	
