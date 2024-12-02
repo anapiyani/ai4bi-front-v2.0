@@ -44,6 +44,7 @@ const config = {
       colors: {
         border: "#E2E8F0",
         input: "#E2E8F0",
+        backdrop: "#155E7566",
         primary: {
           DEFAULT: "#0891B2",
           foreground: "#FFFFFF",
