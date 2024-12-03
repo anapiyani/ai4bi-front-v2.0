@@ -21,6 +21,19 @@
 		"leave-chat-mode-description": "You will return to the Bnect platform.",
 		"exit-auction": "Leave auction?",
 		"description-exit-auction": "If you leave now, you will not be able to return to the auction.",
-		"leave-technical-council-description": "You will return to the chat mode, you will be able to enter the technical council while it is ongoing."
+		"leave-technical-council-description": "You will return to the chat mode, you will be able to enter the technical council while it is ongoing.",
+		"planning-technical-council": "Planning technical council",
+		"planning-technical-council-short": "Planning tech. council",
+		"planning-auction": "Planning auction",
+		"step": "Step",
+		"of": "of",
+		"next": "Next",
+		"pick-a-date": "Pick a date",
+		"time-of-technical-council": "Time of technical council",
+		"date-of-technical-council": "Date of technical council",
+		"time-of-auction": "Time of auction",
+		"date-of-auction": "Date of auction",
+		"back": "Back",
+		"plan": "Plan"
 	}
 }

@@ -21,6 +21,19 @@
 		"leave-chat-mode-description": "Вы вернетесь на платформу Bnect.",
 		"exit-auction": "Покинуть тендер?",
 		"description-exit-auction": "Вы не сможете вернуться в тендер, если покинете его сейчас.",
-		"leave-technical-council-description": "Вы вернетесь в режим чата, вы сможете войти в технический совет, пока он длится."
+		"leave-technical-council-description": "Вы вернетесь в режим чата, вы сможете войти в технический совет, пока он длится.",
+		"planning-technical-council": "Планирование технического совета",
+		"planning-technical-council-short": "Планирование тех. совета",
+		"planning-auction": "Планирование тендера",
+		"step": "Шаг",
+		"of": "из",
+		"next": "Далее",
+		"pick-a-date": "Выберите дату",
+		"time-of-technical-council": "Время тех. совета",
+		"date-of-technical-council": "Дата тех. совета",
+		"time-of-auction": "Время тендера",
+		"date-of-auction": "Дата тендера",
+		"back": "Назад",
+		"plan": "Запланировать"
 	}
 }

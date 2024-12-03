@@ -21,6 +21,19 @@
 		"leave-chat-mode-description": "Сіз Bnect платформасына қайта ораласыз.",
 		"exit-auction": "Тендерден шығу?",
 		"description-exit-auction": "Қазір шығып кетсеңіз, сіз тендерге орала алмайсыз.",
-		"leave-technical-council-description": "Сіз чат режиміне ораласыз, ол жалғасып жатқан кезде техникалық кеңеске қайта кіре аласыз."
+		"leave-technical-council-description": "Сіз чат режиміне ораласыз, ол жалғасып жатқан кезде техникалық кеңеске қайта кіре аласыз.",
+		"planning-technical-council": "Техникалық кеңесті жоспарлау",
+		"planning-technical-council-short": "Тех. кеңесті жоспарлау",
+		"planning-auction": "Тендерді жоспарлау",
+		"step": "Қадам",
+		"of": "/",
+		"next": "Келесі",
+		"pick-a-date": "Күнді таңдаңыз",
+		"time-of-technical-council": "Тех. кеңестің уақыты",
+		"date-of-technical-council": "Тех. кеңестің күні",
+		"time-of-auction": "Тендердің уақыты",
+		"date-of-auction": "Тендердің күні",
+		"back": "Қайту",
+		"plan": "Жоспарлау"
 	}
 }
