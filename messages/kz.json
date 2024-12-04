@@ -4,6 +4,8 @@
 		"accept": "Қабылдау",
 		"decline": "Қабылданбайды",
 		"understood": "Түсінікті",
+		"change": "Өзгерту",
+		"confirm": "Растау",
 		"reschedule": "Жылжыту",
 		"auction-in-progress": "Тендер жүргізіліп жатыр",
 		"about-auction": "Тендер туралы",
@@ -41,6 +43,10 @@
 		"new-time-technical-council": "Тех. кеңестің жаңа уақыты",
 		"new-date-auction": "Тендердің жаңа күні",
 		"new-time-auction": "Тендердің жаңа уақыты",
-		"keep-current-auction-date": "Тендердің қазіргі күнін сақтау"
+		"keep-current-auction-date": "Тендердің қазіргі күнін сақтау",
+		"technical-council-completed": "Тех. совет завершен",
+		"time": "Уақыт",
+		"its-time-to-start-the-technical-council": "Тех. кеңесті бастайтын уақыт",
+		"start": "Бастау"
 	}
 }
