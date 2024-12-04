@@ -1,42 +1,43 @@
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { useTranslations } from 'next-intl'
-import { FormEvent } from 'react'
-import { usePlanningForm } from '../../hooks/usePlanningForm'
+import { useState } from 'react'
+import { useChangeDateForm } from '../../hooks/useChangeDateForm'
 import { DateTimeInput } from './components/PlanningDateTime'
 
-const PlanningForm = ({ open }: { open: boolean }) => {
-  const t = useTranslations('dashboard')
-  const { state, updateState } = usePlanningForm()
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (state.step === 2) {
-      console.log('Form submitted:', state)
-      // Add your form submission logic here
-    } else {
-      updateState({ step: 2 })
-    }
-  }
+const ChangeDates = () => {
+	const t = useTranslations('dashboard');
+	const { state, updateState } = useChangeDateForm();
+	const [keepCurrentAuctionDate, setKeepCurrentAuctionDate] = useState<boolean>(false);
 
-  const handleBack = () => {
-    updateState({ step: 1 })
-  }
+	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault()
+		if (state.step === 2) {
+			console.log('submit', state);
+		} else {
+			updateState({ step: 2 })
+		}
+	}
 
-  return (
-    <Dialog open={open}>
+	const handleBack = () => {
+		updateState({ step: 1 })
+	}
+
+	return (
+		<Dialog open={true}>
       <DialogContent className='bg-primary-foreground w-full max-w-md mx-auto p-6 sm:p-8 flex flex-col items-center justify-center'>
         <DialogHeader className='flex flex-col items-center justify-center gap-2'>
           <DialogTitle className='text-secondary-foreground text-2xl font-bold'>
-            {state.step === 1 ? t("planning-technical-council-short") : t("planning-auction")}
+            {state.step === 1 ? t("change-technical-council-dates") : t("change-auction-dates")}
           </DialogTitle>
           <p className='text-sm text-muted-foreground'>{t("step")} {state.step} {t("of")} 2</p>
         </DialogHeader>
         <form onSubmit={handleSubmit} className='w-full'>
           {state.step === 1 ? (
             <DateTimeInput
-              dateLabel={t("date-of-technical-council")}
-              timeLabel={t("time-of-technical-council")}
+              dateLabel={t("new-date-technical-council")}
+              timeLabel={t("new-time-technical-council")}
               locale={state.locale}
               dateValue={state.technicalCouncilDate}
               timeValue={state.technicalCouncilTime}
@@ -45,11 +46,15 @@ const PlanningForm = ({ open }: { open: boolean }) => {
             />
           ) : (
             <DateTimeInput
-              dateLabel={t("date-of-auction")}
-              timeLabel={t("time-of-auction")}
+              dateLabel={keepCurrentAuctionDate ? t("date-of-auction") : t("new-date-auction")}
+              timeLabel={keepCurrentAuctionDate ? t("time-of-auction") : t("new-time-auction")}
+							keepCurrentAuctionLabel={t("keep-current-auction-date")}
               locale={state.locale}
-              dateValue={state.auctionDate}
-              timeValue={state.auctionTime}
+							newDate={true}
+							keepCurrentAuctionDate={keepCurrentAuctionDate}
+							onKeepCurrentAuctionDateChange={(checked) => setKeepCurrentAuctionDate(checked)}
+              dateValue={keepCurrentAuctionDate ? state.auctionDate : undefined}
+              timeValue={keepCurrentAuctionDate ? state.auctionTime : ''}
               onDateChange={(date) => updateState({ auctionDate: date })}
               onTimeChange={(time) => updateState({ auctionTime: time })}
             />
@@ -70,8 +75,8 @@ const PlanningForm = ({ open }: { open: boolean }) => {
         </form>
       </DialogContent>
     </Dialog>
-  )
+	)
+
 }
 
-export default PlanningForm
-
+export default ChangeDates

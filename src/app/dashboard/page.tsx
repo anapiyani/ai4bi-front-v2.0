@@ -2,10 +2,14 @@
 
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
-import PlanningForm from '../components/Form/PlanningForm'
+import ChangeDates from '../components/Form/ChangeDates'
 import Header from '../components/Headers/Headers'
 import { PopUpFactory } from '../components/PopUp/PopUp'
 import { HeaderType } from '../types/types'
+
+// 2:
+// 1. input indicator
+// 2. form submits after 1 step
 
 const Dashboard = () => {
   const t = useTranslations("dashboard")
@@ -21,7 +25,7 @@ const Dashboard = () => {
   return (
     <div className="flex w-full h-screen">
       <div className='w-full'>
-        <Header type="chat" t={t} handlers={{
+        <Header type="technical-council" t={t} handlers={{
           infoButtonClick: () => {
             console.log('Info button clicked')
           },
@@ -41,7 +45,7 @@ const Dashboard = () => {
           console.log('Exiting popup', exitType)
         }
       }} />
-      <PlanningForm />
+      <ChangeDates />
     </div>
   )  
 }

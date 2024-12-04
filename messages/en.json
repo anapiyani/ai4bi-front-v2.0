@@ -34,6 +34,13 @@
 		"time-of-auction": "Time of auction",
 		"date-of-auction": "Date of auction",
 		"back": "Back",
-		"plan": "Plan"
+		"plan": "Plan",
+		"change-technical-council-dates": "Change technical council dates",
+		"change-auction-dates": "Change auction dates",
+		"new-date-technical-council": "New date of technical council",
+		"new-time-technical-council": "New time of technical council",
+		"new-date-auction": "New date of auction",
+		"new-time-auction": "New time of auction",
+		"keep-current-auction-date": "Keep current auction date"
 	}
 }
