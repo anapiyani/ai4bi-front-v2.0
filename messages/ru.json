@@ -4,6 +4,8 @@
 		"accept": "Принять",
 		"decline": "Отказаться",
 		"understood": "Понятно",
+		"change": "Изменить",
+		"confirm": "Подтвердить",
 		"reschedule": "Перенести",
 		"auction-in-progress": "Тендер в процессе",
 		"about-auction": "О тендере",
@@ -41,6 +43,11 @@
 		"new-time-technical-council": "Новое время тех. совета",
 		"new-date-auction": "Новая дата тендера",
 		"new-time-auction": "Новое время тендера",
-		"keep-current-auction-date": "Оставить прежнюю дату тендера"
+		"keep-current-auction-date": "Оставить прежнюю дату тендера",
+		"technical-council-completed": "Тех. совет завершен",
+		"time": "Время",
+		"its-time-to-start-the-technical-council": "Время начинать технический совет",
+		"start": "Начать",
+		"its-time-to-start-the-auction": "Время начинать тендер"
 	}
 }

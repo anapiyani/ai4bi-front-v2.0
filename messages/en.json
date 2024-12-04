@@ -4,6 +4,8 @@
 		"accept": "Accept",
 		"decline": "Decline",
 		"understood": "Understood",
+		"change": "Change",
+		"confirm": "Confirm",
 		"reschedule": "Reschedule",
 		"auction-in-progress": "Auction in progress",
 		"about-auction": "About auction",
@@ -41,6 +43,10 @@
 		"new-time-technical-council": "New time of technical council",
 		"new-date-auction": "New date of auction",
 		"new-time-auction": "New time of auction",
-		"keep-current-auction-date": "Keep current auction date"
+		"keep-current-auction-date": "Keep current auction date",
+		"technical-council-completed": "Technical council completed",
+		"time": "Time",
+		"its-time-to-start-the-technical-council": "It's time to start the technical council",
+		"start": "Start"
 	}
 }

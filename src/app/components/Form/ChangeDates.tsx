@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { useChangeDateForm } from '../../hooks/useChangeDateForm'
-import { DateTimeInput } from './components/PlanningDateTime'
+import { DateTimeInput } from './components/FormDateTime'
 
 
 const ChangeDates = () => {
@@ -15,6 +15,7 @@ const ChangeDates = () => {
 		e.preventDefault()
 		if (state.step === 2) {
 			console.log('submit', state);
+			// logic to send data to backend
 		} else {
 			updateState({ step: 2 })
 		}
