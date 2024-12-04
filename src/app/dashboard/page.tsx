@@ -2,14 +2,10 @@
 
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
-import ChangeDates from '../components/Form/ChangeDates'
+import TimeToStartAucTech from '../components/Alerts/Organizers/TimeToStartAucTech'
 import Header from '../components/Headers/Headers'
 import { PopUpFactory } from '../components/PopUp/PopUp'
 import { HeaderType } from '../types/types'
-
-// 2:
-// 1. input indicator
-// 2. form submits after 1 step
 
 const Dashboard = () => {
   const t = useTranslations("dashboard")
@@ -45,7 +41,7 @@ const Dashboard = () => {
           console.log('Exiting popup', exitType)
         }
       }} />
-      <ChangeDates />
+      <TimeToStartAucTech type="technical-council" open={true} setOpen={() => {}} date="12.12.2024" time="12:00" />
     </div>
   )  
 }
