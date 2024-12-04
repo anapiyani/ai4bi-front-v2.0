@@ -22,9 +22,8 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { DayPicker } from "react-day-picker"
 
-export function DatePicker({ locale = enUS, onChange }: { locale?: Locale, onChange: (date: Date) => void }) {
+export function DatePicker({ locale = enUS, onChange, value }: { locale?: Locale, onChange: (date: Date) => void, value: Date | undefined }) {
   const t = useTranslations("dashboard")
-  const [date, setDate] = React.useState<Date>()
 
   return (
     <Popover>
@@ -33,10 +32,10 @@ export function DatePicker({ locale = enUS, onChange }: { locale?: Locale, onCha
           variant={"outline"}
           className={cn(
             "w-full justify-between text-left font-normal",
-            !date && "text-muted-foreground"
+            !value && "text-muted-foreground"
           )}
         >
-          {date ? format(date, "dd.MM.yyyy", { locale }) : <span>{t("pick-a-date")}</span>}
+          {value ? format(value, "dd.MM.yyyy", { locale }) : <span>{t("pick-a-date")}</span>}
           <svg width="19" height="18" viewBox="0 0 19 18" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M2.75 9C2.75 5.81802 2.75 4.97703 3.73851 3.98851C4.72703 3 6.31802 3 9.5 3C12.682 3 14.273 3 15.2615 3.98851C16.25 4.97703 16.25 5.81802 16.25 9C16.25 12.182 16.25 13.773 15.2615 14.7615C14.273 15.75 12.682 15.75 9.5 15.75C6.31802 15.75 4.72703 15.75 3.73851 14.7615C2.75 13.773 2.75 12.182 2.75 9Z" stroke="#64748B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             <path d="M2.9375 6H16.0625" stroke="#64748B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -48,9 +47,8 @@ export function DatePicker({ locale = enUS, onChange }: { locale?: Locale, onCha
       <PopoverContent className="w-auto p-0">
         <Calendar
           mode="single"
-          selected={date}
+          selected={value}
           onSelect={(date) => {
-            setDate(date);
             onChange(date as Date);
           }}
           initialFocus

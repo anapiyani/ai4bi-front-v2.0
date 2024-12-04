@@ -4,7 +4,7 @@ import { Locale } from 'date-fns'
 import { enUS } from 'date-fns/locale'
 import { useEffect, useState } from 'react'
 
-interface PlanningFormState {
+interface ChangeDateFormState {
   step: number
   locale: Locale
   technicalCouncilDate: Date | undefined
@@ -13,8 +13,8 @@ interface PlanningFormState {
   auctionTime: string
 }
 
-export function usePlanningForm() {
-  const [state, setState] = useState<PlanningFormState>({
+export function useChangeDateForm() {
+	const [state, setState] = useState<ChangeDateFormState>({
     step: 1,
     locale: enUS,
     technicalCouncilDate: undefined,
@@ -34,7 +34,7 @@ export function usePlanningForm() {
     fetchLocale()
   }, [])
 
-  const updateState = (newState: Partial<PlanningFormState>) => {
+  const updateState = (newState: Partial<ChangeDateFormState>) => {
     setState((prevState) => ({ ...prevState, ...newState }))
   }
 

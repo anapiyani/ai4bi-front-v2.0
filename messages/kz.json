@@ -34,6 +34,13 @@
 		"time-of-auction": "Тендердің уақыты",
 		"date-of-auction": "Тендердің күні",
 		"back": "Қайту",
-		"plan": "Жоспарлау"
+		"plan": "Жоспарлау",
+		"change-technical-council-dates": "Тех. кеңестің күнін өзгерту",
+		"change-auction-dates": "Тендердің уақытын өзгерту",
+		"new-date-technical-council": "Тех. кеңестің жаңа күні",
+		"new-time-technical-council": "Тех. кеңестің жаңа уақыты",
+		"new-date-auction": "Тендердің жаңа күні",
+		"new-time-auction": "Тендердің жаңа уақыты",
+		"keep-current-auction-date": "Тендердің қазіргі күнін сақтау"
 	}
 }

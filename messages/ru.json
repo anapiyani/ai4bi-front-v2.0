@@ -34,6 +34,13 @@
 		"time-of-auction": "Время тендера",
 		"date-of-auction": "Дата тендера",
 		"back": "Назад",
-		"plan": "Запланировать"
+		"plan": "Запланировать",
+		"change-technical-council-dates": "Перенос даты тех. совета",
+		"change-auction-dates": "Перенос даты тендера",
+		"new-date-technical-council": "Новая дата тех. совета",
+		"new-time-technical-council": "Новое время тех. совета",
+		"new-date-auction": "Новая дата тендера",
+		"new-time-auction": "Новое время тендера",
+		"keep-current-auction-date": "Оставить прежнюю дату тендера"
 	}
 }
