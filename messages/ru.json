@@ -48,6 +48,13 @@
 		"time": "Время",
 		"its-time-to-start-the-technical-council": "Время начинать технический совет",
 		"start": "Начать",
-		"its-time-to-start-the-auction": "Время начинать тендер"
+		"its-time-to-start-the-auction": "Время начинать тендер",
+		"add-the-commercial-proposal": "Добавить коммерческое предложение",
+		"proposal-description-deadline": "Для участия в тендере вам нужно сделать коммерческое предложение. У вас есть 48 часов до начала тендера.",
+		"download": "Загрузить",
+		"CP": "КП",
+		"tech-con-finished-you-want-participate-auction": "Тех. совет завершен. Вы хотите принять участие в тендере?",
+		"tech-con-want-participate": "Принять участие в техническом совете данного тендера?",
+		"you-have-48-hours-to-make-a-confirmation": "У вас есть 48 часов для принятия решения."
 	}
 }

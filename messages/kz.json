@@ -47,6 +47,14 @@
 		"technical-council-completed": "Тех. совет завершен",
 		"time": "Уақыт",
 		"its-time-to-start-the-technical-council": "Тех. кеңесті бастайтын уақыт",
-		"start": "Бастау"
+		"start": "Бастау",
+		"its-time-to-start-the-auction": "Тендерді бастайтын уақыт",
+		"add-the-commercial-proposal": "Коммерциялық ұсынысты қосу",
+		"proposal-description-deadline": "Тендерге қатысу үшін сіз коммерциялық ұсыныс жасауыңыз керек. Сіздің үшін 48 сағат бар.",
+		"download": "Жүктеу",
+		"CP": "КП",
+		"tech-con-finished-you-want-participate-auction": "Тех. кеңес аяқталды. Сіз тендерге қатысуға келісіміңізді қабылдайсыз?",
+		"tech-con-want-participate": "Осы тендердің техникалық кеңесіне қатысу?",
+		"you-have-48-hours-to-make-a-confirmation": "Сіздің қатысуыңызды қабылдауыңыз үшін 48 сағат бар."
 	}
 }
