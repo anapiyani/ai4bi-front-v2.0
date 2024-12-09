@@ -55,6 +55,13 @@
 		"CP": "CP",
 		"tech-con-finished-you-want-participate-auction": "Technical council finished. Do you want to participate in the auction?",
 		"tech-con-want-participate": "Do you want to participate in the technical council of this auction?",
-		"you-have-48-hours-to-make-a-confirmation": "You have 48 hours to make a confirmation."
+		"you-have-48-hours-to-make-a-confirmation": "You have 48 hours to make a confirmation.",
+		"your-auctions": "Your auctions",
+		"all": "All",
+		"active": "Active",
+		"published": "Published",
+		"in-progress": "In progress",
+		"completed": "Completed",
+		"search": "Search"
 	}
 }
