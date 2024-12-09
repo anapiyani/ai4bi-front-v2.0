@@ -1,4 +1,4 @@
-export type HeaderType = "auction" | "technical-council" | "chat" | "auction-results"
+export type activity_status = "chat" | "technical-council" | "auction-results" | "auction";
 
 export type PopUpHandlers = {
 	stayButtonClick: () => void,
