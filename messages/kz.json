@@ -55,6 +55,13 @@
 		"CP": "КП",
 		"tech-con-finished-you-want-participate-auction": "Тех. кеңес аяқталды. Сіз тендерге қатысуға келісіміңізді қабылдайсыз?",
 		"tech-con-want-participate": "Осы тендердің техникалық кеңесіне қатысу?",
-		"you-have-48-hours-to-make-a-confirmation": "Сіздің қатысуыңызды қабылдауыңыз үшін 48 сағат бар."
+		"you-have-48-hours-to-make-a-confirmation": "Сіздің қатысуыңызды қабылдауыңыз үшін 48 сағат бар.",
+		"your-auctions": "Сіздің тендерлеріңіз",
+		"all": "Барлығы",
+		"active": "Активті",
+		"published": "Шығарылған",
+		"in-progress": "Жүргізіліп жатыр",
+		"completed": "Аяқталған",
+		"search": "Іздеу"
 	}
 }
