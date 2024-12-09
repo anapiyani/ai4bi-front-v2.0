@@ -1,16 +1,31 @@
 "use client"
 
 import { useTranslations } from 'next-intl'
+import { useSearchParams } from 'next/navigation'
 import { useState } from 'react'
-import ToParticipate from '../components/Alerts/Participants/ToParticipate'
+import { PopUpFactory } from '../components/ExitPopUps/ExitPopUps'
 import Header from '../components/Headers/Headers'
-import { PopUpFactory } from '../components/PopUp/PopUp'
-import { HeaderType } from '../types/types'
+import { activity_status } from '../types/types'
+import Auction from './Auction/Auction'
+import AuctionResults from './AuctionResults/AuctionResults'
+import Chat from './Chat/Chat'
+import TechnicalCouncil from './TechnicalCouncil/TechnicalCouncil'
 
 const Dashboard = () => {
-  const t = useTranslations("dashboard")
+  const t = useTranslations("dashboard");
+  const searchParams = useSearchParams();
+  let active_tab = searchParams.get("active_tab") as activity_status;
+
+  if (
+    !active_tab ||
+    !["chat", "technical-council", "auction-results", "auction"].includes(active_tab)
+  ) {
+    active_tab = "chat";
+  }
+
   const [exitType, setExitType] = useState<string | null>(null)
-  const handleExitType = (type: HeaderType) => {
+
+  const handleExitType = (type: activity_status) => {
     if (type === "auction-results") {
       console.log("exiting auction results")
     } else {
@@ -18,10 +33,21 @@ const Dashboard = () => {
     }
   }
 
+  const getActive = (active_tab: activity_status) => {
+    const components = {
+      chat: () => <Chat />,
+      "technical-council": () => <TechnicalCouncil />,
+      "auction-results": () => <AuctionResults />,
+      auction: () => <Auction />  
+    } as const;
+
+    return components[active_tab]?.() ?? components.chat();
+  }
+
   return (
-    <div className="flex w-full h-screen">
+    <div className="flex w-full h-screen flex-col">
       <div className='w-full'>
-        <Header type="technical-council" t={t} handlers={{
+        <Header type={active_tab} t={t} handlers={{
           infoButtonClick: () => {
             console.log('Info button clicked')
           },
@@ -30,6 +56,9 @@ const Dashboard = () => {
           },  
           exitButtonClick: handleExitType
         }} />
+      </div>
+      <div className='w-full'>
+        {getActive(active_tab)}
       </div>
       <PopUpFactory type={exitType} handlers={{
         stayButtonClick: () => {
@@ -41,10 +70,9 @@ const Dashboard = () => {
           console.log('Exiting popup', exitType)
         }
       }} />
-      <ToParticipate date="12.12.2024" type="auction" />
     </div>
   )  
 }
 
-export default Dashboard
+export default Dashboard;
 

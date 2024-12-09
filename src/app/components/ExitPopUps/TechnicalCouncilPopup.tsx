@@ -1,6 +1,6 @@
 import { useTranslations } from 'next-intl'
 import { PopUpHandlers } from '../../types/types'
-import { PopUp } from './PopUp'
+import { PopUp } from './ExitPopUps'
 
 	
 const TechnicalCouncilPopup = (handlers: PopUpHandlers) => {

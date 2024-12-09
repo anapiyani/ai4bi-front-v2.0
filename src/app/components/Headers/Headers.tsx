@@ -1,16 +1,16 @@
 import { Button } from '@/components/ui/button'
 import { useTranslations } from 'next-intl'
-import { HeaderType } from '../../types/types'
+import { activity_status } from '../../types/types'
 import Icons from '../Icons'
 import HeaderButtons from './CommonButtons'
 
 type HeaderProps = {
-	type: HeaderType,
+	type: activity_status,
 	t: ReturnType<typeof useTranslations>,
 	handlers: {
 		infoButtonClick: () => void,
 		audioButtonClick: () => void,
-		exitButtonClick: (type: HeaderType) => void
+		exitButtonClick: (type: activity_status) => void
 	}
 }
 
