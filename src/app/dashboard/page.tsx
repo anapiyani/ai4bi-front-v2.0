@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
-import TimeToStartAucTech from '../components/Alerts/Organizers/TimeToStartAucTech'
+import ToParticipate from '../components/Alerts/Participants/ToParticipate'
 import Header from '../components/Headers/Headers'
 import { PopUpFactory } from '../components/PopUp/PopUp'
 import { HeaderType } from '../types/types'
@@ -41,7 +41,7 @@ const Dashboard = () => {
           console.log('Exiting popup', exitType)
         }
       }} />
-      <TimeToStartAucTech type="technical-council" open={true} setOpen={() => {}} date="12.12.2024" time="12:00" />
+      <ToParticipate date="12.12.2024" type="auction" />
     </div>
   )  
 }

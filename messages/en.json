@@ -47,6 +47,14 @@
 		"technical-council-completed": "Technical council completed",
 		"time": "Time",
 		"its-time-to-start-the-technical-council": "It's time to start the technical council",
-		"start": "Start"
+		"start": "Start",
+		"its-time-to-start-the-auction": "It's time to start the auction",
+		"add-the-commercial-proposal": "Add the commercial proposal",
+		"proposal-description-deadline": "For participation in the auction, you need to make a commercial proposal. You have 48 hours before the auction starts.",
+		"download": "Download",
+		"CP": "CP",
+		"tech-con-finished-you-want-participate-auction": "Technical council finished. Do you want to participate in the auction?",
+		"tech-con-want-participate": "Do you want to participate in the technical council of this auction?",
+		"you-have-48-hours-to-make-a-confirmation": "You have 48 hours to make a confirmation."
 	}
 }
