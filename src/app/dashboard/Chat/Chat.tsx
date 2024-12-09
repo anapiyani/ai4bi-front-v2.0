@@ -55,8 +55,10 @@ const Chat = () => {
         </div>
       </aside>
 
-      <div className="w-full lg:w-2/3 mt-6 lg:mt-6 mx-4 lg:mr-3 rounded-lg bg-secondary h-full px-4 lg:px-6 py-6 lg:py-8">
-					
+      <div className="w-full lg:w-2/3 mt-6 lg:mt-6 mx-4 lg:mr-6 rounded-lg bg-secondary min-h-[calc(100vh-8rem)] px-4 lg:px-6 py-6 lg:py-8">
+					<div className="flex flex-col items-center justify-center h-full">
+						<h1>Начните обсуждение с участниками аукционов</h1>
+					</div>
       </div>
     </div>
   )
