@@ -62,6 +62,8 @@
 		"published": "Published",
 		"in-progress": "In progress",
 		"completed": "Completed",
-		"search": "Search"
+		"search": "Search",
+		"aboutAuction": "About auction",
+		"select-chat": "Select the chat to start the conversation"
 	}
 }

@@ -3,11 +3,12 @@ import { ChatListItemData } from '@/src/app/types/types'
 
 type ChatListItemProps = {
 	data: ChatListItemData
+	onClick: () => void
 }
 
-const ChatListItem = ({data}: ChatListItemProps) => {
+const ChatListItem = ({data, onClick}: ChatListItemProps) => {
 	return (
-		<div className={`relative flex items-center flex-col p-4 rounded-lg hover:cursor-pointer ${data.active ? 'bg-secondary' : ''}`}>
+		<div className={`relative flex items-center flex-col p-4 rounded-lg hover:cursor-pointer ${data.active ? 'bg-secondary' : ''}`} onClick={onClick}>
 			{data.active && (
 				<span className="absolute right-0 h-2/3 w-1 bg-primary"></span>
 			)}

@@ -62,6 +62,9 @@
 		"published": "Опубликован",
 		"in-progress": "В процессе",
 		"completed": "Завершен",
-		"search": "Поиск"
+		"search": "Поиск",
+		"aboutAuction": "О тендере",
+		"select-chat": "Выберите чат для начала общения"
 	}
 }
+

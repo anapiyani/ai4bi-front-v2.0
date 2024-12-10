@@ -7,7 +7,7 @@ export type BnectStatuses = "submission_of_applications" | "bid_submission" // m
 
 export type ChatListItemData = {
 	active: boolean;
-	status: string;
+	status: Exclude<ChatStatus, 'all'>;
 	bnect_status: BnectStatuses;
 	start_date: string;
 	end_date: string;
@@ -18,17 +18,4 @@ export type ChatListItemData = {
 export type PopUpHandlers = {
 	stayButtonClick: () => void,
 	exitButtonClick: () => void
-}
-export type ChatItem = {
-  id: string
-  title: string
-  start_date: string
-  end_date: string
-  status: Exclude<ChatStatus, 'all'>
-  active?: boolean
-}
-
-export type ChatListProps = {
-  items: ChatItem[]
-  status: ChatStatus
 }
