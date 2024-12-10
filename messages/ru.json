@@ -55,6 +55,16 @@
 		"CP": "КП",
 		"tech-con-finished-you-want-participate-auction": "Тех. совет завершен. Вы хотите принять участие в тендере?",
 		"tech-con-want-participate": "Принять участие в техническом совете данного тендера?",
-		"you-have-48-hours-to-make-a-confirmation": "У вас есть 48 часов для принятия решения."
+		"you-have-48-hours-to-make-a-confirmation": "У вас есть 48 часов для принятия решения.",
+		"your-auctions": "Ваши тендеры",
+		"all": "Все",
+		"active": "Активен",
+		"published": "Опубликован",
+		"in-progress": "В процессе",
+		"completed": "Завершен",
+		"search": "Поиск",
+		"aboutAuction": "О тендере",
+		"select-chat": "Выберите чат для начала общения"
 	}
 }
+
