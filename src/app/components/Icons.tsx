@@ -67,6 +67,22 @@ const Icons = {
 				<path d="M7.91699 9.99658H16.2503" stroke="#0F172A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 			</svg>
 		)
+	},
+	SearchInput: () => {
+		return (
+			<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M12.6704 12.6899L14.9805 15M14.3138 8.68583C14.3138 11.826 11.7767 14.3717 8.64714 14.3717C5.51752 14.3717 2.98047 11.826 2.98047 8.68583C2.98047 5.54563 5.51752 3 8.64714 3C11.7767 3 14.3138 5.54563 14.3138 8.68583Z" stroke="#64748B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+			</svg>
+		)
+	},
+	Menu: () => {
+		return (
+			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M4.5 17.5H19.5" stroke="#0F172A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				<path d="M4.5 12H19.5" stroke="#0F172A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				<path d="M4.5 6.5H19.5" stroke="#0F172A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+			</svg>
+		)
 	}
 }
 

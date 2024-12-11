@@ -8,7 +8,7 @@ import Header from '../components/Headers/Headers'
 import { activity_status } from '../types/types'
 import Auction from './Auction/Auction'
 import AuctionResults from './AuctionResults/AuctionResults'
-import Chat from './Chat/Chat'
+import ChatMode from './ChatMode/ChatMode'
 import TechnicalCouncil from './TechnicalCouncil/TechnicalCouncil'
 
 const Dashboard = () => {
@@ -35,7 +35,7 @@ const Dashboard = () => {
 
   const getActive = (active_tab: activity_status) => {
     const components = {
-      chat: () => <Chat />,
+      chat: () => <ChatMode />, 
       "technical-council": () => <TechnicalCouncil />,
       "auction-results": () => <AuctionResults />,
       auction: () => <Auction />  
