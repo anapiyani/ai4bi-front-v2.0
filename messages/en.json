@@ -64,6 +64,11 @@
 		"completed": "Completed",
 		"search": "Search",
 		"aboutAuction": "About auction",
-		"select-chat": "Select the chat to start the conversation"
+		"select-chat": "Select the chat to start the conversation",
+		"auction": "Auction",
+		"at": "at",
+		"type-your-message-here": "Type your message here...",
+		"send": "Send"
 	}
 }
+

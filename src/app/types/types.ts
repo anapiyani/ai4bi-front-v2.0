@@ -19,3 +19,14 @@ export type PopUpHandlers = {
 	stayButtonClick: () => void,
 	exitButtonClick: () => void
 }
+
+export type ChatIdStatuses = {
+	planned_auction: string,
+	planned_technical_council: string,
+	time_to_start_auction: string, // for an admin
+	time_to_start_technical_council: string, // for an admin
+	auction_on_progress: string,
+	technical_council_on_progress: string,
+	auction_completed: string, 
+	technical_council_completed: string, 
+}

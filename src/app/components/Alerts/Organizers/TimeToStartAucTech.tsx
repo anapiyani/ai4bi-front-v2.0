@@ -1,4 +1,3 @@
-import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { useTranslations } from 'next-intl'
 
@@ -18,27 +17,29 @@ const TimeToStartAucTech = ({
 	const t = useTranslations('dashboard')
 
 	return (
-		<AlertDialog open={true}>
-			<AlertDialogContent className='w-[500px] absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2'>
-				<AlertDialogHeader>
-					<AlertDialogTitle>
-						{t(`its-time-to-start-the-${type}`)}
-					</AlertDialogTitle>
-					<AlertDialogDescription>
-						{date} / {time}
-					</AlertDialogDescription>
-					<AlertDialogFooter>
-						<Button variant='outline'>
-							{t('reschedule')}
-						</Button>
-						<Button>
-							{t('start')}
-						</Button>
-					</AlertDialogFooter>
-				</AlertDialogHeader>
-			</AlertDialogContent>
-		</AlertDialog>
-  )
+			<div className="flex items-center justify-center w-full mt-3">
+				<div className="w-[500px] bg-white rounded-lg p-6">
+					<div className="space-y-4">
+						<div>
+							<h2 className="text-lg font-semibold">
+								{t(`its-time-to-start-the-${type}`)}
+							</h2>
+							<p className="text-sm text-gray-500">
+								{date} / {time}
+							</p>
+						</div>
+						<div className="flex justify-end gap-3">
+							<Button variant='outline'>
+								{t('reschedule')}
+							</Button>
+							<Button>
+								{t('start')}
+							</Button>
+						</div>
+					</div>
+				</div>
+			</div>
+		)
 }
 
 export default TimeToStartAucTech;
