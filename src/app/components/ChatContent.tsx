@@ -52,7 +52,7 @@ const ChatContent = ({ chatId }: { chatId: string }) => {
 
         {/* chat messages component here */}
         <div className="p-5">
-          {/* Chat messages will be rendered here */}
+
         </div>
       </div>
 

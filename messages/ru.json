@@ -68,7 +68,12 @@
 		"auction": "Тендер",
 		"at": "в",
 		"type-your-message-here": "Введите ваше сообщение",
-		"send": "Отправить"
+		"send": "Отправить",
+		"joined-auction": "теперь участвует в тендере",
+		"left-auction": "покинул тендер",
+		"joined-technical-council": "теперь участвует в техническом совете",
+		"left-technical-council": "покинул техническое совет"
 	}
 }
+
 

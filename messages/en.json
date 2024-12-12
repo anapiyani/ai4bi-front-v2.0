@@ -68,7 +68,11 @@
 		"auction": "Auction",
 		"at": "at",
 		"type-your-message-here": "Type your message here...",
-		"send": "Send"
+		"send": "Send",
+		"joined-auction": "now participates in the auction",
+		"left-auction": "left the auction",
+		"joined-technical-council": "now participates in the technical council",
+		"left-technical-council": "left the technical council"
 	}
 }
 

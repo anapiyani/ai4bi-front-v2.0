@@ -68,7 +68,12 @@
 		"auction": "Тендер",
 		"at": "/",
 		"type-your-message-here": "Хабарыңызды енгізіңіз",
-		"send": "Жіберу"
+		"send": "Жіберу",
+		"joined-auction": "Енді тендерге қатысады",
+		"left-auction": "тендерден шығып кетті",
+		"joined-technical-council": "Енді техникалық кеңеске қатысады",
+		"left-technical-council": "тех. кеңестен шығып кетті"
 	}
 }
+
 
