@@ -1,21 +1,26 @@
-
-type JoinLeftMessageProps = {
+interface JoinLeftMessageProps {
   type: 'auction' | 'technical_council';
-	action: 'joined' | 'left';
+  action: 'joined' | 'left' | 'active';
   participant_name: string;
-  t: any;
+  t: (key: string) => string;
 }
 
-const JoinLeftMessage = ({type, action, participant_name, t}: JoinLeftMessageProps) => {
+const JoinLeftMessage = ({ type, action, participant_name, t }: JoinLeftMessageProps) => {
+  if (action === 'active') return null;
+
+  const messageKey = `${action}-${type}`;
+  const commonClasses = 'text-sm text-secondary-foreground';
+
   return (
-    <div className='flex w-full justify-center items-center'>
-			{
-				action === 'joined' ? (
-					<p>{participant_name} {type === 'auction' ? t('joined-auction') : t('joined-technical-council')}</p>
-				) : (
-					<p>{participant_name} {type === 'auction' ? t('left-auction') : t('left-technical-council')}</p>
-				)
-			}
+    <div className="flex w-full justify-center items-center">
+      <div className="flex items-center gap-2">
+        <p className={`${commonClasses} font-bold`}>{participant_name}</p>
+        <p className={`${commonClasses} font-medium`}>
+          {t(messageKey)}
+        </p>
+      </div>
     </div>
-  )
-}
+  );
+};
+
+export default JoinLeftMessage;
