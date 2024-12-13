@@ -20,6 +20,31 @@ export const useChat = (chatId: string) => {
 			date: "12.12.2024",
 			time: "12:00",
 			// other data's: example: participants, messages, etc.
+			participants: [
+				{
+					id: "1",
+					name: "John Doe",
+					type: "technical_council",
+					message: "",
+					action: "joined",
+				},
+				{
+					id: "2",
+					name: "User Name",
+					type: "technical_council",
+					message: "",
+					action: "left",
+				},
+			],
+			messages: [
+				{
+					name: "John Doe",
+					message: "Hello, how are you? Are you ready for the auction?",
+					type: "technical_council",
+					action: "active",
+					id: "1",
+				}
+			]
 		}
 	}
 }
