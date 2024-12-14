@@ -27,7 +27,7 @@ export const EXAMPLE_DATA: ChatListItemData[] = [
     start_date: "21 дек", 
     end_date: "21 дек", 
     title: "Тендер на устройство слаботочных сетей по проекту NRG Maftun Makon Comfort 2" 
-  }
+  },
 ]
 
 const ChatMode = () => {
