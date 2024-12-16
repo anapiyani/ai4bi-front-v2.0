@@ -21,7 +21,7 @@ const ChatContent = ({ chatId }: { chatId: string }) => {
       <div className='flex justify-center items-center h-full mt-5'>
         <p className='text-secondary-foreground text-base font-semibold'>{t('select-chat')}</p>
       </div>
-    )
+    ) 
   }
 
   // Constants for chat statuses to avoid magic strings and improve maintainability
