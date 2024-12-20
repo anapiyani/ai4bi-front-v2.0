@@ -81,7 +81,7 @@ const ChatContent = ({ chatId }: { chatId: string }) => {
         {/* Chat messages section */}
         <div className="p-5 gap-2 flex flex-col">
           {/* Participant join/leave messages */}
-          {chat.participants?.map((participant) => (
+          {chat.participant_actions?.map((participant) => (
             <JoinLeftMessage 
               key={participant.id}
               participant_name={participant.name} 
@@ -92,7 +92,7 @@ const ChatContent = ({ chatId }: { chatId: string }) => {
           ))}
           
           {/* Chat messages */}
-          {chat.messages?.map((message) => (
+          {chat.messages?.map((message: any) => (
             <Message
               key={message.id}
               message={message.message} 
