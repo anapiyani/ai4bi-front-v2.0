@@ -11,23 +11,14 @@ import { CHAT_TABS } from './config/ChatTabs'
 {/* data is example! */}
 export const EXAMPLE_DATA: ChatListItemData[] = [
   {
-    id: "1",
+    id: "d7d69048-ed7e-49d2-adb8-fa3276e6ee2c",
     active: false, 
     status: "active", 
     bnect_status: "submission_of_applications", 
     start_date: "16 ноя", 
     end_date: "11 ноя", 
     title: "Открытый тендер насосная станция пожаротушения по проекту Arena Light 1" 
-  },
-  {
-    id: "2",
-    active: false, 
-    status: "published", 
-    bnect_status: "bid_submission", 
-    start_date: "21 дек", 
-    end_date: "21 дек", 
-    title: "Тендер на устройство слаботочных сетей по проекту NRG Maftun Makon Comfort 2" 
-  },
+  }
 ]
 
 const ChatMode = () => {
@@ -74,9 +65,16 @@ const ChatMode = () => {
                 value={tab.value}
                 className="mt-4"
               >
-                {useRenderChatTabContent({status: tab.value, data: activeData, handleItemClick: handleItemClick})}
+                {useRenderChatTabContent({status: tab.value, data: activeData, handleItemClick: handleItemClick, t: t})}
               </TabsContent>
             ))}
+            {
+              activeData.length === 0 && (
+                <div className="mt-4">
+                  <p className="text-center text-sm text-gray-500">{t("you-have-no-auctions")}</p>
+                </div>
+              )
+            }
           </Tabs>
         </div>
       </aside>

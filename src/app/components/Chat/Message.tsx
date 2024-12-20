@@ -33,7 +33,7 @@ const Message = ({ message, sender, t }: MessageProps) => {
     <>
       <div className="flex items-center gap-2">
         {!isUser && <div className={avatarClasses} />}
-        <p className="text-sm font-medium text-muted-foreground">{senderName}</p>
+        <p className="text-sm font-medium text-muted-foreground cursor-pointer">{senderName}</p>
         {isUser && <div className={avatarClasses} />}
       </div>
       <div className={messageClasses}>

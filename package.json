@@ -25,6 +25,7 @@
     "@radix-ui/react-toast": "^1.2.1",
     "@radix-ui/react-tooltip": "^1.1.2",
     "@tanstack/react-table": "^8.19.3",
+    "@types/uuid": "^10.0.0",
     "axios": "^1.7.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
@@ -44,6 +45,7 @@
     "react-hook-form": "^7.52.1",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
+    "uuidv4": "^6.2.13",
     "zod": "^3.23.8",
     "zustand": "^5.0.1"
   },

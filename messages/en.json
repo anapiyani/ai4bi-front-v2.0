@@ -74,7 +74,9 @@
 		"joined-technical_council": "now participates in the technical council",
 		"left-technical_council": "left the technical council",
 		"aray-bot": "Aray Bot",
-		"you": "You"
+		"you": "You",
+		"you-have-no-auctions": "You have no auctions yet",
+		"you-have-no-auctions-in-this-status": "You have no auctions in this status"
 	}
 }
 
