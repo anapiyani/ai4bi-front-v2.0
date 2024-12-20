@@ -74,7 +74,9 @@
 		"joined-technical_council": "теперь участвует в техническом совете",
 		"left-technical_council": "покинул техническое совет",
 		"aray-bot": "Арай - бот",
-		"you": "Вы"
+		"you": "Вы",
+		"you-have-no-auctions": "У вас нет тендеров",
+		"you-have-no-auctions-in-this-status": "У вас нет тендеров в этом статусе"
 	}
 }
 

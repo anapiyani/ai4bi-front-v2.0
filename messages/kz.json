@@ -74,7 +74,9 @@
 		"joined-technical_council": "Енді техникалық кеңеске қатысады",
 		"left-technical_council": "тех. кеңестен шығып кетті",
 		"aray-bot": "Арай бот",
-		"you": "Сіз"
+		"you": "Сіз",
+		"you-have-no-auctions": "Сіздің тендерлеріңіз жоқ",
+		"you-have-no-auctions-in-this-status": "Сіздің бұл статустағы тендерлеріңіз жоқ"
 	}
 }
 

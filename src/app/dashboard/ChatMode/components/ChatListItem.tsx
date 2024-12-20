@@ -12,11 +12,11 @@ const ChatListItem = ({data, onClick}: ChatListItemProps) => {
 			{data.active && (
 				<span className="absolute right-0 h-2/3 w-1 bg-primary"></span>
 			)}
-			<div className='flex flex-col'>
-				<h2 className='text-secondary-foreground text-sm'>{data.title}</h2>
+			<div className='flex flex-col self-start'>
+				<h2 className='text-secondary-foreground text-sm text-start'>{data.title}</h2>
 				<div className='flex items-center gap-2'>
 					<p className='text-xs text-secondary-foreground'>{data.start_date} - {data.end_date}</p> 
-					<BnectBadge status={data.bnect_status} /> 
+					{data.bnect_status && <BnectBadge status={data.bnect_status} />}
 				</div>
 			</div>
 		</div>

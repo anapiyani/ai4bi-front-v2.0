@@ -8,9 +8,9 @@ export type BnectStatuses = "submission_of_applications" | "bid_submission" // m
 export type ChatListItemData = {
 	active: boolean;
 	status: Exclude<ChatStatus, 'all'>;
-	bnect_status: BnectStatuses;
+	bnect_status?: BnectStatuses;
 	start_date: string;
-	end_date: string;
+	end_date?: string;
 	title: string;
 	id: string;
 }
