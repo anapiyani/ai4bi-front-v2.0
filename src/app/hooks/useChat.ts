@@ -12,12 +12,12 @@ export const useChat = (chatId: string) => {
 			time: "12:00",
 			// ! other data's: example: participants, messages, etc.
 		}
-	} else if (chatId === "2") {
+	} else if (chatId === "d7123322-ed7e-123jk-adb8-ed7e123jk") {
 		return {
 			id: chatId,
-			title: "Открытый тендер насосная станция пожаротушения по проекту Arena Light 1",
+			title: "Открытый тендер (СМР) по СС проект Atamura Comfort 2",
 			chat_status: "time_to_start_technical_council",
-			date: "12.12.2024",
+			date: "23.12.2024",
 			time: "12:00",
 			// ! other data's: example: participants, messages, etc.
 			participant_actions: [

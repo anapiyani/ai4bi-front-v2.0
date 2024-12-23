@@ -1,13 +1,10 @@
-import { useRouter } from 'next/navigation'
-
 
 
 const TechnicalCouncil = () => {
-	const router = useRouter();
 
 	return (
 		<div>
-			
+			<h1>Technical Council</h1>
 		</div>
 	)
 }

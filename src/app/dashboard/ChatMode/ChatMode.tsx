@@ -19,6 +19,15 @@ export const EXAMPLE_DATA: ChatListItemData[] = [
     end_date: "11 ноя", 
     title: "Открытый тендер насосная станция пожаротушения по проекту Arena Light 1" 
   },
+  {
+    id: "d7123322-ed7e-123jk-adb8-ed7e123jk",
+    active: false, 
+    status: "published", 
+    bnect_status: "bid_submission", 
+    start_date: "13 дек", 
+    end_date: "18 дек", 
+    title: "Открытый тендер (СМР) по СС проект Atamura Comfort 2" 
+  },
 ]
 
 const ChatMode = () => {
