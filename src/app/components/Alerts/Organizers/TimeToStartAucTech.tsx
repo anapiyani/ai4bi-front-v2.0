@@ -12,11 +12,7 @@ const TimeToStartAucTech = ({
 	onStartClick: () => void,
 	date: string,
 	time: string,
-<<<<<<< Updated upstream
-	type: 'technical-council' | 'auction'
-=======
 	type: 'technical-council' | 'auction',
->>>>>>> Stashed changes
 }) => {
 	const t = useTranslations('dashboard')
 
