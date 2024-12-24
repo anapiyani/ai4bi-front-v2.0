@@ -23,7 +23,6 @@ const ChangeDates = ({
 		e.preventDefault()
 		if (state.step === 2) {
 			console.log('submit', state);
-			// logic to send data to backend
 		} else {
 			updateState({ step: 2 })
 		}
