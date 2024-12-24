@@ -80,8 +80,7 @@ const ChatMode = () => {
       </aside>
 
       <div className="w-full lg:w-2/3 mt-6 lg:mt-6 mx-4 lg:mr-6 rounded-lg bg-secondary min-h-[calc(100vh-8rem)] py-3 lg:py-3">
-          {/* content */}
-					<ChatContent chatId={chatId || ""} />
+					<ChatContent chatId={chatId || ""} type="chat" />
       </div>
     </div>
   )

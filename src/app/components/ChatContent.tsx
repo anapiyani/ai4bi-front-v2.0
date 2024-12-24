@@ -7,6 +7,8 @@ import Message from './Chat/Message'
 import MessageInput from './Chat/MessageInput'
 import PlannedType from './Chat/PlannedType'
 
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
 /**
  * ChatContent component displays the chat interface for auctions and technical councils.
  * It handles different chat states and renders appropriate components based on chat status.
@@ -14,6 +16,18 @@ import PlannedType from './Chat/PlannedType'
 const ChatContent = ({ chatId }: { chatId: string }) => {
   const t = useTranslations('dashboard')
   const chat = useChat(chatId)
+=======
+const ChatContent = ({ chatId, type }: { chatId?: string | null, type?: "technical-council" | "auction" | "chat" }) => {
+  const t = useTranslations('dashboard')
+  const [openRescheduleModal, setOpenRescheduleModal] = useState<boolean>(false);
+  const chat = useChat(chatId as string, type as "technical-council" | "auction" | "chat") // websocket connection to the chats
+>>>>>>> Stashed changes
+=======
+const ChatContent = ({ chatId, type }: { chatId?: string | null, type?: "technical-council" | "auction" | "chat" }) => {
+  const t = useTranslations('dashboard')
+  const [openRescheduleModal, setOpenRescheduleModal] = useState<boolean>(false);
+  const chat = useChat(chatId as string, type as "technical-council" | "auction" | "chat") // websocket connection to the chats
+>>>>>>> Stashed changes
 
   // Early return if chat data is not available
   if (!chat?.id || !chatId) {
@@ -82,7 +96,7 @@ const ChatContent = ({ chatId }: { chatId: string }) => {
         <div className="p-5 gap-2 flex flex-col">
           {/* Participant join/leave messages */}
           {chat.participant_actions?.map((participant) => (
-            <JoinLeftMessage 
+            <JoinLeftMessage
               key={participant.id}
               participant_name={participant.name} 
               type={participant.type as "technical_council" | "auction"} 
@@ -97,7 +111,7 @@ const ChatContent = ({ chatId }: { chatId: string }) => {
               key={message.id}
               message={message.message} 
               sender={message.name} 
-              t={t} 
+              t={t}
             />
           ))}
         </div>
