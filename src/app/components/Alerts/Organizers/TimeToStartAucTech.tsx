@@ -7,16 +7,12 @@ const TimeToStartAucTech = ({
 	date,
 	time,
 	type,
-	onRescheduleClick,
-	onStartClick,
 }: {
 	onRescheduleClick: () => void,
 	onStartClick: () => void,
 	date: string,
 	time: string,
 	type: 'technical-council' | 'auction',
-	onRescheduleClick: () => void,
-	onStartClick: () => void,
 }) => {
 	const t = useTranslations('dashboard')
 

@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl'
 import { useSearchParams } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { PopUpFactory } from '../components/ExitPopUps/ExitPopUps'
 import Header from '../components/Headers/Headers'
 import { activity_status } from '../types/types'
@@ -24,6 +24,13 @@ const Dashboard = () => {
   }
 
   const [exitType, setExitType] = useState<string | null>(null)
+  const [isMicrophoneOn, setIsMicrophoneOn] = useState(false)
+
+  useEffect(() => {
+    if (active_tab === "technical-council") {
+      setIsMicrophoneOn(true)
+    }
+  }, [active_tab])
 
   const handleExitType = (type: activity_status) => {
     if (type === "auction-results") {
@@ -33,10 +40,14 @@ const Dashboard = () => {
     }
   }
 
+  const toggleMicrophone = () => {
+    setIsMicrophoneOn(prev => !prev)
+  }
+
   const getActive = (active_tab: activity_status) => {
     const components = {
       chat: () => <ChatMode />, 
-      "technical-council": () => <TechnicalCouncil />,
+      "technical-council": () => <TechnicalCouncil isMicrophoneOn={isMicrophoneOn} toggleMicrophone={toggleMicrophone} />,
       "auction-results": () => <AuctionResults />,
       auction: () => <Auction />  
     } as const;
@@ -51,11 +62,9 @@ const Dashboard = () => {
           infoButtonClick: () => {
             console.log('Info button clicked')
           },
-          audioButtonClick: () => {
-            console.log('Audio button clicked')
-          },  
+          audioButtonClick: toggleMicrophone,  
           exitButtonClick: handleExitType
-        }} />
+        }} isMicrophoneOn={isMicrophoneOn} />
       </div>
       <div className='w-full'>
         {getActive(active_tab)}
