@@ -13,7 +13,7 @@ const Message = ({ message, sender, t }: MessageProps) => {
 
   const avatarClasses = `w-6 h-6 rounded-full ${
     isBot ? 'bg-primary' : 'bg-input'
-  }`;
+  } ${isUser ? 'ml-auto' : ''}`;
 
   const messageClasses = `flex flex-col p-2 rounded-lg w-fit max-w-[50%] ${
     isBot
@@ -33,8 +33,8 @@ const Message = ({ message, sender, t }: MessageProps) => {
     <>
       <div className="flex items-center gap-2">
         {!isUser && <div className={avatarClasses} />}
-        <p className="text-sm font-medium text-muted-foreground cursor-pointer">{senderName}</p>
-        {isUser && <div className={avatarClasses} />}
+        <p className={`text-sm font-medium text-muted-foreground cursor-pointer ${isUser ? 'ml-auto' : ''}`}>{senderName}</p>
+        {isUser && <div className={avatarClasses + `w-0`} />}
       </div>
       <div className={messageClasses}>
         <p className={textClasses}>{message}</p>

@@ -19,6 +19,14 @@ export const EXAMPLE_DATA: ChatListItemData[] = [
     end_date: "11 ноя", 
     title: "Открытый тендер насосная станция пожаротушения по проекту Arena Light 1" 
   },
+  {
+    id: "d7123322-ed7e-123jk-adb8-ed7e123jk",
+    active: false, 
+    status: "published", 
+    bnect_status: "bid_submission", 
+    start_date: "13 дек", 
+    end_date: "18 дек", 
+    title: "Открытый тендер (СМР) по СС проект Atamura Comfort 2" 
 ]
 
 const ChatMode = () => {
@@ -80,8 +88,7 @@ const ChatMode = () => {
       </aside>
 
       <div className="w-full lg:w-2/3 mt-6 lg:mt-6 mx-4 lg:mr-6 rounded-lg bg-secondary min-h-[calc(100vh-8rem)] py-3 lg:py-3">
-          {/* content */}
-					<ChatContent chatId={chatId || ""} />
+					<ChatContent chatId={chatId || ""} type="chat" />
       </div>
     </div>
   )

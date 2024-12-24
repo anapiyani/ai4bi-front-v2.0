@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import { useTranslations } from 'next-intl'
 import Icons from '../Icons'
 
-const HeaderButtons = () => {
+const HeaderButtons = ({isMicrophoneOn}: {isMicrophoneOn: boolean}) => {
 	const t = useTranslations("dashboard")
 	
 	const InfoButton = ({onClick}: {onClick?: () => void}) => (
@@ -22,7 +22,7 @@ const HeaderButtons = () => {
 			variant='ghost'
 			onClick={onClick}
 		>
-			<Icons.Audio />
+			{isMicrophoneOn ? <Icons.MicrophoneOn /> : <Icons.MicrophoneOff />}
 			<p className='text-[10px] text-muted-foreground'>{t("audio")}</p>
 		</Button>
 	)

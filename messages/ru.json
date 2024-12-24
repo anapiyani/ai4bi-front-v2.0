@@ -76,7 +76,11 @@
 		"aray-bot": "Арай - бот",
 		"you": "Вы",
 		"you-have-no-auctions": "У вас нет тендеров",
-		"you-have-no-auctions-in-this-status": "У вас нет тендеров в этом статусе"
+		"you-have-no-auctions-in-this-status": "У вас нет тендеров в этом статусе",
+		"absent": "Отсутствует",
+		"call-again": "Пригласить повторно",
+		"turn-off-microphone": "Отключить микрофон",
+		"delete": "Удалить"
 	}
 }
 

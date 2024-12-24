@@ -12,13 +12,14 @@ type HeaderProps = {
 		audioButtonClick: () => void,
 		exitButtonClick: (type: activity_status) => void
 	}
+	isMicrophoneOn: boolean
 }
 
 const commonHeaderClasses = 'w-full h-20 flex items-center justify-between m-0 px-20'
 const commonTitleClasses = 'text-lg font-semibold'
 
-const Header = ({type, t, handlers}: HeaderProps) => {
-	const { InfoButton, AudioButton, ExitButton } = HeaderButtons();
+const Header = ({type, t, handlers, isMicrophoneOn}: HeaderProps) => {
+	const { InfoButton, AudioButton, ExitButton } = HeaderButtons({isMicrophoneOn});
 	const HeaderContent = () => {
 		switch(type) {
 			case "auction":

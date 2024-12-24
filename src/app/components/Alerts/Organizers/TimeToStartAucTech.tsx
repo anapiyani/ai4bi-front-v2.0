@@ -2,17 +2,17 @@ import { Button } from '@/components/ui/button'
 import { useTranslations } from 'next-intl'
 
 const TimeToStartAucTech = ({
-	open,
-	setOpen,
+	onRescheduleClick,
+	onStartClick,
 	date,
 	time,
 	type,
 }: {
-	open: boolean,
-	setOpen: (open: boolean) => void,
+	onRescheduleClick: () => void,
+	onStartClick: () => void,
 	date: string,
 	time: string,
-	type: 'technical-council' | 'auction'
+	type: 'technical-council' | 'auction',
 }) => {
 	const t = useTranslations('dashboard')
 
@@ -29,10 +29,10 @@ const TimeToStartAucTech = ({
 							</p>
 						</div>
 						<div className="flex justify-end gap-3">
-							<Button variant='outline'>
+							<Button variant='outline' onClick={onRescheduleClick}>
 								{t('reschedule')}
 							</Button>
-							<Button>
+							<Button onClick={onStartClick}>
 								{t('start')}
 							</Button>
 						</div>
