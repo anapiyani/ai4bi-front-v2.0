@@ -6,7 +6,15 @@ import { useChangeDateForm } from '../../hooks/useChangeDateState'
 import { DateTimeInput } from './components/FormDateTime'
 
 
-const ChangeDates = () => {
+const ChangeDates = ({
+  open,
+  onClose,
+  chat_id,
+}: {
+  open: boolean;
+  onClose: () => void;
+  chat_id: string;
+}) => {
 	const t = useTranslations('dashboard');
 	const { state, updateState } = useChangeDateForm();
 	const [keepCurrentAuctionDate, setKeepCurrentAuctionDate] = useState<boolean>(false);
@@ -26,7 +34,7 @@ const ChangeDates = () => {
 	}
 
 	return (
-		<Dialog open={true}>
+		<Dialog open={open} onOpenChange={onClose}>
       <DialogContent className='bg-primary-foreground w-full max-w-md mx-auto p-6 sm:p-8 flex flex-col items-center justify-center'>
         <DialogHeader className='flex flex-col items-center justify-center gap-2'>
           <DialogTitle className='text-secondary-foreground text-2xl font-bold'>
