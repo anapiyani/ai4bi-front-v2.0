@@ -76,7 +76,11 @@
 		"aray-bot": "Арай бот",
 		"you": "Сіз",
 		"you-have-no-auctions": "Сіздің тендерлеріңіз жоқ",
-		"you-have-no-auctions-in-this-status": "Сіздің бұл статустағы тендерлеріңіз жоқ"
+		"you-have-no-auctions-in-this-status": "Сіздің бұл статустағы тендерлеріңіз жоқ",
+		"absent": "Жоқ",
+		"call-again": "Қайтадан шақыру",
+		"turn-off-microphone": "Микрофонды өшіру",
+		"delete": "Жою"
 	}
 }
 

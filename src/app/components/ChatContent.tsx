@@ -9,10 +9,10 @@ import MessageInput from './Chat/MessageInput'
 import PlannedType from './Chat/PlannedType'
 import ChangeDates from './Form/ChangeDates'
 
-const ChatContent = ({ chatId }: { chatId: string }) => {
+const ChatContent = ({ chatId, type }: { chatId?: string | null, type?: "technical-council" | "auction" | "chat" }) => {
   const t = useTranslations('dashboard')
   const [openRescheduleModal, setOpenRescheduleModal] = useState<boolean>(false);
-  const chat = useChat(chatId)
+  const chat = useChat(chatId as string, type as "technical-council" | "auction" | "chat") // websocket connection to the chats /
 
   if (!chat?.id || !chatId) {
     return (
@@ -82,7 +82,7 @@ const ChatContent = ({ chatId }: { chatId: string }) => {
 
         <div className="p-5 gap-2 flex flex-col">
           {chat.participant_actions?.map((participant) => (
-            <JoinLeftMessage 
+            <JoinLeftMessage
               key={participant.id}
               participant_name={participant.name} 
               type={participant.type as "technical_council" | "auction"} 
@@ -96,7 +96,7 @@ const ChatContent = ({ chatId }: { chatId: string }) => {
               key={message.id}
               message={message.message} 
               sender={message.name} 
-              t={t} 
+              t={t}
             />
           ))}
         </div>

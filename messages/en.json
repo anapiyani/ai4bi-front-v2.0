@@ -76,7 +76,11 @@
 		"aray-bot": "Aray Bot",
 		"you": "You",
 		"you-have-no-auctions": "You have no auctions yet",
-		"you-have-no-auctions-in-this-status": "You have no auctions in this status"
+		"you-have-no-auctions-in-this-status": "You have no auctions in this status",
+		"absent": "Absent",
+		"call-again": "Call again",
+		"turn-off-microphone": "Turn off microphone",
+		"delete": "Delete"
 	}
 }
 

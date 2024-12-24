@@ -2,12 +2,16 @@ import { Button } from '@/components/ui/button'
 import { useTranslations } from 'next-intl'
 
 const TimeToStartAucTech = ({
+	onRescheduleClick,
+	onStartClick,
 	date,
 	time,
 	type,
 	onRescheduleClick,
 	onStartClick,
 }: {
+	onRescheduleClick: () => void,
+	onStartClick: () => void,
 	date: string,
 	time: string,
 	type: 'technical-council' | 'auction',
