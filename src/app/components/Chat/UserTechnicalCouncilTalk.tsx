@@ -22,7 +22,12 @@ const UserTechnicalCouncilTalk = ({
 	LocalUser?: boolean;
 }) => {
 	return (
-		<div className='flex justify-between'>
+		<div className={`flex justify-between relative`}>
+			{
+				LocalUser && (
+					<span className="absolute right-0 h-full rounded-full w-1 bg-primary"></span>
+				)
+			}
 			<div className='flex gap-2 items-center'>
 				<div className='flex'>
 					{
@@ -60,7 +65,9 @@ const UserTechnicalCouncilTalk = ({
 									{
 										isAbsent && <Button variant="ghost" className='text-sm text-muted-foreground w-full'>{t("call-again")}</Button>
 									}
-									<Button variant="ghost" className='text-sm text-muted-foreground w-full'>{t("turn-off-microphone")}</Button>
+									{
+										isMicrophoneOn && <Button variant="ghost" className='text-sm text-muted-foreground w-full'>{t("turn-off-microphone")}</Button>
+									}
 									<Button variant="ghost" className='text-sm w-full text-destructive'>{t("delete")}</Button>
 								</div>
 							</DropdownMenuContent>
