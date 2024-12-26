@@ -44,6 +44,7 @@ const Dashboard = () => {
     setIsMicrophoneOn(prev => !prev)
   }
 
+
   const getActive = (active_tab: activity_status) => {
     const components = {
       chat: () => <ChatMode />, 
@@ -53,6 +54,23 @@ const Dashboard = () => {
     } as const;
 
     return components[active_tab]?.() ?? components.chat();
+  }
+
+  const ExitTo = (type: activity_status) => {
+    switch (type) {
+      case "auction":
+        window.location.href = `dashboard?active_tab=chat`        
+        break;
+      case "technical-council":
+        window.location.href = `dashboard?active_tab=chat`
+        break;
+      case "chat":
+        window.location.href = `https://bnect.pro/`
+        break;
+      default:
+        break;
+    }
+    setExitType(null)
   }
 
   return (
@@ -72,11 +90,9 @@ const Dashboard = () => {
       <PopUpFactory type={exitType} handlers={{
         stayButtonClick: () => {
           setExitType(null)
-          console.log('Staying in popup', exitType)
         },
         exitButtonClick: () => {
-          setExitType(null)
-          console.log('Exiting popup', exitType)
+          ExitTo(exitType as activity_status)
         }
       }} />
     </div>
