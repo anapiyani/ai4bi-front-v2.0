@@ -27,6 +27,7 @@ export const EXAMPLE_DATA: ChatListItemData[] = [
     start_date: "13 дек", 
     end_date: "18 дек", 
     title: "Открытый тендер (СМР) по СС проект Atamura Comfort 2" 
+  }
 ]
 
 const ChatMode = () => {

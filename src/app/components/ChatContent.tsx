@@ -40,6 +40,8 @@ const ChatContent = ({ chatId, type }: { chatId?: string | null, type?: "technic
 
   const isPlannedState = chat.chat_status === CHAT_STATUSES.PLANNED_TECHNICAL_COUNCIL || chat.chat_status === CHAT_STATUSES.PLANNED_AUCTION
 
+  // Happy new year 2025!
+
   const isTimeToStartState = chat.chat_status === CHAT_STATUSES.TIME_TO_START_TECHNICAL_COUNCIL || chat.chat_status === CHAT_STATUSES.TIME_TO_START_AUCTION
 
   const handleStart = (type: "technical-council" | "auction", id: string) => {
