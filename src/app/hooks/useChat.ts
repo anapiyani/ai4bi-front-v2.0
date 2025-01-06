@@ -21,6 +21,16 @@ export const useChat = (chatId: string, type: "technical-council" | "auction" | 
 				time: "12:00",
 			}
 		}
+	} else if (chatId === "sodm-kwowmd-232md-123mdss-213ds") {
+		if (type === "chat") {
+			return {
+				id: chatId,
+				title: "Открытый тендер по проекту Arena Light 2",
+				chat_status: "time_to_start_auction",
+				date: "23.12.2024",
+				time: "12:00",
+			}
+		}
 	} else if (chatId === "d7123322-ed7e-123jk-adb8-ed7e123jk") {
 		if (type === "technical-council") {
 			return {
