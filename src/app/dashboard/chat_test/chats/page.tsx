@@ -46,13 +46,34 @@ export default function WebSocketChat() {
     }
   }, [lastMessage]);
 
- const handleWebSocketMessage = (message: any) => {
+  const handleWebSocketMessage = (message: any) => {
     console.log('Received message:', message);
     if (message.jsonrpc === "2.0" && message.result) {
       if (message.result.chat_id) {
         handleChatCreated(message.result);
       } else if (message.result.message_id) {
         handleMessageReceived(message.result);
+      }
+    } else if (message.type === 'message') {
+      // Handle the new message format
+      const messageData = message.data.message;
+      const chatId = message.chat_id;
+      
+      const formattedMessage = {
+        message_id: messageData.counter.toString(),
+        chat_id: chatId,
+        sender: messageData.author.name,
+        content: messageData.content,
+        timestamp: messageData.timestamp || new Date().toISOString()
+      };
+      
+      handleMessageReceived(formattedMessage);
+    
+      if (!conversations.find(c => c.id === chatId)) {
+        handleChatCreated({
+          chat_id: chatId,
+          name: messageData.author.name
+        });
       }
     } else if (message.type === 'message_received') {
       handleMessageReceived(message);
@@ -61,22 +82,23 @@ export default function WebSocketChat() {
     }
   };
 
-
   const handleChatCreated = (result: any) => {
     console.log('Chat created:', result);
     const newChat: Conversation = {
       id: result.chat_id,
-      name: `chat id: ${result.chat_id}`,
+      name: result.name || `Chat with ${result.chat_id}`,
       lastMessage: '',
       avatar: '/placeholder.svg?height=32&width=32'
     };
     setConversations(prev => {
-      const updatedConversations = [...prev, newChat];
-      console.log('Updated conversations:', updatedConversations);
-      return updatedConversations;
+      if (!prev.find(c => c.id === result.chat_id)) {
+        const updatedConversations = [...prev, newChat];
+        console.log('Updated conversations:', updatedConversations);
+        return updatedConversations;
+      }
+      return prev;
     });
     setSelectedConversation(result.chat_id);
-    console.log(result.chat_id + " this is the chat id")
     subscribeToChatRoom(result.chat_id);
   };
 
@@ -112,12 +134,22 @@ export default function WebSocketChat() {
     if (newMessage.trim() === '' || !selectedConversation) return;
 
     const rpcId = Date.now().toString();
+    const messageContent = newMessage;
+    
+    const localMessage: Message = {
+      id: rpcId,
+      sender: 'You',
+      content: messageContent,
+      timestamp: new Date().toISOString()
+    };
+    setMessages(prev => [...prev, localMessage]);
+
     sendMessage({
       jsonrpc: "2.0",
       method: "sendMessage",
       params: {
         chat_id: selectedConversation,
-        content: newMessage,
+        content: messageContent,
         media: []
       },
       id: rpcId,
@@ -166,9 +198,6 @@ export default function WebSocketChat() {
                 }`}
                 onClick={() => setSelectedConversation(conversation.id)}
               >
-                <div>
-                  {conversation.name}
-                </div>
                 <div className="flex flex-col items-start">
                   <span className="font-semibold">{conversation.name}</span>
                   <span className="text-sm text-muted-foreground">{conversation.lastMessage}</span>
@@ -259,4 +288,3 @@ export default function WebSocketChat() {
     </div>
   )
 }
-

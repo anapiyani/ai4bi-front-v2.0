@@ -25,9 +25,24 @@ export const useWebSocket = (url: string) => {
     };
 
     ws.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      console.log(message)
-      setLastMessage(message);
+      try {
+        const message = JSON.parse(event.data);
+        console.log('Received WebSocket message:', message);
+        
+        // Handle different message types
+        if (message.type === 'message') {
+          // For chat messages
+          setLastMessage(message);
+        } else if (message.jsonrpc === "2.0") {
+          // For RPC responses
+          setLastMessage(message);
+        } else {
+          // For other message types
+          setLastMessage(message);
+        }
+      } catch (error) {
+        console.error('Error parsing WebSocket message:', error);
+      }
     };
 
     ws.onclose = () => {
