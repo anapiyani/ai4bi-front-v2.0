@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import dayjs from "dayjs"
 import { MessageCircle, Search, Send, UserPlus } from "lucide-react"
+
 interface Conversation {
   id: string;
   name: string;
@@ -18,9 +19,11 @@ interface Conversation {
 
 interface ChatMessage {
   id: string;
-  sender: string;      // Could be user name or "You"
+  sender: string;
   content: string;
   timestamp: string;
+  pending?: boolean;
+  authorId?: string;
 }
 
 // Point this to your actual server
@@ -29,6 +32,8 @@ const WS_URL = "ws://cattle-giving-commonly.ngrok-free.app/ws/";
 export default function WebSocketChat() {
   const { sendMessage, isConnected, lastMessage } = useWebSocket(WS_URL);
 
+  const [currentUser, setCurrentUser] = useState<string | null>(null);
+  const [localViewMessage, setLocalViewMessage] = useState<string | null>(null);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -98,11 +103,12 @@ export default function WebSocketChat() {
         const chatId = message.chat_id || message.data.chat_id;
 
         const formattedMessage = {
-          message_id: msgData.counter.toString(),
+          message_id: `${msgData.counter}-${msgData.timestamp}-${Math.random()}`,
           chat_id: chatId,
-          sender: msgData.author.name,
+          sender: msgData.author.id === currentUser ? "You" : msgData.author.name,
           content: msgData.content,
-          timestamp: msgData.timestamp || new Date().toISOString(),
+          timestamp: msgData.timestamp || dayjs().toISOString(),
+          authorId: msgData.author.id
         };
         handleMessageReceived(formattedMessage);
       } else {
@@ -151,13 +157,18 @@ export default function WebSocketChat() {
   const handleMessageReceived = (msg: any) => {
     // Convert to local shape
     const newMsg: ChatMessage = {
-      id: msg.message_id,
+      id: msg.message_id + '-' + msg.timestamp + '-' + Math.random(),
       sender: msg.sender,
       content: msg.content,
       timestamp: msg.timestamp,
+      authorId: msg.authorId
     };
 
-    setMessages((prev) => [...prev, newMsg]);
+    setMessages((prev) => {
+      // Remove any pending messages with the same content
+      const filtered = prev.filter(m => !(m.pending && m.content === msg.content));
+      return [...filtered, newMsg];
+    });
 
     // Update lastMessage
     setConversations((prev) =>
@@ -189,8 +200,8 @@ export default function WebSocketChat() {
       params: { user_id: userId },
       id: rpcId,
     };
-    console.log("[createPrivateChat] Sending request:", request);
     sendMessage(request);
+    console.log("user id", currentUser);
   };
 
   // 8) sendChatMessage
@@ -199,14 +210,18 @@ export default function WebSocketChat() {
     const rpcId = Date.now().toString();
     const content = newMessage.trim();
 
-    // Locally add it as "You"
-    const localMsg: ChatMessage = {
+    // Add pending message
+    const pendingMsg: ChatMessage = {
       id: rpcId,
       sender: "You",
       content,
-      timestamp: dayjs().format("HH:mm"),
+      timestamp: dayjs().toISOString(),
+      pending: true
     };
-    setMessages((prev) => [...prev, localMsg]);
+    setMessages((prev) => {
+      const deduped = prev.filter((m) => m.content !== content || m.pending);
+      return [...deduped, pendingMsg];
+    })
 
     // Send JSON-RPC request
     sendMessage({
@@ -216,7 +231,7 @@ export default function WebSocketChat() {
         chat_id: selectedConversation,
         content,
         media: [],
-        timestamp: new Date().toISOString(),
+        timestamp: dayjs().toISOString(),
       },
       id: rpcId,
     });
@@ -225,10 +240,7 @@ export default function WebSocketChat() {
     setNewMessage("");
   };
 
-  // Just for debugging
-  useEffect(() => {
-    console.log("[WebSocketChat] Conversations updated:", conversations);
-  }, [conversations]);
+  // const { data, isLoading, error } = useMe();
 
   useEffect(() => {
     if (selectedConversation) {
@@ -236,6 +248,7 @@ export default function WebSocketChat() {
       subscribeToChatRoom(selectedConversation);
     }
   }, [selectedConversation]);
+
 
   // -------------------------------------------
   // Render UI
@@ -304,7 +317,7 @@ export default function WebSocketChat() {
               <ScrollArea className="h-[calc(100vh-220px)]">
                 {messages.map((m) => (
                   <div
-                    key={m.id}
+                    key={`${m.id}`}
                     className={`flex mb-4 ${
                       m.sender === "You" ? "justify-end" : "justify-start"
                     }`}
@@ -315,11 +328,11 @@ export default function WebSocketChat() {
                         m.sender === "You"
                           ? "bg-primary text-primary-foreground"
                           : "bg-muted"
-                      }`}
+                      } ${m.pending ? "opacity-50" : ""}`}
                     >
                       <p>{m.content}</p>
                       <span className="text-xs text-muted-foreground block mt-1">
-                        {dayjs(m.timestamp).format("HH:mm")}
+                        {dayjs(m.timestamp).isValid() ? dayjs(m.timestamp).format("HH:mm") : "Now"}
                       </span>
                     </div>
                   </div>
