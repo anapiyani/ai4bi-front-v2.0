@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import Image from 'next/image'
 import Icons from '../Icons'
 
 const UserTechnicalCouncilTalk = ({
@@ -31,7 +32,7 @@ const UserTechnicalCouncilTalk = ({
 			<div className='flex gap-2 items-center'>
 				<div className='flex'>
 					{
-						pfp ? <img className='rounded-full' src={pfp} alt={name} width={40} height={40} /> : <div className='w-10 h-10 bg-secondary rounded-full flex items-center justify-center text-primary font-bold text-base'>{name.slice(0,2)}</div>
+						pfp ? <Image className='rounded-full' src={pfp} alt={name} width={40} height={40} /> : <div className='w-10 h-10 bg-secondary rounded-full flex items-center justify-center text-primary font-bold text-base'>{name.slice(0,2)}</div>
 					}
 				</div>
 				<div className='flex ml-3 items-center'>

@@ -54,6 +54,13 @@ const ChatMode = () => {
     active: item.id === chatId
   }));
 
+  const tabContents = useRenderChatTabContent({
+    status: 'all',
+    data: activeData,
+    handleItemClick,
+    t
+  });
+
   return (
     <div className="w-full flex flex-col lg:flex-row bg-primary-foreground justify-center">
       <aside className="w-full lg:w-1/3 bg-primary-foreground h-full px-4 lg:px-6 py-6 lg:py-6">
@@ -83,7 +90,7 @@ const ChatMode = () => {
                 value={tab.value}
                 className="mt-4"
               >
-                {useRenderChatTabContent({status: tab.value, data: activeData, handleItemClick: handleItemClick, t: t})}
+                {tabContents}
               </TabsContent>
             ))}
             {
