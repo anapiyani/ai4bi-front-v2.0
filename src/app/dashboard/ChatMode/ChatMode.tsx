@@ -27,6 +27,15 @@ export const EXAMPLE_DATA: ChatListItemData[] = [
     start_date: "13 дек", 
     end_date: "18 дек", 
     title: "Открытый тендер (СМР) по СС проект Atamura Comfort 2" 
+  },
+  {
+    id: "sodm-kwowmd-232md-123mdss-213ds",
+    active: false, 
+    status: "published", 
+    bnect_status: "bid_submission", 
+    start_date: "13 янв", 
+    end_date: "18 янв", 
+    title: "Открытый тендер по проекту Arena Light 2" 
   }
 ]
 
