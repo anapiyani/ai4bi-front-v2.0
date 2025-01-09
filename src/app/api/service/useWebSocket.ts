@@ -47,7 +47,7 @@ export function useWebSocket(url: string): UseWebSocketReturn {
         console.log("[useWebSocket] Raw WebSocket message:", parsed);
         // We'll treat everything as a valid message
         setLastMessage(parsed);
-      } catch (err) {
+      } catch (err) { 
         console.error("[useWebSocket] Error parsing WebSocket message:", err);
       }
     };

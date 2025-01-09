@@ -1,7 +1,7 @@
 "use client";
 
 import { useWebSocket } from "@/src/app/api/service/useWebSocket"; // Adjust import path
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 // UI components (replace with your own or remove)
 import { Button } from "@/components/ui/button"
@@ -24,6 +24,7 @@ interface ChatMessage {
   timestamp: string;
   pending?: boolean;
   authorId?: string;
+  chat_id?: string;
 }
 
 // Point this to your actual server
@@ -33,13 +34,25 @@ export default function WebSocketChat() {
   const { sendMessage, isConnected, lastMessage } = useWebSocket(WS_URL);
 
   const [currentUser, setCurrentUser] = useState<string | null>(null);
-  const [localViewMessage, setLocalViewMessage] = useState<string | null>(null);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-  // 1) Subscribe to "chat_updates" once we connect
+  // ------------------------------------------------
+  // Initialize currentUser from localStorage
+  // ------------------------------------------------
+  useEffect(() => {
+    const userId = localStorage.getItem("user_id");
+    if (userId) {
+      setCurrentUser(userId);
+    }
+  }, []);
+
+  // ------------------------------------------------
+  // Subscribe to chat_updates once connected
+  // ------------------------------------------------
   useEffect(() => {
     if (isConnected) {
       console.log("[WebSocketChat] Subscribing to chat_updates...");
@@ -47,7 +60,9 @@ export default function WebSocketChat() {
     }
   }, [isConnected, sendMessage]);
 
-  // 2) Whenever we get a new lastMessage, handle it
+  // ------------------------------------------------
+  // Whenever we get a new lastMessage, handle it
+  // ------------------------------------------------
   useEffect(() => {
     if (!lastMessage) return;
     handleWebSocketMessage(lastMessage);
@@ -93,25 +108,44 @@ export default function WebSocketChat() {
     // (C) If it's a "message" type, then check the event
     if (message.type === "message") {
       if (message.event === "new_chat") {
+        // A brand new chat
         const chatData = message.data; 
         handleChatCreated({
           chat_id: chatData.id,
           name: chatData.user?.name || `Chat with ${chatData.id}`,
         });
-      } else if (message.event === "new_message") {
+      } 
+      else if (message.event === "new_message") {
+        // Distinguish by channel
         const msgData = message.data.message;
         const chatId = message.chat_id || message.data.chat_id;
 
-        const formattedMessage = {
-          message_id: `${msgData.counter}-${msgData.timestamp}-${Math.random()}`,
-          chat_id: chatId,
-          sender: msgData.author.id === currentUser ? "You" : msgData.author.name,
-          content: msgData.content,
-          timestamp: msgData.timestamp || dayjs().toISOString(),
-          authorId: msgData.author.id
-        };
-        handleMessageReceived(formattedMessage);
-      } else {
+        // Check if channel is "chat_room.*" or "chat_updates.*"
+        if (message.channel?.startsWith("chat_room")) {
+          // Show message in the chat window
+          const formattedMessage = {
+            message_id: `${msgData.counter}-${msgData.timestamp}-${Math.random()}`,
+            chat_id: chatId,
+            sender: msgData.author.id === currentUser ? "You" : msgData.author.name,
+            content: msgData.content,
+            timestamp: msgData.timestamp || dayjs().toISOString(),
+            authorId: msgData.author.id
+          };
+          handleMessageReceived(formattedMessage);
+        } 
+        else if (message.channel?.startsWith("chat_updates")) {
+          // Only update the conversation list (lastMessage)
+          setConversations((prev) =>
+            prev.map((c) => {
+              if (c.id === chatId) {
+                return { ...c, lastMessage: msgData.content };
+              }
+              return c;
+            })
+          );
+        }
+      } 
+      else {
         console.log("[handleWebSocketMessage] Unhandled message event:", message);
       }
       return;
@@ -127,7 +161,9 @@ export default function WebSocketChat() {
     console.log("[handleWebSocketMessage] Unhandled message:", message);
   };
 
-  // 4) handleChatCreated
+  // ------------------------------------------------
+  // handleChatCreated
+  // ------------------------------------------------
   const handleChatCreated = (data: any) => {
     console.log("[handleChatCreated] Chat created:", data);
     const newChat: Conversation = {
@@ -137,7 +173,7 @@ export default function WebSocketChat() {
     };
 
     setConversations((prev) => {
-      // If already exists, do nothing
+      // If it already exists, do nothing
       if (!prev.find((c) => c.id === newChat.id)) {
         const updated = [...prev, newChat];
         console.log("[handleChatCreated] Updated conversations:", updated);
@@ -153,7 +189,9 @@ export default function WebSocketChat() {
     subscribeToChatRoom(data.chat_id);
   };
 
-  // 5) handleMessageReceived
+  // ------------------------------------------------
+  // handleMessageReceived
+  // ------------------------------------------------
   const handleMessageReceived = (msg: any) => {
     // Convert to local shape
     const newMsg: ChatMessage = {
@@ -161,16 +199,17 @@ export default function WebSocketChat() {
       sender: msg.sender,
       content: msg.content,
       timestamp: msg.timestamp,
-      authorId: msg.authorId
+      authorId: msg.authorId,
+      chat_id: msg.chat_id,
     };
 
     setMessages((prev) => {
       // Remove any pending messages with the same content
-      const filtered = prev.filter(m => !(m.pending && m.content === msg.content));
+      const filtered = prev.filter((m) => !(m.pending && m.content === msg.content));
       return [...filtered, newMsg];
     });
 
-    // Update lastMessage
+    // Update lastMessage in the conversation list
     setConversations((prev) =>
       prev.map((c) => {
         if (c.id === msg.chat_id) {
@@ -181,7 +220,9 @@ export default function WebSocketChat() {
     );
   };
 
-  // 6) subscribeToChatRoom
+  // ------------------------------------------------
+  // subscribeToChatRoom
+  // ------------------------------------------------
   const subscribeToChatRoom = (chatId: string) => {
     console.log("[subscribeToChatRoom] Subscribing to chat room:", chatId);
     sendMessage({
@@ -191,7 +232,9 @@ export default function WebSocketChat() {
     });
   };
 
-  // 7) createPrivateChat (JSON-RPC request)
+  // ------------------------------------------------
+  // createPrivateChat (JSON-RPC request)
+  // ------------------------------------------------
   const createPrivateChat = (userId: string) => {
     const rpcId = Date.now().toString();
     const request = {
@@ -201,27 +244,29 @@ export default function WebSocketChat() {
       id: rpcId,
     };
     sendMessage(request);
-    console.log("user id", currentUser);
   };
 
-  // 8) sendChatMessage
+  // ------------------------------------------------
+  // sendChatMessage
+  // ------------------------------------------------
   const sendChatMessage = () => {
     if (!selectedConversation || !newMessage.trim()) return;
     const rpcId = Date.now().toString();
     const content = newMessage.trim();
 
-    // Add pending message
+    // Add pending message to local state
     const pendingMsg: ChatMessage = {
       id: rpcId,
       sender: "You",
       content,
       timestamp: dayjs().toISOString(),
-      pending: true
+      pending: true,
+      chat_id: selectedConversation,
     };
     setMessages((prev) => {
-      const deduped = prev.filter((m) => m.content !== content || m.pending);
+      const deduped = prev.filter((m) => !(m.pending && m.content === content));
       return [...deduped, pendingMsg];
-    })
+    });
 
     // Send JSON-RPC request
     sendMessage({
@@ -240,8 +285,8 @@ export default function WebSocketChat() {
     setNewMessage("");
   };
 
-  // const { data, isLoading, error } = useMe();
-
+  // If the user selects a conversation from the left sidebar,
+  // subscribe to that chat room as well
   useEffect(() => {
     if (selectedConversation) {
       console.log("[WebSocketChat] setSelectedConversation =>", selectedConversation);
@@ -249,6 +294,19 @@ export default function WebSocketChat() {
     }
   }, [selectedConversation]);
 
+  useEffect(() => {
+    const scrollTimeout = setTimeout(() => {
+      if (scrollRef.current) {
+        scrollRef.current.scrollTo({
+          top: scrollRef.current.scrollHeight,
+          behavior: 'smooth',
+        });
+      }
+    }, 100);
+  
+    return () => clearTimeout(scrollTimeout);
+  }, [messages, selectedConversation]);
+  
 
   // -------------------------------------------
   // Render UI
@@ -307,37 +365,40 @@ export default function WebSocketChat() {
           <>
             <CardHeader className="border-b p-4">
               <CardTitle className="text-xl font-bold">
-                {
-                  conversations.find((c) => c.id === selectedConversation)
-                    ?.name
-                }
+                {conversations.find((c) => c.id === selectedConversation)?.name}
               </CardTitle>
             </CardHeader>
             <CardContent className="p-4">
-              <ScrollArea className="h-[calc(100vh-220px)]">
-                {messages.map((m) => (
-                  <div
-                    key={`${m.id}`}
-                    className={`flex mb-4 ${
-                      m.sender === "You" ? "justify-end" : "justify-start"
-                    }`}
-                  >
-                    {m.sender !== "You" && <div>{m.sender}</div>}
+            <div
+                ref={scrollRef}
+                className="h-[calc(100vh-220px)] overflow-y-auto"
+              >
+                {messages
+                  .filter((m) => m.chat_id === selectedConversation)
+                  .map((m) => (
                     <div
-                      className={`rounded-lg p-2 max-w-[70%] ${
-                        m.sender === "You"
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted"
-                      } ${m.pending ? "opacity-50" : ""}`}
+                      key={`${m.id}`}
+                      className={`flex mb-4 ${
+                        m.sender === "You" ? "justify-end" : "justify-start"
+                      }`}
                     >
-                      <p>{m.content}</p>
-                      <span className="text-xs text-muted-foreground block mt-1">
-                        {dayjs(m.timestamp).isValid() ? dayjs(m.timestamp).format("HH:mm") : "Now"}
-                      </span>
+                      <div
+                        className={`rounded-lg p-2 max-w-[70%] ${
+                          m.sender === "You"
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-muted"
+                        } ${m.pending ? "opacity-50" : ""}`}
+                      >
+                        <p>{m.content}</p>
+                        <span className="text-xs text-muted-foreground block mt-1">
+                          {dayjs(m.timestamp).isValid()
+                            ? dayjs(m.timestamp).format("HH:mm")
+                            : "Now"}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </ScrollArea>
+                  ))}
+              </div>
             </CardContent>
             <CardFooter className="border-t p-4">
               <form
@@ -353,11 +414,7 @@ export default function WebSocketChat() {
                   placeholder="Type a message..."
                   className="flex-1"
                 />
-                <Button
-                  type="submit"
-                  size="icon"
-                  disabled={!isConnected}
-                >
+                <Button type="submit" size="icon" disabled={!isConnected}>
                   <Send className="h-4 w-4" />
                   <span className="sr-only">Send</span>
                 </Button>
