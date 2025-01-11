@@ -59,16 +59,7 @@ const Dashboard = () => {
         "Authorization": `Bearer ${localStorage.getItem('access_token')}`
       }});
     },
-  });
-
-  useEffect(() => {
-    if (!userData) return;
-    localStorage.setItem('user_id', userData.uuid);
-    if (!localStorage.getItem('access_token')) {
-      window.location.href = 'https://bnect.pro/';
-    }
-  }, [userData]);
-  
+  });  
 
   const getActive = (active_tab: activity_status) => {
     const components = {
@@ -97,6 +88,14 @@ const Dashboard = () => {
     }
     setExitType(null)
   }
+
+  useEffect(() => {
+    if (!userData) return;
+    localStorage.setItem('user_id', userData.uuid);
+    if (!localStorage.getItem('access_token')) {
+      window.location.href = 'https://bnect.pro/';
+    }
+  }, [userData]);
 
   return (
     <div className="flex w-full h-screen flex-col">

@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react"
 
 // UI components (replace with your own or remove)
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import dayjs from "dayjs"
@@ -39,34 +39,7 @@ export default function WebSocketChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
-
-  // ------------------------------------------------
-  // Initialize currentUser from localStorage
-  // ------------------------------------------------
-  useEffect(() => {
-    const userId = localStorage.getItem("user_id");
-    if (userId) {
-      setCurrentUser(userId);
-    }
-  }, []);
-
-  // ------------------------------------------------
-  // Subscribe to chat_updates once connected
-  // ------------------------------------------------
-  useEffect(() => {
-    if (isConnected) {
-      console.log("[WebSocketChat] Subscribing to chat_updates...");
-      sendMessage({ type: "subscribe", channel: "chat_updates" });
-    }
-  }, [isConnected, sendMessage]);
-
-  // ------------------------------------------------
-  // Whenever we get a new lastMessage, handle it
-  // ------------------------------------------------
-  useEffect(() => {
-    if (!lastMessage) return;
-    handleWebSocketMessage(lastMessage);
-  }, [lastMessage]);
+  const prevConversationRef = useRef<string | null>(null);
 
   // ------------------------------------------------
   // handleWebSocketMessage
@@ -108,33 +81,27 @@ export default function WebSocketChat() {
     // (C) If it's a "message" type, then check the event
     if (message.type === "message") {
       if (message.event === "new_chat") {
-        // A brand new chat
-        const chatData = message.data; 
-        handleChatCreated({
-          chat_id: chatData.id,
-          name: chatData.user?.name || `Chat with ${chatData.id}`,
+         handleChatCreated({
+          chat_id: message.data.id,
+          name: message.data.user?.name || `Chat with ${message.data.id}`,
         });
       } 
       else if (message.event === "new_message") {
-        // Distinguish by channel
         const msgData = message.data.message;
         const chatId = message.chat_id || message.data.chat_id;
 
-        // Check if channel is "chat_room.*" or "chat_updates.*"
         if (message.channel?.startsWith("chat_room")) {
-          // Show message in the chat window
           const formattedMessage = {
             message_id: `${msgData.counter}-${msgData.timestamp}-${Math.random()}`,
             chat_id: chatId,
             sender: msgData.author.id === currentUser ? "You" : msgData.author.name,
             content: msgData.content,
             timestamp: msgData.timestamp || dayjs().toISOString(),
-            authorId: msgData.author.id
+            authorId: msgData.author.id,
           };
           handleMessageReceived(formattedMessage);
-        } 
-        else if (message.channel?.startsWith("chat_updates")) {
-          // Only update the conversation list (lastMessage)
+        } else if (message.channel?.startsWith("chat_updates")) {
+          // Update lastMessage in conversations
           setConversations((prev) =>
             prev.map((c) => {
               if (c.id === chatId) {
@@ -144,8 +111,9 @@ export default function WebSocketChat() {
             })
           );
         }
-      } 
-      else {
+      } else if (message.event === "new_participant") {
+        handleNewParticipant(message);
+      } else {
         console.log("[handleWebSocketMessage] Unhandled message event:", message);
       }
       return;
@@ -168,7 +136,7 @@ export default function WebSocketChat() {
     console.log("[handleChatCreated] Chat created:", data);
     const newChat: Conversation = {
       id: data.chat_id,
-      name: data.name || `Chat with ${data.chat_id}`,
+      name: data.name || `Auction Chat ${data.chat_id}`,
       lastMessage: "",
     };
 
@@ -221,12 +189,62 @@ export default function WebSocketChat() {
   };
 
   // ------------------------------------------------
+  // handleNewParticipant
+  // ------------------------------------------------
+  const handleNewParticipant = (message: any) => {
+    const {chat_id, data} = message;
+    const {user_id} = data;
+
+    // Check if the chat already exists
+     const chatExists = conversations.some((conv) => conv.id === chat_id);
+      if (chatExists) {
+        alert(`[handleNewParticipant] Chat ${chat_id} already exists.`);
+        return;
+      }
+      
+      setMessages((prev) => [...prev, {
+        id: `${user_id}-${dayjs().toISOString()}-${Math.random()}`,
+        sender: "System", 
+        content: `User ${user_id} joined the chat`,
+        timestamp: dayjs().toISOString(),
+        chat_id: chat_id,
+        broadcast: true
+      }]);
+
+      
+    const newChat: Conversation = {
+      id: chat_id,
+      name: `User ${user_id} Joined`, // Customize as needed
+      lastMessage: "",
+    };
+
+    setConversations((prev) => [...prev, newChat]);
+
+    // Optionally auto-select the new chat
+    setSelectedConversation(chat_id);
+
+    // Subscribe to the new chat room
+    subscribeToChatRoom(chat_id);
+  };
+
+  // ------------------------------------------------
   // subscribeToChatRoom
   // ------------------------------------------------
   const subscribeToChatRoom = (chatId: string) => {
     console.log("[subscribeToChatRoom] Subscribing to chat room:", chatId);
     sendMessage({
       type: "subscribe",
+      channel: "chat_room",
+      chat_id: chatId,
+    });
+  };
+  // ------------------------------------------------
+  // unsubscribeToChatRoom
+  // ------------------------------------------------
+  const unsubscribeToChatRoom = (chatId: string) => {
+    console.log("[unsubscribeToChatRoom] Unsubscribing from chat room:", chatId);
+    sendMessage({
+      type: "unsubscribe",
       channel: "chat_room",
       chat_id: chatId,
     });
@@ -245,6 +263,61 @@ export default function WebSocketChat() {
     };
     sendMessage(request);
   };
+
+  // ------------------------------------------------
+  // create AuctionChat
+  // Creates a new chat intended to be linked with an auction (or any custom business logic).
+  // ------------------------------------------------
+  const createAuctionChat = (auctionName: string, auctionId: number) => {
+    const rpcId = Date.now().toString();
+    const request = {
+      jsonrpc: "2.0",
+      method: "createAuctionChat",
+      id: rpcId,
+      params: {
+        name: auctionName,
+        type: "auction_chat",
+        auction_id: auctionId,
+        participants: [],
+      },
+    };
+    console.log("[createAuctionChat] Request:", request);
+    sendMessage(request);
+  };
+
+  // ------------------------------------------------
+  // addAuctionChatParticipant
+  // ------------------------------------------------
+  const addAuctionChatParticipant = (user_id: string) => {
+    const rpcId = Date.now().toString();
+    const request = {
+      jsonrpc: "2.0",
+      method: "addParticipant",
+      id: rpcId,
+      params: {
+        user_id: user_id,
+        chat_id: selectedConversation,
+        role: "user",
+      },
+    };
+    sendMessage(request);
+  }
+
+
+  // ------------------------------------------------
+  // getChats
+  // ------------------------------------------------
+    const getChats = () => {
+      const rpcId = Date.now().toString();
+      const request = {
+        jsonrpc: "2.0",
+        method: "getChats",
+        id: rpcId,
+        params: {},
+      };
+      sendMessage(request);
+    };
+
 
   // ------------------------------------------------
   // sendChatMessage
@@ -285,15 +358,47 @@ export default function WebSocketChat() {
     setNewMessage("");
   };
 
-  // If the user selects a conversation from the left sidebar,
-  // subscribe to that chat room as well
+  // ------------------------------------------------
+  // Initialize currentUser from localStorage
+  // ------------------------------------------------
   useEffect(() => {
-    if (selectedConversation) {
-      console.log("[WebSocketChat] setSelectedConversation =>", selectedConversation);
-      subscribeToChatRoom(selectedConversation);
+    const userId = localStorage.getItem("user_id");
+    if (userId) {
+      setCurrentUser(userId);
     }
-  }, [selectedConversation]);
+  }, []);
 
+    // Unsubscribe from previous and subscribe to new conversation
+    useEffect(() => {
+      if (prevConversationRef.current) {
+        unsubscribeToChatRoom(prevConversationRef.current);
+      }
+      if (selectedConversation) {
+        subscribeToChatRoom(selectedConversation);
+      }
+      prevConversationRef.current = selectedConversation;
+    }, [selectedConversation]);
+  // ------------------------------------------------
+  // Subscribe to chat_updates once connected
+  // ------------------------------------------------
+  useEffect(() => {
+    if (isConnected) {
+      console.log("[WebSocketChat] Subscribing to chat_updates...");
+      sendMessage({ type: "subscribe", channel: "chat_updates" });
+    }
+  }, [isConnected, sendMessage]);
+
+  // ------------------------------------------------
+  // Whenever we get a new lastMessage, handle it
+  // ------------------------------------------------
+  useEffect(() => {
+    if (!lastMessage) return;
+    handleWebSocketMessage(lastMessage);
+  }, [lastMessage]);
+
+  // ------------------------------------------------
+  // Scroll to bottom when new message is received
+  // ------------------------------------------------
   useEffect(() => {
     const scrollTimeout = setTimeout(() => {
       if (scrollRef.current) {
@@ -306,7 +411,15 @@ export default function WebSocketChat() {
   
     return () => clearTimeout(scrollTimeout);
   }, [messages, selectedConversation]);
-  
+
+  // ------------------------------------------------
+  // Get chats when currentUser is set
+  // ------------------------------------------------
+  useEffect(() => {
+    if (currentUser) {
+      getChats();
+    }
+  }, [currentUser]);
 
   // -------------------------------------------
   // Render UI
@@ -356,6 +469,19 @@ export default function WebSocketChat() {
             <UserPlus className="mr-2 h-4 w-4" />
             New Chat
           </Button>
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={() => {
+              const auctionId = prompt("Auction ID:");
+              const auctionName = prompt("Auction name:");
+              if (auctionName && auctionId) {
+                createAuctionChat(auctionName, Number(auctionId));
+              }
+            }}
+          >
+            Create Auction Chat
+          </Button>
         </CardFooter>
       </Card>
 
@@ -367,6 +493,14 @@ export default function WebSocketChat() {
               <CardTitle className="text-xl font-bold">
                 {conversations.find((c) => c.id === selectedConversation)?.name}
               </CardTitle>
+              <CardDescription>
+                <Button onClick={() => {
+                  const userId = prompt("Enter user ID to add to auction chat:");
+                  if (userId) addAuctionChatParticipant(userId);
+                }} variant="outline" className="w-full">
+                  Add Participant
+                </Button>
+              </CardDescription>
             </CardHeader>
             <CardContent className="p-4">
             <div
@@ -380,21 +514,26 @@ export default function WebSocketChat() {
                       key={`${m.id}`}
                       className={`flex mb-4 ${
                         m.sender === "You" ? "justify-end" : "justify-start"
-                      }`}
+                      } ${m.sender === "System" ? "justify-center" : ""}`}
                     >
                       <div
                         className={`rounded-lg p-2 max-w-[70%] ${
                           m.sender === "You"
                             ? "bg-primary text-primary-foreground"
                             : "bg-muted"
-                        } ${m.pending ? "opacity-50" : ""}`}
+                        } ${m.pending ? "opacity-50" : ""} ${m.sender === "System" ? "bg-transparent text-muted-foreground" : ""}`}
                       >
+                        <p className='text-xs text-muted-foreground'>{m.sender === "System" ? "" : m.sender}</p>
                         <p>{m.content}</p>
-                        <span className="text-xs text-muted-foreground block mt-1">
-                          {dayjs(m.timestamp).isValid()
+                        {
+                          m.sender !== "System" && (
+                            <span className="text-xs text-muted-foreground block mt-1">
+                          {dayjs(m.timestamp).isValid() 
                             ? dayjs(m.timestamp).format("HH:mm")
                             : "Now"}
                         </span>
+                        )
+                        }
                       </div>
                     </div>
                   ))}
