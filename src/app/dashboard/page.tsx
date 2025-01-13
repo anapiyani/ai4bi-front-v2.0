@@ -14,7 +14,7 @@ import AuctionResults from './AuctionResults/AuctionResults'
 import ChatMode from './ChatMode/ChatMode'
 import TechnicalCouncil from './TechnicalCouncil/TechnicalCouncil'
 
-const Dashboard = () => {
+export default function Dashboard() {
   const t = useTranslations("dashboard")
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -73,24 +73,24 @@ const Dashboard = () => {
     return components[active_tab]?.() ?? components.chat()
   }
 
-  const ExitTo = (type: activity_status) => {
-    switch (type) {
-      case "auction":
-        router.push('/dashboard?active_tab=chat')
-        break
-      case "technical-council":
-        router.push('/dashboard?active_tab=chat')
-        break
-      case "chat":
-        if (typeof window !== 'undefined') {
-          window.location.href = 'https://bnect.pro/'
-        }
-        break
-      default:
-        break
-    }
-    setExitType(null)
-  }
+  // const ExitTo = (type: activity_status) => {
+  //   switch (type) {
+  //     case "auction":
+  //       router.push('/dashboard?active_tab=chat')
+  //       break
+  //     case "technical-council":
+  //       router.push('/dashboard?active_tab=chat')
+  //       break
+  //     case "chat":
+  //       if (typeof window !== 'undefined') {
+  //         window.location.href = 'https://bnect.pro/'
+  //       }
+  //       break
+  //     default:
+  //       break
+  //   }
+  //   setExitType(null)
+  // }
 
   useEffect(() => {
     if (!userData || typeof window === 'undefined') return
@@ -128,12 +128,10 @@ const Dashboard = () => {
             setExitType(null)
           },
           exitButtonClick: () => {
-            ExitTo(exitType as activity_status)
+            // ExitTo(exitType as activity_status)
           }
         }} 
       />
     </div>
   )
 }
-
-export default Dashboard
