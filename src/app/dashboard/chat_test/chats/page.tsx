@@ -68,13 +68,19 @@ export default function WebSocketChat() {
       } else if (message.result.message_id) {
         // Means we got a new message from a sendMessage response
         handleMessageReceived(message.result);
+      } else if (Array.isArray(message.result)) {
+        // Means we got a list of chats
+        handleChatsReceived(message.result);
+      } else if (message.result.count && message.result.messages) {
+        // Means we got a list of messages
+        handleMessagesReceived(message.result.messages);
       }
       return;
     }
 
     // (B) If it's a "subscribe" or "auth" confirmation
     if (message.type === "auth" || message.type === "subscribe") {
-      console.log("[handleWebSocketMessage] Auth/Subscribe message, ignoring:", message);
+      getChats(); // For now, we just get chats when we subscribe
       return;
     }
 
@@ -155,6 +161,34 @@ export default function WebSocketChat() {
 
     // Optionally also subscribe to the "chat_room"
     subscribeToChatRoom(data.chat_id);
+  };
+
+  // ------------------------------------------------
+  // handleChatsReceived
+  // ------------------------------------------------
+  const handleChatsReceived = (chats: any[]) => {  
+    const transformedChats = chats.map(chat => ({
+      id: chat.chat_id,
+      name: chat.name || `Chat with ${chat.chat_id}`,
+      lastMessage: chat.last_message || "",
+    }));
+    
+    setConversations(transformedChats);
+  };
+
+  // ------------------------------------------------
+  // handleMessagesReceived
+  // ------------------------------------------------
+  const handleMessagesReceived = (messages: any[]) => {
+    const transformedMessages = messages.map(message => ({
+      id: message.message_id,
+      sender: message.sender,
+      content: message.content,
+      timestamp: message.send_at,
+      chat_id: message.chat_id,
+      authorId: message.sender_id,
+    }));
+    setMessages(transformedMessages);
   };
 
   // ------------------------------------------------
@@ -303,7 +337,6 @@ export default function WebSocketChat() {
     sendMessage(request);
   }
 
-
   // ------------------------------------------------
   // getChats
   // ------------------------------------------------
@@ -316,7 +349,26 @@ export default function WebSocketChat() {
         params: {},
       };
       sendMessage(request);
+      console.log("[getChats] getting chats for user:", request);
     };
+
+  // ------------------------------------------------
+  // get ChatMessages
+  // ------------------------------------------------
+  const getChatMessages = () => {
+    const rpcId = Date.now().toString();
+    const request = {
+      jsonrpc: "2.0",
+      method: "getMessages",
+      id: rpcId,
+      params: {
+        chat_id: selectedConversation,
+        page: 1,
+        page_size: 50,
+      },
+    };
+    sendMessage(request);
+  };
 
 
   // ------------------------------------------------
@@ -368,6 +420,7 @@ export default function WebSocketChat() {
     }
   }, []);
 
+
     // Unsubscribe from previous and subscribe to new conversation
     useEffect(() => {
       if (prevConversationRef.current) {
@@ -378,6 +431,7 @@ export default function WebSocketChat() {
       }
       prevConversationRef.current = selectedConversation;
     }, [selectedConversation]);
+
   // ------------------------------------------------
   // Subscribe to chat_updates once connected
   // ------------------------------------------------
@@ -417,9 +471,20 @@ export default function WebSocketChat() {
   // ------------------------------------------------
   useEffect(() => {
     if (currentUser) {
+      console.log("[WebSocketChat] Getting chats for user:", currentUser);
       getChats();
     }
   }, [currentUser]);
+
+    // ------------------------------------------------
+  // Get messages in selected conversation
+  // ------------------------------------------------
+  useEffect(() => {
+    if (selectedConversation) {
+      console.log("[WebSocketChat] Getting messages for:", selectedConversation);
+      getChatMessages();
+    }
+  }, [selectedConversation]);
 
   // -------------------------------------------
   // Render UI

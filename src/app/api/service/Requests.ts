@@ -70,4 +70,3 @@ export const createQueryKeys = (endpoint: string) => ({
   detail: (id: number) => [...createQueryKeys(endpoint).details(), id] as const,
 });
 
-
