@@ -30,3 +30,16 @@ export type ChatIdStatuses = {
 	auction_completed: string, 
 	technical_council_completed: string, 
 }
+
+export type MyData = {
+	created_at: string
+	deleted_at: string | null
+	email: string
+	first_name: string
+	last_name: string
+	middle_name: string
+	phone: string
+	role: string
+	updated_at: string
+	uuid: string
+}

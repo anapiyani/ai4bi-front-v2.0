@@ -12,7 +12,7 @@ import ChangeDates from './Form/ChangeDates'
 const ChatContent = ({ chatId, type }: { chatId?: string | null, type?: "technical-council" | "auction" | "chat" }) => {
   const t = useTranslations('dashboard')
   const [openRescheduleModal, setOpenRescheduleModal] = useState<boolean>(false);
-  const chat = useChat(chatId as string, type as "technical-council" | "auction" | "chat") // websocket connection to the chats /
+  const chat = useChat(chatId as string, type as "technical-council" | "auction" | "chat") // websocket connection to the chats 
 
   if (!chat?.id || !chatId) {
     return (
@@ -74,7 +74,7 @@ const ChatContent = ({ chatId, type }: { chatId?: string | null, type?: "technic
               setOpenRescheduleModal(true)
             }} 
             onStartClick={() => {
-              handleStart(CHAT_STATUSES.TIME_TO_START_TECHNICAL_COUNCIL ? "technical-council" : "auction", chat.id);
+              handleStart(chat.chat_status === CHAT_STATUSES.TIME_TO_START_TECHNICAL_COUNCIL ? "technical-council" : "auction", chat.id);
             }} 
             date={chat.date}
             time={chat.time} 
