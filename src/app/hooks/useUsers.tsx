@@ -6,7 +6,6 @@ const useUsers = (chat_id: string) => {
 		{
 			id: uuidv4(),
 			name: 'Aray',
-			// pfp: 'https://i.pravatar.cc/300',
 			stream: null,
 			isMicrophoneOn: false,
 			isAbsent: false,
@@ -21,7 +20,6 @@ const useUsers = (chat_id: string) => {
 		{
 			id: uuidv4(),
 			name: "Alex Dumbster",
-			pfp: 'https://i.pravatar.cc/200',
 			stream: null,
 			isMicrophoneOn: true,
 			isAbsent: false,
@@ -29,7 +27,6 @@ const useUsers = (chat_id: string) => {
 		{
 			id: uuidv4(),
 			name: "Lana Rhoades",
-			pfp: 'https://i.pravatar.cc/100',
 			stream: null,
 			isMicrophoneOn: false,
 			isAbsent: true,
