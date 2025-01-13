@@ -1,3 +1,4 @@
+"use client"
 import { Button } from '@/components/ui/button'
 import { useTranslations } from 'next-intl'
 import { activity_status } from '../../types/types'
