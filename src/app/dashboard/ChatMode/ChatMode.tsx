@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl'
 import { useRouter, useSearchParams } from 'next/navigation'
 import ChatContent from '../../components/ChatContent'
 import useRenderChatTabContent from '../../hooks/useRenderChatTabContent'
-import { ChatListItemData } from '../../types/types'
+import { ChatListItemData, ChatStatus } from '../../types/types'
 import { SearchBar } from './components/SearchBar'
 import { CHAT_TABS } from './config/ChatTabs'
 
@@ -54,8 +54,8 @@ const ChatMode = () => {
     active: item.id === chatId
   }));
 
-  const tabContents = useRenderChatTabContent({
-    status: 'all',
+  const tabContents = (status: ChatStatus) => useRenderChatTabContent({
+    status: status,
     data: activeData,
     handleItemClick,
     t
@@ -90,7 +90,7 @@ const ChatMode = () => {
                 value={tab.value}
                 className="mt-4"
               >
-                {tabContents}
+                {tabContents(tab.value as ChatStatus)}
               </TabsContent>
             ))}
             {
