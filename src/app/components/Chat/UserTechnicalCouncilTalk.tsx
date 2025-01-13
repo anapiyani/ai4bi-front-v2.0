@@ -1,5 +1,8 @@
+"use client"
+
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import Image from 'next/image'
 import Icons from '../Icons'
 
 const UserTechnicalCouncilTalk = ({
@@ -31,7 +34,7 @@ const UserTechnicalCouncilTalk = ({
 			<div className='flex gap-2 items-center'>
 				<div className='flex'>
 					{
-						pfp ? <img className='rounded-full' src={pfp} alt={name} width={40} height={40} /> : <div className='w-10 h-10 bg-secondary rounded-full flex items-center justify-center text-primary font-bold text-base'>{name.slice(0,2)}</div>
+						pfp ? <Image className='rounded-full' src={pfp} alt={name} width={40} height={40} /> : <div className='w-10 h-10 bg-secondary rounded-full flex items-center justify-center text-primary font-bold text-base'>{name.slice(0,2)}</div>
 					}
 				</div>
 				<div className='flex ml-3 items-center'>
@@ -55,9 +58,9 @@ const UserTechnicalCouncilTalk = ({
 						<DropdownMenu>
 							<DropdownMenuTrigger>
 							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-								<path d="M16 12.25V11.75" stroke="#0F172A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-								<path d="M12 12.25V11.75" stroke="#0F172A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-								<path d="M8 12.25V11.75" stroke="#0F172A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+								<path d="M16 12.25V11.75" stroke="#0F172A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+								<path d="M12 12.25V11.75" stroke="#0F172A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+								<path d="M8 12.25V11.75" stroke="#0F172A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
 							</svg>
 							</DropdownMenuTrigger>
 							<DropdownMenuContent className='bg-primary-foreground'>

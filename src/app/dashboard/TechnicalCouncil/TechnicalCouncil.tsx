@@ -1,12 +1,16 @@
+"use client"
+
 import { useTranslations } from 'next-intl'
+import dynamic from 'next/dynamic'
 import { useSearchParams } from 'next/navigation'
-import { useMemo, useState } from 'react'
-import BotVisualizer from '../../components/Bot/BotVisualizer'
+import { useState } from 'react'
 import UserTechnicalCouncilTalk from '../../components/Chat/UserTechnicalCouncilTalk'
 import ChatContent from '../../components/ChatContent'
 import { useSpeechDetection } from '../../hooks/useSpeechDetection'
 import useUsers from '../../hooks/useUsers'
 import RenderUsers from './components/RenderUsers'
+
+const BotVisualizer = dynamic(() => import('../../components/Bot/BotVisualizer'), { ssr: false })
 
 interface TechnicalCouncilProps {
   isMicrophoneOn: boolean;
@@ -14,10 +18,11 @@ interface TechnicalCouncilProps {
 }
 
 const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, toggleMicrophone }) => {
-  const t = useTranslations('dashboard')
+  const t = useTranslations('dashboard');
   const searchParams = useSearchParams();
   const chatId = searchParams.get('id');
-  const users = useMemo(() => useUsers(chatId || ""), [chatId]);
+  
+  const users = useUsers(chatId || ""); // Move hook to the top level
 
   const [userStream, setUserStream] = useState<MediaStream | null>(null);
 
@@ -29,18 +34,17 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
         <div className='flex flex-col gap-1'>
           <p className='text-primary font-bold text-base'>{t("aray-bot")}</p>
           <BotVisualizer stream={null} type="default" /> 
-          {/* <BotVisualizer stream={userStream} type="speaking" /> */}
         </div>
         <div className={`flex flex-col m-2 py-4 px-2 rounded-lg border-2 ${isSpeaking ? 'border-primary' : 'border-transparent'}`}>
-        <UserTechnicalCouncilTalk 
-          t={t}
-          name={t("you")}
-          isMicrophoneOn={isMicrophoneOn}
-          turnOffTheMicrophone={toggleMicrophone}
-          turnOnTheMicrophone={toggleMicrophone}
-          isAbsent={false}
-          LocalUser={true}
-         />
+          <UserTechnicalCouncilTalk 
+            t={t}
+            name={t("you")}
+            isMicrophoneOn={isMicrophoneOn}
+            turnOffTheMicrophone={toggleMicrophone}
+            turnOnTheMicrophone={toggleMicrophone}
+            isAbsent={false}
+            LocalUser={true}
+          />
         </div>
         <RenderUsers users={users} t={t} />
       </aside>
@@ -48,7 +52,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
         <ChatContent chatId={chatId || ""} type="technical-council" />
       </main>
     </div>
-  )
-}
+  );
+};
 
 export default TechnicalCouncil;
