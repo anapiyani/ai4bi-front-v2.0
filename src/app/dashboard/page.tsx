@@ -1,14 +1,12 @@
 "use client"
 
-import { useQuery } from '@tanstack/react-query'
 import { useTranslations } from 'next-intl'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { get } from '../api/service/Requests'
 import { PopUpFactory } from '../components/ExitPopUps/ExitPopUps'
 import Header from '../components/Headers/Headers'
 import { useAuthHeader } from '../hooks/useAuthHeader'
-import { activity_status, MyData } from '../types/types'
+import { activity_status } from '../types/types'
 import Auction from './Auction/Auction'
 import AuctionResults from './AuctionResults/AuctionResults'
 import ChatMode from './ChatMode/ChatMode'
@@ -48,18 +46,18 @@ const Dashboard = () => {
     setIsMicrophoneOn(prev => !prev)
   }
 
-  const {
-    data: userData,
-    isLoading,
-    isError,
-    error,
-  } = useQuery<MyData>({
-    queryKey: ['me'],
-    queryFn: async () => {
-      return get<MyData>('user/me', { headers: authHeader })
-    },
-    enabled: typeof window !== 'undefined', // Only run query on client side
-  })
+  // const {
+  //   data: userData,
+  //   isLoading,
+  //   isError,
+  //   error,
+  // } = useQuery<MyData>({
+  //   queryKey: ['me'],
+  //   queryFn: async () => {
+  //     return get<MyData>('user/me', { headers: authHeader })
+  //   },
+  //   enabled: typeof window !== 'undefined', // Only run query on client side
+  // })
 
   const getActive = (active_tab: activity_status) => {
     const components = {
@@ -89,15 +87,15 @@ const Dashboard = () => {
     setExitType(null)
   }
 
-  // Move localStorage operations into useEffect
-  useEffect(() => {
-    if (!userData) return
-    localStorage.setItem('user_id', userData.uuid)
+  // // Move localStorage operations into useEffect
+  // useEffect(() => {
+  //   if (!userData) return
+  //   localStorage.setItem('user_id', userData.uuid)
     
-    if (!localStorage.getItem('access_token')) {
-      window.location.href = 'https://bnect.pro/'
-    }
-  }, [userData])
+  //   if (!localStorage.getItem('access_token')) {
+  //     window.location.href = 'https://bnect.pro/'
+  //   }
+  // }, [userData])
 
   return (
     <div className="flex w-full h-screen flex-col">
