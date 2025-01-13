@@ -73,34 +73,38 @@ export default function Dashboard() {
     return components[active_tab]?.() ?? components.chat()
   }
 
-  // const ExitTo = (type: activity_status) => {
-  //   switch (type) {
-  //     case "auction":
-  //       router.push('/dashboard?active_tab=chat')
-  //       break
-  //     case "technical-council":
-  //       router.push('/dashboard?active_tab=chat')
-  //       break
-  //     case "chat":
-  //       if (typeof window !== 'undefined') {
-  //         window.location.href = 'https://bnect.pro/'
-  //       }
-  //       break
-  //     default:
-  //       break
-  //   }
-  //   setExitType(null)
-  // }
-
   useEffect(() => {
-    if (!userData || typeof window === 'undefined') return
+    if (typeof window === 'undefined' || !userData) return
     
-    localStorage.setItem('user_id', userData.uuid)
-    
-    if (!localStorage.getItem('access_token')) {
-      window.location.href = 'https://bnect.pro/'
+    try {
+      localStorage.setItem('user_id', userData.uuid)
+      
+      if (!localStorage.getItem('access_token')) {
+        window.location.href = 'https://bnect.pro/'
+      }
+    } catch (error) {
+      console.error('Error accessing localStorage:', error)
     }
   }, [userData])
+  
+  const ExitTo = (type: activity_status) => {
+    switch (type) {
+      case "auction":
+        router.push('/dashboard?active_tab=chat')
+        break
+      case "technical-council":
+        router.push('/dashboard?active_tab=chat')
+        break
+      case "chat":
+        if (typeof window !== 'undefined') {
+          window.location.href = 'https://bnect.pro/'
+        }
+        break
+      default:
+        break
+    }
+    setExitType(null)
+  }
 
   return (
     <div className="flex w-full h-screen flex-col">
@@ -128,7 +132,7 @@ export default function Dashboard() {
             setExitType(null)
           },
           exitButtonClick: () => {
-            // ExitTo(exitType as activity_status)
+            ExitTo(exitType as activity_status)
           }
         }} 
       />
