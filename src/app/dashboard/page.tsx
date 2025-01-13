@@ -1,14 +1,12 @@
 "use client"
 
-import { useQuery } from '@tanstack/react-query'
 import { useTranslations } from 'next-intl'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { get } from '../api/service/Requests'
 import { PopUpFactory } from '../components/ExitPopUps/ExitPopUps'
 import Header from '../components/Headers/Headers'
 import { useAuthHeader } from '../hooks/useAuthHeader'
-import { activity_status, MyData } from '../types/types'
+import { activity_status } from '../types/types'
 import Auction from './Auction/Auction'
 import AuctionResults from './AuctionResults/AuctionResults'
 import ChatMode from './ChatMode/ChatMode'
@@ -49,18 +47,18 @@ export default function Dashboard() {
     setIsMicrophoneOn(prev => !prev)
   }
 
-  const {
-    data: userData,
-    isLoading,
-    isError,
-    error,
-  } = useQuery<MyData>({
-    queryKey: ['me'],
-    queryFn: async () => {
-      return get<MyData>('user/me', { headers: authHeader })
-    },
-    enabled: typeof window !== 'undefined', // Only run query on client side
-  })
+  // const {
+  //   data: userData,
+  //   isLoading,
+  //   isError,
+  //   error,
+  // } = useQuery<MyData>({
+  //   queryKey: ['me'],
+  //   queryFn: async () => {
+  //     return get<MyData>('user/me', { headers: authHeader })
+  //   },
+  //   enabled: typeof window !== 'undefined', // Only run query on client side
+  // })
 
   const getActive = (active_tab: activity_status) => {
     const components = {
@@ -73,38 +71,38 @@ export default function Dashboard() {
     return components[active_tab]?.() ?? components.chat()
   }
 
-  useEffect(() => {
-    if (typeof window === 'undefined' || !userData) return
+  // useEffect(() => {
+  //   if (typeof window === 'undefined' || !userData) return
     
-    try {
-      localStorage.setItem('user_id', userData.uuid)
+  //   try {
+  //     localStorage.setItem('user_id', userData.uuid)
       
-      if (!localStorage.getItem('access_token')) {
-        window.location.href = 'https://bnect.pro/'
-      }
-    } catch (error) {
-      console.error('Error accessing localStorage:', error)
-    }
-  }, [userData])
-  
-  const ExitTo = (type: activity_status) => {
-    switch (type) {
-      case "auction":
-        router.push('/dashboard?active_tab=chat')
-        break
-      case "technical-council":
-        router.push('/dashboard?active_tab=chat')
-        break
-      case "chat":
-        if (typeof window !== 'undefined') {
-          window.location.href = 'https://bnect.pro/'
-        }
-        break
-      default:
-        break
-    }
-    setExitType(null)
-  }
+  //     if (!localStorage.getItem('access_token')) {
+  //       window.location.href = 'https://bnect.pro/'
+  //     }
+  //   } catch (error) {
+  //     console.error('Error accessing localStorage:', error)
+  //   }
+  // }, [userData])
+
+  // const ExitTo = (type: activity_status) => {
+  //   switch (type) {
+  //     case "auction":
+  //       router.push('/dashboard?active_tab=chat')
+  //       break
+  //     case "technical-council":
+  //       router.push('/dashboard?active_tab=chat')
+  //       break
+  //     case "chat":
+  //       if (typeof window !== 'undefined') {
+  //         window.location.href = 'https://bnect.pro/'
+  //       }
+  //       break
+  //     default:
+  //       break
+  //   }
+  //   setExitType(null)
+  // }
 
   return (
     <div className="flex w-full h-screen flex-col">
@@ -132,7 +130,7 @@ export default function Dashboard() {
             setExitType(null)
           },
           exitButtonClick: () => {
-            ExitTo(exitType as activity_status)
+            // ExitTo(exitType as activity_status)
           }
         }} 
       />
