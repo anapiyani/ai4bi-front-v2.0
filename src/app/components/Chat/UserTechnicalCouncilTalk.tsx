@@ -1,3 +1,5 @@
+"use client"
+
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import Image from 'next/image'
