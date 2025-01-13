@@ -1,14 +1,16 @@
 "use client"
 
 import { useTranslations } from 'next-intl'
+import dynamic from 'next/dynamic'
 import { useSearchParams } from 'next/navigation'
 import { useState } from 'react'
-import BotVisualizer from '../../components/Bot/BotVisualizer'
 import UserTechnicalCouncilTalk from '../../components/Chat/UserTechnicalCouncilTalk'
 import ChatContent from '../../components/ChatContent'
 import { useSpeechDetection } from '../../hooks/useSpeechDetection'
 import useUsers from '../../hooks/useUsers'
 import RenderUsers from './components/RenderUsers'
+
+const BotVisualizer = dynamic(() => import('../../components/Bot/BotVisualizer'), { ssr: false })
 
 interface TechnicalCouncilProps {
   isMicrophoneOn: boolean;

@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { useTranslations } from 'next-intl'
+import dynamic from 'next/dynamic'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { get } from '../api/service/Requests'
@@ -9,10 +10,11 @@ import { PopUpFactory } from '../components/ExitPopUps/ExitPopUps'
 import Header from '../components/Headers/Headers'
 import { useAuthHeader } from '../hooks/useAuthHeader'
 import { activity_status, MyData } from '../types/types'
-import Auction from './Auction/Auction'
-import AuctionResults from './AuctionResults/AuctionResults'
-import ChatMode from './ChatMode/ChatMode'
-import TechnicalCouncil from './TechnicalCouncil/TechnicalCouncil'
+
+const Auction = dynamic(() => import('./Auction/Auction'), { ssr: false })
+const AuctionResults = dynamic(() => import('./AuctionResults/AuctionResults'), { ssr: false })
+const ChatMode = dynamic(() => import('./ChatMode/ChatMode'), { ssr: false })
+const TechnicalCouncil = dynamic(() => import('./TechnicalCouncil/TechnicalCouncil'), { ssr: false })
 
 export default function Dashboard() {
   const t = useTranslations("dashboard")

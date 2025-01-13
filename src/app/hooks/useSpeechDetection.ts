@@ -1,6 +1,8 @@
+"use client"
+
 import { useCallback, useEffect, useRef, useState } from 'react'
 // For a local user for now
-export const useSpeechDetection = (isMicrophoneOn: boolean, setUserStream: (stream: MediaStream | null) => void) => {
+export function useSpeechDetection(isMicrophoneOn: boolean, setUserStream: (stream: MediaStream | null) => void) {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const audioContext = useRef<AudioContext | null>(null);
   const analyser = useRef<AnalyserNode | null>(null);
