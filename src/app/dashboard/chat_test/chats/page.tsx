@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { getCookie } from '@/src/app/api/service/cookie'
 import dayjs from "dayjs"
 import { MessageCircle, Search, Send, UserPlus } from "lucide-react"
 
@@ -411,10 +412,10 @@ export default function WebSocketChat() {
   };
 
   // ------------------------------------------------
-  // Initialize currentUser from localStorage
+  // Initialize currentUser from Cookies
   // ------------------------------------------------
   useEffect(() => {
-    const userId = localStorage.getItem("user_id");
+    const userId = getCookie("user_id");
     if (userId) {
       setCurrentUser(userId);
     }

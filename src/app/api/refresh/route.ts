@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    if (error.response && error.response.status === 401) {
+    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     return NextResponse.json(error.response.data, {

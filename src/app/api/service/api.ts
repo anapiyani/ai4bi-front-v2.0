@@ -1,10 +1,24 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
-
+import { refreshToken } from './auth'
+import { getCookie } from './cookie'
 const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
 });
+  
+axiosInstance.interceptors.request.use(
+  (config) => {
+    if (typeof window !== 'undefined') {
+      const token = getCookie('access_token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 async function apiCall<T>(
   method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
@@ -36,7 +50,11 @@ async function apiCall<T>(
     }
 
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
+    if (error.response?.status === 403) {
+      await refreshToken()
+      return apiCall(method, url, data, config)
+    }
     if (axios.isAxiosError(error)) {
       throw new Error(error.response?.data?.message || error.message);
     }

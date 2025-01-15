@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { getCookie } from '../api/service/cookie'
 
 export function useAuthHeader() {
   const [authHeader, setAuthHeader] = useState<Record<string, string>>({
@@ -8,7 +9,7 @@ export function useAuthHeader() {
   })
 
   useEffect(() => {
-    const token = localStorage.getItem('access_token')
+    const token = getCookie('access_token')
     if (token) {
       setAuthHeader(prev => ({
         ...prev,
