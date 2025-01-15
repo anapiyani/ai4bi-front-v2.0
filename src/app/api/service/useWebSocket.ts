@@ -2,6 +2,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react"
+import { getCookie } from './cookie'
 
 export interface WebSocketMessage {
   [key: string]: any;
@@ -20,7 +21,7 @@ export function useWebSocket(url: string): UseWebSocketReturn {
 
   useEffect(() => {
     // Grab token from localStorage (or wherever you store it)
-    const token = localStorage.getItem("access_token");
+    const token = getCookie('access_token')
     if (!token) {
       console.warn("[useWebSocket] No access token found; continuing without auth token...");
     }
