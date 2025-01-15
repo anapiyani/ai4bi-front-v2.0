@@ -9,11 +9,11 @@ import { useState } from 'react'
 import { LoginCredentials, useLogin } from './hook/useLogin'
 
 const Login = () => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const login = useLogin()
-  const router = useRouter()
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const login = useLogin();
+  const router = useRouter()  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -28,7 +28,7 @@ const Login = () => {
 
     try {
       await login.mutateAsync(credentials)
-      router.push('/dashboard/chat_test/chats')
+      router.push('/dashboard/')
     } catch (err) {
       setError('Invalid email or password')
     }

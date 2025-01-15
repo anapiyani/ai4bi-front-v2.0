@@ -5,7 +5,8 @@ import { useTranslations } from 'next-intl'
 import dynamic from 'next/dynamic'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { get } from '../api/service/Requests'
+import { get } from '../api/service/api'
+import { getCookie, setCookie } from '../api/service/cookie'
 import { PopUpFactory } from '../components/ExitPopUps/ExitPopUps'
 import Header from '../components/Headers/Headers'
 import { useAuthHeader } from '../hooks/useAuthHeader'
@@ -63,7 +64,7 @@ export default function Dashboard() {
     queryFn: async () => {
       return get<MyData>('user/me', { headers: authHeader })
     },
-    enabled: typeof window !== 'undefined', // Only run query on client side
+    enabled: typeof window !== 'undefined',
   })
 
   const getActive = (active_tab: activity_status) => {
@@ -73,21 +74,19 @@ export default function Dashboard() {
       "auction-results": () => <AuctionResults />,
       auction: () => <Auction />  
     } as const
-
     return components[active_tab]?.() ?? components.chat()
   }
 
   useEffect(() => {
     if (typeof window === 'undefined' || !userData) return
-    
     try {
-      localStorage.setItem('user_id', userData.uuid)
+      setCookie('user_id', userData.uuid)
       
-      if (!localStorage.getItem('access_token')) {
-        window.location.href = 'https://bnect.pro/'
+      if (!getCookie('access_token')) {
+        window.location.href = '/login'
       }
     } catch (error) {
-      console.error('Error accessing localStorage:', error)
+      console.error('Error accessing Cookies:', error)
     }
   }, [userData])
   
