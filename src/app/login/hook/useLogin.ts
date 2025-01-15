@@ -1,5 +1,6 @@
-import { createQueryKeys, post } from '@/src/app/api/service/Requests'
 import { useMutation } from '@tanstack/react-query'
+import { post } from '../../api/service/api'
+import { createQueryKeys } from '../../api/service/queryKeys'
 
 export interface LoginCredentials {
   email: string
