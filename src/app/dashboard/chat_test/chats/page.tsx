@@ -1,5 +1,19 @@
 "use client";
 
+/**
+ * Test Page: WebSocket Chat Implementation
+ * 
+ * This page serves as a reference implementation for WebSocket-based chat functionality.
+ * It demonstrates:
+ * - WebSocket connection handling
+ * - Real-time chat message processing
+ * - Basic chat UI components
+ * 
+ * Note: This is a development/testing page only. The production implementation 
+ * uses the useChatWebSocket hook with additional auction-related functionality,
+ * pending backend completion.
+ */
+
 import { useWebSocket } from "@/src/app/api/service/useWebSocket"; // Adjust import path
 import { useEffect, useRef, useState } from "react"
 
@@ -14,7 +28,7 @@ import dayjs from "dayjs"
 import { MessageCircle, Search, Send, UserPlus } from "lucide-react"
 
 // Point this to your actual server
-export const WS_URL = "ws://cattle-giving-commonly.ngrok-free.app/ws/";
+const WS_URL = "ws://cattle-giving-commonly.ngrok-free.app/ws/";
 
 export default function WebSocketChat() {
   const { sendMessage, isConnected, lastMessage } = useWebSocket(WS_URL);
