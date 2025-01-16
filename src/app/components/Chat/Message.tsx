@@ -1,3 +1,5 @@
+"use client"
+
 import React from 'react'
 
 type Sender = 'bot' | 'user' | string;

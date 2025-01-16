@@ -28,7 +28,7 @@ import dayjs from "dayjs"
 import { MessageCircle, Search, Send, UserPlus } from "lucide-react"
 
 // Point this to your actual server
-const WS_URL = "ws://cattle-giving-commonly.ngrok-free.app/ws/";
+const WS_URL = "wss://cattle-giving-commonly.ngrok-free.app/ws/";
 
 export default function WebSocketChat() {
   const { sendMessage, isConnected, lastMessage } = useWebSocket(WS_URL);

@@ -1,5 +1,6 @@
-import { useChatWebSocket } from './useChatWebSocket'
+"use client"
 
+import { useChatWebSocket } from './useChatWebSocket'
 
 export const useChat = (chatId: string, type: "technical-council" | "auction" | "chat") => {
 	const {

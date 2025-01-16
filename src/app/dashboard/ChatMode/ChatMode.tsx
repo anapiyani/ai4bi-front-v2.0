@@ -54,7 +54,8 @@ const ChatMode = () => {
     selectedConversation,
     setNewMessage,
     newMessage,
-    sendChatMessage
+    sendChatMessage,
+    scrollRef
   } = useChatWebSocket();
 
   const handleItemClick = (id: string) => {
@@ -125,9 +126,11 @@ const ChatMode = () => {
                             )}
                           </span>
                         ) : (
-                          <span className="text-sm text-muted-foreground">
-                            {t("no-messages-yet")}
-                          </span>
+                          conversation.lastMessage?.content || (
+                            <span className="text-sm text-muted-foreground">
+                              {t("no-messages-yet")}
+                            </span>
+                          )
                         )
                         }</p>
                     </div>
@@ -156,7 +159,7 @@ const ChatMode = () => {
       </aside>
 
       <div className="w-full lg:w-2/3 mt-6 lg:mt-6 mx-4 lg:mr-6 rounded-lg bg-secondary min-h-[calc(100vh-8rem)] py-3 lg:py-3">
-					<ChatContent chatId={chatId || ""} selectedConversation={selectedConversation} messages={messages} title={conversations.find((c) => c.id === selectedConversation)?.name || t("chat")} isConnected={isConnected} setNewMessage={setNewMessage} newMessage={newMessage} sendChatMessage={sendChatMessage} />
+					<ChatContent chatId={chatId || ""} selectedConversation={selectedConversation} messages={messages} title={conversations.find((c) => c.id === selectedConversation)?.name || t("chat")} isConnected={isConnected} setNewMessage={setNewMessage} newMessage={newMessage} sendChatMessage={sendChatMessage} scrollRef={scrollRef} />
       </div>
     </div>
   )
