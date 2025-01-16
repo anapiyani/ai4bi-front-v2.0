@@ -1,4 +1,4 @@
-
+"use client"
 import { v4 as uuidv4 } from 'uuid'
 
 const useUsers = (chat_id: string) => {
