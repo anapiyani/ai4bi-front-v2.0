@@ -9,24 +9,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { getCookie } from '@/src/app/api/service/cookie'
+import { ChatMessage, Conversation } from '@/src/app/types/types'
 import dayjs from "dayjs"
 import { MessageCircle, Search, Send, UserPlus } from "lucide-react"
-
-interface Conversation {
-  id: string;
-  name: string;
-  lastMessage: string;
-}
-
-interface ChatMessage {
-  id: string;
-  sender: string;
-  content: string;
-  timestamp: string;
-  pending?: boolean;
-  authorId?: string;
-  chat_id?: string;
-}
 
 // Point this to your actual server
 export const WS_URL = "ws://cattle-giving-commonly.ngrok-free.app/ws/";
@@ -141,11 +126,28 @@ export default function WebSocketChat() {
   // handleChatCreated
   // ------------------------------------------------
   const handleChatCreated = (data: any) => {
-    console.log("[handleChatCreated] Chat created:", data);
+    console.log("[handleChatCreated] Chat created or received:", data);
     const newChat: Conversation = {
       id: data.chat_id,
-      name: data.name || `Auction Chat ${data.chat_id}`,
-      lastMessage: "",
+      name: data.name || `Chat ${data.chat_id}`,
+      lastMessage: {
+				chat_id: data.chat_id,
+				content: null,
+				counter: null,
+				deleted_at: null,
+				delivered_at: null,
+				edited_at: null,
+				is_deleted: false,
+				is_edited: false,
+				media_ids: null,
+				message_id: null,
+				reply_message_id: null,
+				send_at: null,
+				sender_first_name: null,
+				sender_id: null,
+				sender_last_name: null,
+				type: null
+			},
     };
 
     setConversations((prev) => {
@@ -181,14 +183,15 @@ export default function WebSocketChat() {
   // ------------------------------------------------
   // handleMessagesReceived
   // ------------------------------------------------
-  const handleMessagesReceived = (messages: any[]) => {
-    const transformedMessages = messages.map(message => ({
+  const handleMessagesReceived = (msgs: any[]) => {
+    const transformedMessages: ChatMessage[] = msgs.map((message: any) => ({
       id: message.message_id,
-      sender: message.sender,
+      sender_first_name: message.sender_first_name,
+      sender_last_name: message.sender_last_name,
       content: message.content,
       timestamp: message.send_at,
       chat_id: message.chat_id,
-      authorId: message.author_id,
+      authorId: message.sender_id,
     }));
     setMessages(transformedMessages);
   };
@@ -198,11 +201,12 @@ export default function WebSocketChat() {
   // ------------------------------------------------
   const handleMessageReceived = (msg: any) => {
     // Convert to local shape
-    const newMsg: ChatMessage = {
-      id: msg.message_id + '-' + msg.timestamp + '-' + Math.random(),
-      sender: msg.sender,
+     const newMsg: ChatMessage = {
+      id: msg.message_id ? `${msg.message_id}-${msg.timestamp}-${Math.random()}` : Date.now().toString(),
+      sender_first_name: msg.sender_first_name,
+      sender_last_name: msg.sender_last_name,
       content: msg.content,
-      timestamp: msg.timestamp,
+      timestamp: msg.timestamp || dayjs().toISOString(),
       authorId: msg.authorId,
       chat_id: msg.chat_id,
     };
@@ -228,30 +232,52 @@ export default function WebSocketChat() {
   // handleNewParticipant
   // ------------------------------------------------
   const handleNewParticipant = (message: any) => {
-    const {chat_id, data} = message;
-    const {user_id} = data;
+    const { chat_id, data } = message;
+    const { user_id } = data;
 
-    // Check if the chat already exists
-     const chatExists = conversations.some((conv) => conv.id === chat_id);
-      if (chatExists) {
-        alert(`[handleNewParticipant] Chat ${chat_id} already exists.`);
-        return;
-      }
-      
-      setMessages((prev) => [...prev, {
+    // If the chat already exists in our list, we may do something else
+    const chatExists = conversations.some((conv) => conv.id === chat_id);
+    if (chatExists) {
+      alert(`[handleNewParticipant] Chat ${chat_id} already exists.`);
+      return;
+    }
+
+    // Optionally, push a "system" style message
+    setMessages((prev) => [
+      ...prev,
+      {
         id: `${user_id}-${dayjs().toISOString()}-${Math.random()}`,
-        sender: "System", 
+        sender_first_name: "System",
+        sender_last_name: "",
         content: `User ${user_id} joined the chat`,
         timestamp: dayjs().toISOString(),
-        chat_id: chat_id,
-        broadcast: true
-      }]);
+        chat_id,
+      },
+    ]);
+
 
       
     const newChat: Conversation = {
       id: chat_id,
-      name: `User ${user_id} Joined`, // Customize as needed
-      lastMessage: "",
+      name: `User ${user_id} Joined`,
+      lastMessage: {
+        chat_id: chat_id,
+        content: `User ${user_id} joined the chat`,
+        counter: null,
+        deleted_at: null,
+        delivered_at: null,
+        edited_at: null,
+        is_deleted: false,
+        is_edited: false,
+        media_ids: null,
+        message_id: null,
+        reply_message_id: null,
+        send_at: null,
+        sender_first_name: null,
+        sender_id: null,
+        sender_last_name: null,
+        type: null
+      },
     };
 
     setConversations((prev) => [...prev, newChat]);
@@ -384,7 +410,8 @@ export default function WebSocketChat() {
     // Add pending message to local state
     const pendingMsg: ChatMessage = {
       id: rpcId,
-      sender: "You",
+      sender_first_name: "You",
+      sender_last_name: "",
       content,
       timestamp: dayjs().toISOString(),
       pending: true,
@@ -517,7 +544,7 @@ export default function WebSocketChat() {
                 <div className="flex flex-col items-start">
                   <span className="font-semibold">{conv.name}</span>
                   <span className="text-sm text-muted-foreground">
-                    {conv.lastMessage}
+                    {conv.lastMessage?.content}
                   </span>
                 </div>
               </Button>
@@ -580,20 +607,20 @@ export default function WebSocketChat() {
                     <div
                       key={`${m.id}`}
                       className={`flex mb-4 ${
-                        m.sender === "You" ? "justify-end" : "justify-start"
-                      } ${m.sender === "System" ? "justify-center" : ""}`}
+                        m.sender_first_name === "You" ? "justify-end" : "justify-start"
+                      } ${m.sender_first_name === "System" ? "justify-center" : ""}`}
                     >
                       <div
                         className={`rounded-lg p-2 max-w-[70%] ${
-                          m.sender === "You"
+                          m.sender_first_name === "You"
                             ? "bg-primary text-primary-foreground"
                             : "bg-muted"
-                        } ${m.pending ? "opacity-50" : ""} ${m.sender === "System" ? "bg-transparent text-muted-foreground" : ""}`}
+                        } ${m.pending ? "opacity-50" : ""} ${m.sender_first_name === "System" ? "bg-transparent text-muted-foreground" : ""}`}
                       >
-                        <p className='text-xs text-muted-foreground'>{m.sender === "System" ? "" : m.sender}</p>
+                        <p className='text-xs text-muted-foreground'>{m.sender_first_name === "System" ? "" : m.sender_first_name}</p>
                         <p>{m.content}</p>
                         {
-                          m.sender !== "System" && (
+                          m.sender_first_name !== "System" && (
                             <span className="text-xs text-muted-foreground block mt-1">
                           {dayjs(m.timestamp).isValid() 
                             ? dayjs(m.timestamp).format("HH:mm")
