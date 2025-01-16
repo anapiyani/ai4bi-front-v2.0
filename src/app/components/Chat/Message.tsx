@@ -6,9 +6,10 @@ interface MessageProps {
   message: string;
   sender: Sender;
   t: (key: string) => string; // i18n translator
+  timestamp: string;
 }
 
-const Message = ({ message, sender, t }: MessageProps) => {
+const Message = ({ message, sender, t, timestamp }: MessageProps) => {
   const isBot = sender === 'bot';
   const isUser = sender === 'user';
 
@@ -19,7 +20,7 @@ const Message = ({ message, sender, t }: MessageProps) => {
     } else if (isUser) {
       return t('you').slice(0, 2).toUpperCase();
     } else if (typeof sender === 'string') {
-      return sender.slice(0, 2).toUpperCase();
+      return `${sender.split(' ')[0][0]}${sender.split(' ')[1][0]}`.toUpperCase();
     }
     return '?';
   }, [sender, t, isBot, isUser]);
@@ -27,7 +28,7 @@ const Message = ({ message, sender, t }: MessageProps) => {
   // 2) Full name label
   const senderName = isBot ? t('aray-bot') : isUser ? t('you') : sender;
 
-  // 3) Avatar styles: we must ensure it’s a flex container that centers text
+  // 3) Avatar styles
   const avatarClasses = `w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
     isBot ? 'bg-primary text-white' : 'bg-input text-secondary-foreground'
   }`;
@@ -45,7 +46,7 @@ const Message = ({ message, sender, t }: MessageProps) => {
     isBot ? 'text-white' : 'text-secondary-foreground'
   }`;
 
-  // 5) Build the layout with an optional avatar
+  // 5) Build the layout with optional avatar
   const messageContent = (
     <>
       <div className="flex items-center gap-2">
@@ -68,7 +69,15 @@ const Message = ({ message, sender, t }: MessageProps) => {
       </div>
 
       <div className={messageClasses}>
-        <p className={textClasses}>{message}</p>
+        <p className={textClasses}>
+          {message}
+        </p>
+        {/* Timestamp in bottom-right corner, Telegram style */}
+        <div className="flex justify-end">
+          <p className="text-[10px] text-muted-foreground">
+            {timestamp}
+          </p>
+        </div>
       </div>
     </>
   );

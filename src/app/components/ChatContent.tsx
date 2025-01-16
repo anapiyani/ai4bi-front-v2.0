@@ -1,4 +1,5 @@
 import ChatHeader from '@/src/app/components/Chat/ChatHeader'
+import dayjs from 'dayjs'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { getCookie } from '../api/service/cookie'
@@ -118,6 +119,7 @@ const ChatContent = ({
               message={message.content} 
               sender={message.authorId ? message.authorId === getCookie("user_id") ? "user" : `${message.sender_first_name} ${message.sender_last_name}` : "bot"}
               t={t}
+              timestamp={dayjs(message.timestamp).format('HH:mm')}
             />
           ))}
           </div>
