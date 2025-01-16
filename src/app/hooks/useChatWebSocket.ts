@@ -1,11 +1,12 @@
+"use client"
+
 import dayjs from 'dayjs'
 import { useEffect, useRef, useState } from 'react'
 import { getCookie } from '../api/service/cookie'
 import { useWebSocket } from '../api/service/useWebSocket'
 import { ChatMessage, Conversation } from '../types/types'
 
-/** Update this to your actual WebSocket URL */
-const WS_URL = "ws://cattle-giving-commonly.ngrok-free.app/ws/";
+const WS_URL = "wss://cattle-giving-commonly.ngrok-free.app/ws/";
 
 export const useChatWebSocket = () => {
   const { sendMessage, isConnected, lastMessage } = useWebSocket(WS_URL);
@@ -16,7 +17,7 @@ export const useChatWebSocket = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
 
-  // We keep these refs to handle auto-scrolling, etc.
+  // Keep these refs to handle auto-scrolling, etc.
   const scrollRef = useRef<HTMLDivElement>(null);
   const prevConversationRef = useRef<string | null>(null);
 

@@ -1,3 +1,5 @@
+"use client"
+
 import ChatHeader from '@/src/app/components/Chat/ChatHeader'
 import dayjs from 'dayjs'
 import { useTranslations } from 'next-intl'
@@ -15,7 +17,8 @@ interface ChatContentProps {
   isConnected: boolean,
   newMessage: string,
   setNewMessage: (message: string) => void,
-  sendChatMessage: () => void
+  sendChatMessage: () => void,
+  scrollRef: React.RefObject<HTMLDivElement>
 }
 
 const ChatContent = ({
@@ -26,7 +29,8 @@ const ChatContent = ({
   isConnected,
   newMessage,
   setNewMessage,
-  sendChatMessage
+  sendChatMessage,
+  scrollRef
 }: ChatContentProps) => {
   const t = useTranslations('dashboard')
   const [openRescheduleModal, setOpenRescheduleModal] = useState<boolean>(false);
@@ -37,8 +41,6 @@ const ChatContent = ({
       </div>
     ) 
   }
-
-  console.log(messages)
 
   // const CHAT_STATUSES = {
   //   PLANNED_TECHNICAL_COUNCIL: 'planned_technical_council',
@@ -99,7 +101,7 @@ const ChatContent = ({
           />
         )} */}
 
-        <div className="h-[calc(100vh-240px)] overflow-y-auto">
+        <div className="h-[calc(100vh-240px)] overflow-y-auto" ref={scrollRef}>
           {/* {chat.participant_actions?.map((participant) => (
             <JoinLeftMessage
               key={participant.id}
@@ -111,17 +113,19 @@ const ChatContent = ({
           ))} */}
           {/* TODO: Implement message fetching */}
           <div className='flex flex-col gap-2 px-4 py-2'>
-          {messages
-          .filter((m: any) => m.chat_id === selectedConversation)
-          .map((message: any) => (
-            <Message
-              key={message.id}
-              message={message.content} 
-              sender={message.authorId ? message.authorId === getCookie("user_id") ? "user" : `${message.sender_first_name} ${message.sender_last_name}` : "bot"}
-              t={t}
-              timestamp={dayjs(message.timestamp).format('HH:mm')}
-            />
-          ))}
+            <div className='flex flex-col gap-2'>
+            {messages
+              .filter((m: any) => m.chat_id === selectedConversation)
+              .map((message: any) => (
+                <Message
+                  key={message.id}
+                  message={message.content} 
+                  sender={message.authorId ? message.authorId === getCookie("user_id") ? "user" : `${message.sender_first_name} ${message.sender_last_name}` : "bot"}
+                  t={t}
+                  timestamp={dayjs(message.timestamp).format('HH:mm')}
+                />
+              ))}
+            </div>
           </div>
         </div>
         {/* {shouldShowChatComponents && ( */}
