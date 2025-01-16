@@ -80,7 +80,9 @@
 		"absent": "Жоқ",
 		"call-again": "Қайтадан шақыру",
 		"turn-off-microphone": "Микрофонды өшіру",
-		"delete": "Жою"
+		"delete": "Жою",
+		"chat": "Чат",
+		"no-messages-yet": "Жаңа хабарлама жоқ"
 	}
 }
 

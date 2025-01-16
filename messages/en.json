@@ -80,7 +80,9 @@
 		"absent": "Absent",
 		"call-again": "Call again",
 		"turn-off-microphone": "Turn off microphone",
-		"delete": "Delete"
+		"delete": "Delete",
+		"chat": "Chat",
+		"no-messages-yet": "No messages yet"
 	}
 }
 

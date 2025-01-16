@@ -29,7 +29,7 @@ interface ChatMessage {
 }
 
 // Point this to your actual server
-const WS_URL = "ws://cattle-giving-commonly.ngrok-free.app/ws/";
+export const WS_URL = "ws://cattle-giving-commonly.ngrok-free.app/ws/";
 
 export default function WebSocketChat() {
   const { sendMessage, isConnected, lastMessage } = useWebSocket(WS_URL);
@@ -96,6 +96,7 @@ export default function WebSocketChat() {
       else if (message.event === "new_message") {
         const msgData = message.data.message;
         const chatId = message.chat_id || message.data.chat_id;
+        getChats();
 
         if (message.channel?.startsWith("chat_room")) {
           const formattedMessage = {
@@ -187,7 +188,7 @@ export default function WebSocketChat() {
       content: message.content,
       timestamp: message.send_at,
       chat_id: message.chat_id,
-      authorId: message.sender_id,
+      authorId: message.author_id,
     }));
     setMessages(transformedMessages);
   };

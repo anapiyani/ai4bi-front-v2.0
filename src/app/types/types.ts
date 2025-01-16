@@ -43,3 +43,37 @@ export type MyData = {
 	updated_at: string
 	uuid: string
 }
+
+export type Conversation = {
+  id: string;
+  name: string;
+  lastMessage: {
+		chat_id: string | null;
+		content: string | null;
+		counter: number | null;
+		deleted_at: string | null;
+		delivered_at: string | null;
+		edited_at: string | null;
+		is_deleted: boolean | null;
+		is_edited: boolean | null;
+		media_ids: string[] | null;
+		message_id: string | null;
+		reply_message_id: string | null;
+		send_at: string | null;
+		sender_first_name: string | null;
+		sender_id: string | null;
+		sender_last_name: string | null;
+		type: string | null;
+	} | null;
+}
+
+export type ChatMessage = {
+  id: string;
+	sender_first_name: string;
+	sender_last_name: string;
+  content: string;
+  timestamp: string;
+  pending?: boolean;
+  authorId?: string;
+  chat_id?: string;
+}
