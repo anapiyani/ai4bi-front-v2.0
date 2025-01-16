@@ -1,20 +1,36 @@
 import ChatHeader from '@/src/app/components/Chat/ChatHeader'
-import { useChat } from "@/src/app/hooks/useChat"
+import dayjs from 'dayjs'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
-import TimeToStartAucTech from './Alerts/Organizers/TimeToStartAucTech'
-import JoinLeftMessage from './Chat/JoinLeftMessage'
+import { getCookie } from '../api/service/cookie'
 import Message from './Chat/Message'
 import MessageInput from './Chat/MessageInput'
-import PlannedType from './Chat/PlannedType'
 import ChangeDates from './Form/ChangeDates'
 
-const ChatContent = ({ chatId, type }: { chatId?: string | null, type?: "technical-council" | "auction" | "chat" }) => {
+interface ChatContentProps {
+  chatId: string | null,
+  selectedConversation: string | null,
+  title: string,
+  messages: any[],
+  isConnected: boolean,
+  newMessage: string,
+  setNewMessage: (message: string) => void,
+  sendChatMessage: () => void
+}
+
+const ChatContent = ({
+  chatId,
+  selectedConversation,
+  title,
+  messages,
+  isConnected,
+  newMessage,
+  setNewMessage,
+  sendChatMessage
+}: ChatContentProps) => {
   const t = useTranslations('dashboard')
   const [openRescheduleModal, setOpenRescheduleModal] = useState<boolean>(false);
-  const chat = useChat(chatId as string, type as "technical-council" | "auction" | "chat") // websocket connection to the chats 
-
-  if (!chat?.id || !chatId) {
+  if (!chatId) {
     return (
       <div className='flex justify-center items-center h-full mt-5'>
         <p className='text-secondary-foreground text-base font-semibold'>{t('select-chat')}</p>
@@ -22,53 +38,54 @@ const ChatContent = ({ chatId, type }: { chatId?: string | null, type?: "technic
     ) 
   }
 
-  const CHAT_STATUSES = {
-    PLANNED_TECHNICAL_COUNCIL: 'planned_technical_council',
-    PLANNED_AUCTION: 'planned_auction',
-    TIME_TO_START_TECHNICAL_COUNCIL: 'time_to_start_technical_council',
-    TIME_TO_START_AUCTION: 'time_to_start_auction',
-    AUCTION_ON_PROGRESS: 'auction_on_progress',
-    TECHNICAL_COUNCIL_ON_PROGRESS: 'technical_council_on_progress'
-  } 
+  console.log(messages)
 
-  const shouldShowChatComponents = [
-    CHAT_STATUSES.TIME_TO_START_AUCTION,
-    CHAT_STATUSES.TIME_TO_START_TECHNICAL_COUNCIL,
-    CHAT_STATUSES.AUCTION_ON_PROGRESS,
-    CHAT_STATUSES.TECHNICAL_COUNCIL_ON_PROGRESS
-  ].includes(chat.chat_status as keyof typeof CHAT_STATUSES)
+  // const CHAT_STATUSES = {
+  //   PLANNED_TECHNICAL_COUNCIL: 'planned_technical_council',
+  //   PLANNED_AUCTION: 'planned_auction',
+  //   TIME_TO_START_TECHNICAL_COUNCIL: 'time_to_start_technical_council',
+  //   TIME_TO_START_AUCTION: 'time_to_start_auction',
+  //   AUCTION_ON_PROGRESS: 'auction_on_progress',
+  //   TECHNICAL_COUNCIL_ON_PROGRESS: 'technical_council_on_progress'
+  // } 
 
-  const isPlannedState = chat.chat_status === CHAT_STATUSES.PLANNED_TECHNICAL_COUNCIL || chat.chat_status === CHAT_STATUSES.PLANNED_AUCTION
+  // const shouldShowChatComponents = [
+  //   CHAT_STATUSES.TIME_TO_START_AUCTION,
+  //   CHAT_STATUSES.TIME_TO_START_TECHNICAL_COUNCIL,
+  //   CHAT_STATUSES.AUCTION_ON_PROGRESS,
+  //   CHAT_STATUSES.TECHNICAL_COUNCIL_ON_PROGRESS
+  // ].includes(chat.chat_status as keyof typeof CHAT_STATUSES)
 
-  // Happy new year 2025!
+  // const isPlannedState = chat.chat_status === CHAT_STATUSES.PLANNED_TECHNICAL_COUNCIL || chat.chat_status === CHAT_STATUSES.PLANNED_AUCTION
 
-  const isTimeToStartState = chat.chat_status === CHAT_STATUSES.TIME_TO_START_TECHNICAL_COUNCIL || chat.chat_status === CHAT_STATUSES.TIME_TO_START_AUCTION
 
-  const handleStart = (type: "technical-council" | "auction", id: string) => {
-    window.location.href = `/dashboard?active_tab=${type}&id=${id}`
-  }
+  // const isTimeToStartState = chat.chat_status === CHAT_STATUSES.TIME_TO_START_TECHNICAL_COUNCIL || chat.chat_status === CHAT_STATUSES.TIME_TO_START_AUCTION
+
+  // const handleStart = (type: "technical-council" | "auction", id: string) => {
+  //   window.location.href = `/dashboard?active_tab=${type}&id=${id}`
+  // }
 
   return (
     <div className='flex flex-col w-full h-full'>
       <ChatHeader 
-        title={chat.title} 
+        title={title}
         onClickAboutAuction={() => {}} // TODO: Implement auction details handler
         t={t} 
       />
       
       <div className="flex-grow overflow-y-auto">
-        {isPlannedState && (
-          <PlannedType 
-            id={chat.id} 
-            status={chat.chat_status as "planned_auction" | "planned_technical_council"} 
-            date={chat.date} 
-            time={chat.time} 
-            onRescheduleClick={() => {}} // TODO: Implement reschedule handler
-            onDeclineClick={() => {}} // TODO: Implement decline handler
-          />
-        )}
+          {/* {isPlannedState && (
+            <PlannedType 
+              id={chat.id} 
+              status={chat.chat_status as "planned_auction" | "planned_technical_council"} 
+              date={chat.date} 
+              time={chat.time} 
+              onRescheduleClick={() => {}} // TODO: Implement reschedule handler
+              onDeclineClick={() => {}} // TODO: Implement decline handler
+            />
+          )} */}
 
-        {isTimeToStartState && (
+        {/* {isTimeToStartState && (
           <TimeToStartAucTech
             onRescheduleClick={() => {
               setOpenRescheduleModal(true)
@@ -80,10 +97,10 @@ const ChatContent = ({ chatId, type }: { chatId?: string | null, type?: "technic
             time={chat.time} 
             type={chat.chat_status === CHAT_STATUSES.TIME_TO_START_TECHNICAL_COUNCIL ? "technical-council" : "auction"}
           />
-        )}
+        )} */}
 
-        <div className="p-5 gap-2 flex flex-col">
-          {chat.participant_actions?.map((participant) => (
+        <div className="h-[calc(100vh-240px)] overflow-y-auto">
+          {/* {chat.participant_actions?.map((participant) => (
             <JoinLeftMessage
               key={participant.id}
               participant_name={participant.name} 
@@ -91,33 +108,40 @@ const ChatContent = ({ chatId, type }: { chatId?: string | null, type?: "technic
               action={participant.action as "joined" | "left" | "active"} 
               t={t} 
             />
-          ))}
+          ))} */}
           {/* TODO: Implement message fetching */}
-          {chat.messages?.map((message: any) => (
+          <div className='flex flex-col gap-2 px-4 py-2'>
+          {messages
+          .filter((m: any) => m.chat_id === selectedConversation)
+          .map((message: any) => (
             <Message
               key={message.id}
-              message={message.message} 
-              sender={message.name} 
+              message={message.content} 
+              sender={message.authorId ? message.authorId === getCookie("user_id") ? "user" : `${message.sender_first_name} ${message.sender_last_name}` : "bot"}
               t={t}
+              timestamp={dayjs(message.timestamp).format('HH:mm')}
             />
           ))}
+          </div>
         </div>
-      </div>
-
-      {shouldShowChatComponents && (
+        {/* {shouldShowChatComponents && ( */}
         <div className='px-5 w-full mt-auto'>
           <MessageInput 
             t={t} 
-            sendMessage={() => {}} // TODO: Implement message sending handler
+            value={newMessage}
+            onChange={setNewMessage}
+            isConnected={isConnected}
+            sendChatMessage={sendChatMessage}
           />
         </div>
-      )}
+        {/* )} */}
+      </div>
       {
         openRescheduleModal && (
           <ChangeDates 
             open={openRescheduleModal} 
             onClose={() => setOpenRescheduleModal(false)}
-            chat_id={chat.id}
+            chat_id={chatId}
           />
         )
       }
