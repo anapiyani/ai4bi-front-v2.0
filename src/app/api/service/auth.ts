@@ -20,6 +20,7 @@ export const refreshToken = async () => {
     window.location.href = '/login';
   }
 };
+
 const access_token_expired = (access_token: string) => {
   const decodedToken: any = jwtDecode(access_token);
   const currentTime = Date.now() / 1000;
@@ -46,4 +47,5 @@ export const isAuthorized = async () => {
 export const logout = () => {
   deleteCookie('access_token');
   deleteCookie('refresh_token');
+  deleteCookie('user_id');
 };

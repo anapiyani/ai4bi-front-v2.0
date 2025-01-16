@@ -80,7 +80,9 @@
 		"absent": "Отсутствует",
 		"call-again": "Пригласить повторно",
 		"turn-off-microphone": "Отключить микрофон",
-		"delete": "Удалить"
+		"delete": "Удалить",
+		"chat": "Чат",
+		"no-messages-yet": "Нет сообщений"
 	}
 }
 
