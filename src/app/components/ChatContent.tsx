@@ -120,7 +120,7 @@ const ChatContent = ({
                 <Message
                   key={message.id}
                   message={message.content} 
-                  sender={message.authorId ? message.authorId === getCookie("user_id") ? "user" : `${message.sender_first_name} ${message.sender_last_name}` : "bot"}
+                  sender={message.authorId && message.authorId === getCookie("user_id") || message.sender_first_name === "user" ? "user" : `${message.sender_first_name} ${message.sender_last_name}`} // we'll add bot later
                   t={t}
                   timestamp={dayjs(message.timestamp).format('HH:mm')}
                 />
@@ -133,7 +133,7 @@ const ChatContent = ({
           <MessageInput 
             t={t} 
             value={newMessage}
-            onChange={setNewMessage}
+            setNewMessage={setNewMessage}
             isConnected={isConnected}
             sendChatMessage={sendChatMessage}
           />

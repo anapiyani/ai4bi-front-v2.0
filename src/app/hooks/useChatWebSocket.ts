@@ -30,11 +30,11 @@ export const useChatWebSocket = () => {
       unsubscribeToChatRoom(prevConversationRef.current);
     }
     // Subscribe to the newly selected conversation
-    if (selectedConversation) {
+    if (selectedConversation && isConnected) {
       subscribeToChatRoom(selectedConversation);
     }
     prevConversationRef.current = selectedConversation;
-  }, [selectedConversation]);
+  }, [selectedConversation, isConnected]);
 
   // ---------------------------------------------------------------------------
   // Initialize currentUser from cookies
@@ -77,11 +77,11 @@ export const useChatWebSocket = () => {
   // Fetch messages whenever a new conversation is selected
   // ---------------------------------------------------------------------------
   useEffect(() => {
-    if (selectedConversation) {
+    if (selectedConversation && isConnected) {
       getChatMessages();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedConversation]);
+  }, [selectedConversation, isConnected]);
 
   // ---------------------------------------------------------------------------
   // Optional: Scroll to bottom when new messages arrive or conversation changes
@@ -154,10 +154,11 @@ export const useChatWebSocket = () => {
           const formattedMessage = {
             message_id: `${msgData.counter}-${msgData.timestamp}-${Math.random()}`,
             chat_id: chatId,
-            sender: msgData.author.id === currentUser ? "You" : msgData.author.name,
+            sender_first_name: msgData.sender_first_name,
+            sender_last_name: msgData.sender_last_name,
             content: msgData.content,
             timestamp: msgData.timestamp || dayjs().toISOString(),
-            authorId: msgData.author.id,
+            authorId: msgData.sender_id,
           };
           handleMessageReceived(formattedMessage);
         } 
@@ -480,7 +481,8 @@ export const useChatWebSocket = () => {
     // Add a pending message to local state
     const pendingMsg: ChatMessage = {
       id: rpcId,
-      sender_first_name: "You",
+			authorId: getCookie("user_id"),
+      sender_first_name: "user",
       sender_last_name: "",
       content,
       timestamp: dayjs().toISOString(),
