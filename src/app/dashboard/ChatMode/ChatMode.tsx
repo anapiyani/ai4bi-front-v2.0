@@ -55,14 +55,12 @@ const ChatMode = () => {
     setNewMessage,
     newMessage,
     sendChatMessage,
-    scrollRef
+    scrollRef,
   } = useChatWebSocket();
 
   const handleItemClick = (id: string) => {
     router.push(`/dashboard?active_tab=chat&id=${id}`);
   }
-
-  console.log(messages)
 
   useEffect(() => {
     if (chatId) {
@@ -81,6 +79,8 @@ const ChatMode = () => {
   //   handleItemClick,
   //   t
   // });
+
+  console.log(messages)
 
   return (
     <div className="w-full flex flex-col lg:flex-row bg-primary-foreground justify-center">
@@ -113,7 +113,7 @@ const ChatMode = () => {
                     <div className="flex flex-col gap-2">
                       <p>{conversation.name}</p>
                       <p>{
-                        conversation.lastMessage?.content ? (
+                        typeof conversation.lastMessage === 'object' ? (
                           <span className="text-sm text-muted-foreground">
                             {conversation.lastMessage?.sender_first_name && (
                               <span className="font-medium">{conversation.lastMessage.sender_first_name}: </span>
@@ -126,7 +126,11 @@ const ChatMode = () => {
                             )}
                           </span>
                         ) : (
-                          conversation.lastMessage?.content || (
+                          typeof conversation.lastMessage === 'string' ? (
+                            <span className="text-sm text-muted-foreground">
+                              {conversation.lastMessage}
+                            </span>
+                          ) : (
                             <span className="text-sm text-muted-foreground">
                               {t("no-messages-yet")}
                             </span>
