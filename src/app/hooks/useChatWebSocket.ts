@@ -242,8 +242,10 @@ export const useChatWebSocket = () => {
   // ---------------------------------------------------------------------------
   // handleMessagesReceived
   // ---------------------------------------------------------------------------
-  const handleMessagesReceived = (msgs: any[]) => {
-    const transformedMessages: ChatMessage[] = msgs.map((message: any) => ({
+const handleMessagesReceived = (msgs: any[]) => {
+  const transformedMessages: ChatMessage[] = msgs
+    .sort((a, b) => new Date(a.send_at).getTime() - new Date(b.send_at).getTime()) // Ensure chronological order
+    .map((message: any) => ({
       id: message.message_id,
       sender_first_name: message.sender_first_name,
       sender_last_name: message.sender_last_name,
@@ -252,28 +254,28 @@ export const useChatWebSocket = () => {
       chat_id: message.chat_id,
       authorId: message.sender_id,
     }));
-    setMessages(transformedMessages);
-  };
+  setMessages(transformedMessages);
+};
 
   // ---------------------------------------------------------------------------
   // handleMessageReceived
   // ---------------------------------------------------------------------------
   const handleMessageReceived = (msg: any) => {
     const newMsg: ChatMessage = {
-      id: msg.message_id ? `${msg.message_id}-${msg.timestamp}-${Math.random()}` : Date.now().toString(),
-      sender_first_name: msg.sender_first_name,
-      sender_last_name: msg.sender_last_name,
-      content: msg.content,
-      timestamp: msg.timestamp || dayjs().toISOString(),
-      authorId: msg.authorId,
-      chat_id: msg.chat_id,
-    };
+    id: msg.message_id ? `${msg.message_id}-${msg.timestamp}-${Math.random()}` : Date.now().toString(),
+    sender_first_name: msg.sender_first_name,
+    sender_last_name: msg.sender_last_name,
+    content: msg.content,
+    timestamp: msg.timestamp || dayjs().toISOString(),
+    authorId: msg.authorId,
+    chat_id: msg.chat_id,
+  };
 
     // Remove any pending messages with the same content, then add the new message
-    setMessages((prev) => {
-      const filtered = prev.filter((m) => !(m.pending && m.content === msg.content));
-      return [...filtered, newMsg];
-    });
+		setMessages((prev) => {
+				const filtered = prev.filter((m) => !(m.pending && m.content === msg.content));
+				return [...filtered, newMsg]; // Append to the end
+		});
     // Update lastMessage in the conversation list
     setConversations((prev) =>
       prev.map((c) => (c.id === newMsg.chat_id ? {
@@ -463,7 +465,7 @@ export const useChatWebSocket = () => {
       params: {
         chat_id: selectedConversation,
         page: 1,
-        page_size: 50,
+        page_size: 100,
       },
     };
     sendMessage(request);
