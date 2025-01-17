@@ -101,7 +101,7 @@ export default function WebSocketChat() {
           const formattedMessage = {
             message_id: `${msgData.counter}-${msgData.timestamp}-${Math.random()}`,
             chat_id: chatId,
-            sender: msgData.author.id === currentUser ? "You" : msgData.author.name,
+            sender: msgData.author.id === currentUser ? "user" : msgData.author.name,
             content: msgData.content,
             timestamp: msgData.timestamp || dayjs().toISOString(),
             authorId: msgData.author.id,
@@ -424,7 +424,7 @@ export default function WebSocketChat() {
     // Add pending message to local state
     const pendingMsg: ChatMessage = {
       id: rpcId,
-      sender_first_name: "You",
+      sender_first_name: "user",
       sender_last_name: "",
       content,
       timestamp: dayjs().toISOString(),
@@ -558,7 +558,7 @@ export default function WebSocketChat() {
                 <div className="flex flex-col items-start">
                   <span className="font-semibold">{conv.name}</span>
                   <span className="text-sm text-muted-foreground">
-                    {conv.lastMessage?.content}
+                    {typeof conv.lastMessage === 'string' ? conv.lastMessage : conv.lastMessage?.content}
                   </span>
                 </div>
               </Button>
@@ -621,12 +621,12 @@ export default function WebSocketChat() {
                     <div
                       key={`${m.id}`}
                       className={`flex mb-4 ${
-                        m.sender_first_name === "You" ? "justify-end" : "justify-start"
+                        m.sender_first_name === "user" ? "justify-end" : "justify-start"
                       } ${m.sender_first_name === "System" ? "justify-center" : ""}`}
                     >
                       <div
                         className={`rounded-lg p-2 max-w-[70%] ${
-                          m.sender_first_name === "You"
+                          m.sender_first_name === "user"
                             ? "bg-primary text-primary-foreground"
                             : "bg-muted"
                         } ${m.pending ? "opacity-50" : ""} ${m.sender_first_name === "System" ? "bg-transparent text-muted-foreground" : ""}`}

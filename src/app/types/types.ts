@@ -64,7 +64,7 @@ export type Conversation = {
 		sender_id: string | null;
 		sender_last_name: string | null;
 		type: string | null;
-	} | null;
+	} | null | string;
 }
 
 export type ChatMessage = {
@@ -74,6 +74,6 @@ export type ChatMessage = {
   content: string;
   timestamp: string;
   pending?: boolean;
-  authorId?: string;
+  authorId?: string | null;
   chat_id?: string;
 }
