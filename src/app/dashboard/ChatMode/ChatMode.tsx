@@ -2,6 +2,7 @@
 
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import dayjs from 'dayjs'
+import { motion } from "framer-motion"
 import { useTranslations } from 'next-intl'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
@@ -10,6 +11,7 @@ import { useChatWebSocket } from '../../hooks/useChatWebSocket'
 import { ChatListItemData } from '../../types/types'
 import { SearchBar } from './components/SearchBar'
 import { CHAT_TABS } from './config/ChatTabs'
+
 
 {/* data is example! */}
 export const EXAMPLE_DATA: ChatListItemData[] = [
@@ -104,21 +106,31 @@ const ChatMode = () => {
             </TabsList>
 
             <SearchBar />
-            <div className="flex flex-col gap-2">
-              {conversations.map((conversation) => (
-                <div onClick={() => {
-                  handleItemClick(conversation.id)
-                }} className={`flex flex-col gap-2 hover:bg-secondary p-2 rounded-lg cursor-pointer ${conversation.id === selectedConversation ? "bg-secondary" : ""}`} key={conversation.id}>
+            <div className="flex flex-col gap-2 overflow-y-auto max-h-[calc(100vh-300px)] no-scrollbar">
+              {conversations.map((conversation, index) => (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    handleItemClick(conversation.id)
+                  }}
+                  className={`flex flex-col gap-2 hover:bg-secondary p-2 rounded-lg cursor-pointer ${conversation.id === selectedConversation ? "bg-secondary" : ""}`}
+                  key={conversation.id}
+                >
                   <div className="flex flex-row gap-2">
-                    <div className="flex flex-col gap-2">
-                      <p>{conversation.name}</p>
-                      <p>{
+                    <div 
+                      className="flex flex-col gap-2 w-full"
+                    >
+                      <p className="break-words">{conversation.name}</p>
+                      <p className="break-words">{
                         typeof conversation.lastMessage === 'object' ? (
                           <span className="text-sm text-muted-foreground">
                             {conversation.lastMessage?.sender_first_name && (
                               <span className="font-medium">{conversation.lastMessage.sender_first_name}: </span>
                             )}
-                            {conversation.lastMessage?.content}
+                            {conversation.lastMessage?.content ? conversation.lastMessage.content.length > 70 ? conversation.lastMessage.content.slice(0, 70) + "..." : conversation.lastMessage.content : t("no-messages-yet")}
                             {conversation.lastMessage?.send_at && (
                               <span className="ml-2 text-xs opacity-70">
                                 {dayjs(conversation.lastMessage.send_at).format("HH:mm")}
@@ -128,7 +140,7 @@ const ChatMode = () => {
                         ) : (
                           typeof conversation.lastMessage === 'string' ? (
                             <span className="text-sm text-muted-foreground">
-                              {conversation.lastMessage}
+                              {conversation.lastMessage ? conversation.lastMessage.length > 100 ? conversation.lastMessage.slice(0, 100) + "..." : conversation.lastMessage : t("no-messages-yet")}
                             </span>
                           ) : (
                             <span className="text-sm text-muted-foreground">
@@ -136,10 +148,10 @@ const ChatMode = () => {
                             </span>
                           )
                         )
-                        }</p>
+                      }</p>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
             {/* {CHAT_TABS.map((tab) => (

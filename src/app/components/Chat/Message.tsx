@@ -9,9 +9,10 @@ interface MessageProps {
   sender: Sender;
   t: (key: string) => string; // i18n translator
   timestamp: string;
+  showSender: boolean; // New prop to control sender visibility
 }
 
-const Message = ({ message, sender, t, timestamp }: MessageProps) => {
+const Message = ({ message, sender, t, timestamp, showSender }: MessageProps) => {
   const isBot = sender === 'bot';
   const isUser = sender === 'user';
 
@@ -22,7 +23,11 @@ const Message = ({ message, sender, t, timestamp }: MessageProps) => {
     } else if (isUser) {
       return t('you').slice(0, 2).toUpperCase();
     } else if (typeof sender === 'string') {
-      return `${sender.split(' ')[0][0]}${sender.split(' ')[1][0]}`.toUpperCase();
+      const nameParts = sender.split(' ');
+      const initials = nameParts.length >= 2 
+        ? `${nameParts[0][0]}${nameParts[1][0]}`
+        : `${nameParts[0][0]}`;
+      return initials.toUpperCase();
     }
     return '?';
   }, [sender, t, isBot, isUser]);
@@ -36,39 +41,40 @@ const Message = ({ message, sender, t, timestamp }: MessageProps) => {
   }`;
 
   // 4) Bubble classes
-  const messageClasses = `flex flex-col p-2 rounded-lg w-fit max-w-[50%] ${
+  const messageClasses = `flex flex-col p-2 rounded-lg w-fit max-w-md ${
     isBot
       ? 'bg-gradient-to-r from-[#0284C7] to-[#77BAAA]'
       : isUser
       ? 'bg-input ml-auto'
       : 'bg-primary-foreground'
-  }`;
+  }`;  
 
-  const textClasses = `text-sm font-normal px-2 text-start ${
+  const textClasses = `text-sm font-normal px-2 text-start text-wrap break-words ${
     isBot ? 'text-white' : 'text-secondary-foreground'
   }`;
 
-  // 5) Build the layout with optional avatar
-  const messageContent = (
-    <>
-      <div className="flex items-center gap-2">
-        {!isUser && (
-          <div className={avatarClasses}>
-            {avatarText}
-          </div>
-        )}
-        <p
-          className={`text-sm font-medium text-muted-foreground cursor-pointer ${
-            isUser ? 'ml-auto' : ''
-          }`}
-        >
-          {senderName}
-        </p>
-        {isUser && (
-          // optional alignment dummy
-          <div className={avatarClasses + ' w-0'} />
-        )}
-      </div>
+  return (
+    <div className={`flex flex-col gap-2 ${isUser ? 'w-full flex justify-end' : ''}`}>
+      {showSender && (
+        <div className="flex items-center gap-2">
+          {!isUser && (
+            <div className={avatarClasses}>
+              {avatarText}
+            </div>
+          )}
+          <p
+            className={`text-sm font-medium text-muted-foreground cursor-pointer ${
+              isUser ? 'ml-auto' : ''
+            }`}
+          >
+            {senderName}
+          </p>
+          {isUser && (
+            // optional alignment dummy
+            <div className={avatarClasses + ' w-0'} />
+          )}
+        </div>
+      )}
 
       <div className={messageClasses}>
         <p className={textClasses}>
@@ -81,12 +87,6 @@ const Message = ({ message, sender, t, timestamp }: MessageProps) => {
           </p>
         </div>
       </div>
-    </>
-  );
-
-  return (
-    <div className={`flex flex-col gap-2 ${isUser ? 'w-full flex justify-end' : ''}`}>
-      {messageContent}
     </div>
   );
 };
