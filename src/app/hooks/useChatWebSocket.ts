@@ -22,84 +22,6 @@ export const useChatWebSocket = () => {
   const prevConversationRef = useRef<string | null>(null);
 
   // ---------------------------------------------------------------------------
-  // Subscribe/unsubscribe to specific chat rooms when selectedConversation changes
-  // ---------------------------------------------------------------------------
-  useEffect(() => {
-    // If previously selected a conversation, unsubscribe from it
-    if (prevConversationRef.current) {
-      unsubscribeToChatRoom(prevConversationRef.current);
-    }
-    // Subscribe to the newly selected conversation
-    if (selectedConversation && isConnected) {
-      subscribeToChatRoom(selectedConversation);
-    }
-    prevConversationRef.current = selectedConversation;
-  }, [selectedConversation, isConnected]);
-
-  // ---------------------------------------------------------------------------
-  // Initialize currentUser from cookies
-  // ---------------------------------------------------------------------------
-  useEffect(() => {
-    const userId = getCookie("user_id");
-    if (userId) {
-      setCurrentUser(userId);
-    }
-  }, []);
-
-  // ---------------------------------------------------------------------------
-  // Subscribe to "chat_updates" once the WebSocket is connected
-  // ---------------------------------------------------------------------------
-  useEffect(() => {
-    if (isConnected) {
-      sendMessage({ type: "subscribe", channel: "chat_updates" });
-    }
-  }, [isConnected, sendMessage]);
-
-  // ---------------------------------------------------------------------------
-  // Handle the most recent WebSocket message
-  // ---------------------------------------------------------------------------
-  useEffect(() => {
-    if (!lastMessage) return;
-    handleWebSocketMessage(lastMessage);
-  }, [lastMessage]);
-
-  // ---------------------------------------------------------------------------
-  // Fetch the full list of chats when currentUser is set
-  // ---------------------------------------------------------------------------
-  useEffect(() => {
-    if (currentUser) {
-      getChats();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentUser]);
-
-  // ---------------------------------------------------------------------------
-  // Fetch messages whenever a new conversation is selected
-  // ---------------------------------------------------------------------------
-  useEffect(() => {
-    if (selectedConversation && isConnected) {
-      getChatMessages();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedConversation, isConnected]);
-
-  // ---------------------------------------------------------------------------
-  // Optional: Scroll to bottom when new messages arrive or conversation changes
-  // ---------------------------------------------------------------------------
-  useEffect(() => {
-    const scrollTimeout = setTimeout(() => {
-      if (scrollRef.current) {
-        scrollRef.current.scrollTo({
-          top: scrollRef.current.scrollHeight,
-          behavior: 'smooth',
-        });
-      }
-    }, 100);
-
-    return () => clearTimeout(scrollTimeout);
-  }, [messages, selectedConversation]);
-
-  // ---------------------------------------------------------------------------
   // handleWebSocketMessage
   // ---------------------------------------------------------------------------
   const handleWebSocketMessage = (rawMsg: any) => {
@@ -513,6 +435,85 @@ const handleMessagesReceived = (msgs: any[]) => {
     // Clear the input
     setNewMessage("");
   };
+
+   // ---------------------------------------------------------------------------
+  // Subscribe/unsubscribe to specific chat rooms when selectedConversation changes
+  // ---------------------------------------------------------------------------
+  useEffect(() => {
+    // If previously selected a conversation, unsubscribe from it
+    if (prevConversationRef.current) {
+      unsubscribeToChatRoom(prevConversationRef.current);
+    }
+    // Subscribe to the newly selected conversation
+    if (selectedConversation && isConnected) {
+      subscribeToChatRoom(selectedConversation);
+    }
+    prevConversationRef.current = selectedConversation;
+  }, [selectedConversation, isConnected]);
+
+  // ---------------------------------------------------------------------------
+  // Initialize currentUser from cookies
+  // ---------------------------------------------------------------------------
+  useEffect(() => {
+    const userId = getCookie("user_id");
+    if (userId) {
+      setCurrentUser(userId);
+    }
+  }, []);
+
+  // ---------------------------------------------------------------------------
+  // Subscribe to "chat_updates" once the WebSocket is connected
+  // ---------------------------------------------------------------------------
+  useEffect(() => {
+    if (isConnected) {
+      sendMessage({ type: "subscribe", channel: "chat_updates" });
+    }
+  }, [isConnected, sendMessage]);
+
+  // ---------------------------------------------------------------------------
+  // Handle the most recent WebSocket message
+  // ---------------------------------------------------------------------------
+  useEffect(() => {
+    if (!lastMessage) return;
+    handleWebSocketMessage(lastMessage);
+  }, [lastMessage]);
+
+  // ---------------------------------------------------------------------------
+  // Fetch the full list of chats when currentUser is set
+  // ---------------------------------------------------------------------------
+  useEffect(() => {
+    if (currentUser) {
+      getChats();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser]);
+
+  // ---------------------------------------------------------------------------
+  // Fetch messages whenever a new conversation is selected
+  // ---------------------------------------------------------------------------
+  useEffect(() => {
+    if (selectedConversation && isConnected) {
+      getChatMessages();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedConversation, isConnected]);
+
+  // ---------------------------------------------------------------------------
+  // Optional: Scroll to bottom when new messages arrive or conversation changes
+  // ---------------------------------------------------------------------------
+  useEffect(() => {
+    const scrollTimeout = setTimeout(() => {
+      if (scrollRef.current) {
+        scrollRef.current.scrollTo({
+          top: scrollRef.current.scrollHeight,
+          behavior: 'smooth',
+        });
+      }
+    }, 100);
+
+    return () => clearTimeout(scrollTimeout);
+  }, [messages, selectedConversation]);
+
 
   return {
     // WebSocket states
