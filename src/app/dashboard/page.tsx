@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react'
 import { get } from '../api/service/api'
 import { getCookie, setCookie } from '../api/service/cookie'
 import { PopUpFactory } from '../components/ExitPopUps/ExitPopUps'
-import Header from '../components/Headers/Headers'
+import Header from '../components/Headers/Headers'  
 import { useAuthHeader } from '../hooks/useAuthHeader'
 import { activity_status, MyData } from '../types/types'
 
