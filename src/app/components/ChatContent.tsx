@@ -115,16 +115,23 @@ const ChatContent = ({
           <div className='flex flex-col gap-2 px-4 py-2'>
             <div className='flex flex-col gap-2'>
             {messages
-              .filter((m: any) => m.chat_id === selectedConversation)
-              .map((message: any) => (
-                <Message
-                  key={message.id}
-                  message={message.content} 
-                  sender={message.authorId && message.authorId === getCookie("user_id") || message.sender_first_name === "user" ? "user" : `${message.sender_first_name} ${message.sender_last_name}`} // we'll add bot later
-                  t={t}
-                  timestamp={dayjs(message.timestamp).format('HH:mm')}
-                />
-              ))}
+                .filter((m: any) => m.chat_id === selectedConversation)
+                .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()) 
+                .map((message: any, index: number, array: any[]) => {
+                  const previousMessage = array[index - 1];
+                  const showSender = !previousMessage || previousMessage.authorId !== message.authorId;
+
+                  return (
+                    <Message
+                      key={message.id}
+                      message={message.content} 
+                      sender={message.authorId && message.authorId === getCookie("user_id") || message.sender_first_name === "user" ? "user" : `${message.sender_first_name} ${message.sender_last_name}`} 
+                      t={t}
+                      timestamp={dayjs(message.timestamp).format('HH:mm')}
+                      showSender={showSender}
+                    />
+                  )
+                })}
             </div>
           </div>
         </div>
