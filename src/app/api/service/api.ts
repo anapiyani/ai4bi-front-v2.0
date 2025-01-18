@@ -4,10 +4,16 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
 const axiosRefreshInstance = axios.create({
   baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
 axiosInstance.interceptors.request.use(
@@ -47,8 +53,8 @@ const refreshToken = async (): Promise<void> => {
     const refresh_token = getCookie('refresh_token');
     if (!refresh_token) throw new Error('No refresh token available');
 
-    const response = await axiosRefreshInstance.post('/user/refresh', {
-      refresh_token,
+    const response = await axiosRefreshInstance.post('/user/refresh/', {
+      refresh_token: refresh_token,
     });
 
     const { access_token, refresh_token: new_refresh_token } = response.data;
@@ -141,7 +147,7 @@ async function apiCall<T>(
       try {
         await refreshToken();
         return apiCall(method, url, data, config, retryCount + 1);
-      } catch (refreshError: any) {
+      } catch (refreshError: any) {  
         throw new Error(refreshError.response?.data?.message || refreshError.message);
       }
     }
