@@ -194,6 +194,7 @@ const handleMessagesReceived = (msgs: any[]) => {
 				const filtered = prev.filter((m) => !(m.pending && m.content === msg.content));
 				return [...filtered, newMsg];
 		});
+
     setConversations((prev) =>
       prev.map((c) => (c.id === newMsg.chat_id ? {
         ...c,
@@ -217,6 +218,10 @@ const handleMessagesReceived = (msgs: any[]) => {
         }
       } : c))
     );
+    if (msg.sender_id !== currentUser && !messages.some(m => m.id === msg.message_id)) {
+      const notificationAudio = new Audio('/assets/sounds/notification_fun.mp3');
+      notificationAudio.play();
+    }
   };
 
   // ---------------------------------------------------------------------------
