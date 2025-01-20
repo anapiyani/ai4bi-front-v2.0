@@ -20,21 +20,17 @@ export function useWebSocket(url: string): UseWebSocketReturn {
   const [lastMessage, setLastMessage] = useState<WebSocketMessage | null>(null);
 
   useEffect(() => {
-    // Grab token from localStorage (or wherever you store it)
     const token = getCookie('access_token')
     if (!token) {
       console.warn("[useWebSocket] No access token found; continuing without auth token...");
     }
 
-    // Create the WebSocket
     console.log("[useWebSocket] Creating WebSocket connection to:", url);
     const ws = new WebSocket(url);
 
     ws.onopen = () => {
       console.log("[useWebSocket] WebSocket connected");
       setIsConnected(true);
-
-      // Immediately send an auth message if we have a token
       if (token) {
         const authMsg = { type: "auth", token };
         console.log("[useWebSocket] Sending auth message:", authMsg);
@@ -46,7 +42,6 @@ export function useWebSocket(url: string): UseWebSocketReturn {
       try {
         const parsed = JSON.parse(event.data);
         console.log("[useWebSocket] Raw WebSocket message:", parsed);
-        // We'll treat everything as a valid message
         setLastMessage(parsed);
       } catch (err) { 
         console.error("[useWebSocket] Error parsing WebSocket message:", err);
@@ -59,15 +54,12 @@ export function useWebSocket(url: string): UseWebSocketReturn {
     };
 
     setSocket(ws);
-
-    // Cleanup when unmounting
     return () => {
       console.log("[useWebSocket] Closing WebSocket");
       ws.close();
     };
   }, [url]);
 
-  // Helper to send a message (as JSON)
   const sendMessage = useCallback(
     (msg: WebSocketMessage) => {
       if (!socket || !isConnected) {

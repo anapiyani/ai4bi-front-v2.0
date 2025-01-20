@@ -21,7 +21,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
   const searchParams = useSearchParams();
   const chatId = searchParams.get('id');
   
-  const users = useUsers(chatId || ""); // Move hook to the top level
+  const users = useUsers(chatId || "");
 
   const [userStream, setUserStream] = useState<MediaStream | null>(null);
 
@@ -48,7 +48,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
         <RenderUsers users={users} t={t} />
       </aside>
       <main className='w-full lg:w-2/3 mt-6 lg:mt-6 mx-4 lg:mr-6 rounded-lg bg-secondary min-h-[calc(100vh-8rem)] py-3 lg:py-3'>
-        {/* <ChatContent chatId={chatId || ""} selectedConversation={selectedConversation} messages={messages} /> */}
+        {/* <ChatContent chatId={chatId || ""} selectedConversation={selectedConversation} messages={messages} /> */} 
       </main>
     </div>
   );

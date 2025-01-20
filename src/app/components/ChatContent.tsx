@@ -42,6 +42,7 @@ const ChatContent = ({
     ) 
   }
 
+  // For use in future but not sure if we need it
   // const CHAT_STATUSES = {
   //   PLANNED_TECHNICAL_COUNCIL: 'planned_technical_council',
   //   PLANNED_AUCTION: 'planned_auction',
@@ -71,7 +72,7 @@ const ChatContent = ({
     <div className='flex flex-col w-full h-full'>
       <ChatHeader 
         title={title}
-        onClickAboutAuction={() => {}} // TODO: Implement auction details handler
+        onClickAboutAuction={() => {}}
         t={t} 
       />
       
@@ -82,8 +83,8 @@ const ChatContent = ({
               status={chat.chat_status as "planned_auction" | "planned_technical_council"} 
               date={chat.date} 
               time={chat.time} 
-              onRescheduleClick={() => {}} // TODO: Implement reschedule handler
-              onDeclineClick={() => {}} // TODO: Implement decline handler
+              onRescheduleClick={() => {}}
+              onDeclineClick={() => {}}
             />
           )} */}
 
@@ -111,7 +112,6 @@ const ChatContent = ({
               t={t} 
             />
           ))} */}
-          {/* TODO: Implement message fetching */}
           <div className='flex flex-col gap-2 px-4 py-2'>
             <div className='flex flex-col gap-2'>
             {messages

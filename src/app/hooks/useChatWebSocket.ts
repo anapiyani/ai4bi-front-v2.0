@@ -17,7 +17,6 @@ export const useChatWebSocket = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
 
-  // Keep these refs to handle auto-scrolling, etc.
   const scrollRef = useRef<HTMLDivElement>(null);
   const prevConversationRef = useRef<string | null>(null);
 
@@ -33,7 +32,7 @@ export const useChatWebSocket = () => {
       return;
     }
 
-    // --- (A) JSON-RPC response ---
+    // --- JSONRpc repsone ---
     if (message.jsonrpc === "2.0" && message.result) {
       // 1) A newly created/returned chat
       if (message.result.chat_id) {
@@ -43,7 +42,7 @@ export const useChatWebSocket = () => {
       } else if (message.result.message_id) {
         handleMessageReceived(message.result);
 
-      // 3) A list of chats
+      // 3) A list of chats or other shit
       } else if (Array.isArray(message.result)) {
         handleChatsReceived(message.result);
 
@@ -142,10 +141,7 @@ export const useChatWebSocket = () => {
       return prev;
     });
 
-    // Optional: auto-select it
     setSelectedConversation(data.chat_id);
-
-    // Optionally subscribe to the newly created chat
     subscribeToChatRoom(data.chat_id);
   };
 
@@ -166,7 +162,7 @@ export const useChatWebSocket = () => {
   // ---------------------------------------------------------------------------
 const handleMessagesReceived = (msgs: any[]) => {
   const transformedMessages: ChatMessage[] = msgs
-    .sort((a, b) => new Date(a.send_at).getTime() - new Date(b.send_at).getTime()) // Ensure chronological order
+    .sort((a, b) => new Date(a.send_at).getTime() - new Date(b.send_at).getTime()) 
     .map((message: any) => ({
       id: message.message_id,
       sender_first_name: message.sender_first_name,
@@ -196,9 +192,8 @@ const handleMessagesReceived = (msgs: any[]) => {
     // Remove any pending messages with the same content, then add the new message
 		setMessages((prev) => {
 				const filtered = prev.filter((m) => !(m.pending && m.content === msg.content));
-				return [...filtered, newMsg]; // Append to the end
+				return [...filtered, newMsg];
 		});
-    // Update lastMessage in the conversation list
     setConversations((prev) =>
       prev.map((c) => (c.id === newMsg.chat_id ? {
         ...c,
@@ -237,8 +232,6 @@ const handleMessagesReceived = (msgs: any[]) => {
       alert(`[handleNewParticipant] Chat ${chat_id} already exists.`);
       return;
     }
-
-    // Optionally, push a "system" style message
     setMessages((prev) => [
       ...prev,
       {
@@ -250,8 +243,6 @@ const handleMessagesReceived = (msgs: any[]) => {
         chat_id,
       },
     ]);
-
-    // Optionally add a new conversation
     const newChat: Conversation = {
       id: chat_id,
       name: `User ${user_id} Joined`,
@@ -275,11 +266,7 @@ const handleMessagesReceived = (msgs: any[]) => {
       },
     };
     setConversations((prev) => [...prev, newChat]);
-
-    // Auto-select
     setSelectedConversation(chat_id);
-
-    // Subscribe to the new chat room
     subscribeToChatRoom(chat_id);
   };
 
@@ -401,8 +388,6 @@ const handleMessagesReceived = (msgs: any[]) => {
     if (!selectedConversation || !newMessage.trim()) return;
     const rpcId = Date.now().toString();
     const content = newMessage.trim();
-
-    // Add a pending message to local state
     const pendingMsg: ChatMessage = {
       id: rpcId,
 			authorId: getCookie("user_id"),
@@ -414,7 +399,6 @@ const handleMessagesReceived = (msgs: any[]) => {
       chat_id: selectedConversation,
     };
     setMessages((prev) => {
-      // Remove any identical pending message
       const filtered = prev.filter((m) => !(m.pending && m.content === content));
       return [...filtered, pendingMsg];
     });
@@ -431,8 +415,6 @@ const handleMessagesReceived = (msgs: any[]) => {
       },
       id: rpcId,
     });
-
-    // Clear the input
     setNewMessage("");
   };
 

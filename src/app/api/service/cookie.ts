@@ -1,5 +1,3 @@
-
-
 export const setCookie = (name: string, value: string) => {
   if (typeof window !== 'undefined') {
     document.cookie = `${name}=${value}; path=/`;
