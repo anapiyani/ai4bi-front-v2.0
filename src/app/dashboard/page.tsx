@@ -6,9 +6,9 @@ import dynamic from 'next/dynamic'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { get } from '../api/service/api'
-import { getCookie, setCookie } from '../api/service/cookie'
+import { deleteCookie, getCookie, setCookie } from '../api/service/cookie'
 import { PopUpFactory } from '../components/ExitPopUps/ExitPopUps'
-import Header from '../components/Headers/Headers'  
+import Header from '../components/Headers/Headers'
 import { useAuthHeader } from '../hooks/useAuthHeader'
 import { activity_status, MyData } from '../types/types'
 
@@ -100,6 +100,9 @@ export default function Dashboard() {
         break
       case "chat":
         if (typeof window !== 'undefined') {
+          deleteCookie('access_token');
+          deleteCookie('refresh_token');
+          deleteCookie('user_id');
           window.location.href = 'https://bnect.pro/'
         }
         break

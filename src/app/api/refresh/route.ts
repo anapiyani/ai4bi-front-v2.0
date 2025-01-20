@@ -18,11 +18,11 @@ export async function POST(request: NextRequest) {
         response = await axios.post(`${API_URL}/user/refresh/`, {
           refresh_token,
         });
-        break; // Exit loop if the request is successful
+        break;
       } catch (error) {
         attempt++;
         if (attempt >= maxRetries) {
-          throw error; // Re-throw the error if max retries are reached
+          throw error;
         }
       }
     }

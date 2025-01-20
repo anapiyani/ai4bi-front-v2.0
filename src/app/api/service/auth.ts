@@ -16,7 +16,6 @@ export const refreshToken = async () => {
     setCookie('refresh_token', new_refresh_token);
     return response.data;
   } catch (error: any) {
-    // for now, just redirect to login!
     window.location.href = '/login';
   }
 };
