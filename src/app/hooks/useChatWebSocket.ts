@@ -20,6 +20,26 @@ export const useChatWebSocket = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const prevConversationRef = useRef<string | null>(null);
 
+  // **1. Create refs for audio instances**
+  const notificationAudioRef = useRef(new Audio('/assets/sounds/notification.mp3'));
+  const notification2AudioRef = useRef(new Audio('/assets/sounds/notification2.mp3'));
+
+  // **2. Preload audio files**
+  useEffect(() => {
+    notificationAudioRef.current.load();
+    notification2AudioRef.current.load();
+  }, []);
+
+  // **3. Create a ref for currentUser to access the latest value inside callbacks**
+  const currentUserRef = useRef<string | null>(currentUser);
+
+  useEffect(() => {
+    currentUserRef.current = currentUser;
+  }, [currentUser]);
+
+  // **4. Track sent message IDs to differentiate between your messages and others**
+  const sentMessageIdsRef = useRef<Set<string>>(new Set());
+
   // ---------------------------------------------------------------------------
   // handleWebSocketMessage
   // ---------------------------------------------------------------------------
@@ -32,7 +52,7 @@ export const useChatWebSocket = () => {
       return;
     }
 
-    // --- JSONRpc repsone ---
+    // --- JSONRpc response ---
     if (message.jsonrpc === "2.0" && message.result) {
       // 1) A newly created/returned chat
       if (message.result.chat_id) {
@@ -42,7 +62,7 @@ export const useChatWebSocket = () => {
       } else if (message.result.message_id) {
         handleMessageReceived(message.result);
 
-      // 3) A list of chats or other shit
+      // 3) A list of chats or other data
       } else if (Array.isArray(message.result)) {
         handleChatsReceived(message.result);
 
@@ -55,14 +75,14 @@ export const useChatWebSocket = () => {
 
     // --- (B) "subscribe" or "auth" confirmation ---
     if (message.type === "auth" || message.type === "subscribe") {
-      getChats(); // For now, re-fetch chats whenever we subscribe
+      getChats(); // Re-fetch chats whenever we subscribe
       return;
     }
 
     // --- (C) Real-time "message" type updates (new_chat, new_message, new_participant, etc.) ---
     if (message.type === "message") {
       if (message.event === "new_chat") {
-        // Possibly you want to handle a newly created chat
+        // Handle a newly created chat
         handleChatCreated({
           chat_id: message.data.id,
           name: message.data.user?.name || `Chat with ${message.data.id}`,
@@ -89,6 +109,23 @@ export const useChatWebSocket = () => {
           setConversations((prev) =>
             prev.map((c) => (c.id === chatId ? { ...c, lastMessage: msgData.content } : c))
           );
+          const isNotFromCurrentUser = String(message.data.message.sender_id) !== String(currentUserRef.current);
+          const isInDifferentChat = message.data.message.chat_id !== selectedConversation;
+      
+          console.log("isNotFromCurrentUser:", isNotFromCurrentUser);
+          console.log("isInDifferentChat:", isInDifferentChat);
+          console.log("Message Chat ID:", message.data.message.chat_id);
+          console.log("Selected Conversation:", selectedConversation);
+      
+          if (isNotFromCurrentUser && isInDifferentChat) {
+            notification2AudioRef.current.play().catch((error) => {
+              console.error("Failed to play notification2.mp3:", error);
+            });
+          }
+      
+          if (message.data.message.message_id) {
+            sentMessageIdsRef.current.delete(message.data.message.message_id);
+          }
         }
       } else if (message.event === "new_participant") {
         handleNewParticipant(message);
@@ -102,7 +139,7 @@ export const useChatWebSocket = () => {
       return;
     }
 
-    // --- (E) Fallback / unhandled
+    // --- (E) Fallback / unhandled ---
     console.log("[handleWebSocketMessage] Unhandled message:", message);
   };
 
@@ -115,23 +152,23 @@ export const useChatWebSocket = () => {
       id: data.chat_id,
       name: data.name || `Chat ${data.chat_id}`,
       lastMessage: {
-				chat_id: data.chat_id,
-				content: null,
-				counter: null,
-				deleted_at: null,
-				delivered_at: null,
-				edited_at: null,
-				is_deleted: false,
-				is_edited: false,
-				media_ids: null,
-				message_id: null,
-				reply_message_id: null,
-				send_at: null,
-				sender_first_name: null,
-				sender_id: null,
-				sender_last_name: null,
-				type: null
-			},
+        chat_id: data.chat_id,
+        content: null,
+        counter: null,
+        deleted_at: null,
+        delivered_at: null,
+        edited_at: null,
+        is_deleted: false,
+        is_edited: false,
+        media_ids: null,
+        message_id: null,
+        reply_message_id: null,
+        send_at: null,
+        sender_first_name: null,
+        sender_id: null,
+        sender_last_name: null,
+        type: null
+      },
     };
 
     setConversations((prev) => {
@@ -160,67 +197,87 @@ export const useChatWebSocket = () => {
   // ---------------------------------------------------------------------------
   // handleMessagesReceived
   // ---------------------------------------------------------------------------
-const handleMessagesReceived = (msgs: any[]) => {
-  const transformedMessages: ChatMessage[] = msgs
-    .sort((a, b) => new Date(a.send_at).getTime() - new Date(b.send_at).getTime()) 
-    .map((message: any) => ({
-      id: message.message_id,
-      sender_first_name: message.sender_first_name,
-      sender_last_name: message.sender_last_name,
-      content: message.content,
-      timestamp: message.send_at,
-      chat_id: message.chat_id,
-      authorId: message.sender_id,
-    }));
-  setMessages(transformedMessages);
-};
+  const handleMessagesReceived = (msgs: any[]) => {
+    const transformedMessages: ChatMessage[] = msgs
+      .sort((a, b) => new Date(a.send_at).getTime() - new Date(b.send_at).getTime()) 
+      .map((message: any) => ({
+        id: message.message_id,
+        sender_first_name: message.sender_first_name,
+        sender_last_name: message.sender_last_name,
+        content: message.content,
+        timestamp: message.send_at,
+        chat_id: message.chat_id,
+        authorId: message.sender_id,
+      }));
+    setMessages(transformedMessages);
+  };
 
   // ---------------------------------------------------------------------------
   // handleMessageReceived
   // ---------------------------------------------------------------------------
   const handleMessageReceived = (msg: any) => {
     const newMsg: ChatMessage = {
-    id: msg.message_id ? `${msg.message_id}-${msg.timestamp}-${Math.random()}` : Date.now().toString(),
-    sender_first_name: msg.sender_first_name,
-    sender_last_name: msg.sender_last_name,
-    content: msg.content,
-    timestamp: msg.timestamp || dayjs().toISOString(),
-    authorId: msg.authorId,
-    chat_id: msg.chat_id,
-  };
+      id: msg.message_id ? `${msg.message_id}-${msg.timestamp}-${Math.random()}` : Date.now().toString(),
+      sender_first_name: msg.sender_first_name,
+      sender_last_name: msg.sender_last_name,
+      content: msg.content,
+      timestamp: msg.timestamp || dayjs().toISOString(),
+      authorId: msg.authorId,
+      chat_id: msg.chat_id,
+    };
 
     // Remove any pending messages with the same content, then add the new message
-		setMessages((prev) => {
-				const filtered = prev.filter((m) => !(m.pending && m.content === msg.content));
-				return [...filtered, newMsg];
-		});
+    setMessages((prev) => {
+      const filtered = prev.filter((m) => !(m.pending && m.content === msg.content));
+      return [...filtered, newMsg];
+    });
 
     setConversations((prev) =>
-      prev.map((c) => (c.id === newMsg.chat_id ? {
-        ...c,
-        lastMessage: {
-          chat_id: newMsg.chat_id,
-          content: newMsg.content,
-          counter: null,
-          deleted_at: null, 
-          delivered_at: null,
-          edited_at: null,
-          is_deleted: false,
-          is_edited: false,
-          media_ids: null,
-          message_id: null,
-          reply_message_id: null,
-          send_at: null,
-          sender_first_name: null,
-          sender_id: null,
-          sender_last_name: null,
-          type: null
-        }
-      } : c))
+      prev.map((c) =>
+        c.id === newMsg.chat_id
+          ? {
+              ...c,
+              lastMessage: {
+                chat_id: newMsg.chat_id,
+                content: newMsg.content,
+                counter: null,
+                deleted_at: null,
+                delivered_at: null,
+                edited_at: null,
+                is_deleted: false,
+                is_edited: false,
+                media_ids: null,
+                message_id: null,
+                reply_message_id: null,
+                send_at: null,
+                sender_first_name: null,
+                sender_id: null,
+                sender_last_name: null,
+                type: null,
+              },
+            }
+          : c
+      )
     );
-    if (msg.sender_id !== currentUser && !messages.some(m => m.id === msg.message_id)) {
-      const notificationAudio = new Audio('/assets/sounds/notification_fun.mp3');
-      notificationAudio.play();
+
+    const isNotFromCurrentUser = String(msg.authorId) !== String(currentUserRef.current);
+    const isInDifferentChat = msg.chat_id !== selectedConversation;
+    const isSentMessage = sentMessageIdsRef.current.has(msg.id);
+
+    console.log("isNotFromCurrentUser:", isNotFromCurrentUser);
+    console.log("isInDifferentChat:", isInDifferentChat);
+    console.log("isSentMessage:", isSentMessage);
+    console.log("Message Chat ID:", newMsg.chat_id);
+    console.log("Selected Conversation:", selectedConversation);
+
+    if (isNotFromCurrentUser && isInDifferentChat && isSentMessage) {
+      notification2AudioRef.current.play().catch((error) => {
+        console.error("Failed to play notification2.mp3:", error);
+      });
+    }
+
+    if (isSentMessage) {
+      sentMessageIdsRef.current.delete(msg.id);
     }
   };
 
@@ -267,7 +324,7 @@ const handleMessagesReceived = (msgs: any[]) => {
         sender_first_name: null,
         sender_id: null,
         sender_last_name: null,
-        type: null
+        type: null,
       },
     };
     setConversations((prev) => [...prev, newChat]);
@@ -395,7 +452,7 @@ const handleMessagesReceived = (msgs: any[]) => {
     const content = newMessage.trim();
     const pendingMsg: ChatMessage = {
       id: rpcId,
-			authorId: getCookie("user_id"),
+      authorId: getCookie("user_id"),
       sender_first_name: "user",
       sender_last_name: "",
       content,
@@ -407,6 +464,8 @@ const handleMessagesReceived = (msgs: any[]) => {
       const filtered = prev.filter((m) => !(m.pending && m.content === content));
       return [...filtered, pendingMsg];
     });
+
+    sentMessageIdsRef.current.add(rpcId);
 
     // Send as JSON-RPC
     sendMessage({
@@ -421,9 +480,13 @@ const handleMessagesReceived = (msgs: any[]) => {
       id: rpcId,
     });
     setNewMessage("");
+
+    notificationAudioRef.current.play().catch((error) => {
+      console.error("Failed to play notification.mp3:", error);
+    });
   };
 
-   // ---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Subscribe/unsubscribe to specific chat rooms when selectedConversation changes
   // ---------------------------------------------------------------------------
   useEffect(() => {
@@ -445,6 +508,7 @@ const handleMessagesReceived = (msgs: any[]) => {
     const userId = getCookie("user_id");
     if (userId) {
       setCurrentUser(userId);
+      currentUserRef.current = userId; // Initialize ref
     }
   }, []);
 
@@ -500,7 +564,6 @@ const handleMessagesReceived = (msgs: any[]) => {
 
     return () => clearTimeout(scrollTimeout);
   }, [messages, selectedConversation]);
-
 
   return {
     // WebSocket states
