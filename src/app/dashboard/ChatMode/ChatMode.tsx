@@ -70,6 +70,7 @@ const ChatMode = () => {
     }
   }, [chatId, setSelectedConversation]);
 
+  // For use in future
   // const activeData = EXAMPLE_DATA.map(item => ({
   //   ...item,
   //   active: item.id === chatId
@@ -81,8 +82,6 @@ const ChatMode = () => {
   //   handleItemClick,
   //   t
   // });
-
-  console.log(messages)
 
   return (
     <div className="w-full flex flex-col lg:flex-row bg-primary-foreground justify-center">
@@ -154,7 +153,8 @@ const ChatMode = () => {
                 </motion.div>
               ))}
             </div>
-            {/* {CHAT_TABS.map((tab) => (
+            {/* for use in future 
+            {CHAT_TABS.map((tab) => (
               <TabsContent 
                 key={tab.value} 
                 value={tab.value}
