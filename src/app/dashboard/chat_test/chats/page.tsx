@@ -26,9 +26,8 @@ import { getCookie } from '@/src/app/api/service/cookie'
 import { ChatMessage, Conversation } from '@/src/app/types/types'
 import dayjs from "dayjs"
 import { MessageCircle, Search, Send, UserPlus } from "lucide-react"
-
 // Point this to your actual server
-const WS_URL = "wss://cattle-giving-commonly.ngrok-free.app/ws/";
+const WS_URL = process.env.NEXT_PUBLIC_WS_URL || "ws://staging.ai4bi.kz/ws/";
 
 export default function WebSocketChat() {
   const { sendMessage, isConnected, lastMessage } = useWebSocket(WS_URL);

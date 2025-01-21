@@ -6,7 +6,7 @@ import { getCookie } from '../api/service/cookie'
 import { useWebSocket } from '../api/service/useWebSocket'
 import { ChatMessage, Conversation } from '../types/types'
 
-const WS_URL = "wss://cattle-giving-commonly.ngrok-free.app/ws/";
+const WS_URL = "wss://staging.ai4bi.kz/ws/";
 
 export const useChatWebSocket = () => {
   const { sendMessage, isConnected, lastMessage } = useWebSocket(WS_URL);
