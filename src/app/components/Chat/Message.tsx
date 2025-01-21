@@ -21,11 +21,9 @@ interface MessageProps {
   showSender: boolean;
   handleOpenDeleteMessage: (messageId: string) => void;
   messageId: string;
-
-  // NEW: For replying
   handleReplyClick?: () => void;
-
-  // Optionally show the snippet we’re replying to
+  reply_message_id: string | null;
+  goToMessage: (messageId: string) => void;
   replyToMessage?: {
     sender: string;
     content: string;
@@ -41,12 +39,14 @@ const Message = ({
   handleOpenDeleteMessage,
   messageId,
   handleReplyClick,
+  reply_message_id,
   replyToMessage,
+  goToMessage,
 }: MessageProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const user_role = getCookie("role");
   const isAdmin = user_role === "admin";
-  const isOwner = sender === "user"; 
+  const isOwner = sender === "user";
 
   const isBot = sender === "bot";
   const isUser = sender === "user";
@@ -58,7 +58,7 @@ const Message = ({
       label: t("reply"),
       show: true,
       action: () => {
-        if (handleReplyClick) handleReplyClick()
+        if (handleReplyClick) handleReplyClick();
       },
     },
     {
@@ -125,6 +125,7 @@ const Message = ({
 
   return (
     <div
+      id={`message-${messageId}`} 
       className={`flex flex-col gap-2 p-1 ${
         isUser ? "w-full flex justify-end" : ""
       } ${
@@ -137,7 +138,7 @@ const Message = ({
         <div className="flex items-center gap-2">
           {!isUser && <div className={avatarClasses}>{avatarText}</div>}
           <p
-            className={`text-sm font-medium text-muted-foreground cursor-pointer ${
+            className={`text-base font-medium text-muted-foreground cursor-pointer ${
               isUser ? "ml-auto" : ""
             }`}
           >
@@ -151,7 +152,10 @@ const Message = ({
         <div className={messageClasses}>
           <ContextMenuTrigger>
             {replyToMessage && (
-              <div className="mb-1 border-l-2 border-gray-300 pl-2 text-xs text-muted-foreground italic">
+              <div
+                onClick={() => reply_message_id && goToMessage(reply_message_id)}
+                className="mb-1 border-l-2 border-gray-300 pl-2 text-sm text-muted-foreground italic cursor-pointer hover:underline"
+              >
                 {t("reply-to")}: {replyToMessage.sender} – “{replyToMessage.content.slice(0, 30)}…”
               </div>
             )}
