@@ -81,7 +81,7 @@ export default function Dashboard() {
     if (typeof window === 'undefined' || !userData) return
     try {
       setCookie('user_id', userData.uuid)
-      
+      setCookie('role', userData.role)
       if (!getCookie('access_token')) {
         window.location.href = '/login'
       }
