@@ -82,7 +82,17 @@
 		"turn-off-microphone": "Микрофонды өшіру",
 		"delete": "Жою",
 		"chat": "Чат",
-		"no-messages-yet": "Жаңа хабарлама жоқ"
+		"no-messages-yet": "Жаңа хабарлама жоқ",
+		"private-chats": "Жеке хабарламалар",
+		"pin": "Қою",
+		"edit": "Өзгерту",
+		"reply": "Жауап беру",
+		"forward": "Жіберу",
+		"action-cannot-be-undone": "Бұл әрекетті қайтару мүмкін емес.",
+		"are-you-sure-you-want-to-delete-this-message": "Сіз мұны жойғыңыз келетініне сенімдісіз бе?",
+		"cancel": "Бас тарту",
+		"message-deleted": "Хабарлама жойылды",
+		"reply-to": "Жауап беру"
 	}
 }
 

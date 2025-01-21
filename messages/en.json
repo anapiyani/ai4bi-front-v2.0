@@ -82,7 +82,17 @@
 		"turn-off-microphone": "Turn off microphone",
 		"delete": "Delete",
 		"chat": "Chat",
-		"no-messages-yet": "No messages yet"
+		"no-messages-yet": "No messages yet",
+		"private-chats": "Private chats",
+		"pin": "Pin",
+		"edit": "Edit",
+		"reply": "Reply",
+		"forward": "Forward",
+		"action-cannot-be-undone": "This action cannot be undone.",
+		"are-you-sure-you-want-to-delete-this-message": "Are you sure you want to delete this message?",
+		"cancel": "Cancel",
+		"message-deleted": "Message deleted",
+		"reply-to": "Reply to"
 	}
 }
 

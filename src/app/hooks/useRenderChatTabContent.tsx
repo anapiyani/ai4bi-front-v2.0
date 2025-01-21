@@ -18,7 +18,7 @@ const useRenderChatTabContent = ({status, data, handleItemClick, t}: UseRenderCh
   return (
     <div className="flex flex-col gap-2">
       {filteredData.map((item, index) => (
-        <ChatListItem key={item.id || index} data={item} onClick={() => handleItemClick(item.id)} />
+        <ChatListItem key={item.id || index} data={item} onClick={() => handleItemClick(item.id)} isSelected={false} index={index} />
       ))}
       {filteredData.length === 0 && (
         <div className="mt-4">
