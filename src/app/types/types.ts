@@ -79,3 +79,8 @@ export type ChatMessage = {
   chat_id?: string;
 	reply_to?: string | null;
 }
+
+export type EditMessage = {
+  id: string;
+  content: string;
+}

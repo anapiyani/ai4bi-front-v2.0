@@ -104,9 +104,7 @@ export const useChatWebSocket = () => {
           };
           handleMessageReceived(formattedMessage);
         } 
-        // If it's in the chat_updates channel...
         else if (message.channel?.startsWith("chat_updates")) {
-          // Update lastMessage in conversation list
           setConversations((prev) =>
             prev.map((c) => (c.id === chatId ? { ...c, lastMessage: msgData.content } : c))
           );
@@ -506,6 +504,24 @@ export const useChatWebSocket = () => {
   };
 
   // ---------------------------------------------------------------------------
+  // handleEditMessage
+  // ---------------------------------------------------------------------------
+  const sendEditMessage = (message: ChatMessage) => {
+    if (!selectedConversation) return;
+    const rpcId = Date.now().toString();
+    sendMessage({
+      jsonrpc: "2.0",
+      method: "editMessage",
+      id: rpcId,
+      params: {
+        message_id: message.id,
+        chat_id: selectedConversation,
+        content: message.content,
+      },
+    });
+  };
+
+  // ---------------------------------------------------------------------------
   // Subscribe/unsubscribe to specific chat rooms when selectedConversation changes
   // ---------------------------------------------------------------------------
   useEffect(() => {
@@ -611,5 +627,6 @@ export const useChatWebSocket = () => {
     getChats,
     getChatMessages,
     deleteMessage,
+    sendEditMessage,
   };
 };

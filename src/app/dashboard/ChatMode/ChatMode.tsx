@@ -29,7 +29,7 @@ const ChatMode = () => {
     newMessage,
     sendChatMessage,
     scrollRef,
-    deleteMessage
+    deleteMessage,
   } = useChatWebSocket();
 
   const handleItemClick = (id: string) => {
@@ -81,6 +81,7 @@ const ChatMode = () => {
               <TabsList className="grid grid-cols-2 md:grid-cols-4 lg:flex lg:flex-row gap-2 lg:gap-0 mb-4">
                 {CHAT_TABS.map((tab, index) => (
                   <motion.div
+                    key={tab.value}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: index * 0.1 }}
