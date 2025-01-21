@@ -17,51 +17,48 @@ interface MessageProps {
   message: string;
   sender: Sender;
   t: (key: string) => string;
-  sender_id: string | null;
   timestamp: string;
   showSender: boolean;
   handleOpenDeleteMessage: (messageId: string) => void;
   messageId: string;
+
+  // NEW: For replying
   handleReplyClick?: () => void;
-  reply_message_id: string | null;
-  goToMessage: (messageId: string) => void;
+
+  // Optionally show the snippet we’re replying to
   replyToMessage?: {
     sender: string;
     content: string;
   } | null;
-  createPrivateChat: (userId: string) => void;
 }
 
 const Message = ({
   message,
   sender,
   t,
-  sender_id,
   timestamp,
   showSender,
   handleOpenDeleteMessage,
   messageId,
   handleReplyClick,
-  reply_message_id,
   replyToMessage,
-  goToMessage,
-  createPrivateChat,
 }: MessageProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const user_role = getCookie("role");
   const isAdmin = user_role === "admin";
-  const isOwner = sender === "user";
+  const isOwner = sender === "user"; 
 
   const isBot = sender === "bot";
   const isUser = sender === "user";
 
+  // Build context menu items
   const contextMenuItems = [
     {
       icon: Icons.Reply,
       label: t("reply"),
       show: true,
       action: () => {
-        if (handleReplyClick) handleReplyClick();
+        if (handleReplyClick) handleReplyClick()
       },
     },
     {
@@ -128,7 +125,6 @@ const Message = ({
 
   return (
     <div
-      id={`message-${messageId}`} 
       className={`flex flex-col gap-2 p-1 ${
         isUser ? "w-full flex justify-end" : ""
       } ${
@@ -141,15 +137,9 @@ const Message = ({
         <div className="flex items-center gap-2">
           {!isUser && <div className={avatarClasses}>{avatarText}</div>}
           <p
-            className={`text-base font-medium text-muted-foreground cursor-pointer ${
+            className={`text-sm font-medium text-muted-foreground cursor-pointer ${
               isUser ? "ml-auto" : ""
             }`}
-            onClick={() => {
-              if (!isUser && sender_id) {
-                console.log("Creating private chat with user:", sender_id);
-                createPrivateChat(sender_id);
-              }
-            }}
           >
             {senderName}
           </p>
@@ -161,10 +151,7 @@ const Message = ({
         <div className={messageClasses}>
           <ContextMenuTrigger>
             {replyToMessage && (
-              <div
-                onClick={() => reply_message_id && goToMessage(reply_message_id)}
-                className="mb-1 border-l-2 border-gray-300 pl-2 text-sm text-muted-foreground italic cursor-pointer hover:underline"
-              >
+              <div className="mb-1 border-l-2 border-gray-300 pl-2 text-xs text-muted-foreground italic">
                 {t("reply-to")}: {replyToMessage.sender} – “{replyToMessage.content.slice(0, 30)}…”
               </div>
             )}
