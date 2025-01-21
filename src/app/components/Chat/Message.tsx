@@ -17,6 +17,7 @@ interface MessageProps {
   message: string;
   sender: Sender;
   t: (key: string) => string;
+  sender_id: string | null;
   timestamp: string;
   showSender: boolean;
   handleOpenDeleteMessage: (messageId: string) => void;
@@ -28,12 +29,14 @@ interface MessageProps {
     sender: string;
     content: string;
   } | null;
+  createPrivateChat: (userId: string) => void;
 }
 
 const Message = ({
   message,
   sender,
   t,
+  sender_id,
   timestamp,
   showSender,
   handleOpenDeleteMessage,
@@ -42,6 +45,7 @@ const Message = ({
   reply_message_id,
   replyToMessage,
   goToMessage,
+  createPrivateChat,
 }: MessageProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const user_role = getCookie("role");
@@ -51,7 +55,6 @@ const Message = ({
   const isBot = sender === "bot";
   const isUser = sender === "user";
 
-  // Build context menu items
   const contextMenuItems = [
     {
       icon: Icons.Reply,
@@ -141,6 +144,12 @@ const Message = ({
             className={`text-base font-medium text-muted-foreground cursor-pointer ${
               isUser ? "ml-auto" : ""
             }`}
+            onClick={() => {
+              if (!isUser && sender_id) {
+                console.log("Creating private chat with user:", sender_id);
+                createPrivateChat(sender_id);
+              }
+            }}
           >
             {senderName}
           </p>

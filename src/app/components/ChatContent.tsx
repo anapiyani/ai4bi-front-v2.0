@@ -21,6 +21,7 @@ interface ChatContentProps {
   sendChatMessage: (reply?: ChatMessage | null) => void;
   scrollRef: React.RefObject<HTMLDivElement>;
   handleOpenDeleteMessage: (messageId: string) => void;
+  createPrivateChat: (userId: string) => void;
 }
 
 const ChatContent = ({
@@ -34,6 +35,7 @@ const ChatContent = ({
   sendChatMessage,
   scrollRef,
   handleOpenDeleteMessage,
+  createPrivateChat,
 }: ChatContentProps) => {
   const t = useTranslations("dashboard");
   const [openRescheduleModal, setOpenRescheduleModal] = useState<boolean>(false);
@@ -94,7 +96,9 @@ const ChatContent = ({
                   return (
                     <Message
                       key={message.id}
+                      sender_id={message.authorId || null}
                       goToMessage={goToMessage} 
+                      createPrivateChat={createPrivateChat}
                       message={message.content}
                       sender={
                         (message.authorId &&
