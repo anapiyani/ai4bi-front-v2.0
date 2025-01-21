@@ -77,4 +77,5 @@ export type ChatMessage = {
   pending?: boolean;
   authorId?: string | null;
   chat_id?: string;
+	reply_to?: string | null;
 }

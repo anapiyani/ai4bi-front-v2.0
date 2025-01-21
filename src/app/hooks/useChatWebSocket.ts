@@ -100,6 +100,7 @@ export const useChatWebSocket = () => {
             content: msgData.content,
             timestamp: msgData.timestamp || dayjs().toISOString(),
             authorId: msgData.sender_id,
+            reply_message_id: msgData.reply_message_id,
           };
           handleMessageReceived(formattedMessage);
         } 
@@ -214,14 +215,19 @@ export const useChatWebSocket = () => {
   // handleMessageReceived
   // ---------------------------------------------------------------------------
   const handleMessageReceived = (msg: any) => {
+    const realId = msg.message_id || Date.now().toString();
+    const replyId = msg.reply_message_id || msg.reply_to || null;
+
+
     const newMsg: ChatMessage = {
-      id: msg.message_id ? `${msg.message_id}-${msg.timestamp}-${Math.random()}` : Date.now().toString(),
+      id: realId,
+      chat_id: msg.chat_id,
+      authorId: msg.authorId,
       sender_first_name: msg.sender_first_name,
       sender_last_name: msg.sender_last_name,
       content: msg.content,
       timestamp: msg.timestamp || dayjs().toISOString(),
-      authorId: msg.authorId,
-      chat_id: msg.chat_id,
+      reply_to: replyId,
     };
 
     // Remove any pending messages with the same content, then add the new message
@@ -246,7 +252,7 @@ export const useChatWebSocket = () => {
                 is_edited: false,
                 media_ids: null,
                 message_id: null,
-                reply_message_id: null,
+                reply_message_id: newMsg.id,
                 send_at: null,
                 sender_first_name: null,
                 sender_id: null,
@@ -439,8 +445,9 @@ export const useChatWebSocket = () => {
   // ---------------------------------------------------------------------------
   // sendChatMessage
   // ---------------------------------------------------------------------------
-  const sendChatMessage = () => {
+  const sendChatMessage = (reply?: ChatMessage | null) => {
     if (!selectedConversation || !newMessage.trim()) return;
+    const replyId = reply?.id ?? null;
     const rpcId = Date.now().toString();
     const content = newMessage.trim();
     const pendingMsg: ChatMessage = {
@@ -452,6 +459,7 @@ export const useChatWebSocket = () => {
       timestamp: dayjs().toISOString(),
       pending: true,
       chat_id: selectedConversation,
+      reply_to: replyId,
     };
     setMessages((prev) => {
       const filtered = prev.filter((m) => !(m.pending && m.content === content));
@@ -468,12 +476,12 @@ export const useChatWebSocket = () => {
         chat_id: selectedConversation,
         content,
         media: [],
+        reply_to: replyId,
         timestamp: dayjs().toISOString(),
       },
       id: rpcId,
     });
     setNewMessage("");
-
     notificationAudioRef.current.play().catch((error) => {
       console.error("Failed to play notification.mp3:", error);
     });

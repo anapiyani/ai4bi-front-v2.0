@@ -91,7 +91,8 @@
 		"action-cannot-be-undone": "Бұл әрекетті қайтару мүмкін емес.",
 		"are-you-sure-you-want-to-delete-this-message": "Сіз мұны жойғыңыз келетініне сенімдісіз бе?",
 		"cancel": "Бас тарту",
-		"message-deleted": "Хабарлама жойылды"
+		"message-deleted": "Хабарлама жойылды",
+		"reply-to": "Жауап беру"
 	}
 }
 

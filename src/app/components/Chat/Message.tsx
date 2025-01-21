@@ -10,6 +10,7 @@ import React, { useState } from "react"
 import { getCookie } from "../../api/service/cookie"
 import Icons from "../Icons"
 
+// Reuse your "Sender" and chat message interface as needed
 type Sender = "bot" | "user" | string;
 
 interface MessageProps {
@@ -20,6 +21,15 @@ interface MessageProps {
   showSender: boolean;
   handleOpenDeleteMessage: (messageId: string) => void;
   messageId: string;
+
+  // NEW: For replying
+  handleReplyClick?: () => void;
+
+  // Optionally show the snippet we’re replying to
+  replyToMessage?: {
+    sender: string;
+    content: string;
+  } | null;
 }
 
 const Message = ({
@@ -30,6 +40,8 @@ const Message = ({
   showSender,
   handleOpenDeleteMessage,
   messageId,
+  handleReplyClick,
+  replyToMessage,
 }: MessageProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const user_role = getCookie("role");
@@ -39,12 +51,15 @@ const Message = ({
   const isBot = sender === "bot";
   const isUser = sender === "user";
 
+  // Build context menu items
   const contextMenuItems = [
     {
       icon: Icons.Reply,
       label: t("reply"),
       show: true,
-      action: () => {},
+      action: () => {
+        if (handleReplyClick) handleReplyClick()
+      },
     },
     {
       icon: Icons.Forward,
@@ -135,7 +150,13 @@ const Message = ({
       <ContextMenu onOpenChange={(open) => setIsMenuOpen(open)}>
         <div className={messageClasses}>
           <ContextMenuTrigger>
+            {replyToMessage && (
+              <div className="mb-1 border-l-2 border-gray-300 pl-2 text-xs text-muted-foreground italic">
+                {t("reply-to")}: {replyToMessage.sender} – “{replyToMessage.content.slice(0, 30)}…”
+              </div>
+            )}
             <p className={textClasses}>{message}</p>
+
             <div className="flex justify-end">
               <p className="text-[10px] text-muted-foreground flex items-center gap-1">
                 {timestamp} <Icons.Checks />

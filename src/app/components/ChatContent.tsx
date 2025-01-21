@@ -5,6 +5,7 @@ import dayjs from 'dayjs'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { getCookie } from '../api/service/cookie'
+import { ChatMessage } from '../types/types'
 import Message from './Chat/Message'
 import MessageInput from './Chat/MessageInput'
 import ChangeDates from './Form/ChangeDates'
@@ -32,16 +33,23 @@ const ChatContent = ({
   setNewMessage,
   sendChatMessage,
   scrollRef,
-  handleOpenDeleteMessage
+  handleOpenDeleteMessage,
+
 }: ChatContentProps) => {
   const t = useTranslations('dashboard')
   const [openRescheduleModal, setOpenRescheduleModal] = useState<boolean>(false);
+  const [replyTo, setReplyTo] = useState<ChatMessage | null>(null)
+  
   if (!chatId) {
     return (
       <div className='flex justify-center items-center h-full mt-5'>
         <p className='text-secondary-foreground text-base font-semibold'>{t('select-chat')}</p>
       </div>
     ) 
+  }
+
+  const handleReplyClick = (message: ChatMessage) => {
+    setReplyTo(message)
   }
 
   return (
@@ -82,6 +90,17 @@ const ChatContent = ({
                       timestamp={dayjs(message.timestamp).format('HH:mm')}
                       showSender={showSender}
                       handleOpenDeleteMessage={handleOpenDeleteMessage}
+                      handleReplyClick={() => handleReplyClick(message)}
+                      replyToMessage={(() => {
+                        if (!message.reply_to) return null;
+                        const original = messages.find(m => m.id === message.reply_to);
+                        return original
+                          ? {
+                              sender: original.sender_first_name,
+                              content: original.content
+                            }
+                          : null;
+                      })()}
                     />
                   )
                 })}
@@ -95,6 +114,8 @@ const ChatContent = ({
             setNewMessage={setNewMessage}
             isConnected={isConnected}
             sendChatMessage={sendChatMessage}
+            replyTo={replyTo}
+            setReplyTo={setReplyTo}
           />
         </div>
       </div>

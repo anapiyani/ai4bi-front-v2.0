@@ -45,7 +45,6 @@ const ChatMode = () => {
   const handleOpenDeleteMessage = (messageId: string) => {
     setIsDeleteMessageOpen(true);
     setMessageId(messageId);
-    console.log(messageId);
   }
 
   const handleDeleteMessage = () => {
