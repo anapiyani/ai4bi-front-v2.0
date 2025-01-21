@@ -22,3 +22,8 @@ body {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+.highlight {
+  background-color: #0E749040;
+  transition: background-color 0.5s ease;
+}
