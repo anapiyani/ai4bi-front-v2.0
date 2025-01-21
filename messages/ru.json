@@ -80,9 +80,18 @@
 		"absent": "Отсутствует",
 		"call-again": "Пригласить повторно",
 		"turn-off-microphone": "Отключить микрофон",
-		"delete": "Удалить",
 		"chat": "Чат",
-		"no-messages-yet": "Нет сообщений"
+		"no-messages-yet": "Нет сообщений",
+		"private-chats": "Личные сообщения",
+		"pin": "Закрепить",
+		"edit": "Редактировать",
+		"reply": "Ответить",
+		"forward": "Переслать",
+		"delete": "Удалить",
+		"action-cannot-be-undone": "Это действие невозможно отменить.",
+		"are-you-sure-you-want-to-delete-this-message": "Вы уверены, что хотите удалить это?",
+		"cancel": "Отмена",
+		"message-deleted": "Сообщение удалено"
 	}
 }
 

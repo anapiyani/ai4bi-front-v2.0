@@ -47,6 +47,7 @@ export type MyData = {
 export type Conversation = {
   id: string;
   name: string;
+  chat_type: "private" | "auction_chat";
   lastMessage: {
 		chat_id: string | null;
 		content: string | null;

@@ -112,11 +112,6 @@ export const useChatWebSocket = () => {
           const isNotFromCurrentUser = String(message.data.message.sender_id) !== String(currentUserRef.current);
           const isInDifferentChat = message.data.message.chat_id !== selectedConversation;
       
-          console.log("isNotFromCurrentUser:", isNotFromCurrentUser);
-          console.log("isInDifferentChat:", isInDifferentChat);
-          console.log("Message Chat ID:", message.data.message.chat_id);
-          console.log("Selected Conversation:", selectedConversation);
-      
           if (isNotFromCurrentUser && isInDifferentChat) {
             notification2AudioRef.current.play().catch((error) => {
               console.error("Failed to play notification2.mp3:", error);
@@ -151,6 +146,7 @@ export const useChatWebSocket = () => {
     const newChat: Conversation = {
       id: data.chat_id,
       name: data.name || `Chat ${data.chat_id}`,
+      chat_type: data.chat_type,
       lastMessage: {
         chat_id: data.chat_id,
         content: null,
@@ -186,10 +182,12 @@ export const useChatWebSocket = () => {
   // handleChatsReceived
   // ---------------------------------------------------------------------------
   const handleChatsReceived = (chats: any[]) => {
+    console.log("[handleChatsReceived] Chats received:", chats);
     const transformed = chats.map((chat) => ({
       id: chat.chat_id,
       name: chat.name || `Chat ${chat.chat_id}`,
       lastMessage: chat.last_message || "",
+      chat_type: chat.chat_type,
     }));
     setConversations(transformed);
   };
@@ -264,12 +262,6 @@ export const useChatWebSocket = () => {
     const isInDifferentChat = msg.chat_id !== selectedConversation;
     const isSentMessage = sentMessageIdsRef.current.has(msg.id);
 
-    console.log("isNotFromCurrentUser:", isNotFromCurrentUser);
-    console.log("isInDifferentChat:", isInDifferentChat);
-    console.log("isSentMessage:", isSentMessage);
-    console.log("Message Chat ID:", newMsg.chat_id);
-    console.log("Selected Conversation:", selectedConversation);
-
     if (isNotFromCurrentUser && isInDifferentChat && isSentMessage) {
       notification2AudioRef.current.play().catch((error) => {
         console.error("Failed to play notification2.mp3:", error);
@@ -308,6 +300,7 @@ export const useChatWebSocket = () => {
     const newChat: Conversation = {
       id: chat_id,
       name: `User ${user_id} Joined`,
+      chat_type: "auction_chat",
       lastMessage: {
         chat_id: chat_id,
         content: `User ${user_id} joined the chat`,
@@ -487,6 +480,24 @@ export const useChatWebSocket = () => {
   };
 
   // ---------------------------------------------------------------------------
+  // deleteMessage
+  // ---------------------------------------------------------------------------
+  const deleteMessage = (messageId: string) => {
+    if (!selectedConversation) return;
+    const rpcId = Date.now().toString();
+    sendMessage({
+      jsonrpc: "2.0",
+      method: "deleteMessage",
+      id: rpcId,
+      params: {
+        message_id: messageId,
+        chat_id: selectedConversation,
+      },
+    });
+    setMessages((prev) => prev.filter((m) => m.id !== messageId));
+  };
+
+  // ---------------------------------------------------------------------------
   // Subscribe/unsubscribe to specific chat rooms when selectedConversation changes
   // ---------------------------------------------------------------------------
   useEffect(() => {
@@ -591,5 +602,6 @@ export const useChatWebSocket = () => {
     addAuctionChatParticipant,
     getChats,
     getChatMessages,
+    deleteMessage,
   };
 };

@@ -62,11 +62,11 @@ const config = {
           foreground: "#64748B",
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
+          DEFAULT: "#F1F5F9",
           foreground: "hsl(var(--accent-foreground))",
         },
         popover: {
-          DEFAULT: "hsl(var(--popover))",
+          DEFAULT: "#FFFFFF",
           foreground: "hsl(var(--popover-foreground))",
         },
         card: {

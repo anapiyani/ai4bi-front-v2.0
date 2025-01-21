@@ -144,6 +144,7 @@ export default function WebSocketChat() {
     const newChat: Conversation = {
       id: data.chat_id,
       name: data.name || `Chat ${data.chat_id}`,
+      chat_type: data.chat_type,
       lastMessage: {
 				chat_id: data.chat_id,
 				content: null,
@@ -189,6 +190,7 @@ export default function WebSocketChat() {
       id: chat.chat_id,
       name: chat.name || `Chat with ${chat.chat_id}`,
       lastMessage: chat.last_message || "",
+      chat_type: chat.chat_type,
     }));
     
     setConversations(transformedChats);
@@ -274,6 +276,7 @@ export default function WebSocketChat() {
     const newChat: Conversation = {
       id: chat_id,
       name: `User ${user_id} Joined`,
+      chat_type: "auction_chat",
       lastMessage: {
         chat_id: chat_id,
         content: `User ${user_id} joined the chat`,

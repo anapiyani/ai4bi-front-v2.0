@@ -1,92 +1,161 @@
-"use client"
+"use client";
 
-import React from 'react'
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu"
+import React, { useState } from "react"
+import { getCookie } from "../../api/service/cookie"
+import Icons from "../Icons"
 
-type Sender = 'bot' | 'user' | string;
+type Sender = "bot" | "user" | string;
 
 interface MessageProps {
   message: string;
   sender: Sender;
-  t: (key: string) => string; // i18n translator
+  t: (key: string) => string;
   timestamp: string;
-  showSender: boolean; // New prop to control sender visibility
+  showSender: boolean;
+  handleOpenDeleteMessage: (messageId: string) => void;
+  messageId: string;
 }
 
-const Message = ({ message, sender, t, timestamp, showSender }: MessageProps) => {
-  const isBot = sender === 'bot';
-  const isUser = sender === 'user';
+const Message = ({
+  message,
+  sender,
+  t,
+  timestamp,
+  showSender,
+  handleOpenDeleteMessage,
+  messageId,
+}: MessageProps) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const user_role = getCookie("role");
+  const isAdmin = user_role === "admin";
+  const isOwner = sender === "user"; 
 
-  // 1) Make a short text for the avatar
+  const isBot = sender === "bot";
+  const isUser = sender === "user";
+
+  const contextMenuItems = [
+    {
+      icon: Icons.Reply,
+      label: t("reply"),
+      show: true,
+      action: () => {},
+    },
+    {
+      icon: Icons.Forward,
+      label: t("forward"),
+      show: true,
+      action: () => {},
+    },
+    {
+      icon: Icons.Pin,
+      label: t("pin"),
+      show: isAdmin,
+      action: () => {},
+    },
+    {
+      icon: Icons.Edit,
+      label: t("edit"),
+      show: isOwner,
+      action: () => {},
+    },
+    {
+      icon: Icons.Delete,
+      label: t("delete"),
+      show: isAdmin || isOwner,
+      action: () => {
+        handleOpenDeleteMessage(messageId);
+      },
+    },
+  ].filter((item) => item.show);
+
   const avatarText = React.useMemo(() => {
     if (isBot) {
-      return t('aray-bot').slice(0, 2).toUpperCase();
+      return t("aray-bot").slice(0, 2).toUpperCase();
     } else if (isUser) {
-      return t('you').slice(0, 2).toUpperCase();
-    } else if (typeof sender === 'string') {
-      const nameParts = sender.split(' ');
-      const initials = nameParts.length >= 2 
-        ? `${nameParts[0][0]}${nameParts[1][0]}`
-        : `${nameParts[0][0]}`;
+      return t("you").slice(0, 2).toUpperCase();
+    } else if (typeof sender === "string") {
+      const nameParts = sender.split(" ");
+      const initials =
+        nameParts.length >= 2
+          ? `${nameParts[0][0]}${nameParts[1][0]}`
+          : `${nameParts[0][0]}`;
       return initials.toUpperCase();
     }
-    return '?';
+    return "?";
   }, [sender, t, isBot, isUser]);
 
-  // 2) Full name label
-  const senderName = isBot ? t('aray-bot') : isUser ? t('you') : sender;
+  const senderName = isBot ? t("aray-bot") : isUser ? t("you") : sender;
 
-  // 3) Avatar styles
   const avatarClasses = `w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-    isBot ? 'bg-primary text-white' : 'bg-input text-secondary-foreground'
+    isBot ? "bg-primary text-white" : "bg-input text-secondary-foreground"
   }`;
 
-  // 4) Bubble classes
-  const messageClasses = `flex flex-col p-2 rounded-lg w-fit max-w-md ${
+  const messageClasses = `flex flex-col p-2 rounded-lg w-fit min-w-[100px] ${
     isBot
-      ? 'bg-gradient-to-r from-[#0284C7] to-[#77BAAA]'
+      ? "bg-gradient-to-r from-[#0284C7] to-[#77BAAA]"
       : isUser
-      ? 'bg-input ml-auto'
-      : 'bg-primary-foreground'
-  }`;  
+      ? "bg-input ml-auto"
+      : "bg-primary-foreground"
+  }`;
 
-  const textClasses = `text-sm font-normal px-2 text-start text-wrap break-words ${
-    isBot ? 'text-white' : 'text-secondary-foreground'
+  const textClasses = `text-sm font-normal px-2 text-start text-wrap break-words max-w-md ${
+    isBot ? "text-white" : "text-secondary-foreground"
   }`;
 
   return (
-    <div className={`flex flex-col gap-2 ${isUser ? 'w-full flex justify-end' : ''}`}>
+    <div
+      className={`flex flex-col gap-2 p-1 ${
+        isUser ? "w-full flex justify-end" : ""
+      } ${
+        isMenuOpen
+          ? "bg-[#0E749040] hover:bg-[#0E749040] transition-colors duration-200 rounded-lg"
+          : "bg-transparent hover:bg-transparent transition-colors duration-200"
+      }`}
+    >
       {showSender && (
         <div className="flex items-center gap-2">
-          {!isUser && (
-            <div className={avatarClasses}>
-              {avatarText}
-            </div>
-          )}
+          {!isUser && <div className={avatarClasses}>{avatarText}</div>}
           <p
             className={`text-sm font-medium text-muted-foreground cursor-pointer ${
-              isUser ? 'ml-auto' : ''
+              isUser ? "ml-auto" : ""
             }`}
           >
             {senderName}
           </p>
-          {isUser && (
-            // optional alignment dummy
-            <div className={avatarClasses + ' w-0'} />
-          )}
+          {isUser && <div className={avatarClasses + " w-0"} />}
         </div>
       )}
 
-      <div className={messageClasses}>
-        <p className={textClasses}>
-          {message}
-        </p>
-        {/* Timestamp in bottom-right corner, Telegram style */}
-        <div className="flex justify-end">
-          <p className="text-[10px] text-muted-foreground">
-            {timestamp}
-          </p>
+      <ContextMenu onOpenChange={(open) => setIsMenuOpen(open)}>
+        <div className={messageClasses}>
+          <ContextMenuTrigger>
+            <p className={textClasses}>{message}</p>
+            <div className="flex justify-end">
+              <p className="text-[10px] text-muted-foreground flex items-center gap-1">
+                {timestamp} <Icons.Checks />
+              </p>
+            </div>
+          </ContextMenuTrigger>
         </div>
-      </div>
+        <ContextMenuContent className="bg-popover w-56 items-center justify-start gap-2 p-2">
+          {contextMenuItems.map((item, index) => (
+            <ContextMenuItem
+              key={index}
+              onClick={item.action}
+              className="flex items-center justify-start gap-2"
+            >
+              <item.icon />
+              {item.label}
+            </ContextMenuItem>
+          ))}
+        </ContextMenuContent>
+      </ContextMenu>
     </div>
   );
 };
