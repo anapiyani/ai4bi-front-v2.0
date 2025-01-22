@@ -69,6 +69,10 @@ const config = {
           DEFAULT: "#FFFFFF",
           foreground: "hsl(var(--popover-foreground))",
         },
+        cyan: {
+          DEFAULT: "#0891B2",
+          foreground: "#FFFFFF",
+        },
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",

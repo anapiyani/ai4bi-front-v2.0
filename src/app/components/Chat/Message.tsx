@@ -96,7 +96,7 @@ const Message = ({
     if (isBot) {
       return t("aray-bot").slice(0, 2).toUpperCase();
     } else if (isUser) {
-      return t("you").slice(0, 2).toUpperCase();
+      return;
     } else if (typeof sender === "string") {
       const nameParts = sender.split(" ");
       const initials =
@@ -108,7 +108,7 @@ const Message = ({
     return "?";
   }, [sender, t, isBot, isUser]);
 
-  const senderName = isBot ? t("aray-bot") : isUser ? t("you") : sender;
+  const senderName = isBot ? t("aray-bot") : isUser ? '' : sender;
 
   const avatarClasses = `w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
     isBot ? "bg-primary text-white" : "bg-input text-secondary-foreground"
@@ -118,13 +118,13 @@ const Message = ({
     isBot
       ? "bg-gradient-to-r from-[#0284C7] to-[#77BAAA]"
       : isUser
-      ? "bg-input ml-auto"
+      ? "bg-cyan-600 ml-auto text-white"
       : "bg-primary-foreground"
   }`;
 
   const textClasses = `text-sm font-normal px-2 text-start text-wrap break-words max-w-md ${
     isBot ? "text-white" : "text-secondary-foreground"
-  }`;
+  } ${isUser ? "text-white" : ""}`;
 
   return (
     <div
@@ -146,14 +146,12 @@ const Message = ({
             }`}
             onClick={() => {
               if (!isUser && sender_id) {
-                console.log("Creating private chat with user:", sender_id);
                 createPrivateChat(sender_id);
               }
             }}
           >
             {senderName}
           </p>
-          {isUser && <div className={avatarClasses + " w-0"} />}
         </div>
       )}
 
@@ -163,16 +161,17 @@ const Message = ({
             {replyToMessage && (
               <div
                 onClick={() => reply_message_id && goToMessage(reply_message_id)}
-                className="mb-1 border-l-2 border-gray-300 pl-2 text-sm text-muted-foreground italic cursor-pointer hover:underline"
+                className="mb-1 gap-2 border-l-2 border-gray-300 pl-2 text-sm text-bi cursor-pointer"
               >
-                {t("reply-to")}: {replyToMessage.sender} – “{replyToMessage.content.slice(0, 30)}…”
+                <p className="text-bi">{replyToMessage.sender} </p>
+                <p className="text-bi">{replyToMessage.content.length > 60 ? `${replyToMessage.content.slice(0, 40)}…` : replyToMessage.content}</p>
               </div>
             )}
             <p className={textClasses}>{message}</p>
 
             <div className="flex justify-end">
-              <p className="text-[10px] text-muted-foreground flex items-center gap-1">
-                {timestamp} <Icons.Checks />
+              <p className={`text-[10px] ${isUser ? "text-white" : "text-muted-foreground"} flex items-center gap-1`}>
+                {timestamp} <Icons.Checks fill={isUser ? "#ffffff" : "#64748B"} />
               </p>
             </div>
           </ContextMenuTrigger>
@@ -185,7 +184,7 @@ const Message = ({
               className="flex items-center justify-start gap-2"
             >
               <item.icon />
-              {item.label}
+              <span className="text-sm">{item.label}</span>
             </ContextMenuItem>
           ))}
         </ContextMenuContent>
