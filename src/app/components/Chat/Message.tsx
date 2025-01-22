@@ -167,9 +167,9 @@ const Message = ({
             {replyToMessage && (
               <div
                 onClick={() => reply_message_id && goToMessage(reply_message_id)}
-                className="mb-1 gap-2 border-l-2 border-gray-300 pl-2 text-sm text-bi cursor-pointer"
+                className="mb-1 gap-2 border-l-2 border-secondary pl-2 py-1 text-sm text-bi cursor-pointer bg-[#F1F5F933]"
               >
-                <p className="text-bi">{replyToMessage.sender} </p>
+                <p className="text-foreground">{replyToMessage.sender} </p>
                 <p className="text-bi">{replyToMessage.content.length > 60 ? `${replyToMessage.content.slice(0, 40)}…` : replyToMessage.content}</p>
               </div>
             )}
