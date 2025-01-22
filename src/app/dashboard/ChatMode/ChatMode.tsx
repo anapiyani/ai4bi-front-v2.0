@@ -3,7 +3,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { toast } from '@/components/ui/use-toast'
 import { motion } from "framer-motion"
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import DeleteMessage from '../../components/Chat/DeleteMessage'
@@ -15,6 +15,7 @@ import { CHAT_TABS } from './config/ChatTabs'
 
 const ChatMode = () => {
   const t = useTranslations("dashboard");
+  const locale = useLocale();
   const searchParams = useSearchParams();
   const router = useRouter();
   const chatId = searchParams.get("id");
@@ -30,7 +31,8 @@ const ChatMode = () => {
     sendChatMessage,
     scrollRef,
     deleteMessage,
-    createPrivateChat
+    createPrivateChat,
+    sendEditMessage,
   } = useChatWebSocket();
 
   const handleItemClick = (id: string) => {
@@ -91,7 +93,7 @@ const ChatMode = () => {
                     <TabsTrigger 
                       key={tab.value} 
                       value={tab.value}
-                      className="w-full lg:w-auto text-sm whitespace-nowrap"
+                      className={`w-full lg:w-auto ${locale === 'kz' ? 'text-[10px]' : 'text-sm'} whitespace-nowrap`}
                       >
                       {t(tab.translationKey)}
                     </TabsTrigger>
@@ -150,6 +152,7 @@ const ChatMode = () => {
           scrollRef={scrollRef}
           handleOpenDeleteMessage={handleOpenDeleteMessage}
           createPrivateChat={createPrivateChat}
+          sendEditMessage={sendEditMessage}
         />
       </div>
       <DeleteMessage isOpen={isDeleteMessageOpen} onClose={handleCloseDeleteMessage} onDelete={handleDeleteMessage} />

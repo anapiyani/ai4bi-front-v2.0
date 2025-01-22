@@ -45,6 +45,7 @@ const config = {
         border: "#E2E8F0",
         input: "#E2E8F0",
         backdrop: "#155E7566",
+        foreground: "#A5F3FC",
         primary: {
           DEFAULT: "#0891B2",
           foreground: "#FFFFFF",
@@ -68,6 +69,10 @@ const config = {
         popover: {
           DEFAULT: "#FFFFFF",
           foreground: "hsl(var(--popover-foreground))",
+        },
+        cyan: {
+          DEFAULT: "#0891B2",
+          foreground: "#FFFFFF",
         },
         card: {
           DEFAULT: "hsl(var(--card))",
