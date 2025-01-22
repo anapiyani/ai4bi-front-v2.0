@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { useEffect, useRef } from "react"
 import { ChatMessage } from "../../types/types"
 import Icons from '../Icons'
 
@@ -11,7 +12,7 @@ type MessageInputProps = {
   isConnected: boolean;
   value: string;
   setNewMessage: (value: string) => void;
-  // For “Reply to”
+  // For "Reply to"
   replyTo: ChatMessage | null;
   setReplyTo: (message: ChatMessage | null) => void;
 };
@@ -25,19 +26,29 @@ const MessageInput = ({
   replyTo,
   setReplyTo,
 }: MessageInputProps) => {
-  // SHIFT+ENTER or normal “Enter” handling is up to you
+  let inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    }, 200);
+  }, [replyTo]);
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && e.shiftKey) {
       e.preventDefault();
       if (value.trim() && isConnected) {
-        sendChatMessage(replyTo); // pass “replyTo” here
+        sendChatMessage(replyTo); 
         setNewMessage("");
         setReplyTo(null);
       }
+    } else if (e.key === "Escape") {
+      setReplyTo(null);
     }
   };
 
-  // On normal submit
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
     if (value.trim()) {
@@ -77,6 +88,7 @@ const MessageInput = ({
         }`} 
       >
         <Input
+          ref={inputRef}
           placeholder={t("type-your-message-here")}
           onChange={(e) => setNewMessage(e.target.value)}
           onKeyDown={handleKeyDown}
