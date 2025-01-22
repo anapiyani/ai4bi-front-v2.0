@@ -23,6 +23,7 @@ interface MessageProps {
   handleOpenDeleteMessage: (messageId: string) => void;
   messageId: string;
   handleReplyClick?: () => void;
+  handleEditClick?: () => void;
   reply_message_id: string | null;
   goToMessage: (messageId: string) => void;
   replyToMessage?: {
@@ -30,6 +31,7 @@ interface MessageProps {
     content: string;
   } | null;
   createPrivateChat: (userId: string) => void;
+  isEdited: boolean;
 }
 
 const Message = ({
@@ -42,9 +44,11 @@ const Message = ({
   handleOpenDeleteMessage,
   messageId,
   handleReplyClick,
+  handleEditClick,
   reply_message_id,
   replyToMessage,
   goToMessage,
+  isEdited,
   createPrivateChat,
 }: MessageProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -61,7 +65,7 @@ const Message = ({
       label: t("reply"),
       show: true,
       action: () => {
-        if (handleReplyClick) handleReplyClick();
+        handleReplyClick && handleReplyClick();
       },
     },
     {
@@ -80,7 +84,9 @@ const Message = ({
       icon: Icons.Edit,
       label: t("edit"),
       show: isOwner,
-      action: () => {},
+      action: () => {
+        handleEditClick && handleEditClick();
+      },
     },
     {
       icon: Icons.Delete,
@@ -171,6 +177,7 @@ const Message = ({
 
             <div className="flex justify-end">
               <p className={`text-[10px] ${isUser ? "text-white" : "text-muted-foreground"} flex items-center gap-1`}>
+                {isEdited && <p className={`text-xs italic ${isUser ? "text-white" : "text-muted-foreground"}`}>{t("edited")}</p>}
                 {timestamp} <Icons.Checks fill={isUser ? "#ffffff" : "#64748B"} />
               </p>
             </div>

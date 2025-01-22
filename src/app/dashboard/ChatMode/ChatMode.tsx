@@ -30,7 +30,8 @@ const ChatMode = () => {
     sendChatMessage,
     scrollRef,
     deleteMessage,
-    createPrivateChat
+    createPrivateChat,
+    sendEditMessage,
   } = useChatWebSocket();
 
   const handleItemClick = (id: string) => {
@@ -150,6 +151,7 @@ const ChatMode = () => {
           scrollRef={scrollRef}
           handleOpenDeleteMessage={handleOpenDeleteMessage}
           createPrivateChat={createPrivateChat}
+          sendEditMessage={sendEditMessage}
         />
       </div>
       <DeleteMessage isOpen={isDeleteMessageOpen} onClose={handleCloseDeleteMessage} onDelete={handleDeleteMessage} />

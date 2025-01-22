@@ -22,6 +22,7 @@ interface ChatContentProps {
   scrollRef: React.RefObject<HTMLDivElement>;
   handleOpenDeleteMessage: (messageId: string) => void;
   createPrivateChat: (userId: string) => void;
+  sendEditMessage: (message: ChatMessage) => void;
 }
 
 const ChatContent = ({
@@ -36,9 +37,11 @@ const ChatContent = ({
   scrollRef,
   handleOpenDeleteMessage,
   createPrivateChat,
+  sendEditMessage,
 }: ChatContentProps) => {
   const t = useTranslations("dashboard");
   const [openRescheduleModal, setOpenRescheduleModal] = useState<boolean>(false);
+  const [editMessage, setEditMessage] = useState<ChatMessage | null>(null);
   const [replyTo, setReplyTo] = useState<ChatMessage | null>(null);
 
  const goToMessage = (messageId: string) => {
@@ -68,6 +71,18 @@ const ChatContent = ({
 
   const handleReplyClick = (message: ChatMessage) => {
     setReplyTo(message);
+  };
+
+  const handleEditClick = (message: ChatMessage) => {
+    setEditMessage(message);
+  };
+
+  const handleEdit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (editMessage) {
+      sendEditMessage(editMessage);
+      setEditMessage(null);
+    }
   };
 
   return (
@@ -113,6 +128,8 @@ const ChatContent = ({
                       showSender={showSender}
                       handleOpenDeleteMessage={handleOpenDeleteMessage}
                       handleReplyClick={() => handleReplyClick(message)}
+                      handleEditClick={() => handleEditClick(message)}
+                      isEdited={message.is_edited || false}
                       reply_message_id={message.reply_to || null}
                       replyToMessage={
                         replyToSnippet
@@ -137,6 +154,9 @@ const ChatContent = ({
             sendChatMessage={sendChatMessage}
             replyTo={replyTo}
             setReplyTo={setReplyTo}
+            editMessage={editMessage}
+            setEditMessage={setEditMessage}
+            handleEdit={handleEdit}
           />
         </div>
       </div>

@@ -15,6 +15,9 @@ type MessageInputProps = {
   // For "Reply to"
   replyTo: ChatMessage | null;
   setReplyTo: (message: ChatMessage | null) => void;
+  editMessage: ChatMessage | null;
+  setEditMessage: (message: ChatMessage | null) => void;
+  handleEdit: (e: React.FormEvent<HTMLFormElement>) => void;
 };
 
 const MessageInput = ({
@@ -25,6 +28,9 @@ const MessageInput = ({
   setNewMessage,
   replyTo,
   setReplyTo,
+  editMessage,
+  setEditMessage,
+  handleEdit,
 }: MessageInputProps) => {
   let inputRef = useRef<HTMLInputElement>(null);
 
@@ -34,9 +40,9 @@ const MessageInput = ({
         inputRef.current.focus();
       }
     }, 200);
-  }, [replyTo]);
+  }, [replyTo, editMessage]);
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+ const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && e.shiftKey) {
       e.preventDefault();
       if (value.trim() && isConnected) {
@@ -46,6 +52,7 @@ const MessageInput = ({
       }
     } else if (e.key === "Escape") {
       setReplyTo(null);
+      setEditMessage(null);
     }
   };
 
@@ -55,6 +62,14 @@ const MessageInput = ({
       sendChatMessage(replyTo);
       setNewMessage("");
       setReplyTo(null);
+    }
+  };
+
+  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (editMessage) {
+      setEditMessage({ ...editMessage, content: e.target.value });
+    } else {
+      setNewMessage(e.target.value);
     }
   };
 
@@ -81,8 +96,35 @@ const MessageInput = ({
           </button>
         </div>
       )}
+      {editMessage && (
+          <div className="absolute bottom-10 left-0 w-full bg-white p-2 text-sm text-gray-700 flex items-start justify-between rounded-t-lg z-10  border-primary">
+            <div className="flex flex-col px-3 gap-1 py-1">
+              <div className="flex items-center gap-2">
+                <Icons.Edit_small_blue />
+                <p className='text-sm font-bold text-primary'>{t("edit-message")}</p>
+              </div>
+              <div>
+                <span className="text-sm">
+                  {editMessage.content.length > 100 ? `${editMessage.content.slice(0, 100)}…` : editMessage.content}
+                </span>
+              </div>
+            </div>
+            <button
+              onClick={() => setEditMessage(null)}
+              className="text-xs h-full"
+            >
+              <Icons.Close />
+            </button>
+        </div>
+      )}
       <form
-        onSubmit={handleSend}
+        onSubmit={(e) => {
+          if (editMessage) {
+            handleEdit(e);
+          } else {
+            handleSend(e);
+          }
+        }}
         className={`flex items-center gap-2 w-full pt-${
           replyTo ? "10" : "0"
         }`} 
@@ -90,13 +132,18 @@ const MessageInput = ({
         <Input
           ref={inputRef}
           placeholder={t("type-your-message-here")}
-          onChange={(e) => setNewMessage(e.target.value)}
+          onChange={handleEditChange}
           onKeyDown={handleKeyDown}
-          value={value}
+          value={editMessage ? editMessage.content : value}
           className="w-full focus:ring-0 focus:border-none border-none focus:outline-none"
         />
-        <Button disabled={!isConnected || !value.trim()} type="submit">
-          {t("send")}
+        <Button  
+          disabled={
+            editMessage ? !isConnected || !editMessage.content.trim() : !isConnected || !value.trim()
+          } 
+          type="submit"
+        >
+          {editMessage ? t("edit") : t("send")}
         </Button>
       </form>
     </div>
