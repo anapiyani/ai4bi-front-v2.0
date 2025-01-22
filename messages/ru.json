@@ -92,7 +92,13 @@
 		"are-you-sure-you-want-to-delete-this-message": "Вы уверены, что хотите удалить это?",
 		"cancel": "Отмена",
 		"message-deleted": "Сообщение удалено",
-		"reply-to": "Ответить на"
+		"reply-to": "Ответить на",
+		"edit-message": "Редактировать сообщение",
+		"language": "Язык",
+		"ru": "Русский",
+		"kz": "Қазақша",
+		"en": "English",
+		"choose-language": "Выберите язык"
 	}
 }
 

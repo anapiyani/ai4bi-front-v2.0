@@ -92,7 +92,13 @@
 		"are-you-sure-you-want-to-delete-this-message": "Are you sure you want to delete this message?",
 		"cancel": "Cancel",
 		"message-deleted": "Message deleted",
-		"reply-to": "Reply to"
+		"reply-to": "Reply to",
+		"edit-message": "Edit message",
+		"language": "Language",
+		"ru": "Russian",
+		"kz": "Kazakh",
+		"en": "English",
+		"choose-language": "Choose language"
 	}
 }
 
