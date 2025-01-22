@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ChatMessage } from "../../types/types"
+import Icons from '../Icons'
 
 type MessageInputProps = {
   t: any;
@@ -48,26 +49,27 @@ const MessageInput = ({
 
   return (
     <div className="relative w-full"> 
-      {/* 1) The reply-to bar is absolutely positioned */}
       {replyTo && (
-        <div className="absolute bottom-10 left-0 w-full bg-gray-200 p-1 px-2 text-sm text-gray-700 rounded flex items-center justify-between z-10">
-          <div>
-            {t("reply-to")}: {replyTo.sender_first_name}
-            <span className="italic text-sm">
-              {" "}
-              - {replyTo.content.slice(0, 30)}…
-            </span>
+        <div className="absolute bottom-10 left-0 w-full bg-white p-2 text-sm text-gray-700 flex items-start justify-between rounded-t-lg z-10  border-primary">
+          <div className="flex flex-col px-3 gap-1 py-1">
+            <div className="flex items-center gap-2">
+              <Icons.Reply_small_blue />
+              <p className='text-sm font-bold text-primary'>{t("reply-to")} {replyTo.sender_first_name} {replyTo.sender_last_name}</p>
+            </div>
+            <div>
+              <span className="text-sm">
+                {replyTo.content.length > 100 ? `${replyTo.content.slice(0, 100)}…` : replyTo.content}
+              </span>
+            </div>
           </div>
           <button
             onClick={() => setReplyTo(null)}
-            className="text-xs text-red-500"
+            className="text-xs h-full"
           >
-            {t("cancel")}
+            <Icons.Close />
           </button>
         </div>
       )}
-
-      {/* 2) Add top padding so the form doesn't overlap the reply bar */}
       <form
         onSubmit={handleSend}
         className={`flex items-center gap-2 w-full pt-${
@@ -79,7 +81,7 @@ const MessageInput = ({
           onChange={(e) => setNewMessage(e.target.value)}
           onKeyDown={handleKeyDown}
           value={value}
-          className="w-full focus:outline-none"
+          className="w-full focus:ring-0 focus:border-none border-none focus:outline-none"
         />
         <Button disabled={!isConnected || !value.trim()} type="submit">
           {t("send")}
