@@ -93,7 +93,12 @@
 		"cancel": "Бас тарту",
 		"message-deleted": "Хабарлама жойылды",
 		"reply-to": "Жауап беру",
-		"edit-message": "Хабарламаны өзгерту"
+		"edit-message": "Хабарламаны өзгерту",
+		"language": "Тіл",
+		"ru": "Русский",
+		"kz": "Қазақша",
+		"en": "English",
+		"choose-language": "Тілді таңдаңыз"
 	}
 }
 

@@ -93,7 +93,12 @@
 		"cancel": "Cancel",
 		"message-deleted": "Message deleted",
 		"reply-to": "Reply to",
-		"edit-message": "Edit message"
+		"edit-message": "Edit message",
+		"language": "Language",
+		"ru": "Russian",
+		"kz": "Kazakh",
+		"en": "English",
+		"choose-language": "Choose language"
 	}
 }
 

@@ -93,7 +93,12 @@
 		"cancel": "Отмена",
 		"message-deleted": "Сообщение удалено",
 		"reply-to": "Ответить на",
-		"edit-message": "Редактировать сообщение"
+		"edit-message": "Редактировать сообщение",
+		"language": "Язык",
+		"ru": "Русский",
+		"kz": "Қазақша",
+		"en": "English",
+		"choose-language": "Выберите язык"
 	}
 }
 

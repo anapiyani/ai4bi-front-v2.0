@@ -106,7 +106,7 @@ export const useChatWebSocket = () => {
         } 
         else if (message.channel?.startsWith("chat_updates")) {
           setConversations((prev) =>
-            prev.map((c) => (c.id === chatId ? { ...c, lastMessage: msgData.content } : c))
+            prev.map((c) => (c.id === chatId ? { ...c, lastMessage: { ...msgData, is_edited: msgData.is_edited || false } } : c))
           );
           const isNotFromCurrentUser = String(message.data.message.sender_id) !== String(currentUserRef.current);
           const isInDifferentChat = message.data.message.chat_id !== selectedConversation;
