@@ -73,6 +73,10 @@ const MessageInput = ({
     }
   };
 
+  const ChooseFiles = () => {
+    console.log("Choose files");
+  }
+
   return (
     <div className="relative w-full"> 
       {replyTo && (
@@ -130,12 +134,16 @@ const MessageInput = ({
         }`} 
       >
         <Input
+          ChooseFiles={() => {
+            ChooseFiles()
+          }}
           ref={inputRef}
           placeholder={t("type-your-message-here")}
           onChange={handleEditChange}
           onKeyDown={handleKeyDown}
           value={editMessage ? editMessage.content : value}
           className="w-full focus:ring-0 focus:border-none border-none focus:outline-none"
+          icon={<Icons.Choose_files />}
         />
         <Button  
           disabled={

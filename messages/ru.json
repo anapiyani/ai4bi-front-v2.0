@@ -98,7 +98,15 @@
 		"ru": "Русский",
 		"kz": "Қазақша",
 		"en": "English",
-		"choose-language": "Выберите язык"
+		"choose-language": "Выберите язык",
+		"chats-not-selected": "Никакой из чатов не выбран",
+		"chats-not-selected-description": "Выберите чат в левой боковой панели для отображения.",
+		"contact-info": "Контактная информация",
+		"notification": "Уведомления",
+		"photo-video": "Фото/Видео",
+		"file": "Файл",
+		"there-are-no-photos-or-videos-yet": "Нет фото или видео",
+		"there-are-no-files-yet": "Нет файлов"
 	}
 }
 

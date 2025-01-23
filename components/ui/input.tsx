@@ -4,9 +4,13 @@ import * as React from "react"
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   icon?: React.ReactNode;
+  ChooseFiles?: () => void;
 }
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, icon, ...props }, ref) => {
+  ({ className, type, icon, ChooseFiles, ...props }, ref) => {
+    const handleIconClick = () => {
+      ChooseFiles?.(); 
+    };
     return (
       <div className="relative w-full">
         <input
@@ -20,7 +24,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           {...props}
         />
         {icon && (
-          <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+          <div onClick={handleIconClick} tabIndex={0} className="absolute inset-y-0 right-3 flex items-center pointer-events-none cursor-pointer">
             {icon}
           </div>
         )}

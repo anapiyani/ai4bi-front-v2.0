@@ -98,7 +98,15 @@
 		"ru": "Russian",
 		"kz": "Kazakh",
 		"en": "English",
-		"choose-language": "Choose language"
+		"choose-language": "Choose language",
+		"chats-not-selected": "No chat selected",
+		"chats-not-selected-description": "Select a chat in the left sidebar to display.",
+		"contact-info": "Contact information",
+		"notification": "Notifications",
+		"photo-video": "Photo/Video",
+		"file": "File",
+		"there-are-no-photos-or-videos-yet": "There are no photos or videos yet",
+		"there-are-no-files-yet": "There are no files yet"
 	}
 }
 

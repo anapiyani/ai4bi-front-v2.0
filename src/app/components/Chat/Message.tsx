@@ -10,7 +10,6 @@ import React, { useState } from "react"
 import { getCookie } from "../../api/service/cookie"
 import Icons from "../Icons"
 
-// Reuse your "Sender" and chat message interface as needed
 type Sender = "bot" | "user" | string;
 
 interface MessageProps {

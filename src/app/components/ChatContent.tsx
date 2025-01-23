@@ -8,6 +8,7 @@ import { getCookie } from "../api/service/cookie"
 import { ChatMessage } from "../types/types"
 import Message from "./Chat/Message"
 import MessageInput from "./Chat/MessageInput"
+import SelectChat from './Chat/SelectChat'
 import ChangeDates from "./Form/ChangeDates"
 
 interface ChatContentProps {
@@ -23,6 +24,9 @@ interface ChatContentProps {
   handleOpenDeleteMessage: (messageId: string) => void;
   createPrivateChat: (userId: string) => void;
   sendEditMessage: (message: ChatMessage) => void;
+  setOpenMenu: (open: boolean) => void;
+  openMenu: boolean;
+
 }
 
 const ChatContent = ({
@@ -38,36 +42,26 @@ const ChatContent = ({
   handleOpenDeleteMessage,
   createPrivateChat,
   sendEditMessage,
+  setOpenMenu,
+  openMenu
 }: ChatContentProps) => {
   const t = useTranslations("dashboard");
   const [openRescheduleModal, setOpenRescheduleModal] = useState<boolean>(false);
   const [editMessage, setEditMessage] = useState<ChatMessage | null>(null);
   const [replyTo, setReplyTo] = useState<ChatMessage | null>(null);
 
- const goToMessage = (messageId: string) => {
-  console.log(`Highlighting message with ID: message-${messageId}`);
-  const element = document.getElementById(`message-${messageId}`);
-  if (element) {
-    element.scrollIntoView({ behavior: "smooth", block: "center" });
-    element.classList.add("highlight");
-    setTimeout(() => {
-      element.classList.remove("highlight");
-    }, 1000); 
-  } else {
-    console.warn(`Element with ID message-${messageId} not found.`);
-  }
-};
-
-
-  if (!chatId) {
-    return (
-      <div className="flex justify-center items-center h-full mt-5">
-        <p className="text-secondary-foreground text-base font-semibold">
-          {t("select-chat")}
-        </p>
-      </div>
-    );
-  }
+  const goToMessage = (messageId: string) => {
+    const element = document.getElementById(`message-${messageId}`);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "center" });
+      element.classList.add("highlight");
+      setTimeout(() => {
+        element.classList.remove("highlight");
+      }, 1000); 
+    } else {
+      console.warn(`Element with ID message-${messageId} not found.`);
+    }
+  };
 
   const handleReplyClick = (message: ChatMessage) => {
     setReplyTo(message);
@@ -85,10 +79,20 @@ const ChatContent = ({
     }
   };
 
-  return (
-    <div className="flex flex-col w-full h-full">
-      <ChatHeader title={title} onClickAboutAuction={() => {}} t={t} />
+  if (!chatId || !selectedConversation) {
+    return <SelectChat />
+  }
 
+  return (
+    <div className="flex flex-col w-full h-full ">
+      <ChatHeader 
+        title={title} 
+        t={t} 
+        onClickAboutAuction={() => {
+          setOpenMenu(true);
+        }}
+        openMenu={openMenu} 
+      />
       <div className="flex-grow overflow-y-auto">
         <div className="h-[calc(100vh-240px)] overflow-y-auto" ref={scrollRef}>
           <div className="flex flex-col gap-2 px-4 py-2">

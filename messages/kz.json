@@ -98,7 +98,15 @@
 		"ru": "Русский",
 		"kz": "Қазақша",
 		"en": "English",
-		"choose-language": "Тілді таңдаңыз"
+		"choose-language": "Тілді таңдаңыз",
+		"chats-not-selected": "Чат таңдалған жоқ",
+		"chats-not-selected-description": "Чатты басқару панелінде таңдаңыз",
+		"contact-info": "Байланыс ақпараты",
+		"notification": "Хабарландырулар",
+		"photo-video": "Фото/Видео",
+		"file": "Файл",
+		"there-are-no-photos-or-videos-yet": "Фото немесе видео жоқ",
+		"there-are-no-files-yet": "Файлдар жоқ"
 	}
 }
 
