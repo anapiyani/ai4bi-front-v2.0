@@ -6,6 +6,6 @@ export function SearchBar() {
   const t = useTranslations("dashboard")
   
   return (
-    <div className='flex my-3 w-full'> <Input placeholder={t("search")} className='w-full' type='text' icon={Icons.SearchInput()} /> </div>
+    <div className='flex mt-3 w-full'> <Input placeholder={t("search")} className='w-full' type='text' icon={Icons.SearchInput()} /> </div>
   )
 }

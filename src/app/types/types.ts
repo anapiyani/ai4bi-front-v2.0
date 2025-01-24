@@ -79,6 +79,7 @@ export type ChatMessage = {
   chat_id?: string;
 	reply_to?: string | null;
   is_edited?: boolean;
+	// tagged_user_id?: string | null;
 }
 
 export type EditMessage = {

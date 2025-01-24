@@ -41,7 +41,6 @@ export default function LocaleSwitcherSelect({
           <Select.Icon>
             <div className="flex items-center justify-center gap-1 flex-col">
               <Icons.Globe />
-              <p className='text-[10px] text-white'>{t("language")}</p>
             </div>
           </Select.Icon>
         </Select.Trigger>
