@@ -100,9 +100,10 @@ const ChatMode = () => {
                 {t("private-chats")}
               </TabsTrigger>
             </TabsList>
+            <SearchBar />
             <TabsContent value="your-auctions">
               <Tabs className="w-full" defaultValue="all">
-                <TabsList className="grid grid-cols-2 md:grid-cols-4 lg:flex lg:flex-row gap-2 lg:gap-0 mb-4">
+                <TabsList className="grid grid-cols-2 md:grid-cols-4 lg:flex lg:flex-row gap-2 lg:gap-0 mb-4 border-none">
                   {CHAT_TABS.map((tab, index) => (
                     <motion.div
                       key={tab.value}
@@ -114,15 +115,13 @@ const ChatMode = () => {
                       <TabsTrigger
                         key={tab.value}
                         value={tab.value}
-                        className={`w-full lg:w-auto ${locale === "kz" ? "text-[10px]" : "text-sm"} whitespace-nowrap`}
+                        className={`w-full lg:w-auto  ${locale === "kz" ? "text-[13px]" : "text-sm"} whitespace-nowrap`}
                       >
                         {t(tab.translationKey)}
                       </TabsTrigger>
                     </motion.div>
                   ))}
                 </TabsList>
-
-                <SearchBar />
                 <div className="flex flex-col gap-2 overflow-y-auto max-h-[calc(100vh-300px)] no-scrollbar">
                   {conversations.map((conversation, index) =>
                     conversation.chat_type === "auction_chat" ? (
@@ -142,7 +141,6 @@ const ChatMode = () => {
               </Tabs>
             </TabsContent>
             <TabsContent value="private-chats">
-              <SearchBar />
               <div className="flex flex-col gap-2 overflow-y-auto max-h-[calc(100vh-300px)] no-scrollbar">
                 {conversations.map((conversation, index) =>
                   conversation.chat_type === "private" ? (
