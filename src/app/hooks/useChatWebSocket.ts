@@ -1,6 +1,8 @@
 "use client"
 
+import { toast } from '@/components/ui/use-toast'
 import dayjs from 'dayjs'
+import { useTranslations } from 'next-intl'
 import { useEffect, useRef, useState } from 'react'
 import { getCookie } from '../api/service/cookie'
 import { useWebSocket } from '../api/service/useWebSocket'
@@ -9,6 +11,7 @@ import { ChatMessage, Conversation } from '../types/types'
 const WS_URL = "wss://staging.ai4bi.kz/ws/";
 
 export const useChatWebSocket = () => {
+  const t = useTranslations("dashboard")
   const { sendMessage, isConnected, lastMessage } = useWebSocket(WS_URL);
 
   const [currentUser, setCurrentUser] = useState<string | null>(null);
@@ -19,18 +22,12 @@ export const useChatWebSocket = () => {
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const prevConversationRef = useRef<string | null>(null);
-
-  // **1. Create refs for audio instances**
   const notificationAudioRef = useRef(new Audio('/assets/sounds/notification.mp3'));
   const notification2AudioRef = useRef(new Audio('/assets/sounds/notification2.mp3'));
-
-  // **2. Preload audio files**
   useEffect(() => {
     notificationAudioRef.current.load();
     notification2AudioRef.current.load();
   }, []);
-
-  // **3. Create a ref for currentUser to access the latest value inside callbacks**
   const currentUserRef = useRef<string | null>(currentUser);
 
   useEffect(() => {
@@ -49,6 +46,11 @@ export const useChatWebSocket = () => {
       message = typeof rawMsg === "string" ? JSON.parse(rawMsg) : rawMsg;
     } catch (err) {
       console.error("[handleWebSocketMessage] Could not parse raw string:", err, rawMsg);
+      toast({
+        title: t("error.connection_error"),
+        description: t("error.please_refresh"),
+        variant: "destructive"
+      })
       return;
     }
 
@@ -266,7 +268,7 @@ export const useChatWebSocket = () => {
     const isInDifferentChat = msg.chat_id !== selectedConversation;
     const isSentMessage = sentMessageIdsRef.current.has(msg.id);
 
-    if (isNotFromCurrentUser && isInDifferentChat && isSentMessage) {
+    if (isNotFromCurrentUser && isInDifferentChat) {
       notification2AudioRef.current.play().catch((error) => {
         console.error("Failed to play notification2.mp3:", error);
       });
@@ -287,7 +289,10 @@ export const useChatWebSocket = () => {
     // If the chat already exists in our list, we may do something else
     const chatExists = conversations.some((conv) => conv.id === chat_id);
     if (chatExists) {
-      alert(`[handleNewParticipant] Chat ${chat_id} already exists.`);
+      toast({
+        title: t("error.chat_already_exists"),
+        variant: "destructive"
+      });
       return;
     }
     setMessages((prev) => [

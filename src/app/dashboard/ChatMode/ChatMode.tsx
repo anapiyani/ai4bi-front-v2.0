@@ -1,11 +1,11 @@
 "use client"
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { toast } from "@/components/ui/use-toast"
 import { motion } from "framer-motion"
 import { useLocale, useTranslations } from "next-intl"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
+import toast from 'react-hot-toast'
 import ChatMenu from "../../components/Chat/ChatMenu/ChatMenu"
 import DeleteMessage from "../../components/Chat/DeleteMessage"
 import ChatContent from "../../components/ChatContent"
@@ -53,10 +53,7 @@ const ChatMode = () => {
     setIsDeleteMessageOpen(false)
     if (messageId) {
       deleteMessage(messageId)
-      toast({
-        title: t("message-deleted"),
-        variant: "destructive",
-      })
+      toast.success(t("message-deleted"))
     }
   }
 
@@ -167,7 +164,7 @@ const ChatMode = () => {
         </Tabs>
       </aside>
 
-      <div className="w-full lg:w-2/3 mt-6 lg:mt-6 mx-4 lg:mr-6 rounded-lg bg-secondary min-h-[calc(100vh-8rem)] py-3 lg:py-3 flex">
+      <div className="w-full lg:w-2/3 mt-6 lg:mt-6 mx-4 lg:mr-6 rounded-lg bg-secondary min-h-[calc(100vh-8rem)] py-3 lg:py-3 flex justify-center">
         <ChatContent
           chatId={chatId || ""}
           selectedConversation={selectedConversation}

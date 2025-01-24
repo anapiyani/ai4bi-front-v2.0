@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl'
 import dynamic from 'next/dynamic'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { Toaster } from "react-hot-toast"
 import { get } from '../api/service/api'
 import { deleteCookie, getCookie, setCookie } from '../api/service/cookie'
 import { PopUpFactory } from '../components/ExitPopUps/ExitPopUps'
@@ -130,6 +131,7 @@ export default function Dashboard() {
       </div>
       <div className='w-full'>
         {getActive(active_tab)}
+        <Toaster />
       </div>
       <PopUpFactory 
         type={exitType} 

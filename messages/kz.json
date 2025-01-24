@@ -84,7 +84,7 @@
 		"chat": "Чат",
 		"no-messages-yet": "Жаңа хабарлама жоқ",
 		"private-chats": "Жеке хабарламалар",
-		"pin": "Қою",
+		"pin": "Бекіту",
 		"edit": "Өзгерту",
 		"reply": "Жауап беру",
 		"forward": "Жіберу",
@@ -106,7 +106,12 @@
 		"photo-video": "Фото/Видео",
 		"file": "Файл",
 		"there-are-no-photos-or-videos-yet": "Фото немесе видео жоқ",
-		"there-are-no-files-yet": "Файлдар жоқ"
+		"there-are-no-files-yet": "Файлдар жоқ",
+		"connection_error": "Байланыс қатесі",
+		"please_refresh": "Парақшаны жаңартыңыз",
+		"message_not_found": "Хабарлама табылмады",
+		"message_not_found_description": "Хабарлама табылмады, парақшаны жаңартыңыз",
+		"chat_already_exists": "Чат уже существует"
 	}
 }
 

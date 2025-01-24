@@ -106,7 +106,12 @@
 		"photo-video": "Фото/Видео",
 		"file": "Файл",
 		"there-are-no-photos-or-videos-yet": "Нет фото или видео",
-		"there-are-no-files-yet": "Нет файлов"
+		"there-are-no-files-yet": "Нет файлов",
+		"connection_error": "Ошибка соединения",
+		"please_refresh": "Пожалуйста, обновите страницу",
+		"message_not_found": "Сообщение не найдено",
+		"message_not_found_description": "Сообщение не найдено, попробуйте обновить страницу",
+		"chat_already_exists": "Чат уже существует"
 	}
 }
 

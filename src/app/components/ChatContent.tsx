@@ -26,7 +26,6 @@ interface ChatContentProps {
   sendEditMessage: (message: ChatMessage) => void;
   setOpenMenu: (open: boolean) => void;
   openMenu: boolean;
-
 }
 
 const ChatContent = ({
@@ -43,7 +42,7 @@ const ChatContent = ({
   createPrivateChat,
   sendEditMessage,
   setOpenMenu,
-  openMenu
+  openMenu,
 }: ChatContentProps) => {
   const t = useTranslations("dashboard");
   const [openRescheduleModal, setOpenRescheduleModal] = useState<boolean>(false);
