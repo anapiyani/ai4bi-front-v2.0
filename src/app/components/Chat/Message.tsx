@@ -119,7 +119,7 @@ const Message = ({
     isBot ? "bg-primary text-white" : "bg-input text-secondary-foreground"
   }`;
 
-  const messageClasses = `flex flex-col p-2 rounded-lg w-fit min-w-[100px] ${
+  const messageClasses = `flex flex-col p-2 rounded-lg w-fit min-w-[120px] ${
     isBot
       ? "bg-gradient-to-r from-[#0284C7] to-[#77BAAA]"
       : isUser
@@ -166,9 +166,9 @@ const Message = ({
             {replyToMessage && (
               <div
                 onClick={() => reply_message_id && goToMessage(reply_message_id)}
-                className="mb-1 gap-2 border-l-2 border-secondary pl-2 py-1 text-sm text-bi cursor-pointer bg-[#F1F5F933]"
+                className={`mb-1 gap-2 border-l-2  pl-2 py-1 text-sm text-bi cursor-pointer ${isUser ? "bg-[#F1F5F933] border-secondary" : "bg-[#F1F5F9] border-[#0891B2]"}`}
               >
-                <p className="text-foreground">{replyToMessage.sender} </p>
+                <p className={`${isUser ? "text-foreground" : "text-primary"}`}>{replyToMessage.sender} </p>
                 <p className="text-bi">{replyToMessage.content.length > 60 ? `${replyToMessage.content.slice(0, 40)}…` : replyToMessage.content}</p>
               </div>
             )}
@@ -176,7 +176,7 @@ const Message = ({
 
             <div className="flex justify-end">
               <p className={`text-[10px] ${isUser ? "text-white" : "text-muted-foreground"} flex items-center gap-1`}>
-                {isEdited && <p className={`text-xs italic ${isUser ? "text-white" : "text-muted-foreground"}`}>{t("edited")}</p>}
+                {isEdited && <p className={`text-[10px] italic ${isUser ? "text-white" : "text-muted-foreground"}`}>{t("edited")}</p>}
                 {timestamp} <Icons.Checks fill={isUser ? "#ffffff" : "#64748B"} />
               </p>
             </div>

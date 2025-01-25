@@ -111,7 +111,8 @@
 		"please_refresh": "Пожалуйста, обновите страницу",
 		"message_not_found": "Сообщение не найдено",
 		"message_not_found_description": "Сообщение не найдено, попробуйте обновить страницу",
-		"chat_already_exists": "Чат уже существует"
+		"chat_already_exists": "Чат уже существует",
+		"edited": "изменено"
 	}
 }
 

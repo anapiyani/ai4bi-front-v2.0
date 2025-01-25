@@ -111,7 +111,8 @@
 		"please_refresh": "Please refresh the page",
 		"message_not_found": "Message not found",
 		"message_not_found_description": "Message not found, please refresh the page",
-		"chat_already_exists": "Chat already exists"
+		"chat_already_exists": "Chat already exists",
+		"edited": "edited"
 	}
 }
 
