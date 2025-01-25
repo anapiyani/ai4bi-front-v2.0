@@ -6,9 +6,9 @@ import { useTranslations } from 'next-intl'
 import { useEffect, useRef, useState } from 'react'
 import { getCookie } from '../api/service/cookie'
 import { useWebSocket } from '../api/service/useWebSocket'
-import { ChatMessage, Conversation } from '../types/types'
+import { ChatMessage, Conversation, ReceivedChats } from '../types/types'
 
-const WS_URL = "wss://staging.ai4bi.kz/ws/";
+const WS_URL = process.env.NEXT_PUBLIC_WS_URL || "ws://staging.ai4bi.kz/ws/";
 
 export const useChatWebSocket = () => {
   const t = useTranslations("dashboard")
@@ -107,6 +107,9 @@ export const useChatWebSocket = () => {
           handleMessageReceived(formattedMessage);
         } 
         else if (message.channel?.startsWith("chat_updates")) {
+          if (message.event === "edit_message") {
+            handleReceivedEditedMessage(message.data.message);
+          }
           setConversations((prev) =>
             prev.map((c) => (c.id === chatId ? { ...c, lastMessage: { ...msgData, is_edited: msgData.is_edited || false } } : c))
           );
@@ -182,12 +185,12 @@ export const useChatWebSocket = () => {
   // ---------------------------------------------------------------------------
   // handleChatsReceived
   // ---------------------------------------------------------------------------
-  const handleChatsReceived = (chats: any[]) => {
+  const handleChatsReceived = (chats: ReceivedChats[]) => {
     console.log("[handleChatsReceived] Chats received:", chats);
     const transformed = chats.map((chat) => ({
       id: chat.chat_id,
       name: chat.name || `Chat ${chat.chat_id}`,
-      lastMessage: chat.last_message || "",
+      lastMessage: chat.last_message || null,
       chat_type: chat.chat_type,
     }));
     setConversations(transformed);
@@ -207,6 +210,8 @@ export const useChatWebSocket = () => {
         timestamp: message.send_at,
         chat_id: message.chat_id,
         authorId: message.sender_id,
+        is_edited: message.is_edited,
+        reply_to: message.reply_message_id,
       }));
     setMessages(transformedMessages);
   };
@@ -268,7 +273,7 @@ export const useChatWebSocket = () => {
     const isInDifferentChat = msg.chat_id !== selectedConversation;
     const isSentMessage = sentMessageIdsRef.current.has(msg.id);
 
-    if (isNotFromCurrentUser && isInDifferentChat) {
+    if (isNotFromCurrentUser && isInDifferentChat && isSentMessage) {
       notification2AudioRef.current.play().catch((error) => {
         console.error("Failed to play notification2.mp3:", error);
       });
@@ -278,6 +283,18 @@ export const useChatWebSocket = () => {
       sentMessageIdsRef.current.delete(msg.id);
     }
   };
+
+  // ---------------------------------------------------------------------------
+  // handleReceivedEditedMessage
+  // ---------------------------------------------------------------------------
+  const handleReceivedEditedMessage = (message: any) => {
+    setMessages((prev) =>
+      prev.map((m) =>
+        m.id === message.message_id ? { ...m, content: message.content, is_edited: message.is_edited } : m
+      )
+    );
+  };
+
 
   // ---------------------------------------------------------------------------
   // handleNewParticipant

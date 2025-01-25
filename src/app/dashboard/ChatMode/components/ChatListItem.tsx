@@ -11,7 +11,6 @@ type ChatListItemProps = {
 
 const ChatListItem = ({ data, onClick, isSelected, index }: ChatListItemProps) => {
   const { name, lastMessage, chat_type } = data;
-
   const renderLastMessage = () => {
     if (typeof lastMessage === 'object') {
       return (

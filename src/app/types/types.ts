@@ -68,6 +68,21 @@ export type Conversation = {
 	} | null | string;
 }
 
+export interface ReceivedChats extends Conversation {
+	chat_id: string;
+	created_at: string;
+	participants: ChatParticipants[];
+	last_message: Conversation['lastMessage'] | null;
+}
+
+export type ChatParticipants = {
+	chat_participant_id: string;
+	user_id: string;
+	role: string;
+	created_at: string;
+	removed_at: string | null;
+}
+
 export type ChatMessage = {
   id: string;
 	sender_first_name: string;

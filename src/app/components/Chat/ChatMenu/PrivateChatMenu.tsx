@@ -1,11 +1,11 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import NotificationBell from '../../Alerts/Notification/NotificationBell'
 
-
 const PrivateChatMenu = ({t}: {t: any}) => {
 	return (
 		<>
-		 <div className='flex flex-col gap-2'>
+		 <div 
+      className='flex flex-col gap-2'>
           <div className='flex flex-col '>
             <p className='text-sm text-muted-foreground'>{t("contact-info")}</p>
             <p className='text-sm'>email@example.com</p>
