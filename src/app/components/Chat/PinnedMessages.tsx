@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ChatMessage } from '../../types/types'
 import Icons from '../Icons'
 
@@ -8,7 +8,17 @@ const PinnedMessages = ({ pinnedMessages, t, goToMessage, handleUnpinMessage }: 
   goToMessage: (messageId: string) => void,
 	handleUnpinMessage: (messageId: string) => void
 }) => {
-  const [currentIndex, setCurrentIndex] = useState(Math.max(0, pinnedMessages.length));
+	const [currentIndex, setCurrentIndex] = useState(
+		pinnedMessages.length > 0 ? pinnedMessages.length - 1 : 0
+	);
+	
+	useEffect(() => {
+    if (pinnedMessages.length === 0) {
+      setCurrentIndex(0);
+    } else if (currentIndex >= pinnedMessages.length) {
+      setCurrentIndex(pinnedMessages.length - 1);
+    }
+  }, [pinnedMessages, currentIndex]);
 
   if (pinnedMessages.length === 0) return null;
 
