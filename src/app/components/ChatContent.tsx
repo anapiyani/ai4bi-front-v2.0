@@ -8,6 +8,7 @@ import { getCookie } from "../api/service/cookie"
 import { ChatMessage } from "../types/types"
 import Message from "./Chat/Message"
 import MessageInput from "./Chat/MessageInput"
+import PinnedMessages from './Chat/PinnedMessages'
 import SelectChat from './Chat/SelectChat'
 import ChangeDates from "./Form/ChangeDates"
 
@@ -26,6 +27,8 @@ interface ChatContentProps {
   sendEditMessage: (message: ChatMessage) => void;
   setOpenMenu: (open: boolean) => void;
   openMenu: boolean;
+  handlePinMessage: ({chat_id, message_id}: {chat_id: string, message_id: string}) => void;
+  handleUnpinMessage: ({chat_id, message_id}: {chat_id: string, message_id: string}) => void;
 }
 
 const ChatContent = ({
@@ -42,12 +45,17 @@ const ChatContent = ({
   createPrivateChat,
   sendEditMessage,
   setOpenMenu,
+  handlePinMessage,
+  handleUnpinMessage,
   openMenu,
 }: ChatContentProps) => {
   const t = useTranslations("dashboard");
   const [openRescheduleModal, setOpenRescheduleModal] = useState<boolean>(false);
   const [editMessage, setEditMessage] = useState<ChatMessage | null>(null);
   const [replyTo, setReplyTo] = useState<ChatMessage | null>(null);
+  const pinnedMessages = messages
+    .filter((m) => m.is_pinned)
+    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
   const goToMessage = (messageId: string) => {
     const element = document.getElementById(`message-${messageId}`);
@@ -82,8 +90,16 @@ const ChatContent = ({
     return <SelectChat />
   }
 
+  const handlePin = (message_id: string) => {
+    handlePinMessage({chat_id: chatId, message_id: message_id});
+  }
+
+  const handleUnpin = (message_id: string) => {
+    handleUnpinMessage({chat_id: chatId, message_id: message_id});
+  }
+
   return (
-    <div className="flex flex-col w-full h-full ">
+    <div className="flex flex-col w-full h-full relative">
       <ChatHeader 
         title={title} 
         t={t} 
@@ -92,6 +108,9 @@ const ChatContent = ({
         }}
         openMenu={openMenu} 
       />
+     <div className="absolute top-[65px] left-0 right-0">
+      <PinnedMessages goToMessage={goToMessage} pinnedMessages={pinnedMessages} t={t} />
+     </div>
       <div className="flex-grow overflow-y-auto">
         <div className="h-[calc(100vh-240px)] overflow-y-auto" ref={scrollRef}>
           <div className="flex flex-col gap-2 px-4 py-2">
@@ -134,6 +153,9 @@ const ChatContent = ({
                       handleEditClick={() => handleEditClick(message)}
                       isEdited={message.is_edited || false}
                       reply_message_id={message.reply_to || null}
+                      handlePin={() => handlePin(message.id)}
+                      isPinned={message.is_pinned || false}
+                      handleUnpin={() => handleUnpin(message.id)}
                       replyToMessage={
                         replyToSnippet
                           ? {

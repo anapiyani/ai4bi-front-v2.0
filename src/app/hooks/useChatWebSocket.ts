@@ -63,6 +63,7 @@ export const useChatWebSocket = () => {
       // 2) A newly created message
       } else if (message.result.message_id) {
         handleMessageReceived(message.result);
+        // !here might be a event to update the message list for pinned messages
 
       // 3) A list of chats or other data
       } else if (Array.isArray(message.result)) {
@@ -83,33 +84,40 @@ export const useChatWebSocket = () => {
 
     // --- (C) Real-time "message" type updates (new_chat, new_message, new_participant, etc.) ---
     if (message.type === "message") {
+      console.log("message", message);
       if (message.event === "new_chat") {
         // Handle a newly created chat
         handleChatCreated({
           chat_id: message.data.id,
           name: message.data.user?.name || `Chat with ${message.data.id}`,
         });
+      } else if (message.event === "edit_message") {
+        const editedMsg = message.data.message;
+        const formattedEditedMessage = {
+          message_id: editedMsg.message_id,
+          content: editedMsg.content,
+          is_edited: true
+        };
+        handleReceivedEditedMessage(formattedEditedMessage);
       } else if (message.event === "new_message") {
         const msgData = message.data.message;
         const chatId = message.chat_id || message.data.chat_id;
         // If it's in the chat_room channel...
         if (message.channel?.startsWith("chat_room")) {
           const formattedMessage = {
-            message_id: `${msgData.counter}-${msgData.timestamp}-${Math.random()}`,
-            chat_id: chatId,
-            sender_first_name: msgData.sender_first_name,
-            sender_last_name: msgData.sender_last_name,
-            content: msgData.content,
-            timestamp: msgData.timestamp || dayjs().toISOString(),
-            authorId: msgData.sender_id,
-            reply_message_id: msgData.reply_message_id,
+              message_id: msgData.message_id,
+              chat_id: chatId,
+              sender_first_name: msgData.sender_first_name,
+              sender_last_name: msgData.sender_last_name,
+              content: msgData.content,
+              timestamp: msgData.timestamp || dayjs().toISOString(),
+              authorId: msgData.sender_id,
+              reply_message_id: msgData.reply_message_id,
+              is_pinned: msgData.is_pinned,
           };
           handleMessageReceived(formattedMessage);
         } 
         else if (message.channel?.startsWith("chat_updates")) {
-          if (message.event === "edit_message") {
-            handleReceivedEditedMessage(message.data.message);
-          }
           setConversations((prev) =>
             prev.map((c) => (c.id === chatId ? { ...c, lastMessage: { ...msgData, is_edited: msgData.is_edited || false } } : c))
           );
@@ -160,6 +168,7 @@ export const useChatWebSocket = () => {
         edited_at: null,
         is_deleted: false,
         is_edited: false,
+        is_pinned: false,
         media_ids: null,
         message_id: null,
         reply_message_id: null,
@@ -210,6 +219,7 @@ export const useChatWebSocket = () => {
         timestamp: message.send_at,
         chat_id: message.chat_id,
         authorId: message.sender_id,
+        is_pinned: message.is_pinned,
         is_edited: message.is_edited,
         reply_to: message.reply_message_id,
       }));
@@ -220,7 +230,8 @@ export const useChatWebSocket = () => {
   // handleMessageReceived
   // ---------------------------------------------------------------------------
   const handleMessageReceived = (msg: any) => {
-    const realId = msg.message_id || Date.now().toString();
+    console.log("handleMessageReceived", msg);
+    const realId = msg.message_id
     const replyId = msg.reply_message_id || msg.reply_to || null;
 
 
@@ -230,6 +241,7 @@ export const useChatWebSocket = () => {
       authorId: msg.authorId,
       sender_first_name: msg.sender_first_name,
       sender_last_name: msg.sender_last_name,
+      is_pinned: msg.is_pinned,
       content: msg.content,
       timestamp: msg.timestamp || dayjs().toISOString(),
       reply_to: replyId,
@@ -257,6 +269,7 @@ export const useChatWebSocket = () => {
                 is_edited: false,
                 media_ids: null,
                 message_id: null,
+                is_pinned: newMsg.is_pinned,
                 reply_message_id: newMsg.id,
                 send_at: null,
                 sender_first_name: null,
@@ -288,13 +301,13 @@ export const useChatWebSocket = () => {
   // handleReceivedEditedMessage
   // ---------------------------------------------------------------------------
   const handleReceivedEditedMessage = (message: any) => {
+    console.log("handleReceivedEditedMessage", message);
     setMessages((prev) =>
       prev.map((m) =>
         m.id === message.message_id ? { ...m, content: message.content, is_edited: message.is_edited } : m
       )
     );
   };
-
 
   // ---------------------------------------------------------------------------
   // handleNewParticipant
@@ -338,6 +351,7 @@ export const useChatWebSocket = () => {
         is_edited: false,
         media_ids: null,
         message_id: null,
+        is_pinned: false,
         reply_message_id: null,
         send_at: null,
         sender_first_name: null,
@@ -362,6 +376,42 @@ export const useChatWebSocket = () => {
       chat_id: chatId,
     });
   };
+
+  // ---------------------------------------------------------------------------
+  // handlePinMessage
+  // ---------------------------------------------------------------------------
+  const handlePinMessage = ({chat_id, message_id}: {chat_id: string, message_id: string}) => {
+    console.log("[handlePinMessage] Pinning message:", {chat_id, message_id});
+    const rpcId = Date.now().toString();
+    const request = {
+      jsonrpc: "2.0",
+      method: "pinMessage",
+      params: {
+        chat_id: chat_id,
+        message_id: message_id,
+      },
+      id: rpcId,
+    }
+    sendMessage(request)
+  }
+
+  // ---------------------------------------------------------------------------
+  // handleUnpinMessage
+  // ---------------------------------------------------------------------------
+  const handleUnpinMessage = ({chat_id, message_id}: {chat_id: string, message_id: string}) => {
+    console.log("[handleUnpinMessage] Unpinning message:", {chat_id, message_id});
+    const rpcId = Date.now().toString();
+    const request = {
+      jsonrpc: "2.0",
+      method: "unpinMessage",
+      params: {
+        chat_id: chat_id,
+        message_id: message_id,
+      },
+      id: rpcId,
+    }
+    sendMessage(request)
+  }
 
   // ---------------------------------------------------------------------------
   // unsubscribeToChatRoom
@@ -476,6 +526,7 @@ export const useChatWebSocket = () => {
       sender_first_name: "user",
       sender_last_name: "",
       content,
+      is_pinned: false,
       timestamp: dayjs().toISOString(),
       pending: true,
       chat_id: selectedConversation,
@@ -496,6 +547,7 @@ export const useChatWebSocket = () => {
         chat_id: selectedConversation,
         content,
         media: [],
+        is_pinned: false,
         reply_to: replyId,
         timestamp: dayjs().toISOString(),
       },
@@ -650,5 +702,7 @@ export const useChatWebSocket = () => {
     getChatMessages,
     deleteMessage,
     sendEditMessage,
+    handlePinMessage,
+    handleUnpinMessage,
   };
 };

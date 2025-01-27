@@ -37,6 +37,8 @@ const ChatMode = () => {
     deleteMessage,
     createPrivateChat,
     sendEditMessage,
+    handlePinMessage,
+    handleUnpinMessage,
   } = useChatWebSocket()
 
   const handleItemClick = (id: string) => {
@@ -174,6 +176,8 @@ const ChatMode = () => {
           sendChatMessage={sendChatMessage}
           scrollRef={scrollRef}
           handleOpenDeleteMessage={handleOpenDeleteMessage}
+          handlePinMessage={handlePinMessage}
+          handleUnpinMessage={handleUnpinMessage}
           createPrivateChat={createPrivateChat}
           sendEditMessage={sendEditMessage}
           setOpenMenu={handleOpenMenu}

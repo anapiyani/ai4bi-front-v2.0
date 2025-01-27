@@ -31,6 +31,9 @@ interface MessageProps {
   } | null;
   createPrivateChat: (userId: string) => void;
   isEdited: boolean;
+  handlePin: (message_id: string) => void;
+  handleUnpin: (message_id: string) => void;
+  isPinned: boolean;
 }
 
 const Message = ({
@@ -49,6 +52,9 @@ const Message = ({
   goToMessage,
   isEdited,
   createPrivateChat,
+  isPinned,
+  handlePin,
+  handleUnpin,
 }: MessageProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const user_role = getCookie("role");
@@ -76,8 +82,18 @@ const Message = ({
     {
       icon: Icons.Pin,
       label: t("pin"),
-      show: isAdmin,
-      action: () => {},
+      show: isAdmin && !isPinned,
+      action: () => {
+        handlePin(messageId);
+      },
+    },
+    {
+      icon: Icons.UnPin,
+      label: t("unpin"),
+      show: isAdmin && isPinned,
+      action: () => {
+        handleUnpin(messageId);
+      },
     },
     {
       icon: Icons.Edit,

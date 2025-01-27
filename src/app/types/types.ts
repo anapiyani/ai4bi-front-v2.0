@@ -65,6 +65,7 @@ export type Conversation = {
 		sender_id: string | null;
 		sender_last_name: string | null;
 		type: string | null;
+    is_pinned?: boolean | null;
 	} | null | string;
 }
 
@@ -94,6 +95,7 @@ export type ChatMessage = {
   chat_id?: string;
 	reply_to?: string | null;
   is_edited?: boolean;
+  is_pinned?: boolean;
 	// tagged_user_id?: string | null;
 }
 
