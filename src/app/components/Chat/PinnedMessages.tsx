@@ -2,16 +2,15 @@ import { useState } from 'react'
 import { ChatMessage } from '../../types/types'
 import Icons from '../Icons'
 
-const PinnedMessages = ({ pinnedMessages, t, goToMessage }: { 
+const PinnedMessages = ({ pinnedMessages, t, goToMessage, handleUnpinMessage }: { 
   pinnedMessages: ChatMessage[], 
   t: any, 
-  goToMessage: (messageId: string) => void 
+  goToMessage: (messageId: string) => void,
+	handleUnpinMessage: (messageId: string) => void
 }) => {
   const [currentIndex, setCurrentIndex] = useState(Math.max(0, pinnedMessages.length));
 
   if (pinnedMessages.length === 0) return null;
-
-  console.log(pinnedMessages[currentIndex]);
 
   const handleMessageClick = () => {
     const currentMessage = pinnedMessages[currentIndex];
@@ -27,11 +26,10 @@ const PinnedMessages = ({ pinnedMessages, t, goToMessage }: {
 
   return (
     <div 
-      className="bg-white px-4 py-2 cursor-pointer" 
-      onClick={handleMessageClick}
+      className="bg-white px-4 py-2 " 
     >
       <div className="flex justify-between items-center">
-        <div className="text-sm flex flex-col gap-1">
+        <div onClick={handleMessageClick} className="text-sm flex cursor-pointer flex-col gap-1">
           <div className="absolute top-1/4 left-3 w-[3px] h-1/2 bg-primary rounded-full"></div>
           <div className="flex flex-col ml-2">
             <div className="flex flex-row items-center">
@@ -44,7 +42,7 @@ const PinnedMessages = ({ pinnedMessages, t, goToMessage }: {
             </p>
           </div>
         </div>
-        <div className="text-sm text-gray-500 cursor-pointer">
+        <div onClick={() => handleUnpinMessage(pinnedMessages[currentIndex].id)} className="text-sm text-gray-500 cursor-pointer">
           <Icons.UnPin />
         </div>
       </div>

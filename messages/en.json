@@ -114,7 +114,8 @@
 		"chat_already_exists": "Chat already exists",
 		"edited": "edited",
 		"unpin": "Unpin",
-		"pinned_message": "Pinned message"
+		"pinned_message": "Pinned message",
+		"pinned": "Pinned"
 	}
 }
 

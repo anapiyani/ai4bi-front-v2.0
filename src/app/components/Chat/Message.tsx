@@ -188,6 +188,7 @@ const Message = ({
                 <p className="text-bi">{replyToMessage.content.length > 60 ? `${replyToMessage.content.slice(0, 40)}…` : replyToMessage.content}</p>
               </div>
             )}
+            {isPinned && <p className={`text-xs text-muted-foreground flex items-center gap-1 mb-1 ${isUser ? "text-white" : ""}`}><Icons.Pin fill={isUser ? "#ffffff" : "#64748B"} className="w-3 h-3" /> {t("pinned")}</p>}
             <p className={textClasses}>{message}</p>
 
             <div className="flex justify-end">

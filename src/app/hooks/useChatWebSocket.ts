@@ -63,7 +63,6 @@ export const useChatWebSocket = () => {
       // 2) A newly created message
       } else if (message.result.message_id) {
         handleMessageReceived(message.result);
-        // !here might be a event to update the message list for pinned messages
 
       // 3) A list of chats or other data
       } else if (Array.isArray(message.result)) {
@@ -84,7 +83,6 @@ export const useChatWebSocket = () => {
 
     // --- (C) Real-time "message" type updates (new_chat, new_message, new_participant, etc.) ---
     if (message.type === "message") {
-      console.log("message", message);
       if (message.event === "new_chat") {
         // Handle a newly created chat
         handleChatCreated({
@@ -99,6 +97,10 @@ export const useChatWebSocket = () => {
           is_edited: true
         };
         handleReceivedEditedMessage(formattedEditedMessage);
+      } else if (message.event === "pin_message") {
+        handleReceivedPinMessage(message.data);
+      } else if (message.event === "unpin_message") {
+        handleReceivedUnpinMessage(message.data);
       } else if (message.event === "new_message") {
         const msgData = message.data.message;
         const chatId = message.chat_id || message.data.chat_id;
@@ -310,6 +312,30 @@ export const useChatWebSocket = () => {
   };
 
   // ---------------------------------------------------------------------------
+  // handleReceivedPinMessage
+  // ---------------------------------------------------------------------------
+  const handleReceivedPinMessage = (message: any) => {
+    console.log("handleReceivedPinMessage", message);
+    setMessages((prev) =>
+      prev.map((m) =>
+        m.id === message.message_id ? { ...m, is_pinned: true } : m
+      )
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // handleReceivedUnpinMessage
+  // ---------------------------------------------------------------------------
+  const handleReceivedUnpinMessage = (message: any) => {
+    console.log("handleReceivedUnpinMessage", message);
+    setMessages((prev) =>
+      prev.map((m) =>
+        m.id === message.message_id ? { ...m, is_pinned: false } : m
+      )
+    );
+  }
+
+  // ---------------------------------------------------------------------------
   // handleNewParticipant
   // ---------------------------------------------------------------------------
   const handleNewParticipant = (message: any) => {
@@ -381,7 +407,12 @@ export const useChatWebSocket = () => {
   // handlePinMessage
   // ---------------------------------------------------------------------------
   const handlePinMessage = ({chat_id, message_id}: {chat_id: string, message_id: string}) => {
-    console.log("[handlePinMessage] Pinning message:", {chat_id, message_id});
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === message_id ? { ...m, is_pinned: true } : m
+        )
+      );
+  
     const rpcId = Date.now().toString();
     const request = {
       jsonrpc: "2.0",
@@ -399,7 +430,13 @@ export const useChatWebSocket = () => {
   // handleUnpinMessage
   // ---------------------------------------------------------------------------
   const handleUnpinMessage = ({chat_id, message_id}: {chat_id: string, message_id: string}) => {
-    console.log("[handleUnpinMessage] Unpinning message:", {chat_id, message_id});
+
+     setMessages((prev) =>
+        prev.map((m) =>
+          m.id === message_id ? { ...m, is_pinned: false } : m
+        )
+      );
+
     const rpcId = Date.now().toString();
     const request = {
       jsonrpc: "2.0",

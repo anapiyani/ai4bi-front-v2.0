@@ -53,9 +53,7 @@ const ChatContent = ({
   const [openRescheduleModal, setOpenRescheduleModal] = useState<boolean>(false);
   const [editMessage, setEditMessage] = useState<ChatMessage | null>(null);
   const [replyTo, setReplyTo] = useState<ChatMessage | null>(null);
-  const pinnedMessages = messages
-    .filter((m) => m.is_pinned)
-    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+  const pinnedMessages = messages.filter((m) => m.is_pinned);
 
   const goToMessage = (messageId: string) => {
     const element = document.getElementById(`message-${messageId}`);
@@ -109,7 +107,7 @@ const ChatContent = ({
         openMenu={openMenu} 
       />
      <div className="absolute top-[65px] left-0 right-0">
-      <PinnedMessages goToMessage={goToMessage} pinnedMessages={pinnedMessages} t={t} />
+      <PinnedMessages goToMessage={goToMessage} pinnedMessages={pinnedMessages} t={t} handleUnpinMessage={handleUnpin} />
      </div>
       <div className="flex-grow overflow-y-auto">
         <div className="h-[calc(100vh-240px)] overflow-y-auto" ref={scrollRef}>
