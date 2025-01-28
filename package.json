@@ -51,9 +51,11 @@
     "react-hook-form": "^7.52.1",
     "react-hot-toast": "^2.5.1",
     "react-textarea-autosize": "^8.5.7",
+    "shadcn-dropzone": "^0.2.1",
     "socket.io-client": "^4.8.1",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
+    "truncate": "^3.0.0",
     "uuidv4": "^6.2.13",
     "zod": "^3.23.8",
     "zustand": "^5.0.1"

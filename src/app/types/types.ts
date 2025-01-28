@@ -103,3 +103,22 @@ export type EditMessage = {
   id: string;
   content: string;
 }
+
+export type ChatContentProps = {
+	chatId: string | null;
+  selectedConversation: string | null;
+  title: string;
+  messages: ChatMessage[];
+  isConnected: boolean;
+  newMessage: string;
+  setNewMessage: (message: string) => void;
+  sendChatMessage: (reply?: ChatMessage | null) => void;
+  scrollRef: React.RefObject<HTMLDivElement>;
+  handleOpenDeleteMessage: (messageId: string) => void;
+  createPrivateChat: (userId: string) => void;
+  sendEditMessage: (message: ChatMessage) => void;
+  setOpenMenu: (open: boolean) => void;
+  openMenu: boolean;
+  handlePinMessage: ({chat_id, message_id}: {chat_id: string, message_id: string}) => void;
+  handleUnpinMessage: ({chat_id, message_id}: {chat_id: string, message_id: string}) => void;
+}
