@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl"
 import { useState } from "react"
 import { getCookie } from "../api/service/cookie"
 import { useGoToMessage } from '../hooks/useGoToMessage'
+import { useUploadMedia } from '../hooks/useUploadMedia'
 import { ChatContentProps, ChatMessage } from "../types/types"
 import DropZoneModal from './Chat/Files/DropZoneModal'
 import Message from "./Chat/Message"
@@ -39,6 +40,7 @@ const ChatContent = ({
   const pinnedMessages = messages.filter((m) => m.is_pinned);
   const [openDropZoneModal, setOpenDropZoneModal] = useState<boolean>(false);
   const goToMessage = useGoToMessage();
+  const [localMedias, setLocalMedias] = useState<File[] | null>(null);
 
   const handleReplyClick = (message: ChatMessage) => {
     setReplyTo(message);
@@ -47,6 +49,8 @@ const ChatContent = ({
   const handleEditClick = (message: ChatMessage) => {
     setEditMessage(message);
   };
+
+  const { mutate: uploadMedia, isPending: uploadMediaPending, data: uploadMediaData } = useUploadMedia()
 
   const handleEdit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -66,6 +70,11 @@ const ChatContent = ({
 
   const handleUnpin = (message_id: string) => {
     handleUnpinMessage({chat_id: chatId, message_id: message_id});
+  }
+
+  const handleUploadMedia = (files: File[]) => {
+    setLocalMedias(files);
+    uploadMedia({ chat_id: chatId, files })
   }
 
   return (
@@ -170,6 +179,7 @@ const ChatContent = ({
           <DropZoneModal
             open={openDropZoneModal}
             setOpen={setOpenDropZoneModal}
+            handleUploadMedia={handleUploadMedia}
           />
         )
       }

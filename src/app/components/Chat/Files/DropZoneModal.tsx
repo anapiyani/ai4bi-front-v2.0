@@ -11,24 +11,23 @@ import {
 import { useState } from 'react'
 import truncate from 'truncate'
 import Icons from '../../Icons'
-import Dropzone from './Dropzone'; // Corrected import
+import Dropzone from './Dropzone'
 
 const DropZoneModal = ({
   open,
   setOpen,
+  handleUploadMedia,
 }: {
   open: boolean;
   setOpen: (open: boolean) => void;
+  handleUploadMedia: (files: File[]) => void;
 }) => {
 	const [filesUploaded, setFilesUploaded] = useState<File[]>([]);
 
   const handleUpload = () => {
-    console.log('Uploaded Files:', filesUploaded);
-    // Add your upload logic here
-    // For example, you might send the files to a server
-    // After upload, you might want to clear the files and close the modal
-    // setFiles([]);
-    // setOpen(false);
+    handleUploadMedia(filesUploaded);
+    setFilesUploaded([]);
+    setOpen(false);
   };
 
 	const deleteUploadedFile = (index: number) => {

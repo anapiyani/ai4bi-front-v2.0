@@ -245,6 +245,8 @@ export const useChatWebSocket = () => {
       sender_last_name: msg.sender_last_name,
       is_pinned: msg.is_pinned,
       content: msg.content,
+      media: msg.media,
+      has_attachments: msg.has_attachments,
       timestamp: msg.timestamp || dayjs().toISOString(),
       reply_to: replyId,
     };
@@ -270,6 +272,8 @@ export const useChatWebSocket = () => {
                 is_deleted: false,
                 is_edited: false,
                 media_ids: null,
+                media: newMsg.media,
+                has_attachments: newMsg.has_attachments,
                 message_id: null,
                 is_pinned: newMsg.is_pinned,
                 reply_message_id: newMsg.id,
@@ -552,7 +556,7 @@ export const useChatWebSocket = () => {
   // ---------------------------------------------------------------------------
   // sendChatMessage
   // ---------------------------------------------------------------------------
-  const sendChatMessage = (reply?: ChatMessage | null) => {
+  const sendChatMessage = (reply?: ChatMessage | null, media?: string[] | null | string) => {
     if (!selectedConversation || !newMessage.trim()) return;
     const replyId = reply?.id ?? null;
     const rpcId = Date.now().toString();
@@ -564,6 +568,8 @@ export const useChatWebSocket = () => {
       sender_last_name: "",
       content,
       is_pinned: false,
+      media: media || null,
+      has_attachments: !!media?.length,
       timestamp: dayjs().toISOString(),
       pending: true,
       chat_id: selectedConversation,
@@ -578,17 +584,18 @@ export const useChatWebSocket = () => {
 
     // Send as JSON-RPC
     sendMessage({
-      jsonrpc: "2.0",
-      method: "sendMessage",
-      params: {
-        chat_id: selectedConversation,
-        content,
-        media: [],
-        is_pinned: false,
-        reply_to: replyId,
-        timestamp: dayjs().toISOString(),
-      },
-      id: rpcId,
+        jsonrpc: "2.0",
+        method: "sendMessage",
+        params: {
+          chat_id: selectedConversation,
+          content,
+          is_pinned: false,
+          has_attachments: !!media?.length,
+          media: media || null,
+          reply_to: replyId,
+          timestamp: dayjs().toISOString(),
+        },
+        id: rpcId,
     });
     setNewMessage("");
     notificationAudioRef.current.play().catch((error) => {

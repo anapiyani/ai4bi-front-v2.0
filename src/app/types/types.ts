@@ -95,6 +95,8 @@ export type ChatMessage = {
   chat_id?: string;
 	reply_to?: string | null;
   is_edited?: boolean;
+	media?: string[] | null | string;
+	has_attachments?: boolean;
   is_pinned?: boolean;
 	// tagged_user_id?: string | null;
 }
@@ -121,4 +123,18 @@ export type ChatContentProps = {
   openMenu: boolean;
   handlePinMessage: ({chat_id, message_id}: {chat_id: string, message_id: string}) => void;
   handleUnpinMessage: ({chat_id, message_id}: {chat_id: string, message_id: string}) => void;
+}
+
+export type UploadMediaResponse = {
+	bucket: string,
+	compress_image: string | null,
+	content_type: string,
+	created_at: string,
+	deleted_at: string | null,
+	extension: string,
+	materialized_name: string,
+	materialized_path: string,
+	real_path: string,
+	restore_path: string | null,
+	uuid: string,
 }
