@@ -1,14 +1,11 @@
 "use client";
 
 import { toast } from "@/components/ui/use-toast"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { useTranslations } from "next-intl"
-import { post } from "../api/service/api"
+import { get, post } from "../api/service/api"
 import { createQueryKeys } from "../api/service/queryKeys"
 import { UploadMediaResponse } from "../types/types"
-
-// Create your query keys (optional pattern)
-export const mediaKeys = createQueryKeys("media");
 
 const uploadSingleMedia = (chat_id: string, file: File) => {
   const formData = new FormData();
@@ -31,7 +28,6 @@ const uploadMultipleMedia = (chat_id: string, files: File[]) => {
 export const useUploadMedia = () => {
   const t = useTranslations("dashboard");
 
-  // We return a React Query mutation
   return useMutation<
     UploadMediaResponse | UploadMediaResponse[],
     Error,
@@ -44,7 +40,6 @@ export const useUploadMedia = () => {
         return uploadMultipleMedia(chat_id, files) as Promise<UploadMediaResponse[]>;
       }
     },
-    onSuccess: (data) => data,
     onError: (error) => {
       toast({
         title: t("error"),
@@ -54,3 +49,26 @@ export const useUploadMedia = () => {
     },
   });
 };
+
+export const getMediaKeys = createQueryKeys("getMedia");
+
+const getSignleMediaData = (uuid: string) => {
+	return get(`/media/show_inline/${uuid}`)
+}
+
+const getMultipleMediaData = (uuids: string[]) => {
+	return get(`/media/show_inline/${uuids}`)
+}
+
+export const useGetMedia = (uuids: string | string[]) => {
+	return useQuery({
+		queryKey: getMediaKeys.all,
+		queryFn: () => {
+			if (Array.isArray(uuids)) {
+				return getMultipleMediaData(uuids)
+			} else {
+				return getSignleMediaData(uuids)
+			}
+		},
+	})
+}

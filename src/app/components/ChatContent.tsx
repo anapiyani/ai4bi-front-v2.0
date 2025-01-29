@@ -6,7 +6,6 @@ import { useTranslations } from "next-intl"
 import { useState } from "react"
 import { getCookie } from "../api/service/cookie"
 import { useGoToMessage } from '../hooks/useGoToMessage'
-import { useUploadMedia } from '../hooks/useUploadMedia'
 import { ChatContentProps, ChatMessage } from "../types/types"
 import DropZoneModal from './Chat/Files/DropZoneModal'
 import Message from "./Chat/Message"
@@ -50,8 +49,6 @@ const ChatContent = ({
     setEditMessage(message);
   };
 
-  const { mutate: uploadMedia, isPending: uploadMediaPending, data: uploadMediaData } = useUploadMedia()
-
   const handleEdit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (editMessage) {
@@ -72,9 +69,8 @@ const ChatContent = ({
     handleUnpinMessage({chat_id: chatId, message_id: message_id});
   }
 
-  const handleUploadMedia = (files: File[]) => {
-    setLocalMedias(files);
-    uploadMedia({ chat_id: chatId, files })
+  const handleSendMedia = (uuids: string[]) => {
+    sendChatMessage(null, uuids);
   }
 
   return (
@@ -135,6 +131,7 @@ const ChatContent = ({
                       handlePin={() => handlePin(message.id)}
                       isPinned={message.is_pinned || false}
                       handleUnpin={() => handleUnpin(message.id)}
+                      media={message.media}
                       replyToMessage={
                         replyToSnippet
                           ? {
@@ -179,7 +176,11 @@ const ChatContent = ({
           <DropZoneModal
             open={openDropZoneModal}
             setOpen={setOpenDropZoneModal}
-            handleUploadMedia={handleUploadMedia}
+            handleSendMedia={handleSendMedia}
+            t={t}
+            value={newMessage}
+            setNewMessage={setNewMessage}
+            chatId={chatId}
           />
         )
       }

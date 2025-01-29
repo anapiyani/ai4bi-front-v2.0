@@ -114,7 +114,7 @@ export type ChatContentProps = {
   isConnected: boolean;
   newMessage: string;
   setNewMessage: (message: string) => void;
-  sendChatMessage: (reply?: ChatMessage | null) => void;
+  sendChatMessage: (reply?: ChatMessage | null, media?: string[] | null) => void;
   scrollRef: React.RefObject<HTMLDivElement>;
   handleOpenDeleteMessage: (messageId: string) => void;
   createPrivateChat: (userId: string) => void;

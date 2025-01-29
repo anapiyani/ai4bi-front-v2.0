@@ -1,4 +1,3 @@
-// DropZoneModal.tsx
 import { Button } from '@/components/ui/button'
 import {
 	Dialog,
@@ -8,40 +7,72 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { useUploadMedia } from '@/src/app/hooks/useUploadMedia'
 import { useState } from 'react'
 import truncate from 'truncate'
 import Icons from '../../Icons'
-import Dropzone from './Dropzone'
+import Dropzone from './DropZone'
 
 const DropZoneModal = ({
   open,
   setOpen,
-  handleUploadMedia,
+  handleSendMedia,
+  t,
+  chatId,
+  value,
+  setNewMessage,
 }: {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  handleUploadMedia: (files: File[]) => void;
+  open: boolean
+  setOpen: (open: boolean) => void
+  handleSendMedia: (uuids: string[]) => void
+  t: any
+  value: string,
+  chatId: string,
+  setNewMessage: (value: string) => void
 }) => {
-	const [filesUploaded, setFilesUploaded] = useState<File[]>([]);
+  const [filesUploaded, setFilesUploaded] = useState<File[]>([])
+
+  const {
+    mutate: uploadMedia,
+    isPending: uploadMediaPending,
+    data: uploadMediaData,
+    error: uploadError,
+  } = useUploadMedia()
 
   const handleUpload = () => {
-    handleUploadMedia(filesUploaded);
-    setFilesUploaded([]);
-    setOpen(false);
-  };
+    if (filesUploaded.length === 0) return
 
-	const deleteUploadedFile = (index: number) => {
-    setFilesUploaded &&
-      setFilesUploaded((prev) => [
-        ...prev.slice(0, index),
-        ...prev.slice(index + 1),
-      ]);
-  };
+    uploadMedia({ chat_id: chatId, files: filesUploaded }, {
+      onSuccess: (dataFromMutation) => {
+        const uploadedIds = Array.isArray(dataFromMutation)
+          ? dataFromMutation.map((item) => item.uuid)
+          : [dataFromMutation.uuid]
+        handleSendMedia(uploadedIds)
+        setFilesUploaded([])
+        setOpen(false)
+        setNewMessage('')
+      },
+      onError: (error) => {
+        console.error('Upload error:', error)
+      },
+    })
+  }
 
+  const deleteUploadedFile = (index: number) => {
+    setFilesUploaded((prev) => [
+      ...prev.slice(0, index),
+      ...prev.slice(index + 1),
+    ])
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewMessage(e.target.value)
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className='w-full max-w-2xl bg-primary-foreground'>
+      <DialogContent className="w-full max-w-2xl bg-primary-foreground">
         <DialogHeader>
           <DialogTitle>Upload Files</DialogTitle>
         </DialogHeader>
@@ -52,53 +83,68 @@ const DropZoneModal = ({
             showFilesList={true}
             showErrorMessage={true}
             onDrop={(acceptedFiles) => {
-              setFilesUploaded((prev) => [...prev, ...acceptedFiles]);
+              setFilesUploaded((prev) => [...prev, ...acceptedFiles])
             }}
           />
-						{filesUploaded.length > 0 && (
-							<div
-								className={`flex flex-col gap-2 w-full ${
-									filesUploaded.length > 2 ? 'h-48 overflow-auto' : 'h-fit'
-								} mt-2 pb-2`}
-							>
-								{filesUploaded.map((fileUploaded, index) => (
-									<div
-										key={index}
-										className='flex justify-between items-center flex-row w-full h-16 mt-2 px-4 border-solid border-2 border-gray-200 rounded-lg shadow-sm'
-									>
-										<div className='flex items-center flex-row gap-4 h-full'>
-											{fileUploaded.type === 'application/pdf' ? (
-												<Icons.PDF className='text-rose-700 w-6 h-6' />
-											) : (
-												<Icons.ImageIcon className='text-rose-700 w-6 h-6' />
-											)}
-											<div className='flex flex-col gap-0'>
-												<div className='text-[0.85rem] font-medium leading-snug'>
-													{truncate(fileUploaded.name.split('.').slice(0, -1).join('.'), 30)}
-												</div>
-												<div className='text-[0.7rem] text-gray-500 leading-tight'>
-													.{fileUploaded.name.split('.').pop()} •{' '}
-													{(fileUploaded.size / (1024 * 1024)).toFixed(2)} MB
-												</div>
-											</div>
-										</div>
-										<div
-											className='p-2 rounded-full border-solid border-2 border-gray-100 shadow-sm hover:bg-accent transition-all select-none cursor-pointer'
-											onClick={() => deleteUploadedFile(index)}
-										>
-											<Icons.Trash className='w-4 h-4' />
-										</div>
-									</div>
-								))}
-							</div>
-						)}
+
+          {filesUploaded.length > 0 && (
+            <div
+              className={`flex flex-col gap-2 w-full ${
+                filesUploaded.length > 2 ? 'h-48 overflow-auto' : 'h-fit'
+              } mt-2 pb-2`}
+            >
+              {filesUploaded.map((fileUploaded, index) => (
+                <div
+                  key={index}
+                  className="flex justify-between items-center flex-row w-full h-16 mt-2 px-4 border-solid border-2 border-gray-200 rounded-lg shadow-sm"
+                >
+                  <div className="flex items-center flex-row gap-4 h-full">
+                    {fileUploaded.type === 'application/pdf' ? (
+                      <Icons.PDF className="text-rose-700 w-6 h-6" />
+                    ) : (
+                      <Icons.ImageIcon className="text-rose-700 w-6 h-6" />
+                    )}
+                    <div className="flex flex-col gap-0">
+                      <div className="text-[0.85rem] font-medium leading-snug">
+                        {truncate(
+                          fileUploaded.name.split('.').slice(0, -1).join('.'),
+                          30
+                        )}
+                      </div>
+                      <div className="text-[0.7rem] text-gray-500 leading-tight">
+                        .{fileUploaded.name.split('.').pop()} •{' '}
+                        {(fileUploaded.size / (1024 * 1024)).toFixed(2)} MB
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    className="p-2 rounded-full border-solid border-2 border-gray-100 shadow-sm hover:bg-accent transition-all select-none cursor-pointer"
+                    onClick={() => deleteUploadedFile(index)}
+                  >
+                    <Icons.Trash className="w-4 h-4" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <Input
+            type="text"
+            value={value}
+            onChange={handleChange}
+            placeholder={t('type-your-message-here')}
+            className="mt-2"
+          />
         </DialogDescription>
+
         <DialogFooter>
-          <Button onClick={handleUpload}>Upload</Button>
+          <Button onClick={handleUpload} disabled={uploadMediaPending}>
+            {uploadMediaPending ? t('uploading') : t('upload')}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
-export default DropZoneModal;
+export default DropZoneModal

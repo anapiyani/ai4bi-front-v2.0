@@ -556,7 +556,7 @@ export const useChatWebSocket = () => {
   // ---------------------------------------------------------------------------
   // sendChatMessage
   // ---------------------------------------------------------------------------
-  const sendChatMessage = (reply?: ChatMessage | null, media?: string[] | null | string) => {
+  const sendChatMessage = (reply?: ChatMessage | null, media?: string[] | null) => {
     if (!selectedConversation || !newMessage.trim()) return;
     const replyId = reply?.id ?? null;
     const rpcId = Date.now().toString();
@@ -569,12 +569,13 @@ export const useChatWebSocket = () => {
       content,
       is_pinned: false,
       media: media || null,
-      has_attachments: !!media?.length,
+      has_attachments: media ? true : false,
       timestamp: dayjs().toISOString(),
       pending: true,
       chat_id: selectedConversation,
       reply_to: replyId,
     };
+    console.log("gonna send", pendingMsg)
     setMessages((prev) => {
       const filtered = prev.filter((m) => !(m.pending && m.content === content));
       return [...filtered, pendingMsg];

@@ -34,6 +34,7 @@ interface MessageProps {
   handlePin: (message_id: string) => void;
   handleUnpin: (message_id: string) => void;
   isPinned: boolean;
+  media: string[] | null | string | undefined;
 }
 
 const Message = ({
@@ -55,11 +56,21 @@ const Message = ({
   isPinned,
   handlePin,
   handleUnpin,
+  media,
 }: MessageProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const user_role = getCookie("role");
   const isAdmin = user_role === "admin";
   const isOwner = sender === "user";
+  // const [mediaData, setMediaData] = useState<any>(null);
+  // if (media) {
+  //   const { data: mediaData, isLoading: mediaLoading, isError: mediaError } = useGetMedia(
+  //     Array.isArray(media) 
+  //       ? media.map((m) => m) 
+  //       : media ? [media] : []
+  //   );
+  //   setMediaData(mediaData);
+  // }
 
   const isBot = sender === "bot";
   const isUser = sender === "user";
@@ -189,6 +200,10 @@ const Message = ({
               </div>
             )}
             {isPinned && <p className={`text-xs text-muted-foreground flex items-center gap-1 mb-1 ${isUser ? "text-white" : ""}`}><Icons.Pin fill={isUser ? "#ffffff" : "#64748B"} className="w-3 h-3" /> {t("pinned")}</p>}
+            {media && <div>
+              <img src="" alt="media" width={100} height={100} />
+              <p>scheiße ich habe keine media FICK DICH</p>
+              </div>}
             <p className={textClasses}>{message}</p>
 
             <div className="flex justify-end">

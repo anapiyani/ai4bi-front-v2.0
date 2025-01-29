@@ -112,10 +112,12 @@
 		"message_not_found": "Хабарлама табылмады",
 		"message_not_found_description": "Хабарлама табылмады, парақшаны жаңартыңыз",
 		"chat_already_exists": "Чат уже существует",
+		"upload": "Жүктеу",
 		"edited": "өңделген",
 		"unpin": "босату",
 		"pinned_message": "Бекітілген хабарламалар",
-		"pinned": "Бекітілген"
+		"pinned": "Бекітілген",
+		"uploading": "Жүктеу"
 	}
 }
 

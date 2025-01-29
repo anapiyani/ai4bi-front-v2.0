@@ -8,7 +8,7 @@ import Icons from '../Icons'
 
 type MessageInputProps = {
   t: any;
-  sendChatMessage: (reply?: ChatMessage | null) => void;
+  sendChatMessage: (reply?: ChatMessage | null, media?: string[] | null) => void;
   isConnected: boolean;
   value: string;
   setNewMessage: (value: string) => void;
@@ -63,7 +63,7 @@ const MessageInput = ({
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
     if (value.trim()) {
-      sendChatMessage(replyTo);
+      sendChatMessage(replyTo, null);
       setNewMessage("");
       setReplyTo(null);
     }
