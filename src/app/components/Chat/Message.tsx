@@ -209,30 +209,21 @@ const Message = ({
                   replyToMessage.media?.map((item, index) => {
                     return (
                       <div key={index} className='py-1 flex items-center gap-1'>
-                        {typeof item === 'string' ? (
-                          <>
-                            {item === 'file' ? (
-                              <Icons.PDF className={`${isUser ? "text-white" : "text-primary"}`} size={16} />
-                            ) : (
-                              <Icons.Image_Small fill={isUser ? "#ffffff" : "#64748B"} />
-                            )}
-                            <p>{t(item)}</p>
-                          </>
-                        ) : (
-                          <>
-                            {item.media_type === 'file' ? (
-                              <Icons.PDF className={isUser ? "text-white" : "text-muted-foreground"} size={16} />
-                            ) : (
-                              <Icons.Image_Small fill={isUser ? "#ffffff" : "#64748B"} />
-                            )}
-                            <p>{t(item.media_type)}</p>
-                          </>
+                        {typeof item === 'object' && (
+                          item.media_type === 'file' ? (
+                            <Icons.PDF className={isUser ? "text-white" : "text-muted-foreground"} size={16} />
+                          ) : item.media_type === 'image' ? (
+                            <Icons.Image_Small fill={isUser ? "#ffffff" : "#64748B"} />
+                          ) : item.media_type === 'video' ? (
+                            <Icons.Video fill={isUser ? "#ffffff" : "#64748B"} size={16} />
+                          ) : null
                         )}
+                        <p>{typeof item === 'object' ? t(item.media_type) : ''}</p>
                       </div>
                     )
                   })
                 : null}
-                <p className="text-bi">{replyToMessage.content.length > 60 ? `${replyToMessage.content.slice(0, 40)}…` : replyToMessage.content}</p>
+                <p className="text-bi pr-2">{replyToMessage.content.length > 60 ? `${replyToMessage.content.slice(0, 40)}…` : replyToMessage.content}</p>
               </div>
             )}
             {isPinned && <p className={`text-xs text-muted-foreground flex items-center gap-1 mb-1 ${isUser ? "text-white" : ""}`}><Icons.Pin fill={isUser ? "#ffffff" : "#64748B"} className="w-3 h-3" /> {t("pinned")}</p>}
