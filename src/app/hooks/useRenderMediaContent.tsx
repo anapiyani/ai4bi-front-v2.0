@@ -44,7 +44,7 @@ export function useRenderMediaContent(
         switch (media_type) {
           case "image":
             return (
-              <div className="flex justify-center gap-2 items-center mb-2 px-2 rounded">
+              <div className="flex justify-center gap-2 items-center mb-2 rounded">
                 <img
                   src={`https://staging.ai4bi.kz/media/show_inline/${media_id}`}
                   alt={name || "media"}
