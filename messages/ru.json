@@ -112,7 +112,10 @@
 		"message_not_found": "Сообщение не найдено",
 		"message_not_found_description": "Сообщение не найдено, попробуйте обновить страницу",
 		"chat_already_exists": "Чат уже существует",
-		"edited": "изменено"
+		"edited": "изменено",
+		"unpin": "Открепить",
+		"pinned_message": "Закрепленное сообщение",
+		"pinned": "Закреплено"
 	}
 }
 

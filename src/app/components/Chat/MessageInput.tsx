@@ -75,6 +75,14 @@ const MessageInput = ({
 
   const ChooseFiles = () => {
     console.log("Choose files");
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.multiple = true;
+    fileInput.onchange = (e) => {
+      const files = (e.target as HTMLInputElement).files;
+      console.log(files);
+    };
+    fileInput.click();
   }
 
   return (

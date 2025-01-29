@@ -24,7 +24,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           {...props}
         />
         {icon && (
-          <div onClick={handleIconClick} tabIndex={0} className="absolute inset-y-0 right-3 flex items-center pointer-events-none cursor-pointer">
+          <div onClick={handleIconClick} tabIndex={0} className="absolute inset-y-0 right-3 flex items-center cursor-pointer">
             {icon}
           </div>
         )}

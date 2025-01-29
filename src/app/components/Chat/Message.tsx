@@ -31,6 +31,9 @@ interface MessageProps {
   } | null;
   createPrivateChat: (userId: string) => void;
   isEdited: boolean;
+  handlePin: (message_id: string) => void;
+  handleUnpin: (message_id: string) => void;
+  isPinned: boolean;
 }
 
 const Message = ({
@@ -49,6 +52,9 @@ const Message = ({
   goToMessage,
   isEdited,
   createPrivateChat,
+  isPinned,
+  handlePin,
+  handleUnpin,
 }: MessageProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const user_role = getCookie("role");
@@ -76,8 +82,18 @@ const Message = ({
     {
       icon: Icons.Pin,
       label: t("pin"),
-      show: isAdmin,
-      action: () => {},
+      show: isAdmin && !isPinned,
+      action: () => {
+        handlePin(messageId);
+      },
+    },
+    {
+      icon: Icons.UnPin,
+      label: t("unpin"),
+      show: isAdmin && isPinned,
+      action: () => {
+        handleUnpin(messageId);
+      },
     },
     {
       icon: Icons.Edit,
@@ -172,6 +188,7 @@ const Message = ({
                 <p className="text-bi">{replyToMessage.content.length > 60 ? `${replyToMessage.content.slice(0, 40)}…` : replyToMessage.content}</p>
               </div>
             )}
+            {isPinned && <p className={`text-xs text-muted-foreground flex items-center gap-1 mb-1 ${isUser ? "text-white" : ""}`}><Icons.Pin fill={isUser ? "#ffffff" : "#64748B"} className="w-3 h-3" /> {t("pinned")}</p>}
             <p className={textClasses}>{message}</p>
 
             <div className="flex justify-end">
