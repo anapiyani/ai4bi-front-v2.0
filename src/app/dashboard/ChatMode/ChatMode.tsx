@@ -146,7 +146,7 @@ const ChatMode = () => {
             </TabsContent>
             <TabsContent value="private-chats">
               <div className="flex flex-col gap-2 overflow-y-auto max-h-[calc(100vh-300px)] no-scrollbar">
-                {conversations.map((conversation, index) =>
+                {conversations.map((conversation, index) => 
                   conversation.chat_type === "private" ? (
                     <ChatListItem
                       key={conversation.id}
