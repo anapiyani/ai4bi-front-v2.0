@@ -82,7 +82,6 @@
 		"turn-off-microphone": "Turn off microphone",
 		"delete": "Delete",
 		"chat": "Chat",
-		"no-messages-yet": "No messages yet",
 		"private-chats": "Private chats",
 		"pin": "Pin",
 		"edit": "Edit",
@@ -119,7 +118,9 @@
 		"pinned": "Pinned",
 		"upload": "Upload",
 		"image": "Image",
-		"video": "Video"
+		"video": "Video",
+		"media": "Media",
+		"no_messages_yet": "No messages yet"
 	}
 }
 

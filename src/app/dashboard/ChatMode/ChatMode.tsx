@@ -131,6 +131,7 @@ const ChatMode = () => {
                       <ChatListItem
                         key={conversation.id}
                         data={conversation}
+                        t={t}
                         onClick={() => {
                           handleItemClick(conversation.id)
                           setSelectedConversationType(conversation.chat_type)
@@ -150,6 +151,7 @@ const ChatMode = () => {
                     <ChatListItem
                       key={conversation.id}
                       data={conversation}
+                      t={t}
                       onClick={() => {
                         handleItemClick(conversation.id)
                         setSelectedConversationType(conversation.chat_type)

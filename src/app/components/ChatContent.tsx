@@ -39,7 +39,6 @@ const ChatContent = ({
   const pinnedMessages = messages.filter((m) => m.is_pinned);
   const [openDropZoneModal, setOpenDropZoneModal] = useState<boolean>(false);
   const goToMessage = useGoToMessage();
-  const [localMedias, setLocalMedias] = useState<File[] | null>(null);
 
   const handleReplyClick = (message: ChatMessage) => {
     setReplyTo(message);
@@ -131,14 +130,14 @@ const ChatContent = ({
                       handlePin={() => handlePin(message.id)}
                       isPinned={message.is_pinned || false}
                       handleUnpin={() => handleUnpin(message.id)}
-                      media={message.media}
+                      media={Array.isArray(message.media) ? message.media : message.media ? [message.media] : null}
                       replyToMessage={
                         replyToSnippet
                           ? {
                               sender: replyToSnippet.sender_first_name,
                               content: replyToSnippet.content,
                               has_attachments: replyToSnippet.has_attachments || false,
-                              media: replyToSnippet.media || null,
+                              media: Array.isArray(replyToSnippet.media) ? replyToSnippet.media : replyToSnippet.media ? [replyToSnippet.media] : null,
                             }
                           : null
                       }

@@ -103,7 +103,7 @@ export type ChatMessage = {
 		mime_type: string;
 		name: string;
 		size: number;
-	}[];
+	};
 	has_attachments?: boolean;
   is_pinned?: boolean;
 	// tagged_user_id?: string | null;

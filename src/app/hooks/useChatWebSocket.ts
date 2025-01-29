@@ -560,7 +560,7 @@ export const useChatWebSocket = () => {
   // sendChatMessage
   // ---------------------------------------------------------------------------
   const sendChatMessage = (reply?: ChatMessage | null, media?: string[] | null) => {
-    if (!selectedConversation || !newMessage.trim()) return;
+    if (!selectedConversation) return;
     const replyId = reply?.id ?? null;
     const rpcId = Date.now().toString();
     const content = newMessage.trim();
@@ -569,7 +569,7 @@ export const useChatWebSocket = () => {
       authorId: getCookie("user_id"),
       sender_first_name: "user",
       sender_last_name: "",
-      content,
+      content: content,
       is_pinned: false,
       media: media || null,
       has_attachments: media ? true : false,
