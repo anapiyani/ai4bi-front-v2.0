@@ -117,7 +117,9 @@
 		"unpin": "Unpin",
 		"pinned_message": "Pinned message",
 		"pinned": "Pinned",
-		"upload": "Upload"
+		"upload": "Upload",
+		"image": "Image",
+		"video": "Video"
 	}
 }
 

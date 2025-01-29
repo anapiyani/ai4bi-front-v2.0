@@ -224,6 +224,8 @@ export const useChatWebSocket = () => {
         is_pinned: message.is_pinned,
         is_edited: message.is_edited,
         reply_to: message.reply_message_id,
+        media: message.media?.length > 0 ? message.media : null,
+        has_attachments: Boolean(message.media?.length),
       }));
     setMessages(transformedMessages);
   };

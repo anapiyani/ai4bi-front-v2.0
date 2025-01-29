@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/context-menu"
 import React, { useState } from "react"
 import { getCookie } from "../../api/service/cookie"
+import useRenderMediaContent from '../../hooks/useRenderMediaContent'
 import Icons from "../Icons"
 
 type Sender = "bot" | "user" | string;
@@ -28,13 +29,28 @@ interface MessageProps {
   replyToMessage?: {
     sender: string;
     content: string;
+    has_attachments: boolean;
+    media: string[] | null | {
+      extension: string;
+      media_id: string;
+      media_type: "image" | "video" | "audio" | "file";
+      mime_type: string;
+      name: string;
+    }[]
   } | null;
   createPrivateChat: (userId: string) => void;
   isEdited: boolean;
   handlePin: (message_id: string) => void;
   handleUnpin: (message_id: string) => void;
   isPinned: boolean;
-  media: string[] | null | string | undefined;
+  media: {
+    extension: string;
+		media_id: string;
+		media_type: "image" | "video" | "audio" | "file";
+		mime_type: string;
+		name: string;
+		size: number;
+  }[] | string[] | null | undefined;
 }
 
 const Message = ({
@@ -62,15 +78,7 @@ const Message = ({
   const user_role = getCookie("role");
   const isAdmin = user_role === "admin";
   const isOwner = sender === "user";
-  // const [mediaData, setMediaData] = useState<any>(null);
-  // if (media) {
-  //   const { data: mediaData, isLoading: mediaLoading, isError: mediaError } = useGetMedia(
-  //     Array.isArray(media) 
-  //       ? media.map((m) => m) 
-  //       : media ? [media] : []
-  //   );
-  //   setMediaData(mediaData);
-  // }
+  const renderedMedia = useRenderMediaContent(media, t)
 
   const isBot = sender === "bot";
   const isUser = sender === "user";
@@ -158,6 +166,7 @@ const Message = ({
     isBot ? "text-white" : "text-secondary-foreground"
   } ${isUser ? "text-white" : ""}`;
 
+
   return (
     <div
       id={`message-${messageId}`} 
@@ -196,14 +205,38 @@ const Message = ({
                 className={`mb-1 gap-2 border-l-2  pl-2 py-1 text-sm text-bi cursor-pointer ${isUser ? "bg-[#F1F5F933] border-secondary" : "bg-[#F1F5F9] border-[#0891B2]"}`}
               >
                 <p className={`${isUser ? "text-foreground" : "text-primary"}`}>{replyToMessage.sender} </p>
+                {replyToMessage.has_attachments ? 
+                  replyToMessage.media?.map((item, index) => {
+                    return (
+                      <div key={index} className='py-1 flex items-center gap-1'>
+                        {typeof item === 'string' ? (
+                          <>
+                            {item === 'file' ? (
+                              <Icons.PDF className={`${isUser ? "text-white" : "text-primary"}`} size={16} />
+                            ) : (
+                              <Icons.Image_Small fill={isUser ? "#ffffff" : "#64748B"} />
+                            )}
+                            <p>{t(item)}</p>
+                          </>
+                        ) : (
+                          <>
+                            {item.media_type === 'file' ? (
+                              <Icons.PDF className={isUser ? "text-white" : "text-muted-foreground"} size={16} />
+                            ) : (
+                              <Icons.Image_Small fill={isUser ? "#ffffff" : "#64748B"} />
+                            )}
+                            <p>{t(item.media_type)}</p>
+                          </>
+                        )}
+                      </div>
+                    )
+                  })
+                : null}
                 <p className="text-bi">{replyToMessage.content.length > 60 ? `${replyToMessage.content.slice(0, 40)}…` : replyToMessage.content}</p>
               </div>
             )}
             {isPinned && <p className={`text-xs text-muted-foreground flex items-center gap-1 mb-1 ${isUser ? "text-white" : ""}`}><Icons.Pin fill={isUser ? "#ffffff" : "#64748B"} className="w-3 h-3" /> {t("pinned")}</p>}
-            {media && <div>
-              <img src="" alt="media" width={100} height={100} />
-              <p>scheiße ich habe keine media FICK DICH</p>
-              </div>}
+            {renderedMedia}
             <p className={textClasses}>{message}</p>
 
             <div className="flex justify-end">

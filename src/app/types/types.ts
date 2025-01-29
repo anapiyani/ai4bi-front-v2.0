@@ -95,7 +95,14 @@ export type ChatMessage = {
   chat_id?: string;
 	reply_to?: string | null;
   is_edited?: boolean;
-	media?: string[] | null | string;
+	media?: string[] | null | {
+		extension: string;
+		media_id: string;
+		media_type: "image" | "video" | "audio" | "file";
+		mime_type: string;
+		name: string;
+		size: number;
+	}[];
 	has_attachments?: boolean;
   is_pinned?: boolean;
 	// tagged_user_id?: string | null;

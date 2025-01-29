@@ -73,6 +73,8 @@ const ChatContent = ({
     sendChatMessage(null, uuids);
   }
 
+  console.log(messages)
+
   return (
     <div className="flex flex-col w-full h-full relative">
       <ChatHeader 
@@ -137,6 +139,8 @@ const ChatContent = ({
                           ? {
                               sender: replyToSnippet.sender_first_name,
                               content: replyToSnippet.content,
+                              has_attachments: replyToSnippet.has_attachments || false,
+                              media: replyToSnippet.media || null,
                             }
                           : null
                       }

@@ -186,7 +186,7 @@ const Icons = {
 	Globe: () => {
 		return (
 			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-				<path d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3M12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3M12 21C14.7614 21 15.9413 15.837 15.9413 12C15.9413 8.16303 14.7614 3 12 3M12 21C9.23858 21 8.05895 15.8369 8.05895 12C8.05895 8.16307 9.23858 3 12 3M3.49988 8.99998C10.1388 8.99998 13.861 8.99998 20.4999 8.99998M3.49988 15C10.1388 15 13.861 15 20.4999 15" stroke="white" stroke-width="1.5" strokeLinecap="round" stroke-linejoin="round"/>
+				<path d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3M12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3M12 21C14.7614 21 15.9413 15.837 15.9413 12C15.9413 8.16303 14.7614 3 12 3M12 21C9.23858 21 8.05895 15.8369 8.05895 12C8.05895 8.16307 9.23858 3 12 3M3.49988 8.99998C10.1388 8.99998 13.861 8.99998 20.4999 8.99998M3.49988 15C10.1388 15 13.861 15 20.4999 15" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
 			</svg>
 		)
 	},
@@ -200,7 +200,7 @@ const Icons = {
 	Choose_files: () => {
 		return (
 			<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-				<path d="M2.88281 7.66773L7.18674 3.52094C11.2583 -0.407306 17.8709 5.65307 13.6338 9.74112L8.29962 14.8876C5.5368 17.5532 1.04964 13.4408 3.92485 10.6667L9.18225 5.59434C10.6364 4.19139 12.998 6.35581 11.4848 7.81583L7.11767 12" stroke="#64748B" stroke-width="1.5" strokeLinecap="round" stroke-linejoin="round"/>
+				<path d="M2.88281 7.66773L7.18674 3.52094C11.2583 -0.407306 17.8709 5.65307 13.6338 9.74112L8.29962 14.8876C5.5368 17.5532 1.04964 13.4408 3.92485 10.6667L9.18225 5.59434C10.6364 4.19139 12.998 6.35581 11.4848 7.81583L7.11767 12" stroke="#64748B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
 			</svg>
 		)
 	},
@@ -250,12 +250,12 @@ const Icons = {
 			</svg>
 		)
 	},
-	PDF: ({ className }: { className?: string }) => {
+	PDF: ({ className, size }: { className?: string, size?: number }) => {
 		return (
 			<svg
 				xmlns='http://www.w3.org/2000/svg'
-				width='24'
-				height='24'
+				width={size || 24}
+				height={size || 24}
 				viewBox='0 0 24 24'
 				fill='none'
 				stroke='currentColor'
@@ -269,6 +269,16 @@ const Icons = {
 				<path d='M10 9H8' />
 				<path d='M16 13H8' />
 				<path d='M16 17H8' />
+			</svg>
+		)
+	},
+	Image_Small: ({ fill }: { fill?: string }) => {
+		return (
+			<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M4.33203 5.33333C4.33203 6.06971 4.92898 6.66667 5.66536 6.66667C6.40174 6.66667 6.9987 6.06971 6.9987 5.33333C6.9987 4.59695 6.40174 4 5.66536 4C4.92898 4 4.33203 4.59695 4.33203 5.33333Z" stroke={fill} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M13.952 6.65986C9.5446 6.05481 5.74458 9.32682 6.0005 13.6667" stroke={fill} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M2 8.71042C3.85291 8.45387 5.51657 9.34966 6.41571 10.7773" stroke={fill} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M2 8C2 5.17157 2 3.75736 2.87868 2.87868C3.75736 2 5.17157 2 8 2C10.8284 2 12.2426 2 13.1213 2.87868C14 3.75736 14 5.17157 14 8C14 10.8284 14 12.2426 13.1213 13.1213C12.2426 14 10.8284 14 8 14C5.17157 14 3.75736 14 2.87868 13.1213C2 12.2426 2 10.8284 2 8Z" stroke={fill} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
 			</svg>
 		)
 	},
