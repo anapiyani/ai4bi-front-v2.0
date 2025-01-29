@@ -93,6 +93,7 @@ export type ChatMessage = {
   pending?: boolean;
   authorId?: string | null;
   chat_id?: string;
+	is_voice_message?: boolean;
 	reply_to?: string | null;
   is_edited?: boolean;
 	media?: string[] | null | {

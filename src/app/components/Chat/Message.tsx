@@ -78,10 +78,10 @@ const Message = ({
   const user_role = getCookie("role");
   const isAdmin = user_role === "admin";
   const isOwner = sender === "user";
-  const renderedMedia = useRenderMediaContent(media, t)
-
+  
   const isBot = sender === "bot";
   const isUser = sender === "user";
+  const renderedMedia = useRenderMediaContent(media, t, isUser)
 
   const contextMenuItems = [
     {

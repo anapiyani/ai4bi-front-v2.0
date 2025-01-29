@@ -115,12 +115,12 @@ const Icons = {
 			</svg>
 		)
 	},
-	Dots: () => {
+	Dots: ({ fill, className }: { fill?: string, className?: string }) => {
 		return (
-			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-				<path d="M16 12.25V11.75" stroke="#64748B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-				<path d="M12 12.25V11.75" stroke="#64748B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-				<path d="M8 12.25V11.75" stroke="#64748B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+			<svg className={className} width="24" height="24" viewBox="0 0 24 24" fill={fill} xmlns="http://www.w3.org/2000/svg">
+				<path d="M16 12.25V11.75" stroke={fill || "#64748B"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M12 12.25V11.75" stroke={fill || "#64748B"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M8 12.25V11.75" stroke={fill || "#64748B"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
 			</svg>
 		)
 	},
@@ -322,6 +322,14 @@ const Icons = {
 			</svg>
 		)
 	},
+	Video: ({ className, fill }: { className?: string, fill?: string }) => {
+		return (
+			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+				<path d="M13.2423 10.7093C13.9141 11.2573 14.25 11.5313 14.25 12C14.25 12.4687 13.9141 12.7427 13.2423 13.2907C13.0568 13.442 12.8729 13.5845 12.7038 13.7032C12.5555 13.8073 12.3876 13.915 12.2137 14.0208C11.5435 14.4283 11.2083 14.6321 10.9078 14.4065C10.6072 14.1809 10.5799 13.7085 10.5252 12.7638C10.5098 12.4967 10.5 12.2348 10.5 12C10.5 11.7652 10.5098 11.5033 10.5252 11.2362C10.5799 10.2915 10.6072 9.81913 10.9078 9.5935C11.2083 9.36787 11.5435 9.57166 12.2137 9.97924C12.3876 10.085 12.5555 10.1927 12.7038 10.2968C12.8729 10.4155 13.0568 10.558 13.2423 10.7093Z" stroke={fill} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M3 12C3 7.75736 3 5.63604 4.31802 4.31802C5.63604 3 7.75736 3 12 3C16.2426 3 18.364 3 19.682 4.31802C21 5.63604 21 7.75736 21 12C21 16.2426 21 18.364 19.682 19.682C18.364 21 16.2426 21 12 21C7.75736 21 5.63604 21 4.31802 19.682C3 18.364 3 16.2426 3 12Z" stroke={fill} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+			</svg>
+		)
+	}
 }
 
 export default Icons

@@ -104,6 +104,7 @@ export const useChatWebSocket = () => {
       } else if (message.event === "new_message") {
         const msgData = message.data.message;
         const chatId = message.chat_id || message.data.chat_id;
+        console.log("new_message", message)
         // If it's in the chat_room channel...
         if (message.channel?.startsWith("chat_room")) {
           const formattedMessage = {
@@ -115,6 +116,7 @@ export const useChatWebSocket = () => {
               timestamp: msgData.timestamp || dayjs().toISOString(),
               authorId: msgData.sender_id,
               reply_message_id: msgData.reply_message_id,
+              media: msgData.media,
               is_pinned: msgData.is_pinned,
           };
           handleMessageReceived(formattedMessage);
@@ -237,7 +239,6 @@ export const useChatWebSocket = () => {
     console.log("handleMessageReceived", msg);
     const realId = msg.message_id
     const replyId = msg.reply_message_id || msg.reply_to || null;
-
 
     const newMsg: ChatMessage = {
       id: realId,
@@ -572,6 +573,7 @@ export const useChatWebSocket = () => {
       is_pinned: false,
       media: media || null,
       has_attachments: media ? true : false,
+      is_voice_message: false,
       timestamp: dayjs().toISOString(),
       pending: true,
       chat_id: selectedConversation,
@@ -595,6 +597,7 @@ export const useChatWebSocket = () => {
           is_pinned: false,
           has_attachments: !!media?.length,
           media: media || null,
+          is_voice_message: false,
           reply_to: replyId,
           timestamp: dayjs().toISOString(),
         },
