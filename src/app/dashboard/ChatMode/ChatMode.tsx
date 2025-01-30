@@ -82,6 +82,7 @@ const ChatMode = () => {
     }
   }, [selectedConversation, conversations])
 
+
   return (
     <div className="w-full flex flex-col lg:flex-row bg-primary-foreground justify-center">
       <aside className="w-full lg:w-1/3 bg-primary-foreground h-full px-4 lg:px-6 py-6 lg:py-6">
@@ -130,6 +131,7 @@ const ChatMode = () => {
                       <ChatListItem
                         key={conversation.id}
                         data={conversation}
+                        t={t}
                         onClick={() => {
                           handleItemClick(conversation.id)
                           setSelectedConversationType(conversation.chat_type)
@@ -144,11 +146,12 @@ const ChatMode = () => {
             </TabsContent>
             <TabsContent value="private-chats">
               <div className="flex flex-col gap-2 overflow-y-auto max-h-[calc(100vh-300px)] no-scrollbar">
-                {conversations.map((conversation, index) =>
+                {conversations.map((conversation, index) => 
                   conversation.chat_type === "private" ? (
                     <ChatListItem
                       key={conversation.id}
                       data={conversation}
+                      t={t}
                       onClick={() => {
                         handleItemClick(conversation.id)
                         setSelectedConversationType(conversation.chat_type)

@@ -104,6 +104,7 @@ export const useChatWebSocket = () => {
       } else if (message.event === "new_message") {
         const msgData = message.data.message;
         const chatId = message.chat_id || message.data.chat_id;
+        console.log("new_message", message)
         // If it's in the chat_room channel...
         if (message.channel?.startsWith("chat_room")) {
           const formattedMessage = {
@@ -115,6 +116,7 @@ export const useChatWebSocket = () => {
               timestamp: msgData.timestamp || dayjs().toISOString(),
               authorId: msgData.sender_id,
               reply_message_id: msgData.reply_message_id,
+              media: msgData.media,
               is_pinned: msgData.is_pinned,
           };
           handleMessageReceived(formattedMessage);
@@ -224,6 +226,8 @@ export const useChatWebSocket = () => {
         is_pinned: message.is_pinned,
         is_edited: message.is_edited,
         reply_to: message.reply_message_id,
+        media: message.media?.length > 0 ? message.media : null,
+        has_attachments: Boolean(message.media?.length),
       }));
     setMessages(transformedMessages);
   };
@@ -236,7 +240,6 @@ export const useChatWebSocket = () => {
     const realId = msg.message_id
     const replyId = msg.reply_message_id || msg.reply_to || null;
 
-
     const newMsg: ChatMessage = {
       id: realId,
       chat_id: msg.chat_id,
@@ -245,6 +248,8 @@ export const useChatWebSocket = () => {
       sender_last_name: msg.sender_last_name,
       is_pinned: msg.is_pinned,
       content: msg.content,
+      media: msg.media,
+      has_attachments: msg.has_attachments,
       timestamp: msg.timestamp || dayjs().toISOString(),
       reply_to: replyId,
     };
@@ -270,6 +275,8 @@ export const useChatWebSocket = () => {
                 is_deleted: false,
                 is_edited: false,
                 media_ids: null,
+                media: newMsg.media,
+                has_attachments: newMsg.has_attachments,
                 message_id: null,
                 is_pinned: newMsg.is_pinned,
                 reply_message_id: newMsg.id,
@@ -552,8 +559,8 @@ export const useChatWebSocket = () => {
   // ---------------------------------------------------------------------------
   // sendChatMessage
   // ---------------------------------------------------------------------------
-  const sendChatMessage = (reply?: ChatMessage | null) => {
-    if (!selectedConversation || !newMessage.trim()) return;
+  const sendChatMessage = (reply?: ChatMessage | null, media?: string[] | null) => {
+    if (!selectedConversation) return;
     const replyId = reply?.id ?? null;
     const rpcId = Date.now().toString();
     const content = newMessage.trim();
@@ -562,13 +569,17 @@ export const useChatWebSocket = () => {
       authorId: getCookie("user_id"),
       sender_first_name: "user",
       sender_last_name: "",
-      content,
+      content: content,
       is_pinned: false,
+      media: media || null,
+      has_attachments: media ? true : false,
+      is_voice_message: false,
       timestamp: dayjs().toISOString(),
       pending: true,
       chat_id: selectedConversation,
       reply_to: replyId,
     };
+    console.log("gonna send", pendingMsg)
     setMessages((prev) => {
       const filtered = prev.filter((m) => !(m.pending && m.content === content));
       return [...filtered, pendingMsg];
@@ -578,17 +589,19 @@ export const useChatWebSocket = () => {
 
     // Send as JSON-RPC
     sendMessage({
-      jsonrpc: "2.0",
-      method: "sendMessage",
-      params: {
-        chat_id: selectedConversation,
-        content,
-        media: [],
-        is_pinned: false,
-        reply_to: replyId,
-        timestamp: dayjs().toISOString(),
-      },
-      id: rpcId,
+        jsonrpc: "2.0",
+        method: "sendMessage",
+        params: {
+          chat_id: selectedConversation,
+          content,
+          is_pinned: false,
+          has_attachments: !!media?.length,
+          media: media || null,
+          is_voice_message: false,
+          reply_to: replyId,
+          timestamp: dayjs().toISOString(),
+        },
+        id: rpcId,
     });
     setNewMessage("");
     notificationAudioRef.current.play().catch((error) => {

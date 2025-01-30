@@ -5,31 +5,14 @@ import dayjs from "dayjs"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
 import { getCookie } from "../api/service/cookie"
-import { ChatMessage } from "../types/types"
+import { useGoToMessage } from '../hooks/useGoToMessage'
+import { ChatContentProps, ChatMessage } from "../types/types"
+import DropZoneModal from './Chat/Files/DropZoneModal'
 import Message from "./Chat/Message"
 import MessageInput from "./Chat/MessageInput"
 import PinnedMessages from './Chat/PinnedMessages'
 import SelectChat from './Chat/SelectChat'
 import ChangeDates from "./Form/ChangeDates"
-
-interface ChatContentProps {
-  chatId: string | null;
-  selectedConversation: string | null;
-  title: string;
-  messages: ChatMessage[];
-  isConnected: boolean;
-  newMessage: string;
-  setNewMessage: (message: string) => void;
-  sendChatMessage: (reply?: ChatMessage | null) => void;
-  scrollRef: React.RefObject<HTMLDivElement>;
-  handleOpenDeleteMessage: (messageId: string) => void;
-  createPrivateChat: (userId: string) => void;
-  sendEditMessage: (message: ChatMessage) => void;
-  setOpenMenu: (open: boolean) => void;
-  openMenu: boolean;
-  handlePinMessage: ({chat_id, message_id}: {chat_id: string, message_id: string}) => void;
-  handleUnpinMessage: ({chat_id, message_id}: {chat_id: string, message_id: string}) => void;
-}
 
 const ChatContent = ({
   chatId,
@@ -54,19 +37,8 @@ const ChatContent = ({
   const [editMessage, setEditMessage] = useState<ChatMessage | null>(null);
   const [replyTo, setReplyTo] = useState<ChatMessage | null>(null);
   const pinnedMessages = messages.filter((m) => m.is_pinned);
-
-  const goToMessage = (messageId: string) => {
-    const element = document.getElementById(`message-${messageId}`);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "center" });
-      element.classList.add("highlight");
-      setTimeout(() => {
-        element.classList.remove("highlight");
-      }, 1000); 
-    } else {
-      console.warn(`Element with ID message-${messageId} not found.`);
-    }
-  };
+  const [openDropZoneModal, setOpenDropZoneModal] = useState<boolean>(false);
+  const goToMessage = useGoToMessage();
 
   const handleReplyClick = (message: ChatMessage) => {
     setReplyTo(message);
@@ -94,6 +66,10 @@ const ChatContent = ({
 
   const handleUnpin = (message_id: string) => {
     handleUnpinMessage({chat_id: chatId, message_id: message_id});
+  }
+
+  const handleSendMedia = (uuids: string[]) => {
+    sendChatMessage(null, uuids);
   }
 
   return (
@@ -154,11 +130,14 @@ const ChatContent = ({
                       handlePin={() => handlePin(message.id)}
                       isPinned={message.is_pinned || false}
                       handleUnpin={() => handleUnpin(message.id)}
+                      media={Array.isArray(message.media) ? message.media : message.media ? [message.media] : null}
                       replyToMessage={
                         replyToSnippet
                           ? {
                               sender: replyToSnippet.sender_first_name,
                               content: replyToSnippet.content,
+                              has_attachments: replyToSnippet.has_attachments || false,
+                              media: Array.isArray(replyToSnippet.media) ? replyToSnippet.media : replyToSnippet.media ? [replyToSnippet.media] : null,
                             }
                           : null
                       }
@@ -180,6 +159,8 @@ const ChatContent = ({
             editMessage={editMessage}
             setEditMessage={setEditMessage}
             handleEdit={handleEdit}
+            openDropZoneModal={openDropZoneModal}
+            setOpenDropZoneModal={setOpenDropZoneModal}
           />
         </div>
       </div>
@@ -191,6 +172,19 @@ const ChatContent = ({
           chat_id={chatId}
         />
       )}
+      {
+        openDropZoneModal && (
+          <DropZoneModal
+            open={openDropZoneModal}
+            setOpen={setOpenDropZoneModal}
+            handleSendMedia={handleSendMedia}
+            t={t}
+            value={newMessage}
+            setNewMessage={setNewMessage}
+            chatId={chatId}
+          />
+        )
+      }
     </div>
   );
 };

@@ -7,9 +7,10 @@ type ChatListItemProps = {
   onClick: () => void;
   isSelected: boolean;
   index: number;
+  t: any;
 };
 
-const ChatListItem = ({ data, onClick, isSelected, index }: ChatListItemProps) => {
+const ChatListItem = ({ data, onClick, isSelected, index, t }: ChatListItemProps) => {
   const { name, lastMessage, chat_type } = data;
   const renderLastMessage = () => {
     if (typeof lastMessage === 'object') {
@@ -22,7 +23,7 @@ const ChatListItem = ({ data, onClick, isSelected, index }: ChatListItemProps) =
             ? lastMessage.content.length > 70
               ? `${lastMessage.content.slice(0, 70)}...`
               : lastMessage.content
-            : 'No messages yet'}
+            : lastMessage.media ? t('media') : t('no_messages_yet')}
           {lastMessage.send_at && (
             <span className="ml-2 text-xs opacity-70">
               {dayjs(lastMessage.send_at).format("HH:mm")}

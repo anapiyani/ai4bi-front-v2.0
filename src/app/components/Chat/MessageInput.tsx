@@ -8,7 +8,7 @@ import Icons from '../Icons'
 
 type MessageInputProps = {
   t: any;
-  sendChatMessage: (reply?: ChatMessage | null) => void;
+  sendChatMessage: (reply?: ChatMessage | null, media?: string[] | null) => void;
   isConnected: boolean;
   value: string;
   setNewMessage: (value: string) => void;
@@ -18,6 +18,8 @@ type MessageInputProps = {
   editMessage: ChatMessage | null;
   setEditMessage: (message: ChatMessage | null) => void;
   handleEdit: (e: React.FormEvent<HTMLFormElement>) => void;
+  openDropZoneModal: boolean;
+  setOpenDropZoneModal: (open: boolean) => void;
 };
 
 const MessageInput = ({
@@ -31,6 +33,8 @@ const MessageInput = ({
   editMessage,
   setEditMessage,
   handleEdit,
+  openDropZoneModal,
+  setOpenDropZoneModal,
 }: MessageInputProps) => {
   let inputRef = useRef<HTMLInputElement>(null);
 
@@ -59,7 +63,7 @@ const MessageInput = ({
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
     if (value.trim()) {
-      sendChatMessage(replyTo);
+      sendChatMessage(replyTo, null);
       setNewMessage("");
       setReplyTo(null);
     }
@@ -74,15 +78,7 @@ const MessageInput = ({
   };
 
   const ChooseFiles = () => {
-    console.log("Choose files");
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.multiple = true;
-    fileInput.onchange = (e) => {
-      const files = (e.target as HTMLInputElement).files;
-      console.log(files);
-    };
-    fileInput.click();
+    setOpenDropZoneModal(true);
   }
 
   return (

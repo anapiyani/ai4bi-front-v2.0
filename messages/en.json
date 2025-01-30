@@ -82,7 +82,6 @@
 		"turn-off-microphone": "Turn off microphone",
 		"delete": "Delete",
 		"chat": "Chat",
-		"no-messages-yet": "No messages yet",
 		"private-chats": "Private chats",
 		"pin": "Pin",
 		"edit": "Edit",
@@ -112,10 +111,16 @@
 		"message_not_found": "Message not found",
 		"message_not_found_description": "Message not found, please refresh the page",
 		"chat_already_exists": "Chat already exists",
+		"uploading": "Uploading",
 		"edited": "edited",
 		"unpin": "Unpin",
 		"pinned_message": "Pinned message",
-		"pinned": "Pinned"
+		"pinned": "Pinned",
+		"upload": "Upload",
+		"image": "Image",
+		"video": "Video",
+		"media": "Media",
+		"no_messages_yet": "No messages yet"
 	}
 }
 
