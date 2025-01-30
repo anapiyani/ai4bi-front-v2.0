@@ -47,6 +47,22 @@ const Message = ({
   const isUser = sender === "user";
   const renderedMedia = useRenderMediaContent(media, t, isUser);
 
+  const avatarText = React.useMemo(() => {
+    if (isBot) {
+      return t("aray-bot").slice(0, 2).toUpperCase();
+    } 
+    if (isUser) {
+      return; 
+    } 
+    if (typeof sender === "string") {
+      const nameParts = sender.split(" ");
+      return nameParts.length >= 2
+        ? `${nameParts[0][0]}${nameParts[1][0]}`
+        : `${nameParts[0][0]}`.toUpperCase();
+    }
+    return "?"; 
+  }, [sender, t, isBot, isUser]);
+
   if (type === "system_message") {
     return (
       <div className="flex w-full justify-center my-2 px-4">
@@ -107,22 +123,6 @@ const Message = ({
       },
     },
   ].filter((item) => item.show);
-
-  const avatarText = React.useMemo(() => {
-    if (isBot) {
-      return t("aray-bot").slice(0, 2).toUpperCase();
-    } else if (isUser) {
-      return;
-    } else if (typeof sender === "string") {
-      const nameParts = sender.split(" ");
-      const initials =
-        nameParts.length >= 2
-          ? `${nameParts[0][0]}${nameParts[1][0]}`
-          : `${nameParts[0][0]}`;
-      return initials.toUpperCase();
-    }
-    return "?";
-  }, [sender, t, isBot, isUser]);
 
   const handleDoubleClick = () => {
     if (handleReplyClick) {
