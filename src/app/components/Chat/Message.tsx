@@ -9,49 +9,8 @@ import {
 import React, { useState } from "react"
 import { getCookie } from "../../api/service/cookie"
 import useRenderMediaContent from '../../hooks/useRenderMediaContent'
+import { MessageProps } from '../../types/types'
 import Icons from "../Icons"
-
-type Sender = "bot" | "user" | string;
-
-interface MessageProps {
-  message: string;
-  sender: Sender;
-  t: (key: string) => string;
-  sender_id: string | null;
-  timestamp: string;
-  showSender: boolean;
-  handleOpenDeleteMessage: (messageId: string) => void;
-  messageId: string;
-  handleReplyClick?: () => void;
-  handleEditClick?: () => void;
-  reply_message_id: string | null;
-  goToMessage: (messageId: string) => void;
-  replyToMessage?: {
-    sender: string;
-    content: string;
-    has_attachments: boolean;
-    media: string[] | null | {
-      extension: string;
-      media_id: string;
-      media_type: "image" | "video" | "audio" | "file";
-      mime_type: string;
-      name: string;
-    }[]
-  } | null;
-  createPrivateChat: (userId: string) => void;
-  isEdited: boolean;
-  handlePin: (message_id: string) => void;
-  handleUnpin: (message_id: string) => void;
-  isPinned: boolean;
-  media: {
-    extension: string;
-		media_id: string;
-		media_type: "image" | "video" | "audio" | "file";
-		mime_type: string;
-		name: string;
-		size: number;
-  }[] | string[] | null | undefined;
-}
 
 const Message = ({
   message,
@@ -72,16 +31,47 @@ const Message = ({
   isPinned,
   handlePin,
   handleUnpin,
+  forwarded_from,
+  forwarded_from_first_name,
+  forwarded_from_last_name,
+  type,
+  handleForward,
   media,
 }: MessageProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const user_role = getCookie("role");
   const isAdmin = user_role === "admin";
   const isOwner = sender === "user";
-  
+
   const isBot = sender === "bot";
   const isUser = sender === "user";
-  const renderedMedia = useRenderMediaContent(media, t, isUser)
+  const renderedMedia = useRenderMediaContent(media, t, isUser);
+
+  const avatarText = React.useMemo(() => {
+    if (isBot) {
+      return t("aray-bot").slice(0, 2).toUpperCase();
+    } 
+    if (isUser) {
+      return; 
+    } 
+    if (typeof sender === "string") {
+      const nameParts = sender.split(" ");
+      return nameParts.length >= 2
+        ? `${nameParts[0][0]}${nameParts[1][0]}`
+        : `${nameParts[0][0]}`.toUpperCase();
+    }
+    return "?"; 
+  }, [sender, t, isBot, isUser]);
+
+  if (type === "system_message") {
+    return (
+      <div className="flex w-full justify-center my-2 px-4">
+        <div className="bg-gray-100 text-gray-600 text-sm px-3 py-2 rounded-md text-center">
+          {message}
+        </div>
+      </div>
+    );
+  }
 
   const contextMenuItems = [
     {
@@ -96,7 +86,9 @@ const Message = ({
       icon: Icons.Forward,
       label: t("forward"),
       show: true,
-      action: () => {},
+      action: () => {
+        handleForward();
+      },
     },
     {
       icon: Icons.Pin,
@@ -132,23 +124,13 @@ const Message = ({
     },
   ].filter((item) => item.show);
 
-  const avatarText = React.useMemo(() => {
-    if (isBot) {
-      return t("aray-bot").slice(0, 2).toUpperCase();
-    } else if (isUser) {
-      return;
-    } else if (typeof sender === "string") {
-      const nameParts = sender.split(" ");
-      const initials =
-        nameParts.length >= 2
-          ? `${nameParts[0][0]}${nameParts[1][0]}`
-          : `${nameParts[0][0]}`;
-      return initials.toUpperCase();
+  const handleDoubleClick = () => {
+    if (handleReplyClick) {
+      handleReplyClick();
     }
-    return "?";
-  }, [sender, t, isBot, isUser]);
+  };
 
-  const senderName = isBot ? t("aray-bot") : isUser ? '' : sender;
+  const senderName = isBot ? t("aray-bot") : isUser ? "" : sender;
 
   const avatarClasses = `w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
     isBot ? "bg-primary text-white" : "bg-input text-secondary-foreground"
@@ -166,10 +148,9 @@ const Message = ({
     isBot ? "text-white" : "text-secondary-foreground"
   } ${isUser ? "text-white" : ""}`;
 
-
   return (
     <div
-      id={`message-${messageId}`} 
+      id={`message-${messageId}`}
       className={`flex flex-col gap-2 p-1 ${
         isUser ? "w-full flex justify-end" : ""
       } ${
@@ -197,47 +178,101 @@ const Message = ({
       )}
 
       <ContextMenu onOpenChange={(open) => setIsMenuOpen(open)}>
-        <div className={messageClasses}>
-          <ContextMenuTrigger>
+        <ContextMenuTrigger onDoubleClick={handleDoubleClick}>
+          <div className={messageClasses}>
             {replyToMessage && (
               <div
-                onClick={() => reply_message_id && goToMessage(reply_message_id)}
-                className={`mb-1 gap-2 border-l-2  pl-2 py-1 text-sm text-bi cursor-pointer ${isUser ? "bg-[#F1F5F933] border-secondary" : "bg-[#F1F5F9] border-[#0891B2]"}`}
+                onClick={() =>
+                  reply_message_id && goToMessage(reply_message_id)
+                }
+                className={`mb-1 gap-2 border-l-2 pl-2 py-1 text-sm text-bi cursor-pointer ${
+                  isUser
+                    ? "bg-[#F1F5F933] border-secondary"
+                    : "bg-[#F1F5F9] border-[#0891B2]"
+                }`}
               >
-                <p className={`${isUser ? "text-foreground" : "text-primary"}`}>{replyToMessage.sender} </p>
-                {replyToMessage.has_attachments ? 
-                  replyToMessage.media?.map((item, index) => {
-                    return (
-                      <div key={index} className='py-1 flex items-center gap-1'>
-                        {typeof item === 'object' && (
-                          item.media_type === 'file' ? (
-                            <Icons.PDF className={isUser ? "text-white" : "text-muted-foreground"} size={16} />
-                          ) : item.media_type === 'image' ? (
-                            <Icons.Image_Small fill={isUser ? "#ffffff" : "#64748B"} />
-                          ) : item.media_type === 'video' ? (
-                            <Icons.Video fill={isUser ? "#ffffff" : "#64748B"} size={16} />
-                          ) : null
-                        )}
-                        <p>{typeof item === 'object' ? t(item.media_type) : ''}</p>
-                      </div>
-                    )
-                  })
-                : null}
-                <p className="text-bi pr-2">{replyToMessage.content.length > 60 ? `${replyToMessage.content.slice(0, 40)}…` : replyToMessage.content}</p>
+                <p
+                  className={`${isUser ? "text-foreground" : "text-primary"}`}
+                >
+                  {replyToMessage.sender}
+                </p>
+                {replyToMessage.has_attachments
+                  ? replyToMessage.media?.map((item, index) => {
+                      return (
+                        <div key={index} className="py-1 flex items-center gap-1">
+                          {typeof item === "object" && item.media_type === "file" && (
+                            <Icons.PDF
+                              className={
+                                isUser ? "text-white" : "text-muted-foreground"
+                              }
+                              size={16}
+                            />
+                          )}
+                          {typeof item === "object" && item.media_type === "image" && (
+                            <Icons.Image_Small
+                              fill={isUser ? "#ffffff" : "#64748B"}
+                            />
+                          )}
+                          {typeof item === "object" && item.media_type === "video" && (
+                            <Icons.Video
+                              fill={isUser ? "#ffffff" : "#64748B"}
+                              size={16}
+                            />
+                          )}
+                          <p>{typeof item === "object" ? t(item.media_type) : ""}</p>
+                        </div>
+                      );
+                    })
+                  : null}
+                <p className="text-bi pr-2">
+                  {replyToMessage.content.length > 60
+                    ? `${replyToMessage.content.slice(0, 40)}…`
+                    : replyToMessage.content}
+                </p>
               </div>
             )}
-            {isPinned && <p className={`text-xs text-muted-foreground flex items-center gap-1 mb-1 ${isUser ? "text-white" : ""}`}><Icons.Pin fill={isUser ? "#ffffff" : "#64748B"} className="w-3 h-3" /> {t("pinned")}</p>}
+            {isPinned && (
+              <p
+                className={`text-xs text-muted-foreground flex items-center gap-1 mb-1 ${
+                  isUser ? "text-white" : ""
+                }`}
+              >
+                <Icons.Pin
+                  fill={isUser ? "#ffffff" : "#64748B"}
+                  className="w-3 h-3"
+                />{" "}
+                {t("pinned")}
+              </p>
+            )}
+            {forwarded_from && (
+              <p onClick={() => createPrivateChat(forwarded_from)} className={`text-xs flex items-center gap-1 mb-1 ${isUser ? "text-white" : "text-muted-foreground"} cursor-pointer`}>
+                <Icons.Forward fill={isUser ? "#ffffff" : "#64748B"} />
+                {t("forwarded_from")} {forwarded_from_first_name} {forwarded_from_last_name}
+              </p>
+            )}
             {renderedMedia}
             <p className={textClasses}>{message}</p>
 
             <div className="flex justify-end">
-              <p className={`text-[10px] ${isUser ? "text-white" : "text-muted-foreground"} flex items-center gap-1`}>
-                {isEdited && <p className={`text-[10px] italic ${isUser ? "text-white" : "text-muted-foreground"}`}>{t("edited")}</p>}
+              <p
+                className={`text-[10px] ${
+                  isUser ? "text-white" : "text-muted-foreground"
+                } flex items-center gap-1`}
+              >
+                {isEdited && (
+                  <span
+                    className={`text-[10px] italic ${
+                      isUser ? "text-white" : "text-muted-foreground"
+                    }`}
+                  >
+                    {t("edited")}
+                  </span>
+                )}
                 {timestamp} <Icons.Checks fill={isUser ? "#ffffff" : "#64748B"} />
               </p>
             </div>
-          </ContextMenuTrigger>
-        </div>
+          </div>
+        </ContextMenuTrigger>
         <ContextMenuContent className="bg-popover w-56 items-center justify-start gap-2 p-2">
           {contextMenuItems.map((item, index) => (
             <ContextMenuItem

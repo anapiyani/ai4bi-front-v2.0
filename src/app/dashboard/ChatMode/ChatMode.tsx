@@ -39,6 +39,7 @@ const ChatMode = () => {
     sendEditMessage,
     handlePinMessage,
     handleUnpinMessage,
+    handleForwardMessage,
   } = useChatWebSocket()
 
   const handleItemClick = (id: string) => {
@@ -184,6 +185,7 @@ const ChatMode = () => {
           createPrivateChat={createPrivateChat}
           sendEditMessage={sendEditMessage}
           setOpenMenu={handleOpenMenu}
+          handleForwardMessage={handleForwardMessage}
           openMenu={openMenu}
         />
       </div>

@@ -5,6 +5,8 @@ export type ChatStatus = 'all' | 'active' | 'published' | 'in-progress' | 'compl
 
 export type BnectStatuses = "submission_of_applications" | "bid_submission" // more statuses could be added here
 
+export type Sender = "bot" | "user" | string;
+
 export type ChatListItemData = {
 	active: boolean;
 	status: Exclude<ChatStatus, 'all'>;
@@ -91,8 +93,13 @@ export type ChatMessage = {
   content: string;
   timestamp: string;
   pending?: boolean;
+	type?: string;
   authorId?: string | null;
+	forwarded_from?: string | null;
+	forwarded_from_first_name?: string | null;
+	forwarded_from_last_name?: string | null;
   chat_id?: string;
+	counter?: number | null;
 	is_voice_message?: boolean;
 	reply_to?: string | null;
   is_edited?: boolean;
@@ -131,6 +138,7 @@ export type ChatContentProps = {
   openMenu: boolean;
   handlePinMessage: ({chat_id, message_id}: {chat_id: string, message_id: string}) => void;
   handleUnpinMessage: ({chat_id, message_id}: {chat_id: string, message_id: string}) => void;
+	handleForwardMessage: (forwardData: ForwardData) => void;
 }
 
 export type UploadMediaResponse = {
@@ -145,4 +153,55 @@ export type UploadMediaResponse = {
 	real_path: string,
 	restore_path: string | null,
 	uuid: string,
+}
+
+export interface MessageProps {
+  message: string;
+  sender: Sender;
+  t: (key: string) => string;
+  sender_id: string | null;
+  timestamp: string;
+  showSender: boolean;
+  handleOpenDeleteMessage: (messageId: string) => void;
+  messageId: string;
+	forwarded_from?: string | null;
+	forwarded_from_first_name?: string | null;
+	forwarded_from_last_name?: string | null;
+  handleReplyClick?: () => void;
+	type?: string;
+  handleEditClick?: () => void;
+  reply_message_id: string | null;
+  goToMessage: (messageId: string) => void;
+  replyToMessage?: {
+    sender: string;
+    content: string;
+    has_attachments: boolean;
+    media: string[] | null | {
+      extension: string;
+      media_id: string;
+      media_type: "image" | "video" | "audio" | "file";
+      mime_type: string;
+      name: string;
+    }[]
+  } | null;
+  createPrivateChat: (userId: string) => void;
+  isEdited: boolean;
+  handlePin: (message_id: string) => void;
+  handleUnpin: (message_id: string) => void;
+	handleForward: () => void;
+  isPinned: boolean;
+  media: {
+    extension: string;
+		media_id: string;
+		media_type: "image" | "video" | "audio" | "file";
+		mime_type: string;
+		name: string;
+		size: number;
+  }[] | string[] | null | undefined;
+}
+
+export type ForwardData = {
+	message_ids: string[];
+	source_chat_id: string;
+	target_chat_id: string;
 }

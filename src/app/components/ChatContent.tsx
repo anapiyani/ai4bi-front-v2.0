@@ -31,6 +31,7 @@ const ChatContent = ({
   handlePinMessage,
   handleUnpinMessage,
   openMenu,
+  handleForwardMessage,
 }: ChatContentProps) => {
   const t = useTranslations("dashboard");
   const [openRescheduleModal, setOpenRescheduleModal] = useState<boolean>(false);
@@ -70,6 +71,13 @@ const ChatContent = ({
 
   const handleSendMedia = (uuids: string[]) => {
     sendChatMessage(null, uuids);
+  }
+
+  const handleForward = (message_id: string) => {
+    const target_chat_id = prompt("Enter the chat id to forward to");
+    if (target_chat_id) {
+      handleForwardMessage({message_ids: [message_id], source_chat_id: chatId, target_chat_id: target_chat_id});
+    }
   }
 
   return (
@@ -130,12 +138,17 @@ const ChatContent = ({
                       handleOpenDeleteMessage={handleOpenDeleteMessage}
                       handleReplyClick={() => handleReplyClick(message)}
                       handleEditClick={() => handleEditClick(message)}
+                      forwarded_from={message.forwarded_from}
+                      forwarded_from_first_name={message.forwarded_from_first_name}
+                      forwarded_from_last_name={message.forwarded_from_last_name}
                       isEdited={message.is_edited || false}
                       reply_message_id={message.reply_to || null}
                       handlePin={() => handlePinUnpin(message.id, message.is_pinned || false)}
                       isPinned={message.is_pinned || false}
                       handleUnpin={() => handlePinUnpin(message.id, message.is_pinned || false)}
+                      type={message.type}
                       media={Array.isArray(message.media) ? message.media : message.media ? [message.media] : null}
+                      handleForward={() => handleForward(message.id)}
                       replyToMessage={
                         replyToSnippet
                           ? {
