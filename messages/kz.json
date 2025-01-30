@@ -121,7 +121,8 @@
 		"image": "Фото",
 		"video": "Видео",
 		"media": "Медиа",
-		"no_messages_yet": "Хабарлама жоқ"
+		"no_messages_yet": "Хабарлама жоқ",
+		"forwarded_from": "Жіберілген"
 	}
 }
 

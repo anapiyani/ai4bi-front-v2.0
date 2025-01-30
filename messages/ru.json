@@ -121,7 +121,8 @@
 		"image": "Фото",
 		"video": "Видео",
 		"media": "Медиа",
-		"no_messages_yet": "Нет сообщений"
+		"no_messages_yet": "Нет сообщений",
+		"forwarded_from": "Переслано от"
 	}
 }
 

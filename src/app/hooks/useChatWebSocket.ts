@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl'
 import { useEffect, useRef, useState } from 'react'
 import { getCookie } from '../api/service/cookie'
 import { useWebSocket } from '../api/service/useWebSocket'
-import { ChatMessage, Conversation, ReceivedChats } from '../types/types'
+import { ChatMessage, Conversation, ForwardData, ReceivedChats } from '../types/types'
 
 const WS_URL = process.env.NEXT_PUBLIC_WS_URL || "ws://staging.ai4bi.kz/ws/";
 
@@ -102,6 +102,7 @@ export const useChatWebSocket = () => {
       } else if (message.event === "unpin_message") {
         handleReceivedPinStatusChange(message.data, false);
       } else if (message.event === "new_message") {
+        console.log("new_message", message);
         const msgData = message.data.message;
         const chatId = message.chat_id || message.data.chat_id;
         if (message.channel?.startsWith("chat_room")) {
@@ -111,8 +112,13 @@ export const useChatWebSocket = () => {
               sender_first_name: msgData.sender_first_name,
               sender_last_name: msgData.sender_last_name,
               content: msgData.content,
+              type: msgData.type,
+              counter: msgData.counter,
               timestamp: msgData.timestamp || dayjs().toISOString(),
               authorId: msgData.sender_id,
+              forwarded_from: msgData.forwarded_from,
+              forwarded_from_first_name: msgData.forwarded_from_first_name,
+              forwarded_from_last_name: msgData.forwarded_from_last_name,
               reply_message_id: msgData.reply_message_id,
               media: msgData.media,
               is_pinned: msgData.is_pinned,
@@ -149,6 +155,7 @@ export const useChatWebSocket = () => {
     }
 
     // --- (E) Fallback / unhandled ---
+    if (message.error)
     console.log("[handleWebSocketMessage] Unhandled message:", message);
   };
 
@@ -178,7 +185,7 @@ export const useChatWebSocket = () => {
         sender_first_name: null,
         sender_id: null,
         sender_last_name: null,
-        type: null
+        type: data.type
       },
     };
 
@@ -221,8 +228,13 @@ export const useChatWebSocket = () => {
         timestamp: message.send_at,
         chat_id: message.chat_id,
         authorId: message.sender_id,
+        counter: message.counter,
+        forwarded_from: message.forwarded_from,
+        forwarded_from_first_name: message.forwarded_from_first_name,
+        forwarded_from_last_name: message.forwarded_from_last_name,
         is_pinned: message.is_pinned,
         is_edited: message.is_edited,
+        type: message.type,
         reply_to: message.reply_message_id,
         media: message.media?.length > 0 ? message.media : null,
         has_attachments: Boolean(message.media?.length),
@@ -249,6 +261,7 @@ export const useChatWebSocket = () => {
       has_attachments: msg.has_attachments,
       timestamp: msg.timestamp || dayjs().toISOString(),
       reply_to: replyId,
+      counter: msg.counter,
     };
 
     // Remove any pending messages with the same content, then add the new message
@@ -541,6 +554,25 @@ export const useChatWebSocket = () => {
     console.log("[getChatMessages] Request:", request);
   };
 
+
+  // ---------------------------------------------------------------------------
+  // handleForwardMessage
+  // ---------------------------------------------------------------------------
+  const handleForwardMessage = (forwardData: ForwardData) => {
+    const { message_ids, source_chat_id, target_chat_id } = forwardData;
+    const rpcId = Date.now().toString();
+    sendMessage({
+      jsonrpc: "2.0",
+      method: "forwardMessages",
+      id: rpcId,
+      params: {
+        message_ids,
+        source_chat_id,
+        target_chat_id,
+      },
+    });
+  }
+
   // ---------------------------------------------------------------------------
   // sendChatMessage
   // ---------------------------------------------------------------------------
@@ -739,5 +771,6 @@ export const useChatWebSocket = () => {
     sendEditMessage,
     handlePinMessage,
     handleUnpinMessage,
+    handleForwardMessage,
   };
 };
