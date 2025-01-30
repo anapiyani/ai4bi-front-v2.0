@@ -5,28 +5,14 @@ import dayjs from "dayjs"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
 import { getCookie } from "../api/service/cookie"
-import { ChatMessage } from "../types/types"
+import { useGoToMessage } from '../hooks/useGoToMessage'
+import { ChatContentProps, ChatMessage } from "../types/types"
+import DropZoneModal from './Chat/Files/DropZoneModal'
 import Message from "./Chat/Message"
 import MessageInput from "./Chat/MessageInput"
+import PinnedMessages from './Chat/PinnedMessages'
 import SelectChat from './Chat/SelectChat'
 import ChangeDates from "./Form/ChangeDates"
-
-interface ChatContentProps {
-  chatId: string | null;
-  selectedConversation: string | null;
-  title: string;
-  messages: ChatMessage[];
-  isConnected: boolean;
-  newMessage: string;
-  setNewMessage: (message: string) => void;
-  sendChatMessage: (reply?: ChatMessage | null) => void;
-  scrollRef: React.RefObject<HTMLDivElement>;
-  handleOpenDeleteMessage: (messageId: string) => void;
-  createPrivateChat: (userId: string) => void;
-  sendEditMessage: (message: ChatMessage) => void;
-  setOpenMenu: (open: boolean) => void;
-  openMenu: boolean;
-}
 
 const ChatContent = ({
   chatId,
@@ -42,25 +28,17 @@ const ChatContent = ({
   createPrivateChat,
   sendEditMessage,
   setOpenMenu,
+  handlePinMessage,
+  handleUnpinMessage,
   openMenu,
 }: ChatContentProps) => {
   const t = useTranslations("dashboard");
   const [openRescheduleModal, setOpenRescheduleModal] = useState<boolean>(false);
   const [editMessage, setEditMessage] = useState<ChatMessage | null>(null);
   const [replyTo, setReplyTo] = useState<ChatMessage | null>(null);
-
-  const goToMessage = (messageId: string) => {
-    const element = document.getElementById(`message-${messageId}`);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "center" });
-      element.classList.add("highlight");
-      setTimeout(() => {
-        element.classList.remove("highlight");
-      }, 1000); 
-    } else {
-      console.warn(`Element with ID message-${messageId} not found.`);
-    }
-  };
+  const pinnedMessages = messages.filter((m) => m.is_pinned);
+  const [openDropZoneModal, setOpenDropZoneModal] = useState<boolean>(false);
+  const goToMessage = useGoToMessage();
 
   const handleReplyClick = (message: ChatMessage) => {
     setReplyTo(message);
@@ -82,8 +60,20 @@ const ChatContent = ({
     return <SelectChat />
   }
 
+  const handlePinUnpin = (message_id: string, isPinned: boolean) => {
+    if (isPinned) {
+      handleUnpinMessage({chat_id: chatId, message_id: message_id});
+    } else {
+      handlePinMessage({chat_id: chatId, message_id: message_id}); 
+    }
+  }
+
+  const handleSendMedia = (uuids: string[]) => {
+    sendChatMessage(null, uuids);
+  }
+
   return (
-    <div className="flex flex-col w-full h-full ">
+    <div className="flex flex-col w-full h-full relative">
       <ChatHeader 
         title={title} 
         t={t} 
@@ -92,6 +82,14 @@ const ChatContent = ({
         }}
         openMenu={openMenu} 
       />
+      <div className="absolute top-[65px] left-0 right-0">
+        <PinnedMessages 
+          goToMessage={goToMessage} 
+          pinnedMessages={pinnedMessages} 
+          t={t} 
+          handleUnpinMessage={(messageId: string) => handlePinUnpin(messageId, true)} 
+        />
+      </div>
       <div className="flex-grow overflow-y-auto">
         <div className="h-[calc(100vh-240px)] overflow-y-auto" ref={scrollRef}>
           <div className="flex flex-col gap-2 px-4 py-2">
@@ -134,11 +132,17 @@ const ChatContent = ({
                       handleEditClick={() => handleEditClick(message)}
                       isEdited={message.is_edited || false}
                       reply_message_id={message.reply_to || null}
+                      handlePin={() => handlePinUnpin(message.id, message.is_pinned || false)}
+                      isPinned={message.is_pinned || false}
+                      handleUnpin={() => handlePinUnpin(message.id, message.is_pinned || false)}
+                      media={Array.isArray(message.media) ? message.media : message.media ? [message.media] : null}
                       replyToMessage={
                         replyToSnippet
                           ? {
                               sender: replyToSnippet.sender_first_name,
                               content: replyToSnippet.content,
+                              has_attachments: replyToSnippet.has_attachments || false,
+                              media: Array.isArray(replyToSnippet.media) ? replyToSnippet.media : replyToSnippet.media ? [replyToSnippet.media] : null,
                             }
                           : null
                       }
@@ -160,6 +164,8 @@ const ChatContent = ({
             editMessage={editMessage}
             setEditMessage={setEditMessage}
             handleEdit={handleEdit}
+            openDropZoneModal={openDropZoneModal}
+            setOpenDropZoneModal={setOpenDropZoneModal}
           />
         </div>
       </div>
@@ -171,6 +177,19 @@ const ChatContent = ({
           chat_id={chatId}
         />
       )}
+      {
+        openDropZoneModal && (
+          <DropZoneModal
+            open={openDropZoneModal}
+            setOpen={setOpenDropZoneModal}
+            handleSendMedia={handleSendMedia}
+            t={t}
+            value={newMessage}
+            setNewMessage={setNewMessage}
+            chatId={chatId}
+          />
+        )
+      }
     </div>
   );
 };

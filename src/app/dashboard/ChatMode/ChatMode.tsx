@@ -37,6 +37,8 @@ const ChatMode = () => {
     deleteMessage,
     createPrivateChat,
     sendEditMessage,
+    handlePinMessage,
+    handleUnpinMessage,
   } = useChatWebSocket()
 
   const handleItemClick = (id: string) => {
@@ -79,6 +81,7 @@ const ChatMode = () => {
       setOpenMenu(false) 
     }
   }, [selectedConversation, conversations])
+
 
   return (
     <div className="w-full flex flex-col lg:flex-row bg-primary-foreground justify-center">
@@ -128,6 +131,7 @@ const ChatMode = () => {
                       <ChatListItem
                         key={conversation.id}
                         data={conversation}
+                        t={t}
                         onClick={() => {
                           handleItemClick(conversation.id)
                           setSelectedConversationType(conversation.chat_type)
@@ -142,11 +146,12 @@ const ChatMode = () => {
             </TabsContent>
             <TabsContent value="private-chats">
               <div className="flex flex-col gap-2 overflow-y-auto max-h-[calc(100vh-300px)] no-scrollbar">
-                {conversations.map((conversation, index) =>
+                {conversations.map((conversation, index) => 
                   conversation.chat_type === "private" ? (
                     <ChatListItem
                       key={conversation.id}
                       data={conversation}
+                      t={t}
                       onClick={() => {
                         handleItemClick(conversation.id)
                         setSelectedConversationType(conversation.chat_type)
@@ -174,6 +179,8 @@ const ChatMode = () => {
           sendChatMessage={sendChatMessage}
           scrollRef={scrollRef}
           handleOpenDeleteMessage={handleOpenDeleteMessage}
+          handlePinMessage={handlePinMessage}
+          handleUnpinMessage={handleUnpinMessage}
           createPrivateChat={createPrivateChat}
           sendEditMessage={sendEditMessage}
           setOpenMenu={handleOpenMenu}

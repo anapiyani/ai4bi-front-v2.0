@@ -78,6 +78,7 @@
 		"you-have-no-auctions": "У вас нет тендеров",
 		"you-have-no-auctions-in-this-status": "У вас нет тендеров в этом статусе",
 		"absent": "Отсутствует",
+		"upload": "Загрузить",
 		"call-again": "Пригласить повторно",
 		"turn-off-microphone": "Отключить микрофон",
 		"chat": "Чат",
@@ -112,7 +113,15 @@
 		"message_not_found": "Сообщение не найдено",
 		"message_not_found_description": "Сообщение не найдено, попробуйте обновить страницу",
 		"chat_already_exists": "Чат уже существует",
-		"edited": "изменено"
+		"edited": "изменено",
+		"unpin": "Открепить",
+		"pinned_message": "Закрепленное сообщение",
+		"pinned": "Закреплено",
+		"uploading": "Загружается",
+		"image": "Фото",
+		"video": "Видео",
+		"media": "Медиа",
+		"no_messages_yet": "Нет сообщений"
 	}
 }
 

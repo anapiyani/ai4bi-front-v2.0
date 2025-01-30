@@ -65,6 +65,7 @@ export type Conversation = {
 		sender_id: string | null;
 		sender_last_name: string | null;
 		type: string | null;
+    is_pinned?: boolean | null;
 	} | null | string;
 }
 
@@ -92,12 +93,56 @@ export type ChatMessage = {
   pending?: boolean;
   authorId?: string | null;
   chat_id?: string;
+	is_voice_message?: boolean;
 	reply_to?: string | null;
   is_edited?: boolean;
+	media?: string[] | null | {
+		extension: string;
+		media_id: string;
+		media_type: "image" | "video" | "audio" | "file";
+		mime_type: string;
+		name: string;
+		size: number;
+	};
+	has_attachments?: boolean;
+  is_pinned?: boolean;
 	// tagged_user_id?: string | null;
 }
 
 export type EditMessage = {
   id: string;
   content: string;
+}
+
+export type ChatContentProps = {
+	chatId: string | null;
+  selectedConversation: string | null;
+  title: string;
+  messages: ChatMessage[];
+  isConnected: boolean;
+  newMessage: string;
+  setNewMessage: (message: string) => void;
+  sendChatMessage: (reply?: ChatMessage | null, media?: string[] | null) => void;
+  scrollRef: React.RefObject<HTMLDivElement>;
+  handleOpenDeleteMessage: (messageId: string) => void;
+  createPrivateChat: (userId: string) => void;
+  sendEditMessage: (message: ChatMessage) => void;
+  setOpenMenu: (open: boolean) => void;
+  openMenu: boolean;
+  handlePinMessage: ({chat_id, message_id}: {chat_id: string, message_id: string}) => void;
+  handleUnpinMessage: ({chat_id, message_id}: {chat_id: string, message_id: string}) => void;
+}
+
+export type UploadMediaResponse = {
+	bucket: string,
+	compress_image: string | null,
+	content_type: string,
+	created_at: string,
+	deleted_at: string | null,
+	extension: string,
+	materialized_name: string,
+	materialized_path: string,
+	real_path: string,
+	restore_path: string | null,
+	uuid: string,
 }
