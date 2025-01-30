@@ -5,7 +5,7 @@ import Icons from '../Icons'
 const PinnedMessages = ({ pinnedMessages, t, goToMessage, handleUnpinMessage }: { 
   pinnedMessages: ChatMessage[], 
   t: any, 
-  goToMessage: (messageId: string) => void,
+  goToMessage: (messageId: string, isPinned: boolean) => void,
 	handleUnpinMessage: (messageId: string) => void
 }) => {
 	const [currentIndex, setCurrentIndex] = useState(
@@ -24,7 +24,7 @@ const PinnedMessages = ({ pinnedMessages, t, goToMessage, handleUnpinMessage }: 
 
   const handleMessageClick = () => {
     const currentMessage = pinnedMessages[currentIndex];
-    goToMessage(currentMessage.id);
+    goToMessage(currentMessage.id, true);
     
     setCurrentIndex((prevIndex) => {
       if (prevIndex <= 0) {

@@ -98,9 +98,9 @@ export const useChatWebSocket = () => {
         };
         handleReceivedEditedMessage(formattedEditedMessage);
       } else if (message.event === "pin_message") {
-        handleReceivedPinMessage(message.data);
+        handleReceivedPinStatusChange(message.data, true);
       } else if (message.event === "unpin_message") {
-        handleReceivedUnpinMessage(message.data);
+        handleReceivedPinStatusChange(message.data, false);
       } else if (message.event === "new_message") {
         const msgData = message.data.message;
         const chatId = message.chat_id || message.data.chat_id;
@@ -236,7 +236,6 @@ export const useChatWebSocket = () => {
   // handleMessageReceived
   // ---------------------------------------------------------------------------
   const handleMessageReceived = (msg: any) => {
-    console.log("handleMessageReceived", msg);
     const realId = msg.message_id
     const replyId = msg.reply_message_id || msg.reply_to || null;
 
@@ -319,25 +318,13 @@ export const useChatWebSocket = () => {
   };
 
   // ---------------------------------------------------------------------------
-  // handleReceivedPinMessage
+  // handleReceivedPinStatusChange
   // ---------------------------------------------------------------------------
-  const handleReceivedPinMessage = (message: any) => {
-    console.log("handleReceivedPinMessage", message);
+  const handleReceivedPinStatusChange = (message: any, isPinned: boolean) => {
+    console.log(`handleReceivedPin${isPinned ? '' : 'Un'}Message`, message);
     setMessages((prev) =>
       prev.map((m) =>
-        m.id === message.message_id ? { ...m, is_pinned: true } : m
-      )
-    );
-  }
-
-  // ---------------------------------------------------------------------------
-  // handleReceivedUnpinMessage
-  // ---------------------------------------------------------------------------
-  const handleReceivedUnpinMessage = (message: any) => {
-    console.log("handleReceivedUnpinMessage", message);
-    setMessages((prev) =>
-      prev.map((m) =>
-        m.id === message.message_id ? { ...m, is_pinned: false } : m
+        m.id === message.message_id ? { ...m, is_pinned: isPinned } : m
       )
     );
   }

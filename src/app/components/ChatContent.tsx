@@ -60,12 +60,12 @@ const ChatContent = ({
     return <SelectChat />
   }
 
-  const handlePin = (message_id: string) => {
-    handlePinMessage({chat_id: chatId, message_id: message_id});
-  }
-
-  const handleUnpin = (message_id: string) => {
-    handleUnpinMessage({chat_id: chatId, message_id: message_id});
+  const handlePinUnpin = (message_id: string, isPinned: boolean) => {
+    if (isPinned) {
+      handleUnpinMessage({chat_id: chatId, message_id: message_id});
+    } else {
+      handlePinMessage({chat_id: chatId, message_id: message_id}); 
+    }
   }
 
   const handleSendMedia = (uuids: string[]) => {
@@ -82,9 +82,14 @@ const ChatContent = ({
         }}
         openMenu={openMenu} 
       />
-     <div className="absolute top-[65px] left-0 right-0">
-      <PinnedMessages goToMessage={goToMessage} pinnedMessages={pinnedMessages} t={t} handleUnpinMessage={handleUnpin} />
-     </div>
+      <div className="absolute top-[65px] left-0 right-0">
+        <PinnedMessages 
+          goToMessage={goToMessage} 
+          pinnedMessages={pinnedMessages} 
+          t={t} 
+          handleUnpinMessage={(messageId: string) => handlePinUnpin(messageId, true)} 
+        />
+      </div>
       <div className="flex-grow overflow-y-auto">
         <div className="h-[calc(100vh-240px)] overflow-y-auto" ref={scrollRef}>
           <div className="flex flex-col gap-2 px-4 py-2">
@@ -127,9 +132,9 @@ const ChatContent = ({
                       handleEditClick={() => handleEditClick(message)}
                       isEdited={message.is_edited || false}
                       reply_message_id={message.reply_to || null}
-                      handlePin={() => handlePin(message.id)}
+                      handlePin={() => handlePinUnpin(message.id, message.is_pinned || false)}
                       isPinned={message.is_pinned || false}
-                      handleUnpin={() => handleUnpin(message.id)}
+                      handleUnpin={() => handlePinUnpin(message.id, message.is_pinned || false)}
                       media={Array.isArray(message.media) ? message.media : message.media ? [message.media] : null}
                       replyToMessage={
                         replyToSnippet
