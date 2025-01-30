@@ -63,6 +63,7 @@ export function useRenderMediaContent(
               </div>
             )
 
+          // TODO: Add audio support
           case "audio":
             return (
               <div className="flex justify-center gap-2 items-center mb-2 rounded-lg">

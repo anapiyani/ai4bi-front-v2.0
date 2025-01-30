@@ -1,16 +1,15 @@
 import { Button } from '@/components/ui/button'
 import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { useUploadMedia } from '@/src/app/hooks/useUploadMedia'
 import { useState } from 'react'
-import truncate from 'truncate'
 import Icons from '../../Icons'
 import Dropzone from './DropZone'
 
@@ -106,10 +105,9 @@ const DropZoneModal = ({
                     )}
                     <div className="flex flex-col gap-0">
                       <div className="text-[0.85rem] font-medium leading-snug">
-                        {truncate(
-                          fileUploaded.name.split('.').slice(0, -1).join('.'),
-                          30
-                        )}
+                        {fileUploaded.name.split('.').slice(0, -1).join('.').length > 30 
+                          ? fileUploaded.name.split('.').slice(0, -1).join('.').substring(0, 30) + '...'
+                          : fileUploaded.name.split('.').slice(0, -1).join('.')}
                       </div>
                       <div className="text-[0.7rem] text-gray-500 leading-tight">
                         .{fileUploaded.name.split('.').pop()} •{' '}
