@@ -43,6 +43,10 @@ const Message = ({
   const isAdmin = user_role === "admin";
   const isOwner = sender === "user";
 
+  const isBot = sender === "bot";
+  const isUser = sender === "user";
+  const renderedMedia = useRenderMediaContent(media, t, isUser);
+
   if (type === "system_message") {
     return (
       <div className="flex w-full justify-center my-2 px-4">
@@ -52,11 +56,6 @@ const Message = ({
       </div>
     );
   }
-
-  const isBot = sender === "bot";
-  const isUser = sender === "user";
-
-  const renderedMedia = useRenderMediaContent(media, t, isUser);
 
   const contextMenuItems = [
     {
