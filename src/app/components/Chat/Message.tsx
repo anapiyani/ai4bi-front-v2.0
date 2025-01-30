@@ -148,6 +148,12 @@ const Message = ({
     return "?";
   }, [sender, t, isBot, isUser]);
 
+  const handleDoubleClick = () => {
+    if (handleReplyClick) {
+      handleReplyClick();
+    }
+  }
+
   const senderName = isBot ? t("aray-bot") : isUser ? '' : sender;
 
   const avatarClasses = `w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
@@ -197,12 +203,12 @@ const Message = ({
       )}
 
       <ContextMenu onOpenChange={(open) => setIsMenuOpen(open)}>
+      <ContextMenuTrigger onDoubleClick={handleDoubleClick}>
         <div className={messageClasses}>
-          <ContextMenuTrigger>
             {replyToMessage && (
               <div
                 onClick={() => reply_message_id && goToMessage(reply_message_id)}
-                className={`mb-1 gap-2 border-l-2  pl-2 py-1 text-sm text-bi cursor-pointer ${isUser ? "bg-[#F1F5F933] border-secondary" : "bg-[#F1F5F9] border-[#0891B2]"}`}
+                className={`mb-1 gap-2 border-l-2 pl-2 py-1 text-sm text-bi cursor-pointer ${isUser ? "bg-[#F1F5F933] border-secondary" : "bg-[#F1F5F9] border-[#0891B2]"}`}
               >
                 <p className={`${isUser ? "text-foreground" : "text-primary"}`}>{replyToMessage.sender} </p>
                 {replyToMessage.has_attachments ? 
@@ -236,8 +242,8 @@ const Message = ({
                 {timestamp} <Icons.Checks fill={isUser ? "#ffffff" : "#64748B"} />
               </p>
             </div>
-          </ContextMenuTrigger>
         </div>
+        </ContextMenuTrigger>
         <ContextMenuContent className="bg-popover w-56 items-center justify-start gap-2 p-2">
           {contextMenuItems.map((item, index) => (
             <ContextMenuItem

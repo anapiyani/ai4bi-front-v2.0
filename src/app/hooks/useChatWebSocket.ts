@@ -104,8 +104,6 @@ export const useChatWebSocket = () => {
       } else if (message.event === "new_message") {
         const msgData = message.data.message;
         const chatId = message.chat_id || message.data.chat_id;
-        console.log("new_message", message)
-        // If it's in the chat_room channel...
         if (message.channel?.startsWith("chat_room")) {
           const formattedMessage = {
               message_id: msgData.message_id,
