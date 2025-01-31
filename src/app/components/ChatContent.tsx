@@ -30,6 +30,8 @@ const ChatContent = ({
   setOpenMenu,
   handlePinMessage,
   handleUnpinMessage,
+  handleTyping,
+  typingStatuses,
   openMenu,
   handleForwardMessage,
 }: ChatContentProps) => {
@@ -80,10 +82,15 @@ const ChatContent = ({
     }
   }
 
+  const handleTypingChat = (status: "typing" | "recording" | "stopped") => {
+    handleTyping(status, chatId);
+  }
+
   return (
     <div className="flex flex-col w-full h-full relative">
       <ChatHeader 
         title={title} 
+        typingStatuses={typingStatuses}
         t={t} 
         onClickAboutAuction={() => {
           setOpenMenu(true);
@@ -168,6 +175,7 @@ const ChatContent = ({
         <div className="px-5 w-full mt-auto">
           <MessageInput
             t={t}
+            handleTypingChat={handleTypingChat}
             value={newMessage}
             setNewMessage={setNewMessage}
             isConnected={isConnected}

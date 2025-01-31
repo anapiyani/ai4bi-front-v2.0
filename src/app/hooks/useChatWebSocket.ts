@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl'
 import { useEffect, useRef, useState } from 'react'
 import { getCookie } from '../api/service/cookie'
 import { useWebSocket } from '../api/service/useWebSocket'
-import { ChatMessage, Conversation, ForwardData, ReceivedChats } from '../types/types'
+import { ChatMessage, Conversation, ForwardData, ReceivedChats, TypingStatus } from '../types/types'
 
 const WS_URL = process.env.NEXT_PUBLIC_WS_URL || "ws://staging.ai4bi.kz/ws/";
 
@@ -18,6 +18,8 @@ export const useChatWebSocket = () => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [typingStatuses, setTypingStatuses] = useState<TypingStatus[]>([]);
+  const typingTimeoutsRef = useRef<{ [chatId: string]: NodeJS.Timeout }>({});
   const [newMessage, setNewMessage] = useState("");
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -95,14 +97,15 @@ export const useChatWebSocket = () => {
           message_id: editedMsg.message_id,
           content: editedMsg.content,
           is_edited: true
-        };
+        }
         handleReceivedEditedMessage(formattedEditedMessage);
+      } else if (message.event === "typing_status") {
+        handleTypingStatus(message.data);
       } else if (message.event === "pin_message") {
         handleReceivedPinStatusChange(message.data, true);
       } else if (message.event === "unpin_message") {
         handleReceivedPinStatusChange(message.data, false);
       } else if (message.event === "new_message") {
-        console.log("new_message", message);
         const msgData = message.data.message;
         const chatId = message.chat_id || message.data.chat_id;
         if (message.channel?.startsWith("chat_room")) {
@@ -456,6 +459,56 @@ export const useChatWebSocket = () => {
   }
 
   // ---------------------------------------------------------------------------
+  // handleTyping
+  // ---------------------------------------------------------------------------
+  const handleTyping = (status: "typing" | "recording" | "stopped", chat_id: string) => {
+    const rpcId = Date.now().toString();
+    const request = {
+      jsonrpc: "2.0",
+      method: "setTypingStatus",
+      params: {
+        status: status,
+        chat_id: chat_id,
+        user_first_name: getCookie('first_name'),
+      },
+      id: rpcId,
+    }
+    sendMessage(request)
+  }
+
+  // ---------------------------------------------------------------------------
+  // handleTypingStatus
+  // ---------------------------------------------------------------------------
+  const handleTypingStatus = (data: TypingStatus) => {
+    const currentUser = getCookie("user_id");
+  
+    if (data.user_id === currentUser) {
+      return;
+    }
+
+    if (typingTimeoutsRef.current[data.chat_id]) {
+      clearTimeout(typingTimeoutsRef.current[data.chat_id]);
+      delete typingTimeoutsRef.current[data.chat_id];
+    }
+
+    setTypingStatuses((prev) => {
+      const exists = prev.some((status) => status.chat_id === data.chat_id);
+      if (!exists) return [...prev, data];
+      return prev.map((status) =>
+        status.chat_id === data.chat_id ? { ...status, status: data.status } : status
+      );
+    });
+
+    typingTimeoutsRef.current[data.chat_id] = setTimeout(() => {
+      setTypingStatuses((prev) =>
+        prev.filter((status) => status.chat_id !== data.chat_id)
+      );
+      delete typingTimeoutsRef.current[data.chat_id];
+    }, 2000);
+  };
+
+
+  // ---------------------------------------------------------------------------
   // unsubscribeToChatRoom
   // ---------------------------------------------------------------------------
   const unsubscribeToChatRoom = (chatId: string) => {
@@ -772,5 +825,7 @@ export const useChatWebSocket = () => {
     handlePinMessage,
     handleUnpinMessage,
     handleForwardMessage,
+    handleTyping,
+    typingStatuses,
   };
 };

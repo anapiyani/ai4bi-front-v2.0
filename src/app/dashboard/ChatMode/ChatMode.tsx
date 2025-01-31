@@ -40,6 +40,8 @@ const ChatMode = () => {
     handlePinMessage,
     handleUnpinMessage,
     handleForwardMessage,
+    handleTyping,
+    typingStatuses,
   } = useChatWebSocket()
 
   const handleItemClick = (id: string) => {
@@ -178,6 +180,7 @@ const ChatMode = () => {
           setNewMessage={setNewMessage}
           newMessage={newMessage}
           sendChatMessage={sendChatMessage}
+          handleTyping={handleTyping}
           scrollRef={scrollRef}
           handleOpenDeleteMessage={handleOpenDeleteMessage}
           handlePinMessage={handlePinMessage}
@@ -187,6 +190,7 @@ const ChatMode = () => {
           setOpenMenu={handleOpenMenu}
           handleForwardMessage={handleForwardMessage}
           openMenu={openMenu}
+          typingStatuses={typingStatuses}
         />
       </div>
       {openMenu && selectedConversation && (

@@ -139,6 +139,8 @@ export type ChatContentProps = {
   handlePinMessage: ({chat_id, message_id}: {chat_id: string, message_id: string}) => void;
   handleUnpinMessage: ({chat_id, message_id}: {chat_id: string, message_id: string}) => void;
 	handleForwardMessage: (forwardData: ForwardData) => void;
+  handleTyping: (status: "typing" | "recording" | "stopped", chat_id: string) => void;
+	typingStatuses: TypingStatus[];
 }
 
 export type UploadMediaResponse = {
@@ -204,4 +206,11 @@ export type ForwardData = {
 	message_ids: string[];
 	source_chat_id: string;
 	target_chat_id: string;
+}
+
+export type TypingStatus = {
+	chat_id: string;
+	user_id: string;
+	user_first_name: string;
+	status: "typing" | "recording" | "stopped";
 }

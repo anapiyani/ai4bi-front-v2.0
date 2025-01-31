@@ -2,19 +2,28 @@
 import { Button } from '@/components/ui/button'
 import Icons from '@/src/app/components/Icons'
 import { useTranslations } from 'next-intl'
+import { TypingStatus } from '../../types/types'
 
 type ChatHeaderProps = {
 	title: string,
 	onClickAboutAuction: () => void
 	t: ReturnType<typeof useTranslations>,
 	openMenu?: boolean;
+	typingStatuses: TypingStatus[];
 }
 
-const ChatHeader = ({title, onClickAboutAuction, t, openMenu}: ChatHeaderProps) => {
+const ChatHeader = ({title, onClickAboutAuction, t, openMenu, typingStatuses}: ChatHeaderProps) => {
 	return (
 		<div className='grid grid-cols-10 justify-between items-center border-b border-gray-200 px-5'>
-			<div className='col-span-8 grid-rows-2 flex gap-2'>
-				<h1 className='text-secondary-foreground text-base font-semibold px-3 h-16 items-center flex'>{title}</h1>
+			<div className='col-span-8 grid-rows-2 flex gap-2 flex-col'>
+				<div className='flex flex-col h-16 justify-center'>
+					<h1 className='text-secondary-foreground text-base font-semibold px-3 items-center flex'>{title}</h1>
+					{typingStatuses.length > 0 ? (
+						<p className='text-primary text-xs font-normal px-3 items-center flex'>{typingStatuses.map((status) => status.user_first_name).join(", ")} {t("isTyping")}</p>
+					) : (
+						<p className='text-primary-foreground text-xs font-normal px-3 items-center flex'>.</p>
+					)}
+				</div>
 			</div>
 			{
 				openMenu ? <div></div> : <>

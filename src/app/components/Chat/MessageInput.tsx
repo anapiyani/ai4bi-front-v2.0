@@ -12,7 +12,6 @@ type MessageInputProps = {
   isConnected: boolean;
   value: string;
   setNewMessage: (value: string) => void;
-  // For "Reply to"
   replyTo: ChatMessage | null;
   setReplyTo: (message: ChatMessage | null) => void;
   editMessage: ChatMessage | null;
@@ -20,6 +19,7 @@ type MessageInputProps = {
   handleEdit: (e: React.FormEvent<HTMLFormElement>) => void;
   openDropZoneModal: boolean;
   setOpenDropZoneModal: (open: boolean) => void;
+  handleTypingChat: (status: "typing" | "recording" | "stopped") => void;
 };
 
 const MessageInput = ({
@@ -34,6 +34,7 @@ const MessageInput = ({
   setEditMessage,
   handleEdit,
   openDropZoneModal,
+  handleTypingChat,
   setOpenDropZoneModal,
 }: MessageInputProps) => {
   let inputRef = useRef<HTMLInputElement>(null);
@@ -74,6 +75,14 @@ const MessageInput = ({
       setEditMessage({ ...editMessage, content: e.target.value });
     } else {
       setNewMessage(e.target.value);
+      
+      const typingTimeout = setTimeout(() => {
+        handleTypingChat("stopped");
+      }, 3000);
+
+      handleTypingChat("typing");
+
+      return () => clearTimeout(typingTimeout);
     }
   };
 
