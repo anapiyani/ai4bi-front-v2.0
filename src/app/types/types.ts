@@ -141,6 +141,7 @@ export type ChatContentProps = {
 	handleForwardMessage: (forwardData: ForwardData) => void;
   handleTyping: (status: "typing" | "recording" | "stopped", chat_id: string) => void;
 	typingStatuses: TypingStatus[];
+	conversations: Conversation[];
 }
 
 export type UploadMediaResponse = {

@@ -191,6 +191,7 @@ const ChatMode = () => {
           handleForwardMessage={handleForwardMessage}
           openMenu={openMenu}
           typingStatuses={typingStatuses}
+          conversations={conversations}
         />
       </div>
       {openMenu && selectedConversation && (

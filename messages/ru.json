@@ -123,7 +123,8 @@
 		"media": "Медиа",
 		"no_messages_yet": "Нет сообщений",
 		"forwarded_from": "Переслано от",
-		"isTyping": "печатает..."
+		"isTyping": "печатает...",
+		"forward-message": "Переслать сообщение"
 	}
 }
 

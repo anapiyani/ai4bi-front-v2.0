@@ -123,7 +123,8 @@
 		"media": "Медиа",
 		"no_messages_yet": "Хабарлама жоқ",
 		"forwarded_from": "Жіберілген",
-		"isTyping": "жазып жатыр..."
+		"isTyping": "жазып жатыр...",
+		"forward-message": "Хабарлама жіберу"
 	}
 }
 

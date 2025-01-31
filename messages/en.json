@@ -122,7 +122,8 @@
 		"media": "Media",
 		"no_messages_yet": "No messages yet",
 		"forwarded_from": "Forwarded from",
-		"isTyping": "is typing..."
+		"isTyping": "is typing...",
+		"forward-message": "Forward message"
 	}
 }
 
