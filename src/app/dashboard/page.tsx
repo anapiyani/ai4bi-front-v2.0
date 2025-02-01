@@ -83,6 +83,7 @@ export default function Dashboard() {
     try {
       setCookie('user_id', userData.uuid)
       setCookie('role', userData.role)
+      setCookie('first_name', userData.first_name)
       if (!getCookie('access_token')) {
         window.location.href = '/login'
       }
