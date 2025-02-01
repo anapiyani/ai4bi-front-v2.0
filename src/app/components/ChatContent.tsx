@@ -8,6 +8,7 @@ import { getCookie } from "../api/service/cookie"
 import { useGoToMessage } from '../hooks/useGoToMessage'
 import { ChatContentProps, ChatMessage } from "../types/types"
 import DropZoneModal from './Chat/Files/DropZoneModal'
+import ForwardMessage from './Chat/ForwardMessage'
 import Message from "./Chat/Message"
 import MessageInput from "./Chat/MessageInput"
 import PinnedMessages from './Chat/PinnedMessages'
@@ -30,8 +31,11 @@ const ChatContent = ({
   setOpenMenu,
   handlePinMessage,
   handleUnpinMessage,
+  handleTyping,
+  typingStatuses,
   openMenu,
   handleForwardMessage,
+  conversations
 }: ChatContentProps) => {
   const t = useTranslations("dashboard");
   const [openRescheduleModal, setOpenRescheduleModal] = useState<boolean>(false);
@@ -39,6 +43,8 @@ const ChatContent = ({
   const [replyTo, setReplyTo] = useState<ChatMessage | null>(null);
   const pinnedMessages = messages.filter((m) => m.is_pinned);
   const [openDropZoneModal, setOpenDropZoneModal] = useState<boolean>(false);
+  const [openForwardMessage, setOpenForwardMessage] = useState<boolean>(false);
+  const [forwardMessageId, setForwardMessageId] = useState<string | null>(null);
   const goToMessage = useGoToMessage();
 
   const handleReplyClick = (message: ChatMessage) => {
@@ -73,17 +79,27 @@ const ChatContent = ({
     sendChatMessage(null, uuids);
   }
 
-  const handleForward = (message_id: string) => {
-    const target_chat_id = prompt("Enter the chat id to forward to");
-    if (target_chat_id) {
-      handleForwardMessage({message_ids: [message_id], source_chat_id: chatId, target_chat_id: target_chat_id});
-    }
+  const handleForwardModal = (message_id: string) => {
+    setForwardMessageId(message_id);
+    setOpenForwardMessage(true);
+  }
+
+  const handleForward = (message_id: string, target_chat_id: string) => {
+    handleForwardMessage({message_ids: [message_id], source_chat_id: chatId, target_chat_id: target_chat_id});
+    setOpenForwardMessage(false);
+    setForwardMessageId(null);
+    window.location.href = `/dashboard?active_tab=chat&id=${target_chat_id}`;
+  }
+
+  const handleTypingChat = (status: "typing" | "recording" | "stopped") => {
+    handleTyping(status, chatId);
   }
 
   return (
     <div className="flex flex-col w-full h-full relative">
       <ChatHeader 
         title={title} 
+        typingStatuses={typingStatuses}
         t={t} 
         onClickAboutAuction={() => {
           setOpenMenu(true);
@@ -148,7 +164,7 @@ const ChatContent = ({
                       handleUnpin={() => handlePinUnpin(message.id, message.is_pinned || false)}
                       type={message.type}
                       media={Array.isArray(message.media) ? message.media : message.media ? [message.media] : null}
-                      handleForward={() => handleForward(message.id)}
+                      handleForward={() => handleForwardModal(message.id)}
                       replyToMessage={
                         replyToSnippet
                           ? {
@@ -168,6 +184,7 @@ const ChatContent = ({
         <div className="px-5 w-full mt-auto">
           <MessageInput
             t={t}
+            handleTypingChat={handleTypingChat}
             value={newMessage}
             setNewMessage={setNewMessage}
             isConnected={isConnected}
@@ -200,6 +217,18 @@ const ChatContent = ({
             value={newMessage}
             setNewMessage={setNewMessage}
             chatId={chatId}
+          />
+        )
+      }
+      {
+        openForwardMessage && (
+          <ForwardMessage
+            open={openForwardMessage}
+            t={t}
+            conversations={conversations}
+            onClose={() => setOpenForwardMessage(false)}
+            handleForward={handleForward}
+            forwardMessageId={forwardMessageId || ""}
           />
         )
       }
