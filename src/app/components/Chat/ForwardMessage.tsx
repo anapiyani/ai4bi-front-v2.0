@@ -17,7 +17,7 @@ const ForwardMessage = ({open, onClose, t, conversations, handleForward, forward
 					<SearchBar />
 					{
 						conversations.map((conversation) => (
-							<div onClick={() => handleForward(forwardMessageId, conversation.id)} key={conversation.id} className='flex items-center justify-between gap-2 my-2 px-3'>
+							<div onClick={() => handleForward(forwardMessageId, conversation.id)} key={conversation.id} className='flex items-center justify-between gap-2 my-2 px-3 cursor-pointer'>
 								<div className='cursor-pointer'>
 									<p>{conversation.name}</p>
 								</div>
