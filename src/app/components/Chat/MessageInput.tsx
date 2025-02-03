@@ -1,14 +1,16 @@
 "use client";
 
-import { Button } from "@/components/ui/button"
+import { Button } from '@/components/ui/button'
 import { Input } from "@/components/ui/input"
+import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useRef } from "react"
+import { useAudioRecorder } from '../../hooks/useAudioRecorder'
 import { ChatMessage } from "../../types/types"
+import BotVisualizer from '../Bot/BotVisualizer'
 import Icons from '../Icons'
-
 type MessageInputProps = {
   t: any;
-  sendChatMessage: (reply?: ChatMessage | null, media?: string[] | null) => void;
+  sendChatMessage: (reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean) => void;
   isConnected: boolean;
   value: string;
   setNewMessage: (value: string) => void;
@@ -20,6 +22,7 @@ type MessageInputProps = {
   openDropZoneModal: boolean;
   setOpenDropZoneModal: (open: boolean) => void;
   handleTypingChat: (status: "typing" | "recording" | "stopped") => void;
+  chatId: string;
 };
 
 const MessageInput = ({
@@ -36,8 +39,28 @@ const MessageInput = ({
   openDropZoneModal,
   handleTypingChat,
   setOpenDropZoneModal,
+  chatId
 }: MessageInputProps) => {
   let inputRef = useRef<HTMLInputElement>(null);
+  const {
+    isRecording,
+    isPaused,
+    handleStartRecording,
+    handleStopAndSend,
+    handlePauseResume,
+    recordingDuration,
+    mediaStream,
+    handleStopRecording
+  } = useAudioRecorder({ handleTypingChat,
+    onSendAudio: (id) => {
+      sendChatMessage(replyTo, [id], true);
+    },
+    chatId: chatId
+   });
+
+  const isSendMode = editMessage
+    ? (!isConnected || !editMessage.content.trim()) === false
+    : (!isConnected || !value.trim()) === false
 
   useEffect(() => {
     setTimeout(() => {
@@ -78,7 +101,7 @@ const MessageInput = ({
       
       const typingTimeout = setTimeout(() => {
         handleTypingChat("stopped");
-      }, 3000);
+      }, 2000);
 
       handleTypingChat("typing");
 
@@ -134,7 +157,7 @@ const MessageInput = ({
             </button>
         </div>
       )}
-      <form
+       <form
         onSubmit={(e) => {
           if (editMessage) {
             handleEdit(e);
@@ -144,28 +167,97 @@ const MessageInput = ({
         }}
         className={`flex items-center gap-2 w-full pt-${
           replyTo ? "10" : "0"
-        }`} 
+        }`}
       >
-        <Input
-          ChooseFiles={() => {
-            ChooseFiles()
-          }}
-          ref={inputRef}
-          placeholder={t("type-your-message-here")}
-          onChange={handleEditChange}
-          onKeyDown={handleKeyDown}
-          value={editMessage ? editMessage.content : value}
-          className="w-full focus:ring-0 focus:border-none border-none focus:outline-none"
-          icon={<Icons.Choose_files />}
-        />
-        <Button  
-          disabled={
-            editMessage ? !isConnected || !editMessage.content.trim() : !isConnected || !value.trim()
-          } 
-          type="submit"
-        >
-          {editMessage ? t("edit") : t("send")}
-        </Button>
+        {
+          isRecording ? (
+            <div className="flex items-center gap-2 w-full">
+              <Button onClick={() => {
+                handleStopRecording();
+              }} className="bg-white rounded-full border-none" variant="outline" size="icon">
+                <Icons.Chat_Trash size={24} />
+              </Button>
+              {
+                isPaused ? (
+                  <BotVisualizer stream={mediaStream} type="user-paused" userSpeaking={true} recordingDuration={recordingDuration} />
+                ) : (
+                  <BotVisualizer stream={mediaStream} type="speaking" userSpeaking={true} recordingDuration={recordingDuration} />
+                )
+              }
+            </div>
+          ) : (
+            <Input
+              ChooseFiles={() => {
+                ChooseFiles();
+              }}
+              ref={inputRef}
+              placeholder={t("type-your-message-here")}
+              onChange={handleEditChange}
+              onKeyDown={handleKeyDown}
+              value={editMessage ? editMessage.content : value}
+              className="w-full focus:ring-0 focus:border-none border-none focus:outline-none"
+              icon={<Icons.Choose_files />}
+            />
+          )
+        }
+        <AnimatePresence mode="wait">
+          {isRecording ? (
+            <motion.div
+              key="recording-ui"
+              initial={{ scale: 0.7, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.7, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="flex items-center gap-2"
+            >
+              <button
+                type="button"
+                onClick={handlePauseResume}
+                className="bg-primary rounded-full p-2"
+              >
+                {isPaused ? (
+                  <Icons.Play size={24} />
+                ) : (
+                  <Icons.Pause size={24} />
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={handleStopAndSend}
+                className="bg-primary rounded-full p-2"
+              >
+                <Icons.Send size={24} />
+              </button>
+            </motion.div>
+          ) : isSendMode ? (
+            <motion.button
+              key="send-icon"
+              type="submit"
+              onClick={handleSend}
+              className="bg-primary rounded-full p-2"
+              initial={{ scale: 0.7, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.7, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Icons.Send size={24} />
+            </motion.button>
+          ) : (
+            <motion.button
+              key="mic-icon"
+              className="bg-primary rounded-full p-2"
+              initial={{ scale: 0.7, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.7, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={handleStartRecording}
+              onTouchStart={handleStartRecording}
+            >
+              <Icons.ChatMicrophone size={24} />
+            </motion.button>
+          )}
+        </AnimatePresence>
       </form>
     </div>
   );

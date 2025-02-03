@@ -18,9 +18,12 @@ const ChatHeader = ({title, onClickAboutAuction, t, openMenu, typingStatuses}: C
 			<div className='col-span-8 grid-rows-2 flex gap-2 flex-col'>
 				<div className='flex flex-col h-16 justify-center'>
 					<h1 className='text-secondary-foreground text-base font-semibold px-3 items-center flex'>{title}</h1>
-					<p className={`text-xs font-normal px-3 items-center flex ${typingStatuses.length > 0 ? 'text-primary' : 'text-primary-foreground'}`}>
+					<p className={`text-xs font-normal px-3 items-center flex ${typingStatuses.length > 0 ? 'text-muted-foreground' : 'text-primary-foreground'}`}>
 						{typingStatuses.length > 0 ? (
-							<>{typingStatuses.map((status) => status.user_first_name).join(", ")} {t("isTyping")}</>
+							<div className='flex items-center gap-1'>
+								<Icons.AnimatedPencil className='w-4 h-4' />
+								<>{typingStatuses.map((status) => status.user_first_name).join(", ")} {t("isTyping")}</>
+							</div>
 						) : (
 							<p className='text-primary-foreground text-xs font-normal px-3 items-center flex'>.</p>
 						)}

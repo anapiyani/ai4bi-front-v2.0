@@ -141,7 +141,7 @@ const Message = ({
     isBot
       ? "bg-gradient-to-r from-[#0284C7] to-[#77BAAA]"
       : isUser
-      ? "bg-cyan-600 ml-auto text-white"
+      ? "bg-muted-foreground ml-auto text-white"
       : "bg-primary-foreground"
   }`;
 
@@ -190,41 +190,47 @@ const Message = ({
                 className={`mb-1 gap-2 border-l-2 pl-2 py-1 text-sm text-bi cursor-pointer ${
                   isUser
                     ? "bg-[#F1F5F933] border-secondary"
-                    : "bg-[#F1F5F9] border-[#0891B2]"
+                    : "bg-[#F1F5F9] border-primary"
                 }`}
               >
                 <p
-                  className={`${isUser ? "text-foreground" : "text-primary"}`}
+                  className={`${isUser ? "text-white" : "text-primary"}`}
                 >
                   {replyToMessage.sender}
                 </p>
                 {replyToMessage.has_attachments
-                  ? replyToMessage.media?.map((item, index) => {
-                      return (
-                        <div key={index} className="py-1 flex items-center gap-1">
-                          {typeof item === "object" && item.media_type === "file" && (
-                            <Icons.PDF
-                              className={
-                                isUser ? "text-white" : "text-muted-foreground"
-                              }
-                              size={16}
-                            />
-                          )}
-                          {typeof item === "object" && item.media_type === "image" && (
-                            <Icons.Image_Small
-                              fill={isUser ? "#ffffff" : "#64748B"}
-                            />
-                          )}
-                          {typeof item === "object" && item.media_type === "video" && (
-                            <Icons.Video
-                              fill={isUser ? "#ffffff" : "#64748B"}
-                              size={16}
-                            />
-                          )}
-                          <p>{typeof item === "object" ? t(item.media_type) : ""}</p>
-                        </div>
-                      );
-                    })
+                  ? (
+                      <div className="py-1 flex items-center gap-1">
+                        {replyToMessage.media && typeof replyToMessage.media[0] === "object" && (
+                          <>
+                            {replyToMessage.media[0]?.media_type === "file" && (
+                              <Icons.PDF
+                                className={
+                                  isUser ? "text-white" : "text-muted-foreground"
+                                }
+                                size={16}
+                              />
+                            )}
+                            {replyToMessage.media[0].media_type === "image" && (
+                              <Icons.Image_Small
+                                fill={isUser ? "#ffffff" : "#64748B"}
+                              />
+                            )}
+                            {replyToMessage.media[0].media_type === "video" && (
+                              <Icons.Video
+                                fill={isUser ? "#ffffff" : "#64748B"}
+                                size={16}
+                              />
+                            )}
+                            <p>
+                              {replyToMessage.media.length > 1 
+                                ? `${replyToMessage.media.length} ${t(replyToMessage.media[0].media_type + "s")}` 
+                                : t(replyToMessage.media[0].media_type)}
+                            </p>
+                          </>
+                        )}
+                      </div>
+                    )
                   : null}
                 <p className="text-bi pr-2">
                   {replyToMessage.content.length > 60

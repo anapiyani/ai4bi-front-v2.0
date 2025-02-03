@@ -105,7 +105,9 @@ export const useChatWebSocket = () => {
         handleReceivedPinStatusChange(message.data, true);
       } else if (message.event === "unpin_message") {
         handleReceivedPinStatusChange(message.data, false);
-      } else if (message.event === "new_message") {
+      } else if (message.event === "delete_message") {
+        handleReceivedDeleteMessage(message.data);
+      }else if (message.event === "new_message") {
         const msgData = message.data.message;
         const chatId = message.chat_id || message.data.chat_id;
         if (message.channel?.startsWith("chat_room")) {
@@ -477,6 +479,13 @@ export const useChatWebSocket = () => {
   }
 
   // ---------------------------------------------------------------------------
+  // handleReceivedDeleteMessage
+  // ---------------------------------------------------------------------------
+  const handleReceivedDeleteMessage = (message: any) => {
+    setMessages((prev) => prev.filter((m) => m.id !== message.message_id));
+  }
+
+  // ---------------------------------------------------------------------------
   // handleTypingStatus
   // ---------------------------------------------------------------------------
   const handleTypingStatus = (data: TypingStatus) => {
@@ -648,7 +657,7 @@ export const useChatWebSocket = () => {
   // ---------------------------------------------------------------------------
   // sendChatMessage
   // ---------------------------------------------------------------------------
-  const sendChatMessage = (reply?: ChatMessage | null, media?: string[] | null) => {
+  const sendChatMessage = (reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean) => {
     if (!selectedConversation) return;
     const replyId = reply?.id ?? null;
     const rpcId = Date.now().toString();
@@ -661,8 +670,8 @@ export const useChatWebSocket = () => {
       content: content,
       is_pinned: false,
       media: media || null,
-      has_attachments: media ? true : false,
-      is_voice_message: false,
+      has_attachments: !!media?.length,
+      is_voice_message: is_voice_message ?? false,
       timestamp: dayjs().toISOString(),
       pending: true,
       chat_id: selectedConversation,
@@ -686,7 +695,7 @@ export const useChatWebSocket = () => {
           is_pinned: false,
           has_attachments: !!media?.length,
           media: media || null,
-          is_voice_message: false,
+          is_voice_message: is_voice_message ?? false,
           reply_to: replyId,
           timestamp: dayjs().toISOString(),
         },

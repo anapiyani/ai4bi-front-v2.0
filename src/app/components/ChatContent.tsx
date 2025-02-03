@@ -226,6 +226,7 @@ const ChatContent = ({
             isConnected={isConnected}
             sendChatMessage={sendChatMessage}
             replyTo={replyTo}
+            chatId={chatId}
             setReplyTo={setReplyTo}
             editMessage={editMessage}
             setEditMessage={setEditMessage}

@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils'
+import { motion } from 'framer-motion'
 
 const Icons = {
 	Radio: () => {
@@ -327,6 +328,82 @@ const Icons = {
 			<svg width={size || 24} height={size || 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
 				<path d="M13.2423 10.7093C13.9141 11.2573 14.25 11.5313 14.25 12C14.25 12.4687 13.9141 12.7427 13.2423 13.2907C13.0568 13.442 12.8729 13.5845 12.7038 13.7032C12.5555 13.8073 12.3876 13.915 12.2137 14.0208C11.5435 14.4283 11.2083 14.6321 10.9078 14.4065C10.6072 14.1809 10.5799 13.7085 10.5252 12.7638C10.5098 12.4967 10.5 12.2348 10.5 12C10.5 11.7652 10.5098 11.5033 10.5252 11.2362C10.5799 10.2915 10.6072 9.81913 10.9078 9.5935C11.2083 9.36787 11.5435 9.57166 12.2137 9.97924C12.3876 10.085 12.5555 10.1927 12.7038 10.2968C12.8729 10.4155 13.0568 10.558 13.2423 10.7093Z" stroke={fill} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
 				<path d="M3 12C3 7.75736 3 5.63604 4.31802 4.31802C5.63604 3 7.75736 3 12 3C16.2426 3 18.364 3 19.682 4.31802C21 5.63604 21 7.75736 21 12C21 16.2426 21 18.364 19.682 19.682C18.364 21 16.2426 21 12 21C7.75736 21 5.63604 21 4.31802 19.682C3 18.364 3 16.2426 3 12Z" stroke={fill} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+			</svg>
+		)
+	},
+	AnimatedPencil: ({ className }: { className?: string }) => {
+		return (
+			<motion.svg
+				width="20"
+				height="20"
+				viewBox="0 0 20 20"
+				fill="none"
+				xmlns="http://www.w3.org/2000/svg"
+				className={className}
+				animate={{ x: [0, 2, -2, 2, 0] }} 
+				transition={{
+					duration: 2, 
+					repeat: Infinity, 
+					ease: "easeInOut", 
+				}}
+			>
+				<path
+					d="M3.33203 17.5H16.6654"
+					stroke="#64748B"
+					strokeWidth="1.5"
+					strokeLinecap="round"
+					strokeLinejoin="round"
+				/>
+				<path
+					d="M4.72306 10.9894C4.36762 11.3453 4.16797 11.8278 4.16797 12.3308V15H6.85347C7.35698 15 7.83985 14.7999 8.19581 14.4437L16.1124 6.52262C16.8532 5.7814 16.8532 4.57998 16.1124 3.83876L15.3303 3.05626C14.5889 2.31438 13.3863 2.31461 12.6451 3.05677L4.72306 10.9894Z"
+					stroke="#64748B"
+					strokeWidth="1.5"
+					strokeLinecap="round"
+					strokeLinejoin="round"
+				/>
+			</motion.svg>
+		);
+	},
+	ChatMicrophone: ({ className, size }: { className?: string, size?: number }) => {
+		return (
+			<svg width={size || 24} height={size || 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+				<path d="M8 21H16" stroke="white" strokeWidth="1.5" 	strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M12 18V21" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M16 6.42857C16 4.53502 14.2091 3 12 3C9.79086 3 8 4.53502 8 6.42857V11.5714C8 13.465 9.79086 15 12 15C14.2091 15 16 13.465 16 11.5714V6.42857Z" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M5 11C5 14.866 8.134 18 12 18C15.866 18 19 14.866 19 11" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+			</svg>
+		)
+	},
+	Send: ({ className, size }: { className?: string, size?: number }) => {
+		return (
+			<svg width={size || 24} height={size || 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+				<path d="M14 9.99997L11 13" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M20.2876 3.03102C20.7105 2.88301 21.117 3.28951 20.9689 3.7124L15.0436 20.6419C14.8836 21.099 14.247 21.125 14.0503 20.6824L10.8314 13.44C10.7777 13.319 10.6809 13.2223 10.5599 13.1685L3.31758 9.94971C2.87501 9.75302 2.90099 9.11633 3.35811 8.95633L20.2876 3.03102Z" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+			</svg>
+		)
+	},
+	Pause: ({ className, size }: { className?: string, size?: number }) => {
+		return (
+			<svg width={size || 24} height={size || 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+				<path d="M15.5 6.5H14.5C13.9477 6.5 13.5 6.94772 13.5 7.5V17.5C13.5 18.0523 13.9477 18.5 14.5 18.5H15.5C16.0523 18.5 16.5 18.0523 16.5 17.5V7.5C16.5 6.94772 16.0523 6.5 15.5 6.5Z" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M9 6.5H8C7.44772 6.5 7 6.94772 7 7.5V17.5C7 18.0523 7.44772 18.5 8 18.5H9C9.55228 18.5 10 18.0523 10 17.5V7.5C10 6.94772 9.55228 6.5 9 6.5Z" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+			</svg>
+		)
+	},
+	Play: ({ className, size }: { className?: string, size?: number }) => {
+		return (
+			<svg width={size || 24} height={size || 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" 	className={className}>
+				<path d="M14.5814 9.40221C16.1938 10.7175 17 11.3752 17 12.5C17 13.6248 16.1938 14.2825 14.5814 15.5978C14.1363 15.9609 13.6948 16.3028 13.2892 16.5876C12.9333 16.8375 12.5302 17.096 12.1129 17.3498C10.5043 18.328 9.69999 18.8171 8.97862 18.2756C8.25725 17.7341 8.19169 16.6005 8.06057 14.3332C8.02349 13.6921 8 13.0635 8 12.5C8 11.9365 8.02349 11.308 8.06057 10.6668C8.19169 8.39953 8.25725 7.26591 8.97862 6.7244C9.69999 6.18288 10.5043 6.67198 12.1129 7.65019C12.5302 7.90395 12.9333 8.16246 13.2892 8.41238C13.6948 8.69725 14.1363 9.03911 14.5814 9.40221Z" stroke="white" strokeWidth="1.5" strokeLinecap="round" 	strokeLinejoin="round"/>
+			</svg>
+		)
+	},
+	Chat_Trash: ({ className, size }: { className?: string, size?: number }) => {
+		return (
+			<svg width={size || 24} height={size || 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+				<path d="M6.28516 8.57141L7.42801 20H16.5709L17.7137 8.57141" stroke="red" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M13.5 15.5V10.5" stroke="red" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M10.5 15.5V10.5" stroke="red" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M4.57031 6.28571H9.14174M9.14174 6.28571L9.5238 4.75746C9.6351 4.3123 10.0351 4 10.4939 4H13.5038C13.9627 4 14.3627 4.3123 14.474 4.75746L14.856 6.28571M9.14174 6.28571H14.856M14.856 6.28571H19.4275" stroke="red" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
 			</svg>
 		)
 	}

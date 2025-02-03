@@ -124,7 +124,10 @@
 		"no_messages_yet": "Хабарлама жоқ",
 		"forwarded_from": "Жіберілген",
 		"isTyping": "жазып жатыр...",
-		"forward-message": "Хабарлама жіберу"
+		"forward-message": "Хабарлама жіберу",
+		"images": "Фото",
+		"videos": "Видео",
+		"medias": "Медиа"
 	}
 }
 
