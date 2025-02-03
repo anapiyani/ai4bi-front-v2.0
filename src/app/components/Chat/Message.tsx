@@ -37,6 +37,7 @@ const Message = ({
   type,
   handleForward,
   media,
+  counter,
 }: MessageProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const user_role = getCookie("role");
@@ -151,7 +152,8 @@ const Message = ({
   return (
     <div
       id={`message-${messageId}`}
-      className={`flex flex-col gap-2 p-1 ${
+      data-counter={counter}
+      className={`message-item flex flex-col gap-2 p-1 ${
         isUser ? "w-full flex justify-end" : ""
       } ${
         isMenuOpen

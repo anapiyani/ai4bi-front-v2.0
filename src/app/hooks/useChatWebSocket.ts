@@ -607,6 +607,25 @@ export const useChatWebSocket = () => {
     console.log("[getChatMessages] Request:", request);
   };
 
+  // ---------------------------------------------------------------------------
+  // handleReadMessage
+  // ---------------------------------------------------------------------------
+  const handleReadMessage = (counter: number) => {
+    if (!selectedConversation) return;
+    const rpcId = Date.now().toString();
+    const request = {
+      jsonrpc: "2.0",
+      method: "readMessage",
+      params: {
+        chat_id: selectedConversation,
+        last_read_counter: counter,
+      },
+      id: rpcId,
+    };
+    sendMessage(request);
+    console.log("[handleReadMessage] Request:", request);
+  }
+
 
   // ---------------------------------------------------------------------------
   // handleForwardMessage
@@ -826,6 +845,7 @@ export const useChatWebSocket = () => {
     handleUnpinMessage,
     handleForwardMessage,
     handleTyping,
+    handleReadMessage,
     typingStatuses,
   };
 };

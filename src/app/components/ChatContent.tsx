@@ -3,7 +3,7 @@
 import ChatHeader from "@/src/app/components/Chat/ChatHeader"
 import dayjs from "dayjs"
 import { useTranslations } from "next-intl"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { getCookie } from "../api/service/cookie"
 import { useGoToMessage } from '../hooks/useGoToMessage'
 import { ChatContentProps, ChatMessage } from "../types/types"
@@ -32,6 +32,7 @@ const ChatContent = ({
   handlePinMessage,
   handleUnpinMessage,
   handleTyping,
+  handleReadMessage,
   typingStatuses,
   openMenu,
   handleForwardMessage,
@@ -46,6 +47,40 @@ const ChatContent = ({
   const [openForwardMessage, setOpenForwardMessage] = useState<boolean>(false);
   const [forwardMessageId, setForwardMessageId] = useState<string | null>(null);
   const goToMessage = useGoToMessage();
+  const [lastSeenCounter, setLastSeenCounter] = useState(0);
+
+  useEffect(() => {
+    const checkVisibleMessage = () => {
+      if (!scrollRef.current) return;
+      const messageElements = scrollRef.current.querySelectorAll(".message-item");
+      let maxVisibleCounter = lastSeenCounter;
+      messageElements.forEach((el) => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top >= 0 && rect.bottom <= window.innerHeight) {
+          const counter = parseInt(el.getAttribute("data-counter") || "0", 10);
+          if (counter > maxVisibleCounter) {
+            maxVisibleCounter = counter;
+          }
+        }
+      });
+      if (maxVisibleCounter > lastSeenCounter) {
+        setLastSeenCounter(maxVisibleCounter);
+        handleReadMessage(maxVisibleCounter);
+      }
+    };
+
+    const interval = setInterval(checkVisibleMessage, 3000);
+
+    const handleScroll = () => {
+      checkVisibleMessage();
+    };
+    scrollRef.current?.addEventListener("scroll", handleScroll);
+
+    return () => {
+      clearInterval(interval);
+      scrollRef.current?.removeEventListener("scroll", handleScroll);
+    };
+  }, [lastSeenCounter, selectedConversation, scrollRef]);
 
   const handleReplyClick = (message: ChatMessage) => {
     setReplyTo(message);
@@ -136,6 +171,7 @@ const ChatContent = ({
                   return (
                     <Message
                       key={message.id}
+                      counter={message.counter}
                       sender_id={message.authorId || null}
                       goToMessage={goToMessage} 
                       createPrivateChat={createPrivateChat}

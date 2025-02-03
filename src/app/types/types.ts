@@ -135,6 +135,7 @@ export type ChatContentProps = {
   createPrivateChat: (userId: string) => void;
   sendEditMessage: (message: ChatMessage) => void;
   setOpenMenu: (open: boolean) => void;
+	handleReadMessage: (counter: number) => void;
   openMenu: boolean;
   handlePinMessage: ({chat_id, message_id}: {chat_id: string, message_id: string}) => void;
   handleUnpinMessage: ({chat_id, message_id}: {chat_id: string, message_id: string}) => void;
@@ -173,6 +174,7 @@ export interface MessageProps {
   handleReplyClick?: () => void;
 	type?: string;
   handleEditClick?: () => void;
+	counter?: number | null;
   reply_message_id: string | null;
   goToMessage: (messageId: string) => void;
   replyToMessage?: {
