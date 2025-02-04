@@ -10,6 +10,7 @@ import ChatMenu from "../../components/Chat/ChatMenu/ChatMenu"
 import DeleteMessage from "../../components/Chat/DeleteMessage"
 import ChatContent from "../../components/ChatContent"
 import { useChatWebSocket } from "../../hooks/useChatWebSocket"
+import { ReceivedChats } from '../../types/types'
 import ChatListItem from "./components/ChatListItem"
 import { SearchBar } from "./components/SearchBar"
 import { CHAT_TABS } from "./config/ChatTabs"
@@ -134,7 +135,8 @@ const ChatMode = () => {
                     conversation.chat_type === "auction_chat" ? (
                       <ChatListItem
                         key={conversation.id}
-                        data={conversation}
+                        data={conversation as ReceivedChats}
+                        typingStatuses={typingStatuses}
                         t={t}
                         onClick={() => {
                           handleItemClick(conversation.id)
@@ -154,7 +156,8 @@ const ChatMode = () => {
                   conversation.chat_type === "private" ? (
                     <ChatListItem
                       key={conversation.id}
-                      data={conversation}
+                      data={conversation as ReceivedChats}
+                      typingStatuses={typingStatuses}
                       t={t}
                       onClick={() => {
                         handleItemClick(conversation.id)

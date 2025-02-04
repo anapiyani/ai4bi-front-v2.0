@@ -364,13 +364,13 @@ const Icons = {
 			</motion.svg>
 		);
 	},
-	ChatMicrophone: ({ className, size }: { className?: string, size?: number }) => {
+	ChatMicrophone: ({ className, size, stroke }: { className?: string, size?: number, stroke?: string }) => {
 		return (
 			<svg width={size || 24} height={size || 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-				<path d="M8 21H16" stroke="white" strokeWidth="1.5" 	strokeLinecap="round" strokeLinejoin="round"/>
-				<path d="M12 18V21" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-				<path d="M16 6.42857C16 4.53502 14.2091 3 12 3C9.79086 3 8 4.53502 8 6.42857V11.5714C8 13.465 9.79086 15 12 15C14.2091 15 16 13.465 16 11.5714V6.42857Z" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-				<path d="M5 11C5 14.866 8.134 18 12 18C15.866 18 19 14.866 19 11" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M8 21H16" stroke={stroke || "white"} strokeWidth="1.5" 	strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M12 18V21" stroke={stroke || "white"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M16 6.42857C16 4.53502 14.2091 3 12 3C9.79086 3 8 4.53502 8 6.42857V11.5714C8 13.465 9.79086 15 12 15C14.2091 15 16 13.465 16 11.5714V6.42857Z" stroke={stroke || "white"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M5 11C5 14.866 8.134 18 12 18C15.866 18 19 14.866 19 11" stroke={stroke || "white"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
 			</svg>
 		)
 	},
@@ -382,18 +382,18 @@ const Icons = {
 			</svg>
 		)
 	},
-	Pause: ({ className, size }: { className?: string, size?: number }) => {
+	Pause: ({ className, size, stroke }: { className?: string, size?: number, stroke?: string }) => {
 		return (
 			<svg width={size || 24} height={size || 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-				<path d="M15.5 6.5H14.5C13.9477 6.5 13.5 6.94772 13.5 7.5V17.5C13.5 18.0523 13.9477 18.5 14.5 18.5H15.5C16.0523 18.5 16.5 18.0523 16.5 17.5V7.5C16.5 6.94772 16.0523 6.5 15.5 6.5Z" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-				<path d="M9 6.5H8C7.44772 6.5 7 6.94772 7 7.5V17.5C7 18.0523 7.44772 18.5 8 18.5H9C9.55228 18.5 10 18.0523 10 17.5V7.5C10 6.94772 9.55228 6.5 9 6.5Z" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M15.5 6.5H14.5C13.9477 6.5 13.5 6.94772 13.5 7.5V17.5C13.5 18.0523 13.9477 18.5 14.5 18.5H15.5C16.0523 18.5 16.5 18.0523 16.5 17.5V7.5C16.5 6.94772 16.0523 6.5 15.5 6.5Z" stroke={stroke} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M9 6.5H8C7.44772 6.5 7 6.94772 7 7.5V17.5C7 18.0523 7.44772 18.5 8 18.5H9C9.55228 18.5 10 18.0523 10 17.5V7.5C10 6.94772 9.55228 6.5 9 6.5Z" stroke={stroke} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
 			</svg>
 		)
 	},
-	Play: ({ className, size }: { className?: string, size?: number }) => {
+	Play: ({ className, size, stroke }: { className?: string, size?: number, stroke?: string }) => {
 		return (
 			<svg width={size || 24} height={size || 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" 	className={className}>
-				<path d="M14.5814 9.40221C16.1938 10.7175 17 11.3752 17 12.5C17 13.6248 16.1938 14.2825 14.5814 15.5978C14.1363 15.9609 13.6948 16.3028 13.2892 16.5876C12.9333 16.8375 12.5302 17.096 12.1129 17.3498C10.5043 18.328 9.69999 18.8171 8.97862 18.2756C8.25725 17.7341 8.19169 16.6005 8.06057 14.3332C8.02349 13.6921 8 13.0635 8 12.5C8 11.9365 8.02349 11.308 8.06057 10.6668C8.19169 8.39953 8.25725 7.26591 8.97862 6.7244C9.69999 6.18288 10.5043 6.67198 12.1129 7.65019C12.5302 7.90395 12.9333 8.16246 13.2892 8.41238C13.6948 8.69725 14.1363 9.03911 14.5814 9.40221Z" stroke="white" strokeWidth="1.5" strokeLinecap="round" 	strokeLinejoin="round"/>
+				<path d="M14.5814 9.40221C16.1938 10.7175 17 11.3752 17 12.5C17 13.6248 16.1938 14.2825 14.5814 15.5978C14.1363 15.9609 13.6948 16.3028 13.2892 16.5876C12.9333 16.8375 12.5302 17.096 12.1129 17.3498C10.5043 18.328 9.69999 18.8171 8.97862 18.2756C8.25725 17.7341 8.19169 16.6005 8.06057 14.3332C8.02349 13.6921 8 13.0635 8 12.5C8 11.9365 8.02349 11.308 8.06057 10.6668C8.19169 8.39953 8.25725 7.26591 8.97862 6.7244C9.69999 6.18288 10.5043 6.67198 12.1129 7.65019C12.5302 7.90395 12.9333 8.16246 13.2892 8.41238C13.6948 8.69725 14.1363 9.03911 14.5814 9.40221Z" stroke={stroke} strokeWidth="1.5" strokeLinecap="round" 	strokeLinejoin="round"/>
 			</svg>
 		)
 	},
@@ -404,6 +404,15 @@ const Icons = {
 				<path d="M13.5 15.5V10.5" stroke="red" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
 				<path d="M10.5 15.5V10.5" stroke="red" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
 				<path d="M4.57031 6.28571H9.14174M9.14174 6.28571L9.5238 4.75746C9.6351 4.3123 10.0351 4 10.4939 4H13.5038C13.9627 4 14.3627 4.3123 14.474 4.75746L14.856 6.28571M9.14174 6.28571H14.856M14.856 6.28571H19.4275" stroke="red" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+			</svg>
+		)
+	},
+	HeadPhones: ({ className, size, fill }: { className?: string, size?: number, fill?: string }) => {
+		return (
+			<svg width={size || 24} height={size || 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+				<path d="M21 17V12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12V17" stroke={fill} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M16 14.9578C16 14.447 16 14.1915 16.0586 13.9887C16.1942 13.5196 16.5482 13.1637 16.9888 13.0537C18.2613 12.7358 18.5191 13.9185 19.4319 14.2857C19.4549 14.295 19.478 14.3045 19.501 14.3141C20.4931 14.7309 20.9985 15.7924 20.996 16.8684L20.9951 17.2245C20.9929 18.1751 20.4868 19.06 19.6426 19.4968C18.7043 19.9822 18.3913 21.2489 17.0278 20.9568C16.591 20.8632 16.2308 20.5284 16.0777 20.0737C16 19.843 16 19.5414 16 18.9381V14.9578Z" stroke={fill}  strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M8.00002 19.0422C8.00002 19.553 8.00002 19.8085 7.94139 20.0113C7.80582 20.4804 7.45183 20.8363 7.0112 20.9463C5.73874 21.2642 5.48096 20.0815 4.56811 19.7143C4.54751 19.706 4.52689 19.6975 4.50625 19.6889C3.50805 19.2714 3.00152 18.2082 3.00404 17.132L3.00489 16.768C3.0071 15.8216 3.51273 14.9402 4.35746 14.5032C5.29572 14.0178 5.60868 12.7511 6.97218 13.0432C7.40899 13.1368 7.76922 13.4716 7.92232 13.9263C8.00002 14.157 8.00002 14.4586 8.00002 15.0619V19.0422Z" stroke={fill}  strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
 			</svg>
 		)
 	}

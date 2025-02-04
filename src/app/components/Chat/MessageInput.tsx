@@ -55,7 +55,8 @@ const MessageInput = ({
     onSendAudio: (id) => {
       sendChatMessage(replyTo, [id], true);
     },
-    chatId: chatId
+    chatId: chatId,
+    outputFormat: "mp3"
    });
 
   const isSendMode = editMessage
@@ -216,9 +217,9 @@ const MessageInput = ({
                 className="bg-primary rounded-full p-2"
               >
                 {isPaused ? (
-                  <Icons.Play size={24} />
+                  <Icons.Play stroke="#ffff" size={24} />
                 ) : (
-                  <Icons.Pause size={24} />
+                  <Icons.Pause stroke="#ffff" size={24} />
                 )}
               </button>
 

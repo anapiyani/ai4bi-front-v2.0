@@ -127,6 +127,7 @@
 		"no_messages_yet": "Нет сообщений",
 		"forwarded_from": "Переслано от",
 		"isTyping": "печатает...",
+		"isRecording": "записывает...",
 		"forward-message": "Переслать сообщение"
 	}
 }

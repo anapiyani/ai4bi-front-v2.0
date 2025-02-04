@@ -132,7 +132,7 @@ const ChatContent = ({
 
   return (
     <div className="flex flex-col w-full h-full relative">
-      <ChatHeader 
+      <ChatHeader  
         title={title} 
         typingStatuses={typingStatuses}
         t={t} 
@@ -206,7 +206,7 @@ const ChatContent = ({
                           ? {
                               sender: replyToSnippet.sender_first_name,
                               content: replyToSnippet.content,
-                              has_attachments: replyToSnippet.has_attachments || false,
+                              has_attachments: replyToSnippet.has_attachements || false,
                               media: Array.isArray(replyToSnippet.media) ? replyToSnippet.media : replyToSnippet.media ? [replyToSnippet.media] : null,
                             }
                           : null

@@ -22,7 +22,7 @@ const ChatHeader = ({title, onClickAboutAuction, t, openMenu, typingStatuses}: C
 						{typingStatuses.length > 0 ? (
 							<div className='flex items-center gap-1'>
 								<Icons.AnimatedPencil className='w-4 h-4' />
-								<>{typingStatuses.map((status) => status.user_first_name).join(", ")} {t("isTyping")}</>
+								<>{typingStatuses.map((status) => status.user_first_name).join(", ")} {typingStatuses.map((status) => status.status === "recording" ? t("isRecording") : t("isTyping")).join(", ")}</>
 							</div>
 						) : (
 							<p className='text-primary-foreground text-xs font-normal px-3 items-center flex'>.</p>

@@ -126,6 +126,7 @@
 		"forward-message": "Forward message",
 		"images": "Images",
 		"videos": "Videos",
+		"isRecording": "is recording...",
 		"medias": "Medias"
 	}
 }

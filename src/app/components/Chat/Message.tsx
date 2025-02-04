@@ -222,6 +222,12 @@ const Message = ({
                                 size={16}
                               />
                             )}
+                            {replyToMessage.media[0].media_type === "audio" && (
+                              <Icons.HeadPhones
+                                fill={isUser ? "#ffffff" : "#64748B"}
+                                size={16}
+                              />
+                            )}
                             <p>
                               {replyToMessage.media.length > 1 
                                 ? `${replyToMessage.media.length} ${t(replyToMessage.media[0].media_type + "s")}` 
