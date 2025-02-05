@@ -23,7 +23,7 @@ const ChatMode = () => {
   const chatId = searchParams.get("id")
   const [openMenu, setOpenMenu] = useState<boolean>(false)
   const [selectedConversationType, setSelectedConversationType] = useState<"auction_chat" | "private">()
-  const [messageId, setMessageId] = useState<string | null>(null)
+  const [messageIds, setMessageIds] = useState<string[] | null>(null)
   const [isDeleteMessageOpen, setIsDeleteMessageOpen] = useState<boolean>(false)
   const {
     isConnected,
@@ -51,15 +51,21 @@ const ChatMode = () => {
     setOpenMenu(false)
   }
 
-  const handleOpenDeleteMessage = (messageId: string) => {
+  const handleOpenDeleteMessage = (messageId: string | string[]) => {
     setIsDeleteMessageOpen(true)
-    setMessageId(messageId)
+    if (Array.isArray(messageId)) {
+      setMessageIds(messageId)
+    } else {
+      setMessageIds([messageId])
+    }
   }
 
   const handleDeleteMessage = () => {
     setIsDeleteMessageOpen(false)
-    if (messageId) {
-      deleteMessage(messageId)
+    if (messageIds) {
+      messageIds.forEach((id) => {
+        deleteMessage(id)
+      })
       toast.success(t("message-deleted"))
     }
   }

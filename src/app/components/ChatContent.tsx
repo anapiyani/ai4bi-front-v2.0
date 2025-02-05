@@ -153,10 +153,10 @@ const ChatContent = ({
         }
         break;
       case "delete_selected":
-        console.log("delete_selected", selectedMessages);
+        handleOpenDeleteMessage(selectedMessages);
         break;
       case "forward_selected":
-        console.log("forward_selected", selectedMessages);
+        handleForwardMessage({message_ids: selectedMessages, source_chat_id: chatId, target_chat_id: selectedConversation});
         break;
     }
   };

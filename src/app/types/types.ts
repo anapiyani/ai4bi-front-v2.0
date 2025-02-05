@@ -138,7 +138,7 @@ export type ChatContentProps = {
   setNewMessage: (message: string) => void;
   sendChatMessage: (reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean) => void;
   scrollRef: React.RefObject<HTMLDivElement>;
-  handleOpenDeleteMessage: (messageId: string) => void;
+  handleOpenDeleteMessage: (messageId: string | string[]) => void;
   createPrivateChat: (userId: string) => void;
   sendEditMessage: (message: ChatMessage) => void;
   setOpenMenu: (open: boolean) => void;
