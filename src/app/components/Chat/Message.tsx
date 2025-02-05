@@ -127,11 +127,7 @@ const Message = ({
   } ${isUser ? "text-white" : ""}`;
 
   useEffect(() => {
-    if (selectedMessages.includes(messageId)) {
-      setIsSelected(true);
-    } else {
-      setIsSelected(false);
-    }
+    setIsSelected(selectedMessages.includes(messageId));
   }, [selectedMessages, messageId]);
 
   return (
