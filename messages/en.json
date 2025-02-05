@@ -127,7 +127,12 @@
 		"images": "Images",
 		"videos": "Videos",
 		"isRecording": "is recording...",
-		"medias": "Medias"
+		"medias": "Medias",
+		"select": "Select",
+		"unselect": "Unselect",
+		"unselect_all": "Unselect all",
+		"delete_selected": "Delete selected",
+		"forward_selected": "Forward selected"
 	}
 }
 

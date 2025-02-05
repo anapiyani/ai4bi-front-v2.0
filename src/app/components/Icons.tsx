@@ -170,6 +170,13 @@ const Icons = {
 			</svg>
 		)
 	},
+	Check: () => {
+		return (
+			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M6 13.6261L7.60619 15.3478C8.49194 16.2972 8.93481 16.772 9.43113 16.9218C9.86704 17.0534 10.3305 17.0181 10.7459 16.8217C11.2189 16.598 11.5985 16.0606 12.3579 14.9859L18 7" stroke="#020617" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+			</svg>
+		)
+	},
 	Reply_small_blue: () => {
 		return (
 			<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">

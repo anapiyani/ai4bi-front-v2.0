@@ -48,6 +48,7 @@ const ChatContent = ({
   const [forwardMessageId, setForwardMessageId] = useState<string | null>(null);
   const goToMessage = useGoToMessage();
   const [lastSeenCounter, setLastSeenCounter] = useState(0);
+  const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
 
   useEffect(() => {
     const checkVisibleMessage = () => {
@@ -130,6 +131,37 @@ const ChatContent = ({
     handleTyping(status, chatId);
   }
 
+  const handleSelectMessages = (
+    action: "select" | "unselect" | "select_all" | "unselect_all" | "delete_selected" | "forward_selected",
+    messageId?: string
+  ) => {
+    switch (action) {
+      case "select_all":
+        setSelectedMessages(messages.map((m) => m.id));
+        break;
+      case "unselect_all":
+        setSelectedMessages([]);
+        break;
+      case "select":
+        if (messageId) {
+          setSelectedMessages((prev) => [...prev, messageId]);
+        }
+        break;
+      case "unselect":
+        if (messageId) {
+          setSelectedMessages((prev) => prev.filter((m) => m !== messageId));
+        }
+        break;
+      case "delete_selected":
+        console.log("delete_selected", selectedMessages);
+        break;
+      case "forward_selected":
+        console.log("forward_selected", selectedMessages);
+        break;
+    }
+  };
+  
+
   return (
     <div className="flex flex-col w-full h-full relative">
       <ChatHeader  
@@ -176,6 +208,8 @@ const ChatContent = ({
                       goToMessage={goToMessage} 
                       createPrivateChat={createPrivateChat}
                       message={message.content}
+                      handleSelectMessages={(action: "select" | "unselect" | "select_all" | "unselect_all" | "delete_selected" | "forward_selected") => handleSelectMessages(action, message.id)}
+                      selectedMessages={selectedMessages}
                       sender={
                         (message.authorId &&
                           message.authorId === getCookie("user_id")) ||

@@ -128,7 +128,12 @@
 		"forwarded_from": "Переслано от",
 		"isTyping": "печатает...",
 		"isRecording": "записывает...",
-		"forward-message": "Переслать сообщение"
+		"forward-message": "Переслать сообщение",
+		"select": "Выбрать",
+		"unselect": "Снять выбор",
+		"unselect_all": "Снять все выборы",
+		"delete_selected": "Удалить выбранные",
+		"forward_selected": "Переслать выбранные"
 	}
 }
 

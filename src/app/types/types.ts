@@ -203,6 +203,8 @@ export interface MessageProps {
 	handleForward: () => void;
   isPinned: boolean;
   media: Media[] | string[] | null | undefined;
+	handleSelectMessages: (action: "select" | "unselect" | "select_all" | "unselect_all" | "delete_selected" | "forward_selected") => void;
+	selectedMessages: string[];
 }
 
 export type ForwardData = {

@@ -1,9 +1,9 @@
 "use client"
-
 import { toast } from '@/components/ui/use-toast'
 import dayjs from 'dayjs'
 import { useTranslations } from 'next-intl'
 import { useEffect, useRef, useState } from 'react'
+import { toast as HotToast } from 'react-hot-toast'
 import { getCookie } from '../api/service/cookie'
 import { useWebSocket } from '../api/service/useWebSocket'
 import { ChatMessage, Conversation, ForwardData, LastMessage, ReceivedChats, TypingStatus } from '../types/types'
@@ -36,7 +36,6 @@ export const useChatWebSocket = () => {
     currentUserRef.current = currentUser;
   }, [currentUser]);
 
-  // **4. Track sent message IDs to differentiate between your messages and others**
   const sentMessageIdsRef = useRef<Set<string>>(new Set());
 
   // ---------------------------------------------------------------------------
@@ -152,6 +151,9 @@ export const useChatWebSocket = () => {
         handleNewParticipant(message);
       }
       return;
+    // 5) User mentioned in a message in another chat
+    } else if (message.type === "notifications") {
+      handleShowNotification(message);
     }
 
     // --- (D) Other message types (e.g. "message_received" ack) ---
@@ -467,6 +469,29 @@ export const useChatWebSocket = () => {
       id: rpcId,
     }
     sendMessage(request)
+  }
+
+  // ---------------------------------------------------------------------------
+  // handleShowNotification
+  // ---------------------------------------------------------------------------
+  const handleShowNotification = (message: any) => {
+    console.log("notification data: ", message.data);
+    HotToast((t) => (
+      message.data.content
+    ), {
+      duration: 5000,
+      position: "top-right",
+      style: {
+        background: "white",
+        color: "black",
+        padding: "10px",
+        borderRadius: "5px",
+        maxWidth: "300px",
+        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+        border: "1px solid #e2e8f0"
+      },
+      className: "custom-toast"
+    });
   }
 
   // ---------------------------------------------------------------------------
