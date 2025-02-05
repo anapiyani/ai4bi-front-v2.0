@@ -45,7 +45,7 @@ const ChatContent = ({
   const pinnedMessages = messages.filter((m) => m.is_pinned);
   const [openDropZoneModal, setOpenDropZoneModal] = useState<boolean>(false);
   const [openForwardMessage, setOpenForwardMessage] = useState<boolean>(false);
-  const [forwardMessageId, setForwardMessageId] = useState<string | null>(null);
+  const [forwardMessageIds, setForwardMessageIds] = useState<string[] | null>(null);
   const goToMessage = useGoToMessage();
   const [lastSeenCounter, setLastSeenCounter] = useState(0);
   const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
@@ -115,15 +115,15 @@ const ChatContent = ({
     sendChatMessage(null, uuids);
   }
 
-  const handleForwardModal = (message_id: string) => {
-    setForwardMessageId(message_id);
+  const handleForwardModal = (message_ids: string | string[]) => {
+    setForwardMessageIds(Array.isArray(message_ids) ? message_ids : [message_ids]);
     setOpenForwardMessage(true);
   }
 
-  const handleForward = (message_id: string, target_chat_id: string) => {
-    handleForwardMessage({message_ids: [message_id], source_chat_id: chatId, target_chat_id: target_chat_id});
+  const handleForward = (message_id: string | string[], target_chat_id: string) => {
+    handleForwardMessage({message_ids: Array.isArray(message_id) ? message_id : [message_id], source_chat_id: chatId, target_chat_id: target_chat_id});
     setOpenForwardMessage(false);
-    setForwardMessageId(null);
+    setForwardMessageIds(null);
     window.location.href = `/dashboard?active_tab=chat&id=${target_chat_id}`;
   }
 
@@ -156,7 +156,7 @@ const ChatContent = ({
         handleOpenDeleteMessage(selectedMessages);
         break;
       case "forward_selected":
-        handleForwardMessage({message_ids: selectedMessages, source_chat_id: chatId, target_chat_id: selectedConversation});
+        handleForwardModal(selectedMessages);
         break;
     }
   };
@@ -299,7 +299,7 @@ const ChatContent = ({
             conversations={conversations}
             onClose={() => setOpenForwardMessage(false)}
             handleForward={handleForward}
-            forwardMessageId={forwardMessageId || ""}
+            forwardMessageIds={forwardMessageIds || []}
           />
         )
       }
