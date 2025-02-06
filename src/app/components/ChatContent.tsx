@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from '@/components/ui/use-toast'
 import ChatHeader from "@/src/app/components/Chat/ChatHeader"
 import dayjs from "dayjs"
 import { useTranslations } from "next-intl"
@@ -9,6 +10,7 @@ import { useGoToMessage } from '../hooks/useGoToMessage'
 import { ChatContentProps, ChatMessage } from "../types/types"
 import DropZoneModal from './Chat/Files/DropZoneModal'
 import ForwardMessage from './Chat/ForwardMessage'
+import { useCreatePrivateChat } from './Chat/hooks/useCreatePrivateChat'
 import Message from "./Chat/Message"
 import MessageInput from "./Chat/MessageInput"
 import PinnedMessages from './Chat/PinnedMessages'
@@ -50,6 +52,7 @@ const ChatContent = ({
   const goToMessage = useGoToMessage();
   const [lastSeenCounter, setLastSeenCounter] = useState(0);
   const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
+  const {mutate: createPrivateChatMutation, isPending: isCreatingPrivateChat} = useCreatePrivateChat();
 
   useEffect(() => {
     const checkVisibleMessage = () => {
@@ -126,6 +129,22 @@ const ChatContent = ({
     setOpenForwardMessage(false);
     setForwardMessageIds(null);
     window.location.href = `/dashboard?active_tab=chat&id=${target_chat_id}`;
+  }
+
+  const handleCreateOrOpenChat = (toUser: string) => {
+    const user_id = getCookie("user_id");
+    if (!user_id) return;
+    createPrivateChatMutation({user_id: user_id, toUser: toUser}, {
+      onSuccess: (data) => {
+        window.location.href = `/dashboard?active_tab=chat&id=${data.chat_id}`;
+      },
+      onError: (error) => {
+        toast({
+          title: "Ошибка при создании чата",
+          description: error.message,
+        })
+      }
+    });
   }
 
   const handleTypingChat = (status: "typing" | "recording" | "stopped") => {
@@ -206,7 +225,7 @@ const ChatContent = ({
                       counter={message.counter}
                       sender_id={message.authorId || null}
                       goToMessage={goToMessage} 
-                      createPrivateChat={createPrivateChat}
+                      createPrivateChat={handleCreateOrOpenChat}
                       message={message.content}
                       handleSelectMessages={(action: "select" | "unselect" | "select_all" | "unselect_all" | "delete_selected" | "forward_selected") => handleSelectMessages(action, message.id)}
                       selectedMessages={selectedMessages}

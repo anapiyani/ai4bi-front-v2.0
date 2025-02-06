@@ -222,3 +222,21 @@ export type TypingStatus = {
 	user_first_name: string;
 	status: "typing" | "recording" | "stopped";
 }
+
+
+export type CreatePrivateChatResponse = {
+  chat_id: string;
+  name: string;
+  chat_type: "private";
+  created_at: string;
+  updated_at: string;
+  participants: {
+    chat_participant_id: string;
+    user_id: string;
+    chat_id: string;
+    role: string;
+    created_at: string;
+    username: string;
+    removed_at: string | null;
+  }[]
+}
