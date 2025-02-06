@@ -212,6 +212,7 @@ const ChatMode = () => {
             type={selectedConversationType}
             setOpenMenu={setOpenMenu}
             name={conversations.find((c) => c.id === selectedConversation)?.name || t("chat")}
+            participants={conversations.find((c) => c.id === selectedConversation)?.participants || []}
           />
         </div>
       )}
