@@ -173,18 +173,18 @@ const ChatContent = ({
         }}
         openMenu={openMenu} 
       />
-      <div className="absolute top-[65px] left-0 right-0">
+      <div className="absolute top-[65px] left-0 right-0 z-50">
         <PinnedMessages 
           goToMessage={goToMessage} 
           pinnedMessages={pinnedMessages} 
-          t={t} 
+          t={t}
           handleUnpinMessage={(messageId: string) => handlePinUnpin(messageId, true)} 
         />
       </div>
       <div className="flex-grow overflow-y-auto">
         <div className="h-[calc(100vh-240px)] overflow-y-auto" ref={scrollRef}>
           <div className="flex flex-col gap-2 px-4 py-2">
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1 ">
               {messages
                 .filter((m) => m.chat_id === selectedConversation)
                 .sort(

@@ -198,13 +198,6 @@ const Icons = {
 			</svg>
 		)
 	},
-	Check: () => {
-		return (
-			<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-				<path d="M4 9.0839L5.07079 10.2317C5.66129 10.8647 5.95654 11.1811 6.28742 11.281C6.57803 11.3688 6.88698 11.3453 7.16393 11.2143C7.47925 11.0652 7.73236 10.7069 8.23858 9.99041L12 4.6665" stroke="#020617" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-			</svg>
-		)
-	},
 	Choose_files: () => {
 		return (
 			<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">

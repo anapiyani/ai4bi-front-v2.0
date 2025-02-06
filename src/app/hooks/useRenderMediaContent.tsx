@@ -34,7 +34,6 @@ export function useRenderMediaContent(
         )
       } else {
         const { media_id, media_type, name, size } = item
-
         switch (media_type) {
           case "image":
             return (

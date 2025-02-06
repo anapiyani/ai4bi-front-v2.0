@@ -36,7 +36,7 @@ const PinnedMessages = ({ pinnedMessages, t, goToMessage, handleUnpinMessage }: 
 
   return (
     <div 
-      className="bg-white px-4 py-2 " 
+      className="bg-white px-4 py-2 z-50" 
     >
       <div className="flex justify-between items-center">
         <div onClick={handleMessageClick} className="text-sm flex cursor-pointer flex-col gap-1">
