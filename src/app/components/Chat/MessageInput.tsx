@@ -1,11 +1,12 @@
 "use client";
 
 import { Button } from '@/components/ui/button'
+import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from '@/components/ui/command'
 import { Input } from "@/components/ui/input"
 import { AnimatePresence, motion } from 'framer-motion'
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useAudioRecorder } from '../../hooks/useAudioRecorder'
-import { ChatMessage } from "../../types/types"
+import { ChatMessage, ChatParticipants } from "../../types/types"
 import BotVisualizer from '../Bot/BotVisualizer'
 import Icons from '../Icons'
 type MessageInputProps = {
@@ -23,6 +24,7 @@ type MessageInputProps = {
   setOpenDropZoneModal: (open: boolean) => void;
   handleTypingChat: (status: "typing" | "recording" | "stopped") => void;
   chatId: string;
+  participants: ChatParticipants[];
 };
 
 const MessageInput = ({
@@ -35,12 +37,17 @@ const MessageInput = ({
   setReplyTo,
   editMessage,
   setEditMessage,
+  participants,
   handleEdit,
   openDropZoneModal,
   handleTypingChat,
   setOpenDropZoneModal,
   chatId
 }: MessageInputProps) => {
+  const timeoutId = useRef<NodeJS.Timeout | null>(null);
+  const intervalId = useRef<NodeJS.Timeout | null>(null);
+  const [suggestions, setSuggestions] = useState<ChatParticipants[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
   let inputRef = useRef<HTMLInputElement>(null);
   const {
     isRecording,
@@ -98,21 +105,63 @@ const MessageInput = ({
     if (editMessage) {
       setEditMessage({ ...editMessage, content: e.target.value });
     } else {
-      setNewMessage(e.target.value);
-      
-      const typingTimeout = setTimeout(() => {
-        handleTypingChat("stopped");
-      }, 2000);
-
-      handleTypingChat("typing");
-
-      return () => clearTimeout(typingTimeout);
+      const text = e.target.value;
+      setNewMessage(text);
+      const match = text.match(/@[^\s]+/g);
+      if (match) {
+        const username = match[0].slice(1);
+        const filteredParticipants = participants.filter((p) => p.user_id.includes(username));
+        setSuggestions(filteredParticipants);
+        setShowSuggestions(true);
+      } else {
+        setShowSuggestions(false);
+      }
+      if (timeoutId.current) {
+        clearTimeout(timeoutId.current);
+      }
+      if (!intervalId.current) {
+        handleTypingChat("typing");
+        intervalId.current = setInterval(() => {
+          handleTypingChat("typing");
+        }, 3000);
+      }
+      timeoutId.current = setTimeout(() => { 
+        if (intervalId.current) {
+          clearInterval(intervalId.current);
+          intervalId.current = null;
+          handleTypingChat("stopped");
+        }
+      }, 3000);
     }
   };
 
   const ChooseFiles = () => {
     setOpenDropZoneModal(true);
   }
+
+  const handleSelectParticipant = (participant: ChatParticipants) => {
+    const currentValue = editMessage ? editMessage.content : value
+    const mentionIndex = currentValue.lastIndexOf('@')
+    const newValue = 
+      currentValue.slice(0, mentionIndex) + 
+      `@${participant.username} ` +
+      currentValue.slice(mentionIndex + participant.username.length + 1)
+    
+    if (editMessage) {
+      setEditMessage({ ...editMessage, content: newValue })
+    } else {
+      setNewMessage(newValue)
+    }
+    setShowSuggestions(false)
+    inputRef.current?.focus()
+  }
+
+  useEffect(() => {
+    return () => {
+      if (timeoutId.current) clearTimeout(timeoutId.current);
+      if (intervalId.current) clearInterval(intervalId.current);
+    };
+  }, []);
 
   return (
     <div className="relative w-full"> 
@@ -199,6 +248,31 @@ const MessageInput = ({
               className="w-full focus:ring-0 focus:border-none border-none focus:outline-none"
               icon={<Icons.Choose_files />}
             />
+          )
+        }
+        {
+          showSuggestions && suggestions.length > 0 && (
+            <Command className="absolute bottom-[40px] left-0 w-full max-w-[300px] rounded-lg border shadow-lg h-fit overflow-y-auto">
+              <CommandList>
+                <CommandGroup>
+                  {suggestions.map((user) => (
+                    <CommandItem
+                      key={user.user_id}
+                      value={user.username}
+                      onSelect={() => handleSelectParticipant(user)}
+                      className="cursor-pointer gap-3 aria-selected:bg-accent aria-selected:text-accent-foreground"
+                    >
+                      <div className="flex flex-col">
+                        <span className="text-muted-foreground text-sm">
+                          @{user.username}
+                        </span>
+                      </div>
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+                <CommandEmpty>{t("no-users-found")}</CommandEmpty>
+              </CommandList>
+            </Command>
           )
         }
         <AnimatePresence mode="wait">

@@ -81,6 +81,7 @@ export type Conversation = {
   name: string;
   chat_type: "private" | "auction_chat";
   lastMessage: LastMessage | null | string;
+	participants: ChatParticipants[]
 }
 
 export interface ReceivedChats extends Conversation {
@@ -98,6 +99,7 @@ export type ChatParticipants = {
 	role: string;
 	created_at: string;
 	removed_at: string | null;
+	username: string;
 }
 
 export type ChatMessage = {
@@ -132,6 +134,7 @@ export type ChatContentProps = {
 	chatId: string | null;
   selectedConversation: string | null;
   title: string;
+	participants: ChatParticipants[];
   messages: ChatMessage[];
   isConnected: boolean;
   newMessage: string;

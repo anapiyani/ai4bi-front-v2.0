@@ -31,6 +31,7 @@ const ChatContent = ({
   setOpenMenu,
   handlePinMessage,
   handleUnpinMessage,
+  participants,
   handleTyping,
   handleReadMessage,
   typingStatuses,
@@ -259,6 +260,7 @@ const ChatContent = ({
             isConnected={isConnected}
             sendChatMessage={sendChatMessage}
             replyTo={replyTo}
+            participants={participants}
             chatId={chatId}
             setReplyTo={setReplyTo}
             editMessage={editMessage}

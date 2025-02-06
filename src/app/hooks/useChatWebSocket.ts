@@ -197,6 +197,7 @@ export const useChatWebSocket = () => {
         sender_last_name: null,
         type: data.type
       },
+      participants: []
     };
 
     setConversations((prev) => {
@@ -406,6 +407,7 @@ export const useChatWebSocket = () => {
         sender_last_name: null,
         type: null,
       },
+      participants: []
     };
     setConversations((prev) => [...prev, newChat]);
     setSelectedConversation(chat_id);
