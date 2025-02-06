@@ -133,7 +133,8 @@
 		"unselect": "Снять выбор",
 		"unselect_all": "Снять все выборы",
 		"delete_selected": "Удалить выбранные",
-		"forward_selected": "Переслать выбранные"
+		"forward_selected": "Переслать выбранные",
+		"no-users-found": "Пользователи не найдены"
 	}
 }
 

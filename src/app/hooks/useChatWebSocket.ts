@@ -68,7 +68,6 @@ export const useChatWebSocket = () => {
       // 3) A list of chats or other data
       } else if (Array.isArray(message.result)) {
         handleChatsReceived(message.result);
-
       // 4) A paginated set of messages
       } else if (message.result.count && message.result.messages) {
         handleMessagesReceived(message.result.messages);
@@ -488,11 +487,28 @@ export const useChatWebSocket = () => {
         color: "black",
         padding: "10px",
         borderRadius: "5px",
-        maxWidth: "300px",
+        maxWidth: "500px",
+        width: "fit-content",
         boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
         border: "1px solid #e2e8f0"
       },
       className: "custom-toast"
+    });
+  }
+
+  // ---------------------------------------------------------------------------
+  // handleGetChatInfo
+  // ---------------------------------------------------------------------------
+  const handleGetChatInfo = () => {
+    if (!selectedConversation) return;
+    const rpcId = Date.now().toString();
+    sendMessage({
+      jsonrpc: "2.0",
+      method: "getChatInfo",
+      params: {
+        chat_id: selectedConversation,
+      },
+      id: rpcId,
     });
   }
 
@@ -851,6 +867,7 @@ export const useChatWebSocket = () => {
   useEffect(() => {
     if (selectedConversation && isConnected) {
       getChatMessages();
+      handleGetChatInfo();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedConversation, isConnected]);

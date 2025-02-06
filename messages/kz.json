@@ -133,7 +133,8 @@
 		"unselect": "Таңдауды өшіру",
 		"unselect_all": "Барлық таңдауды өшіру",
 		"delete_selected": "Таңдалғандарды жою",
-		"forward_selected": "Таңдалғандарды жіберу"
+		"forward_selected": "Таңдалғандарды жіберу",
+		"no-users-found": "Пайдаланушылар табылмады"
 	}
 }
 

@@ -132,7 +132,8 @@
 		"unselect": "Unselect",
 		"unselect_all": "Unselect all",
 		"delete_selected": "Delete selected",
-		"forward_selected": "Forward selected"
+		"forward_selected": "Forward selected",
+		"no-users-found": "No users found"
 	}
 }
 

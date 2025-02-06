@@ -48,7 +48,9 @@ const MessageInput = ({
   const intervalId = useRef<NodeJS.Timeout | null>(null);
   const [suggestions, setSuggestions] = useState<ChatParticipants[]>([]);
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
+  const [highlightedIndex, setHighlightedIndex] = useState<number>(0);
   let inputRef = useRef<HTMLInputElement>(null);
+  const commandRef = useRef<HTMLDivElement>(null);
   const {
     isRecording,
     isPaused,
@@ -78,20 +80,6 @@ const MessageInput = ({
     }, 200);
   }, [replyTo, editMessage]);
 
- const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && e.shiftKey) {
-      e.preventDefault();
-      if (value.trim() && isConnected) {
-        sendChatMessage(replyTo); 
-        setNewMessage("");
-        setReplyTo(null);
-      }
-    } else if (e.key === "Escape") {
-      setReplyTo(null);
-      setEditMessage(null);
-    }
-  };
-
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
     if (value.trim()) {
@@ -107,12 +95,21 @@ const MessageInput = ({
     } else {
       const text = e.target.value;
       setNewMessage(text);
-      const match = text.match(/@[^\s]+/g);
-      if (match) {
-        const username = match[0].slice(1);
-        const filteredParticipants = participants.filter((p) => p.user_id.includes(username));
+      const regex = /(?:^|\s)@([^\s]*)/g;
+      const matches = Array.from(text.matchAll(regex));
+      
+      if (matches.length > 0) {
+        const lastMatch = matches[matches.length - 1];
+        const username = lastMatch[1];
+        const filteredParticipants = username 
+          ? participants.filter(p => 
+              p.username.toLowerCase().includes(username.toLowerCase())
+            )
+          : participants;
+        
         setSuggestions(filteredParticipants);
         setShowSuggestions(true);
+        setHighlightedIndex(0);
       } else {
         setShowSuggestions(false);
       }
@@ -156,12 +153,55 @@ const MessageInput = ({
     inputRef.current?.focus()
   }
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (showSuggestions && suggestions.length > 0) {
+      switch (e.key) {
+        case "ArrowDown":
+          e.preventDefault();
+          setHighlightedIndex(prev => (prev + 1) % suggestions.length);
+          break;
+        case "ArrowUp":
+          e.preventDefault();
+          setHighlightedIndex(prev => 
+            prev === 0 ? suggestions.length - 1 : prev - 1
+          );
+          break;
+        case "Enter":
+        case "Tab":
+          e.preventDefault();
+          handleSelectParticipant(suggestions[highlightedIndex]);
+          break;
+        default:
+          break;
+      }
+    } else {
+      if (e.key === "Enter" && e.shiftKey) {
+        e.preventDefault();
+        if (value.trim() && isConnected) {
+          sendChatMessage(replyTo); 
+          setNewMessage("");
+          setReplyTo(null);
+        }
+      } else if (e.key === "Escape") {
+        setReplyTo(null);
+        setEditMessage(null);
+      }
+    }
+  };
+
+
   useEffect(() => {
     return () => {
       if (timeoutId.current) clearTimeout(timeoutId.current);
       if (intervalId.current) clearInterval(intervalId.current);
     };
   }, []);
+
+  useEffect(() => {
+    if (commandRef.current && showSuggestions) {
+      commandRef.current.scrollTo({ top: highlightedIndex * 24, behavior: "smooth" });
+    }
+  }, [highlightedIndex, showSuggestions]);
 
   return (
     <div className="relative w-full"> 
@@ -252,15 +292,23 @@ const MessageInput = ({
         }
         {
           showSuggestions && suggestions.length > 0 && (
-            <Command className="absolute bottom-[40px] left-0 w-full max-w-[300px] rounded-lg border shadow-lg h-fit overflow-y-auto">
+            <Command ref={commandRef} className="absolute bottom-[40px] left-0 w-full max-w-[300px] rounded-lg border shadow-lg h-fit overflow-y-auto">
               <CommandList>
                 <CommandGroup>
-                  {suggestions.map((user) => (
+                  {suggestions.map((user, index) => (
                     <CommandItem
                       key={user.user_id}
                       value={user.username}
                       onSelect={() => handleSelectParticipant(user)}
-                      className="cursor-pointer gap-3 aria-selected:bg-accent aria-selected:text-accent-foreground"
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        handleSelectParticipant(user);
+                      }}
+                      onKeyDown={handleKeyDown}
+                      className={`
+                        cursor-pointer gap-3 
+                        ${highlightedIndex === index ? "bg-accent text-accent-foreground" : ""}
+                      `}
                     >
                       <div className="flex flex-col">
                         <span className="text-muted-foreground text-sm">

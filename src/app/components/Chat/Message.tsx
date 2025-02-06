@@ -68,6 +68,10 @@ const Message = ({
     selectedMessages,
   });
 
+  useEffect(() => {
+    setIsSelected(selectedMessages.includes(messageId));
+  }, [selectedMessages, messageId]);
+
   const avatarText = React.useMemo(() => {
     if (isBot) {
       return t("aray-bot").slice(0, 2).toUpperCase();
@@ -125,10 +129,6 @@ const Message = ({
   const textClasses = `text-sm font-normal px-2 text-start text-wrap break-words max-w-md ${
     isBot ? "text-white" : "text-secondary-foreground"
   } ${isUser ? "text-white" : ""}`;
-
-  useEffect(() => {
-    setIsSelected(selectedMessages.includes(messageId));
-  }, [selectedMessages, messageId]);
 
   return (
     <div
