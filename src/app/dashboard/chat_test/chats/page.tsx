@@ -162,8 +162,9 @@ export default function WebSocketChat() {
 				sender_first_name: null,
 				sender_id: null,
 				sender_last_name: null,
-				type: null
+				type: null,
 			},
+			participants: data.participants,
     };
 
     setConversations((prev) => {
@@ -192,6 +193,7 @@ export default function WebSocketChat() {
       name: chat.name || `Chat with ${chat.chat_id}`,
       lastMessage: chat.last_message || "",
       chat_type: chat.chat_type,
+      participants: chat.participants,
     }));
     
     setConversations(transformedChats);
@@ -298,6 +300,7 @@ export default function WebSocketChat() {
         sender_last_name: null,
         type: null
       },
+      participants: [],
     };
 
     setConversations((prev) => [...prev, newChat]);
