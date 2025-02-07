@@ -1,12 +1,12 @@
 "use client"
-
 import { toast } from '@/components/ui/use-toast'
 import dayjs from 'dayjs'
 import { useTranslations } from 'next-intl'
 import { useEffect, useRef, useState } from 'react'
+import { toast as HotToast } from 'react-hot-toast'
 import { getCookie } from '../api/service/cookie'
 import { useWebSocket } from '../api/service/useWebSocket'
-import { ChatMessage, Conversation, ForwardData, ReceivedChats, TypingStatus } from '../types/types'
+import { ChatMessage, Conversation, ForwardData, LastMessage, ReceivedChats, TypingStatus } from '../types/types'
 
 const WS_URL = process.env.NEXT_PUBLIC_WS_URL || "ws://staging.ai4bi.kz/ws/";
 
@@ -36,7 +36,6 @@ export const useChatWebSocket = () => {
     currentUserRef.current = currentUser;
   }, [currentUser]);
 
-  // **4. Track sent message IDs to differentiate between your messages and others**
   const sentMessageIdsRef = useRef<Set<string>>(new Set());
 
   // ---------------------------------------------------------------------------
@@ -69,7 +68,6 @@ export const useChatWebSocket = () => {
       // 3) A list of chats or other data
       } else if (Array.isArray(message.result)) {
         handleChatsReceived(message.result);
-
       // 4) A paginated set of messages
       } else if (message.result.count && message.result.messages) {
         handleMessagesReceived(message.result.messages);
@@ -105,7 +103,9 @@ export const useChatWebSocket = () => {
         handleReceivedPinStatusChange(message.data, true);
       } else if (message.event === "unpin_message") {
         handleReceivedPinStatusChange(message.data, false);
-      } else if (message.event === "new_message") {
+      } else if (message.event === "delete_message") {
+        handleReceivedDeleteMessage(message.data);
+      }else if (message.event === "new_message") {
         const msgData = message.data.message;
         const chatId = message.chat_id || message.data.chat_id;
         if (message.channel?.startsWith("chat_room")) {
@@ -129,6 +129,7 @@ export const useChatWebSocket = () => {
           handleMessageReceived(formattedMessage);
         } 
         else if (message.channel?.startsWith("chat_updates")) {
+          getChats();
           setConversations((prev) =>
             prev.map((c) => (c.id === chatId ? { ...c, lastMessage: { ...msgData, is_edited: msgData.is_edited || false } } : c))
           );
@@ -149,6 +150,9 @@ export const useChatWebSocket = () => {
         handleNewParticipant(message);
       }
       return;
+    // 5) User mentioned in a message in another chat
+    } else if (message.type === "notifications") {
+      handleShowNotification(message);
     }
 
     // --- (D) Other message types (e.g. "message_received" ack) ---
@@ -179,6 +183,8 @@ export const useChatWebSocket = () => {
         delivered_at: null,
         edited_at: null,
         is_deleted: false,
+        has_attachements: false,
+        media: null,
         is_edited: false,
         is_pinned: false,
         media_ids: null,
@@ -190,6 +196,7 @@ export const useChatWebSocket = () => {
         sender_last_name: null,
         type: data.type
       },
+      participants: []
     };
 
     setConversations((prev) => {
@@ -213,6 +220,9 @@ export const useChatWebSocket = () => {
       name: chat.name || `Chat ${chat.chat_id}`,
       lastMessage: chat.last_message || null,
       chat_type: chat.chat_type,
+      unread_count: chat.unread_count,
+      updated_at: chat.updated_at || null,
+      participants: chat.participants || null,
     }));
     setConversations(transformed);
   };
@@ -240,7 +250,7 @@ export const useChatWebSocket = () => {
         type: message.type,
         reply_to: message.reply_message_id,
         media: message.media?.length > 0 ? message.media : null,
-        has_attachments: Boolean(message.media?.length),
+        has_attachements: Boolean(message.media?.length),
       }));
     setMessages(transformedMessages);
   };
@@ -261,7 +271,7 @@ export const useChatWebSocket = () => {
       is_pinned: msg.is_pinned,
       content: msg.content,
       media: msg.media,
-      has_attachments: msg.has_attachments,
+      has_attachements: msg.has_attachements,
       timestamp: msg.timestamp || dayjs().toISOString(),
       reply_to: replyId,
       counter: msg.counter,
@@ -288,21 +298,22 @@ export const useChatWebSocket = () => {
                 is_deleted: false,
                 is_edited: false,
                 media_ids: null,
-                media: newMsg.media,
-                has_attachments: newMsg.has_attachments,
+                media: newMsg.media ?? null,
+                has_attachements: newMsg.has_attachements ?? null,
                 message_id: null,
-                is_pinned: newMsg.is_pinned,
+                is_pinned: newMsg.is_pinned ?? null,
                 reply_message_id: newMsg.id,
                 send_at: null,
                 sender_first_name: null,
                 sender_id: null,
                 sender_last_name: null,
                 type: null,
-              },
+              } as LastMessage,
             }
           : c
       )
     );
+    
 
     const isNotFromCurrentUser = String(msg.authorId) !== String(currentUserRef.current);
     const isInDifferentChat = msg.chat_id !== selectedConversation;
@@ -385,6 +396,8 @@ export const useChatWebSocket = () => {
         is_edited: false,
         media_ids: null,
         message_id: null,
+        has_attachements: false,
+        media: null,
         is_pinned: false,
         reply_message_id: null,
         send_at: null,
@@ -393,6 +406,7 @@ export const useChatWebSocket = () => {
         sender_last_name: null,
         type: null,
       },
+      participants: []
     };
     setConversations((prev) => [...prev, newChat]);
     setSelectedConversation(chat_id);
@@ -459,6 +473,46 @@ export const useChatWebSocket = () => {
   }
 
   // ---------------------------------------------------------------------------
+  // handleShowNotification
+  // ---------------------------------------------------------------------------
+  const handleShowNotification = (message: any) => {
+    console.log("notification data: ", message.data);
+    HotToast((t) => (
+      message.data.content
+    ), {
+      duration: 5000,
+      position: "top-right",
+      style: {
+        background: "white",
+        color: "black",
+        padding: "10px",
+        borderRadius: "5px",
+        maxWidth: "500px",
+        width: "fit-content",
+        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+        border: "1px solid #e2e8f0"
+      },
+      className: "custom-toast"
+    });
+  }
+
+  // ---------------------------------------------------------------------------
+  // handleGetChatInfo
+  // ---------------------------------------------------------------------------
+  const handleGetChatInfo = () => {
+    if (!selectedConversation) return;
+    const rpcId = Date.now().toString();
+    sendMessage({
+      jsonrpc: "2.0",
+      method: "getChatInfo",
+      params: {
+        chat_id: selectedConversation,
+      },
+      id: rpcId,
+    });
+  }
+
+  // ---------------------------------------------------------------------------
   // handleTyping
   // ---------------------------------------------------------------------------
   const handleTyping = (status: "typing" | "recording" | "stopped", chat_id: string) => {
@@ -474,6 +528,14 @@ export const useChatWebSocket = () => {
       id: rpcId,
     }
     sendMessage(request)
+  }
+
+  // ---------------------------------------------------------------------------
+  // handleReceivedDeleteMessage
+  // ---------------------------------------------------------------------------
+  const handleReceivedDeleteMessage = (message: any) => {
+    setMessages((prev) => prev.filter((m) => m.id !== message.message_id));
+    setConversations((prev) => prev.map((c) => c.id === message.chat_id ? { ...c, lastMessage: null } : c));
   }
 
   // ---------------------------------------------------------------------------
@@ -648,7 +710,7 @@ export const useChatWebSocket = () => {
   // ---------------------------------------------------------------------------
   // sendChatMessage
   // ---------------------------------------------------------------------------
-  const sendChatMessage = (reply?: ChatMessage | null, media?: string[] | null) => {
+  const sendChatMessage = (reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean) => {
     if (!selectedConversation) return;
     const replyId = reply?.id ?? null;
     const rpcId = Date.now().toString();
@@ -661,8 +723,8 @@ export const useChatWebSocket = () => {
       content: content,
       is_pinned: false,
       media: media || null,
-      has_attachments: media ? true : false,
-      is_voice_message: false,
+      has_attachements: !!media?.length,
+      is_voice_message: is_voice_message ?? false,
       timestamp: dayjs().toISOString(),
       pending: true,
       chat_id: selectedConversation,
@@ -686,7 +748,7 @@ export const useChatWebSocket = () => {
           is_pinned: false,
           has_attachments: !!media?.length,
           media: media || null,
-          is_voice_message: false,
+          is_voice_message: is_voice_message ?? false,
           reply_to: replyId,
           timestamp: dayjs().toISOString(),
         },
@@ -735,6 +797,17 @@ export const useChatWebSocket = () => {
   };
 
   // ---------------------------------------------------------------------------
+  // handleSubscribeToNotfications
+  // ---------------------------------------------------------------------------
+  const handleSubscribeToNotfications = () => {
+    console.log("[handleSubscribeToNotfications] Subscribing to notifications:");
+    sendMessage({
+      type: "subscribe",
+      channel: "notifications",
+    });
+  }
+
+  // ---------------------------------------------------------------------------
   // Subscribe/unsubscribe to specific chat rooms when selectedConversation changes
   // ---------------------------------------------------------------------------
   useEffect(() => {
@@ -745,6 +818,7 @@ export const useChatWebSocket = () => {
     // Subscribe to the newly selected conversation
     if (selectedConversation && isConnected) {
       subscribeToChatRoom(selectedConversation);
+      handleSubscribeToNotfications();
     }
     prevConversationRef.current = selectedConversation;
   }, [selectedConversation, isConnected]);
@@ -793,6 +867,7 @@ export const useChatWebSocket = () => {
   useEffect(() => {
     if (selectedConversation && isConnected) {
       getChatMessages();
+      handleGetChatInfo();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedConversation, isConnected]);

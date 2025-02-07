@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils'
+import { motion } from 'framer-motion'
 
 const Icons = {
 	Radio: () => {
@@ -169,6 +170,13 @@ const Icons = {
 			</svg>
 		)
 	},
+	Check: () => {
+		return (
+			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M6 13.6261L7.60619 15.3478C8.49194 16.2972 8.93481 16.772 9.43113 16.9218C9.86704 17.0534 10.3305 17.0181 10.7459 16.8217C11.2189 16.598 11.5985 16.0606 12.3579 14.9859L18 7" stroke="#020617" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+			</svg>
+		)
+	},
 	Reply_small_blue: () => {
 		return (
 			<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -187,13 +195,6 @@ const Icons = {
 		return (
 			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 				<path d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3M12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3M12 21C14.7614 21 15.9413 15.837 15.9413 12C15.9413 8.16303 14.7614 3 12 3M12 21C9.23858 21 8.05895 15.8369 8.05895 12C8.05895 8.16307 9.23858 3 12 3M3.49988 8.99998C10.1388 8.99998 13.861 8.99998 20.4999 8.99998M3.49988 15C10.1388 15 13.861 15 20.4999 15" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-			</svg>
-		)
-	},
-	Check: () => {
-		return (
-			<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-				<path d="M4 9.0839L5.07079 10.2317C5.66129 10.8647 5.95654 11.1811 6.28742 11.281C6.57803 11.3688 6.88698 11.3453 7.16393 11.2143C7.47925 11.0652 7.73236 10.7069 8.23858 9.99041L12 4.6665" stroke="#020617" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
 			</svg>
 		)
 	},
@@ -327,6 +328,91 @@ const Icons = {
 			<svg width={size || 24} height={size || 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
 				<path d="M13.2423 10.7093C13.9141 11.2573 14.25 11.5313 14.25 12C14.25 12.4687 13.9141 12.7427 13.2423 13.2907C13.0568 13.442 12.8729 13.5845 12.7038 13.7032C12.5555 13.8073 12.3876 13.915 12.2137 14.0208C11.5435 14.4283 11.2083 14.6321 10.9078 14.4065C10.6072 14.1809 10.5799 13.7085 10.5252 12.7638C10.5098 12.4967 10.5 12.2348 10.5 12C10.5 11.7652 10.5098 11.5033 10.5252 11.2362C10.5799 10.2915 10.6072 9.81913 10.9078 9.5935C11.2083 9.36787 11.5435 9.57166 12.2137 9.97924C12.3876 10.085 12.5555 10.1927 12.7038 10.2968C12.8729 10.4155 13.0568 10.558 13.2423 10.7093Z" stroke={fill} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
 				<path d="M3 12C3 7.75736 3 5.63604 4.31802 4.31802C5.63604 3 7.75736 3 12 3C16.2426 3 18.364 3 19.682 4.31802C21 5.63604 21 7.75736 21 12C21 16.2426 21 18.364 19.682 19.682C18.364 21 16.2426 21 12 21C7.75736 21 5.63604 21 4.31802 19.682C3 18.364 3 16.2426 3 12Z" stroke={fill} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+			</svg>
+		)
+	},
+	AnimatedPencil: ({ className }: { className?: string }) => {
+		return (
+			<motion.svg
+				width="20"
+				height="20"
+				viewBox="0 0 20 20"
+				fill="none"
+				xmlns="http://www.w3.org/2000/svg"
+				className={className}
+				animate={{ x: [0, 2, -2, 2, 0] }} 
+				transition={{
+					duration: 2, 
+					repeat: Infinity, 
+					ease: "easeInOut", 
+				}}
+			>
+				<path
+					d="M3.33203 17.5H16.6654"
+					stroke="#64748B"
+					strokeWidth="1.5"
+					strokeLinecap="round"
+					strokeLinejoin="round"
+				/>
+				<path
+					d="M4.72306 10.9894C4.36762 11.3453 4.16797 11.8278 4.16797 12.3308V15H6.85347C7.35698 15 7.83985 14.7999 8.19581 14.4437L16.1124 6.52262C16.8532 5.7814 16.8532 4.57998 16.1124 3.83876L15.3303 3.05626C14.5889 2.31438 13.3863 2.31461 12.6451 3.05677L4.72306 10.9894Z"
+					stroke="#64748B"
+					strokeWidth="1.5"
+					strokeLinecap="round"
+					strokeLinejoin="round"
+				/>
+			</motion.svg>
+		);
+	},
+	ChatMicrophone: ({ className, size, stroke }: { className?: string, size?: number, stroke?: string }) => {
+		return (
+			<svg width={size || 24} height={size || 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+				<path d="M8 21H16" stroke={stroke || "white"} strokeWidth="1.5" 	strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M12 18V21" stroke={stroke || "white"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M16 6.42857C16 4.53502 14.2091 3 12 3C9.79086 3 8 4.53502 8 6.42857V11.5714C8 13.465 9.79086 15 12 15C14.2091 15 16 13.465 16 11.5714V6.42857Z" stroke={stroke || "white"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M5 11C5 14.866 8.134 18 12 18C15.866 18 19 14.866 19 11" stroke={stroke || "white"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+			</svg>
+		)
+	},
+	Send: ({ className, size }: { className?: string, size?: number }) => {
+		return (
+			<svg width={size || 24} height={size || 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+				<path d="M14 9.99997L11 13" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M20.2876 3.03102C20.7105 2.88301 21.117 3.28951 20.9689 3.7124L15.0436 20.6419C14.8836 21.099 14.247 21.125 14.0503 20.6824L10.8314 13.44C10.7777 13.319 10.6809 13.2223 10.5599 13.1685L3.31758 9.94971C2.87501 9.75302 2.90099 9.11633 3.35811 8.95633L20.2876 3.03102Z" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+			</svg>
+		)
+	},
+	Pause: ({ className, size, stroke }: { className?: string, size?: number, stroke?: string }) => {
+		return (
+			<svg width={size || 24} height={size || 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+				<path d="M15.5 6.5H14.5C13.9477 6.5 13.5 6.94772 13.5 7.5V17.5C13.5 18.0523 13.9477 18.5 14.5 18.5H15.5C16.0523 18.5 16.5 18.0523 16.5 17.5V7.5C16.5 6.94772 16.0523 6.5 15.5 6.5Z" stroke={stroke} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M9 6.5H8C7.44772 6.5 7 6.94772 7 7.5V17.5C7 18.0523 7.44772 18.5 8 18.5H9C9.55228 18.5 10 18.0523 10 17.5V7.5C10 6.94772 9.55228 6.5 9 6.5Z" stroke={stroke} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+			</svg>
+		)
+	},
+	Play: ({ className, size, stroke }: { className?: string, size?: number, stroke?: string }) => {
+		return (
+			<svg width={size || 24} height={size || 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" 	className={className}>
+				<path d="M14.5814 9.40221C16.1938 10.7175 17 11.3752 17 12.5C17 13.6248 16.1938 14.2825 14.5814 15.5978C14.1363 15.9609 13.6948 16.3028 13.2892 16.5876C12.9333 16.8375 12.5302 17.096 12.1129 17.3498C10.5043 18.328 9.69999 18.8171 8.97862 18.2756C8.25725 17.7341 8.19169 16.6005 8.06057 14.3332C8.02349 13.6921 8 13.0635 8 12.5C8 11.9365 8.02349 11.308 8.06057 10.6668C8.19169 8.39953 8.25725 7.26591 8.97862 6.7244C9.69999 6.18288 10.5043 6.67198 12.1129 7.65019C12.5302 7.90395 12.9333 8.16246 13.2892 8.41238C13.6948 8.69725 14.1363 9.03911 14.5814 9.40221Z" stroke={stroke} strokeWidth="1.5" strokeLinecap="round" 	strokeLinejoin="round"/>
+			</svg>
+		)
+	},
+	Chat_Trash: ({ className, size }: { className?: string, size?: number }) => {
+		return (
+			<svg width={size || 24} height={size || 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+				<path d="M6.28516 8.57141L7.42801 20H16.5709L17.7137 8.57141" stroke="red" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M13.5 15.5V10.5" stroke="red" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M10.5 15.5V10.5" stroke="red" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M4.57031 6.28571H9.14174M9.14174 6.28571L9.5238 4.75746C9.6351 4.3123 10.0351 4 10.4939 4H13.5038C13.9627 4 14.3627 4.3123 14.474 4.75746L14.856 6.28571M9.14174 6.28571H14.856M14.856 6.28571H19.4275" stroke="red" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+			</svg>
+		)
+	},
+	HeadPhones: ({ className, size, fill }: { className?: string, size?: number, fill?: string }) => {
+		return (
+			<svg width={size || 24} height={size || 24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+				<path d="M21 17V12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12V17" stroke={fill} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M16 14.9578C16 14.447 16 14.1915 16.0586 13.9887C16.1942 13.5196 16.5482 13.1637 16.9888 13.0537C18.2613 12.7358 18.5191 13.9185 19.4319 14.2857C19.4549 14.295 19.478 14.3045 19.501 14.3141C20.4931 14.7309 20.9985 15.7924 20.996 16.8684L20.9951 17.2245C20.9929 18.1751 20.4868 19.06 19.6426 19.4968C18.7043 19.9822 18.3913 21.2489 17.0278 20.9568C16.591 20.8632 16.2308 20.5284 16.0777 20.0737C16 19.843 16 19.5414 16 18.9381V14.9578Z" stroke={fill}  strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M8.00002 19.0422C8.00002 19.553 8.00002 19.8085 7.94139 20.0113C7.80582 20.4804 7.45183 20.8363 7.0112 20.9463C5.73874 21.2642 5.48096 20.0815 4.56811 19.7143C4.54751 19.706 4.52689 19.6975 4.50625 19.6889C3.50805 19.2714 3.00152 18.2082 3.00404 17.132L3.00489 16.768C3.0071 15.8216 3.51273 14.9402 4.35746 14.5032C5.29572 14.0178 5.60868 12.7511 6.97218 13.0432C7.40899 13.1368 7.76922 13.4716 7.92232 13.9263C8.00002 14.157 8.00002 14.4586 8.00002 15.0619V19.0422Z" stroke={fill}  strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
 			</svg>
 		)
 	}

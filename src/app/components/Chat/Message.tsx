@@ -6,11 +6,12 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { getCookie } from "../../api/service/cookie"
 import useRenderMediaContent from '../../hooks/useRenderMediaContent'
 import { MessageProps } from '../../types/types'
 import Icons from "../Icons"
+import useContextMenuItems from './ContextMenuItems'
 
 const Message = ({
   message,
@@ -37,9 +38,12 @@ const Message = ({
   type,
   handleForward,
   media,
+  handleSelectMessages,
+  selectedMessages,
   counter,
 }: MessageProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSelected, setIsSelected] = useState(false);
   const user_role = getCookie("role");
   const isAdmin = user_role === "admin";
   const isOwner = sender === "user";
@@ -47,6 +51,26 @@ const Message = ({
   const isBot = sender === "bot";
   const isUser = sender === "user";
   const renderedMedia = useRenderMediaContent(media, t, isUser);
+  const contextMenuItems = useContextMenuItems({
+    isSelected,
+    handleReplyClick: handleReplyClick || (() => {}),
+    handleForward,
+    handlePin,
+    handleUnpin,
+    handleEditClick: handleEditClick || (() => {}),
+    handleOpenDeleteMessage,
+    handleSelectMessages,
+    t,
+    isAdmin,
+    isPinned,
+    isOwner,
+    messageId,
+    selectedMessages,
+  });
+
+  useEffect(() => {
+    setIsSelected(selectedMessages.includes(messageId));
+  }, [selectedMessages, messageId]);
 
   const avatarText = React.useMemo(() => {
     if (isBot) {
@@ -74,62 +98,19 @@ const Message = ({
     );
   }
 
-  const contextMenuItems = [
-    {
-      icon: Icons.Reply,
-      label: t("reply"),
-      show: true,
-      action: () => {
-        handleReplyClick && handleReplyClick();
-      },
-    },
-    {
-      icon: Icons.Forward,
-      label: t("forward"),
-      show: true,
-      action: () => {
-        handleForward();
-      },
-    },
-    {
-      icon: Icons.Pin,
-      label: t("pin"),
-      show: isAdmin && !isPinned,
-      action: () => {
-        handlePin(messageId);
-      },
-    },
-    {
-      icon: Icons.UnPin,
-      label: t("unpin"),
-      show: isAdmin && isPinned,
-      action: () => {
-        handleUnpin(messageId);
-      },
-    },
-    {
-      icon: Icons.Edit,
-      label: t("edit"),
-      show: isOwner,
-      action: () => {
-        handleEditClick && handleEditClick();
-      },
-    },
-    {
-      icon: Icons.Delete,
-      label: t("delete"),
-      show: isAdmin || isOwner,
-      action: () => {
-        handleOpenDeleteMessage(messageId);
-      },
-    },
-  ].filter((item) => item.show);
-
   const handleDoubleClick = () => {
     if (handleReplyClick) {
       handleReplyClick();
     }
   };
+
+  const handleMessageClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (selectedMessages.length >= 1 && handleSelectMessages) {
+      e.preventDefault();
+      const action = selectedMessages.includes(messageId) ? 'unselect' : 'select';
+      handleSelectMessages(action);
+    }
+  }
 
   const senderName = isBot ? t("aray-bot") : isUser ? "" : sender;
 
@@ -141,7 +122,7 @@ const Message = ({
     isBot
       ? "bg-gradient-to-r from-[#0284C7] to-[#77BAAA]"
       : isUser
-      ? "bg-cyan-600 ml-auto text-white"
+      ? "bg-muted-foreground ml-auto text-white"
       : "bg-primary-foreground"
   }`;
 
@@ -156,10 +137,11 @@ const Message = ({
       className={`message-item flex flex-col gap-2 p-1 ${
         isUser ? "w-full flex justify-end" : ""
       } ${
-        isMenuOpen
+        isMenuOpen || isSelected
           ? "bg-[#0E749040] hover:bg-[#0E749040] transition-colors duration-200 rounded-lg"
           : "bg-transparent hover:bg-transparent transition-colors duration-200"
       }`}
+      onClick={handleMessageClick}
     >
       {showSender && (
         <div className="flex items-center gap-2">
@@ -168,7 +150,8 @@ const Message = ({
             className={`text-base font-medium text-muted-foreground cursor-pointer ${
               isUser ? "ml-auto" : ""
             }`}
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               if (!isUser && sender_id) {
                 createPrivateChat(sender_id);
               }
@@ -184,47 +167,61 @@ const Message = ({
           <div className={messageClasses}>
             {replyToMessage && (
               <div
-                onClick={() =>
+                onClick={(e) => {
+                  e.stopPropagation();
                   reply_message_id && goToMessage(reply_message_id)
+                  }
                 }
                 className={`mb-1 gap-2 border-l-2 pl-2 py-1 text-sm text-bi cursor-pointer ${
                   isUser
                     ? "bg-[#F1F5F933] border-secondary"
-                    : "bg-[#F1F5F9] border-[#0891B2]"
+                    : "bg-[#F1F5F9] border-primary"
                 }`}
               >
                 <p
-                  className={`${isUser ? "text-foreground" : "text-primary"}`}
+                  className={`${isUser ? "text-white" : "text-primary"}`}
                 >
                   {replyToMessage.sender}
                 </p>
                 {replyToMessage.has_attachments
-                  ? replyToMessage.media?.map((item, index) => {
-                      return (
-                        <div key={index} className="py-1 flex items-center gap-1">
-                          {typeof item === "object" && item.media_type === "file" && (
-                            <Icons.PDF
-                              className={
-                                isUser ? "text-white" : "text-muted-foreground"
-                              }
-                              size={16}
-                            />
-                          )}
-                          {typeof item === "object" && item.media_type === "image" && (
-                            <Icons.Image_Small
-                              fill={isUser ? "#ffffff" : "#64748B"}
-                            />
-                          )}
-                          {typeof item === "object" && item.media_type === "video" && (
-                            <Icons.Video
-                              fill={isUser ? "#ffffff" : "#64748B"}
-                              size={16}
-                            />
-                          )}
-                          <p>{typeof item === "object" ? t(item.media_type) : ""}</p>
-                        </div>
-                      );
-                    })
+                  ? (
+                      <div className="py-1 flex items-center gap-1">
+                        {replyToMessage.media && typeof replyToMessage.media[0] === "object" && (
+                          <>
+                            {replyToMessage.media[0]?.media_type === "file" && (
+                              <Icons.PDF
+                                className={
+                                  isUser ? "text-white" : "text-muted-foreground"
+                                }
+                                size={16}
+                              />
+                            )}
+                            {replyToMessage.media[0].media_type === "image" && (
+                              <Icons.Image_Small
+                                fill={isUser ? "#ffffff" : "#64748B"}
+                              />
+                            )}
+                            {replyToMessage.media[0].media_type === "video" && (
+                              <Icons.Video
+                                fill={isUser ? "#ffffff" : "#64748B"}
+                                size={16}
+                              />
+                            )}
+                            {replyToMessage.media[0].media_type === "audio" && (
+                              <Icons.HeadPhones
+                                fill={isUser ? "#ffffff" : "#64748B"}
+                                size={16}
+                              />
+                            )}
+                            <p>
+                              {replyToMessage.media.length > 1 
+                                ? `${replyToMessage.media.length} ${t(replyToMessage.media[0].media_type + "s")}` 
+                                : t(replyToMessage.media[0].media_type)}
+                            </p>
+                          </>
+                        )}
+                      </div>
+                    )
                   : null}
                 <p className="text-bi pr-2">
                   {replyToMessage.content.length > 60
@@ -247,7 +244,10 @@ const Message = ({
               </p>
             )}
             {forwarded_from && (
-              <p onClick={() => createPrivateChat(forwarded_from)} className={`text-xs flex items-center gap-1 mb-1 ${isUser ? "text-white" : "text-muted-foreground"} cursor-pointer`}>
+              <p onClick={(e) => {
+                e.stopPropagation();
+                createPrivateChat(forwarded_from)
+              }} className={`text-xs flex items-center gap-1 mb-1 ${isUser ? "text-white" : "text-muted-foreground"} cursor-pointer`}>
                 <Icons.Forward fill={isUser ? "#ffffff" : "#64748B"} />
                 {t("forwarded_from")} {forwarded_from_first_name} {forwarded_from_last_name}
               </p>

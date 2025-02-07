@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from '@/components/ui/use-toast'
 import ChatHeader from "@/src/app/components/Chat/ChatHeader"
 import dayjs from "dayjs"
 import { useTranslations } from "next-intl"
@@ -9,6 +10,7 @@ import { useGoToMessage } from '../hooks/useGoToMessage'
 import { ChatContentProps, ChatMessage } from "../types/types"
 import DropZoneModal from './Chat/Files/DropZoneModal'
 import ForwardMessage from './Chat/ForwardMessage'
+import { useCreatePrivateChat } from './Chat/hooks/useCreatePrivateChat'
 import Message from "./Chat/Message"
 import MessageInput from "./Chat/MessageInput"
 import PinnedMessages from './Chat/PinnedMessages'
@@ -31,6 +33,7 @@ const ChatContent = ({
   setOpenMenu,
   handlePinMessage,
   handleUnpinMessage,
+  participants,
   handleTyping,
   handleReadMessage,
   typingStatuses,
@@ -45,9 +48,11 @@ const ChatContent = ({
   const pinnedMessages = messages.filter((m) => m.is_pinned);
   const [openDropZoneModal, setOpenDropZoneModal] = useState<boolean>(false);
   const [openForwardMessage, setOpenForwardMessage] = useState<boolean>(false);
-  const [forwardMessageId, setForwardMessageId] = useState<string | null>(null);
+  const [forwardMessageIds, setForwardMessageIds] = useState<string[] | null>(null);
   const goToMessage = useGoToMessage();
   const [lastSeenCounter, setLastSeenCounter] = useState(0);
+  const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
+  const {mutate: createPrivateChatMutation, isPending: isCreatingPrivateChat} = useCreatePrivateChat();
 
   useEffect(() => {
     const checkVisibleMessage = () => {
@@ -114,25 +119,71 @@ const ChatContent = ({
     sendChatMessage(null, uuids);
   }
 
-  const handleForwardModal = (message_id: string) => {
-    setForwardMessageId(message_id);
+  const handleForwardModal = (message_ids: string | string[]) => {
+    setForwardMessageIds(Array.isArray(message_ids) ? message_ids : [message_ids]);
     setOpenForwardMessage(true);
   }
 
-  const handleForward = (message_id: string, target_chat_id: string) => {
-    handleForwardMessage({message_ids: [message_id], source_chat_id: chatId, target_chat_id: target_chat_id});
+  const handleForward = (message_id: string | string[], target_chat_id: string) => {
+    handleForwardMessage({message_ids: Array.isArray(message_id) ? message_id : [message_id], source_chat_id: chatId, target_chat_id: target_chat_id});
     setOpenForwardMessage(false);
-    setForwardMessageId(null);
+    setForwardMessageIds(null);
     window.location.href = `/dashboard?active_tab=chat&id=${target_chat_id}`;
+  }
+
+  const handleCreateOrOpenChat = (toUser: string) => {
+    const user_id = getCookie("user_id");
+    if (!user_id) return;
+    createPrivateChatMutation({user_id: user_id, toUser: toUser}, {
+      onSuccess: (data) => {
+        window.location.href = `/dashboard?active_tab=chat&id=${data.chat_id}`;
+      },
+      onError: (error) => {
+        toast({
+          title: "Ошибка при создании чата",
+          description: error.message,
+        })
+      }
+    });
   }
 
   const handleTypingChat = (status: "typing" | "recording" | "stopped") => {
     handleTyping(status, chatId);
   }
 
+  const handleSelectMessages = (
+    action: "select" | "unselect" | "select_all" | "unselect_all" | "delete_selected" | "forward_selected",
+    messageId?: string
+  ) => {
+    switch (action) {
+      case "select_all":
+        setSelectedMessages(messages.map((m) => m.id));
+        break;
+      case "unselect_all":
+        setSelectedMessages([]);
+        break;
+      case "select":
+        if (messageId) {
+          setSelectedMessages((prev) => [...prev, messageId]);
+        }
+        break;
+      case "unselect":
+        if (messageId) {
+          setSelectedMessages((prev) => prev.filter((m) => m !== messageId));
+        }
+        break;
+      case "delete_selected":
+        handleOpenDeleteMessage(selectedMessages);
+        break;
+      case "forward_selected":
+        handleForwardModal(selectedMessages);
+        break;
+    }
+  };
+
   return (
     <div className="flex flex-col w-full h-full relative">
-      <ChatHeader 
+      <ChatHeader  
         title={title} 
         typingStatuses={typingStatuses}
         t={t} 
@@ -141,18 +192,18 @@ const ChatContent = ({
         }}
         openMenu={openMenu} 
       />
-      <div className="absolute top-[65px] left-0 right-0">
+      <div className="absolute top-[65px] left-0 right-0 z-50">
         <PinnedMessages 
           goToMessage={goToMessage} 
           pinnedMessages={pinnedMessages} 
-          t={t} 
+          t={t}
           handleUnpinMessage={(messageId: string) => handlePinUnpin(messageId, true)} 
         />
       </div>
       <div className="flex-grow overflow-y-auto">
         <div className="h-[calc(100vh-240px)] overflow-y-auto" ref={scrollRef}>
           <div className="flex flex-col gap-2 px-4 py-2">
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1 ">
               {messages
                 .filter((m) => m.chat_id === selectedConversation)
                 .sort(
@@ -174,8 +225,10 @@ const ChatContent = ({
                       counter={message.counter}
                       sender_id={message.authorId || null}
                       goToMessage={goToMessage} 
-                      createPrivateChat={createPrivateChat}
+                      createPrivateChat={handleCreateOrOpenChat}
                       message={message.content}
+                      handleSelectMessages={(action: "select" | "unselect" | "select_all" | "unselect_all" | "delete_selected" | "forward_selected") => handleSelectMessages(action, message.id)}
+                      selectedMessages={selectedMessages}
                       sender={
                         (message.authorId &&
                           message.authorId === getCookie("user_id")) ||
@@ -206,7 +259,7 @@ const ChatContent = ({
                           ? {
                               sender: replyToSnippet.sender_first_name,
                               content: replyToSnippet.content,
-                              has_attachments: replyToSnippet.has_attachments || false,
+                              has_attachments: replyToSnippet.has_attachements || false,
                               media: Array.isArray(replyToSnippet.media) ? replyToSnippet.media : replyToSnippet.media ? [replyToSnippet.media] : null,
                             }
                           : null
@@ -226,6 +279,8 @@ const ChatContent = ({
             isConnected={isConnected}
             sendChatMessage={sendChatMessage}
             replyTo={replyTo}
+            participants={participants}
+            chatId={chatId}
             setReplyTo={setReplyTo}
             editMessage={editMessage}
             setEditMessage={setEditMessage}
@@ -264,7 +319,7 @@ const ChatContent = ({
             conversations={conversations}
             onClose={() => setOpenForwardMessage(false)}
             handleForward={handleForward}
-            forwardMessageId={forwardMessageId || ""}
+            forwardMessageIds={forwardMessageIds || []}
           />
         )
       }

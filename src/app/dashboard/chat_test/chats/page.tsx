@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Test Page: WebSocket Chat Implementation
+ * Test Page: WebSocket Chat Implementation (TO CREATE A NEW CHATS CUZ WE DONT HAVE IT THE ACTUAL CHAT SO I DELETE THIS LATER)
  * 
  * This page serves as a reference implementation for WebSocket-based chat functionality.
  * It demonstrates:
@@ -153,6 +153,8 @@ export default function WebSocketChat() {
 				edited_at: null,
 				is_deleted: false,
 				is_edited: false,
+				media: null,
+				has_attachements: false,
 				media_ids: null,
 				message_id: null,
 				reply_message_id: null,
@@ -160,8 +162,9 @@ export default function WebSocketChat() {
 				sender_first_name: null,
 				sender_id: null,
 				sender_last_name: null,
-				type: null
+				type: null,
 			},
+			participants: data.participants,
     };
 
     setConversations((prev) => {
@@ -190,6 +193,7 @@ export default function WebSocketChat() {
       name: chat.name || `Chat with ${chat.chat_id}`,
       lastMessage: chat.last_message || "",
       chat_type: chat.chat_type,
+      participants: chat.participants,
     }));
     
     setConversations(transformedChats);
@@ -286,6 +290,8 @@ export default function WebSocketChat() {
         is_deleted: false,
         is_edited: false,
         media_ids: null,
+        media: null,
+        has_attachements: false,
         message_id: null,
         reply_message_id: null,
         send_at: null,
@@ -294,6 +300,7 @@ export default function WebSocketChat() {
         sender_last_name: null,
         type: null
       },
+      participants: [],
     };
 
     setConversations((prev) => [...prev, newChat]);

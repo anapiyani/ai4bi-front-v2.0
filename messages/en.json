@@ -123,7 +123,17 @@
 		"no_messages_yet": "No messages yet",
 		"forwarded_from": "Forwarded from",
 		"isTyping": "is typing...",
-		"forward-message": "Forward message"
+		"forward-message": "Forward message",
+		"images": "Images",
+		"videos": "Videos",
+		"isRecording": "is recording...",
+		"medias": "Medias",
+		"select": "Select",
+		"unselect": "Unselect",
+		"unselect_all": "Unselect all",
+		"delete_selected": "Delete selected",
+		"forward_selected": "Forward selected",
+		"no-users-found": "No users found"
 	}
 }
 

@@ -1,14 +1,16 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { getCookie } from '@/src/app/api/service/cookie'
+import { ChatParticipants } from '@/src/app/types/types'
 import NotificationBell from '../../Alerts/Notification/NotificationBell'
 
-const PrivateChatMenu = ({t}: {t: any}) => {
+const PrivateChatMenu = ({t, participants}: {t: any, participants: ChatParticipants[]}) => {
 	return (
 		<>
 		 <div 
       className='flex flex-col gap-2'>
           <div className='flex flex-col '>
             <p className='text-sm text-muted-foreground'>{t("contact-info")}</p>
-            <p className='text-sm'>email@example.com</p>
+            <p className='text-sm'>{participants.find((p) => p.user_id !== getCookie("user_id"))?.username}@gmail.com</p>
           </div>
         </div>
         <div className='flex flex-col gap-2 mt-8'>

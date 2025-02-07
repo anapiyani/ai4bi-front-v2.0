@@ -35,8 +35,6 @@ const DropZoneModal = ({
   const {
     mutate: uploadMedia,
     isPending: uploadMediaPending,
-    data: uploadMediaData,
-    error: uploadError,
   } = useUploadMedia()
 
   const handleUpload = () => {

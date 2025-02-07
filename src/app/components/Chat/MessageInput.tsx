@@ -1,14 +1,17 @@
 "use client";
 
-import { Button } from "@/components/ui/button"
+import { Button } from '@/components/ui/button'
+import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from '@/components/ui/command'
 import { Input } from "@/components/ui/input"
-import { useEffect, useRef } from "react"
-import { ChatMessage } from "../../types/types"
+import { AnimatePresence, motion } from 'framer-motion'
+import { useEffect, useRef, useState } from "react"
+import { useAudioRecorder } from '../../hooks/useAudioRecorder'
+import { ChatMessage, ChatParticipants } from "../../types/types"
+import BotVisualizer from '../Bot/BotVisualizer'
 import Icons from '../Icons'
-
 type MessageInputProps = {
   t: any;
-  sendChatMessage: (reply?: ChatMessage | null, media?: string[] | null) => void;
+  sendChatMessage: (reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean) => void;
   isConnected: boolean;
   value: string;
   setNewMessage: (value: string) => void;
@@ -20,6 +23,8 @@ type MessageInputProps = {
   openDropZoneModal: boolean;
   setOpenDropZoneModal: (open: boolean) => void;
   handleTypingChat: (status: "typing" | "recording" | "stopped") => void;
+  chatId: string;
+  participants: ChatParticipants[];
 };
 
 const MessageInput = ({
@@ -32,12 +37,40 @@ const MessageInput = ({
   setReplyTo,
   editMessage,
   setEditMessage,
+  participants,
   handleEdit,
   openDropZoneModal,
   handleTypingChat,
   setOpenDropZoneModal,
+  chatId
 }: MessageInputProps) => {
+  const timeoutId = useRef<NodeJS.Timeout | null>(null);
+  const intervalId = useRef<NodeJS.Timeout | null>(null);
+  const [suggestions, setSuggestions] = useState<ChatParticipants[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
+  const [highlightedIndex, setHighlightedIndex] = useState<number>(0);
   let inputRef = useRef<HTMLInputElement>(null);
+  const commandRef = useRef<HTMLDivElement>(null);
+  const {
+    isRecording,
+    isPaused,
+    handleStartRecording,
+    handleStopAndSend,
+    handlePauseResume,
+    recordingDuration,
+    mediaStream,
+    handleStopRecording
+  } = useAudioRecorder({ handleTypingChat,
+    onSendAudio: (id) => {
+      sendChatMessage(replyTo, [id], true);
+    },
+    chatId: chatId,
+    outputFormat: "mp3"
+   });
+
+  const isSendMode = editMessage
+    ? (!isConnected || !editMessage.content.trim()) === false
+    : (!isConnected || !value.trim()) === false
 
   useEffect(() => {
     setTimeout(() => {
@@ -46,20 +79,6 @@ const MessageInput = ({
       }
     }, 200);
   }, [replyTo, editMessage]);
-
- const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && e.shiftKey) {
-      e.preventDefault();
-      if (value.trim() && isConnected) {
-        sendChatMessage(replyTo); 
-        setNewMessage("");
-        setReplyTo(null);
-      }
-    } else if (e.key === "Escape") {
-      setReplyTo(null);
-      setEditMessage(null);
-    }
-  };
 
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,21 +93,115 @@ const MessageInput = ({
     if (editMessage) {
       setEditMessage({ ...editMessage, content: e.target.value });
     } else {
-      setNewMessage(e.target.value);
+      const text = e.target.value;
+      setNewMessage(text);
+      const regex = /(?:^|\s)@([^\s]*)/g;
+      const matches = Array.from(text.matchAll(regex));
       
-      const typingTimeout = setTimeout(() => {
-        handleTypingChat("stopped");
+      if (matches.length > 0) {
+        const lastMatch = matches[matches.length - 1];
+        const username = lastMatch[1];
+        const filteredParticipants = username 
+          ? participants.filter(p => 
+              p.username.toLowerCase().includes(username.toLowerCase())
+            )
+          : participants;
+        
+        setSuggestions(filteredParticipants);
+        setShowSuggestions(true);
+        setHighlightedIndex(0);
+      } else {
+        setShowSuggestions(false);
+      }
+      if (timeoutId.current) {
+        clearTimeout(timeoutId.current);
+      }
+      if (!intervalId.current) {
+        handleTypingChat("typing");
+        intervalId.current = setInterval(() => {
+          handleTypingChat("typing");
+        }, 3000);
+      }
+      timeoutId.current = setTimeout(() => { 
+        if (intervalId.current) {
+          clearInterval(intervalId.current);
+          intervalId.current = null;
+          handleTypingChat("stopped");
+        }
       }, 3000);
-
-      handleTypingChat("typing");
-
-      return () => clearTimeout(typingTimeout);
     }
   };
 
   const ChooseFiles = () => {
     setOpenDropZoneModal(true);
   }
+
+  const handleSelectParticipant = (participant: ChatParticipants) => {
+    const currentValue = editMessage ? editMessage.content : value
+    const mentionIndex = currentValue.lastIndexOf('@')
+    const newValue = 
+      currentValue.slice(0, mentionIndex) + 
+      `@${participant.username} ` +
+      currentValue.slice(mentionIndex + participant.username.length + 1)
+    
+    if (editMessage) {
+      setEditMessage({ ...editMessage, content: newValue })
+    } else {
+      setNewMessage(newValue)
+    }
+    setShowSuggestions(false)
+    inputRef.current?.focus()
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (showSuggestions && suggestions.length > 0) {
+      switch (e.key) {
+        case "ArrowDown":
+          e.preventDefault();
+          setHighlightedIndex(prev => (prev + 1) % suggestions.length);
+          break;
+        case "ArrowUp":
+          e.preventDefault();
+          setHighlightedIndex(prev => 
+            prev === 0 ? suggestions.length - 1 : prev - 1
+          );
+          break;
+        case "Enter":
+        case "Tab":
+          e.preventDefault();
+          handleSelectParticipant(suggestions[highlightedIndex]);
+          break;
+        default:
+          break;
+      }
+    } else {
+      if (e.key === "Enter" && e.shiftKey) {
+        e.preventDefault();
+        if (value.trim() && isConnected) {
+          sendChatMessage(replyTo); 
+          setNewMessage("");
+          setReplyTo(null);
+        }
+      } else if (e.key === "Escape") {
+        setReplyTo(null);
+        setEditMessage(null);
+      }
+    }
+  };
+
+
+  useEffect(() => {
+    return () => {
+      if (timeoutId.current) clearTimeout(timeoutId.current);
+      if (intervalId.current) clearInterval(intervalId.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (commandRef.current && showSuggestions) {
+      commandRef.current.scrollTo({ top: highlightedIndex * 24, behavior: "smooth" });
+    }
+  }, [highlightedIndex, showSuggestions]);
 
   return (
     <div className="relative w-full"> 
@@ -134,7 +247,7 @@ const MessageInput = ({
             </button>
         </div>
       )}
-      <form
+       <form
         onSubmit={(e) => {
           if (editMessage) {
             handleEdit(e);
@@ -144,28 +257,130 @@ const MessageInput = ({
         }}
         className={`flex items-center gap-2 w-full pt-${
           replyTo ? "10" : "0"
-        }`} 
+        }`}
       >
-        <Input
-          ChooseFiles={() => {
-            ChooseFiles()
-          }}
-          ref={inputRef}
-          placeholder={t("type-your-message-here")}
-          onChange={handleEditChange}
-          onKeyDown={handleKeyDown}
-          value={editMessage ? editMessage.content : value}
-          className="w-full focus:ring-0 focus:border-none border-none focus:outline-none"
-          icon={<Icons.Choose_files />}
-        />
-        <Button  
-          disabled={
-            editMessage ? !isConnected || !editMessage.content.trim() : !isConnected || !value.trim()
-          } 
-          type="submit"
-        >
-          {editMessage ? t("edit") : t("send")}
-        </Button>
+        {
+          isRecording ? (
+            <div className="flex items-center gap-2 w-full">
+              <Button onClick={() => {
+                handleStopRecording();
+              }} className="bg-white rounded-full border-none" variant="outline" size="icon">
+                <Icons.Chat_Trash size={24} />
+              </Button>
+              {
+                isPaused ? (
+                  <BotVisualizer stream={mediaStream} type="user-paused" userSpeaking={true} recordingDuration={recordingDuration} />
+                ) : (
+                  <BotVisualizer stream={mediaStream} type="speaking" userSpeaking={true} recordingDuration={recordingDuration} />
+                )
+              }
+            </div>
+          ) : (
+            <Input
+              ChooseFiles={() => {
+                ChooseFiles();
+              }}
+              ref={inputRef}
+              placeholder={t("type-your-message-here")}
+              onChange={handleEditChange}
+              onKeyDown={handleKeyDown}
+              value={editMessage ? editMessage.content : value}
+              className="w-full focus:ring-0 focus:border-none border-none focus:outline-none"
+              icon={<Icons.Choose_files />}
+            />
+          )
+        }
+        {
+          showSuggestions && suggestions.length > 0 && (
+            <Command ref={commandRef} className="absolute bottom-[40px] left-0 w-full max-w-[300px] rounded-lg border shadow-lg h-fit overflow-y-auto">
+              <CommandList>
+                <CommandGroup>
+                  {suggestions.map((user, index) => (
+                    <CommandItem
+                      key={user.user_id}
+                      value={user.username}
+                      onSelect={() => handleSelectParticipant(user)}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        handleSelectParticipant(user);
+                      }}
+                      onKeyDown={handleKeyDown}
+                      className={`
+                        cursor-pointer gap-3 
+                        ${highlightedIndex === index ? "bg-accent text-accent-foreground" : ""}
+                      `}
+                    >
+                      <div className="flex flex-col">
+                        <span className="text-muted-foreground text-sm">
+                          @{user.username}
+                        </span>
+                      </div>
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+                <CommandEmpty>{t("no-users-found")}</CommandEmpty>
+              </CommandList>
+            </Command>
+          )
+        }
+        <AnimatePresence mode="wait">
+          {isRecording ? (
+            <motion.div
+              key="recording-ui"
+              initial={{ scale: 0.7, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.7, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="flex items-center gap-2"
+            >
+              <button
+                type="button"
+                onClick={handlePauseResume}
+                className="bg-primary rounded-full p-2"
+              >
+                {isPaused ? (
+                  <Icons.Play stroke="#ffff" size={24} />
+                ) : (
+                  <Icons.Pause stroke="#ffff" size={24} />
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={handleStopAndSend}
+                className="bg-primary rounded-full p-2"
+              >
+                <Icons.Send size={24} />
+              </button>
+            </motion.div>
+          ) : isSendMode ? (
+            <motion.button
+              key="send-icon"
+              type="submit"
+              onClick={handleSend}
+              className="bg-primary rounded-full p-2"
+              initial={{ scale: 0.7, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.7, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Icons.Send size={24} />
+            </motion.button>
+          ) : (
+            <motion.button
+              key="mic-icon"
+              className="bg-primary rounded-full p-2"
+              initial={{ scale: 0.7, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.7, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={handleStartRecording}
+              onTouchStart={handleStartRecording}
+            >
+              <Icons.ChatMicrophone size={24} />
+            </motion.button>
+          )}
+        </AnimatePresence>
       </form>
     </div>
   );
