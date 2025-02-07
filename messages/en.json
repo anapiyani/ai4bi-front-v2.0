@@ -133,7 +133,18 @@
 		"unselect_all": "Unselect all",
 		"delete_selected": "Delete selected",
 		"forward_selected": "Forward selected",
-		"no-users-found": "No users found"
+		"no-users-found": "No users found",
+		"refuse-participation": "Refuse participation",
+		"status": "Status",
+		"region": "Region",
+		"construction": "Construction",
+		"project-name": "Project name",
+		"portal-id": "Portal ID",
+		"lot-information": "Lot information",
+		"go to the table": "Go to the table",
+		"technical-council-date": "Technical council date",
+		"auction-date": "Auction date",
+		"participants": "Participants"
 	}
 }
 

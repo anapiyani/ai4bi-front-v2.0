@@ -19,7 +19,7 @@ const ChatMenu = ({type, setOpenMenu, name, participants}: {type?: "auction_chat
             <Icons.Close />
           </Button>
         </div>
-        {type === "private" ? <PrivateChatMenu t={t} participants={participants} /> : <AuctionChatMenu t={t} />}
+        {type === "private" ? <PrivateChatMenu t={t} participants={participants} /> : <AuctionChatMenu t={t} name={name} status={"Подача заявок"} region={"Астана"} construction={"Трансформаторная подстанция и распределительный пункт"} project_name={"GreenLine.Astra"} portal_id={"00-090812"} lot_information={"#"} auction_date={"23 января 2025"} technical_council_date={"26 января 2025"} participants={participants} />}
       </div>
     </div>
   )
