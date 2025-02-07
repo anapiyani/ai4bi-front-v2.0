@@ -1,6 +1,5 @@
 import { SelectActions } from '../../types/types'
 import Icons from '../Icons'
-
 type ContextMenuItemsProps = {
   isSelected: boolean;
   handleReplyClick: () => void;
