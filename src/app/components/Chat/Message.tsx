@@ -45,29 +45,14 @@ const Message = ({
 }: MessageProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSelected, setIsSelected] = useState(false);
+
   const user_role = getCookie("role");
   const isAdmin = user_role === "admin";
-  const isOwner = sender === "user";
 
   const isBot = sender === "bot";
   const isUser = sender === "user";
+
   const renderedMedia = useRenderMediaContent(media, t, isUser);
-  const contextMenuItems = useContextMenuItems({
-    isSelected,
-    handleReplyClick: handleReplyClick || (() => {}),
-    handleForward,
-    handlePin,
-    handleUnpin,
-    handleEditClick: handleEditClick || (() => {}),
-    handleOpenDeleteMessage,
-    handleSelectMessages,
-    t,
-    isAdmin,
-    isPinned,
-    isOwner,
-    messageId,
-    selectedMessages,
-  });
 
   const avatarText = React.useMemo(() => {
     if (isBot) {
@@ -85,6 +70,31 @@ const Message = ({
     return "?"; 
   }, [sender, t, isBot, isUser]);
 
+  const contextMenuItems = useContextMenuItems({
+    isSelected,
+    handleReplyClick: handleReplyClick || (() => {}),
+    handleForward,
+    handlePin,
+    handleUnpin,
+    handleEditClick: handleEditClick || (() => {}),
+    handleOpenDeleteMessage,
+    handleSelectMessages,
+    t,
+    isAdmin,
+    isPinned,
+    isOwner: sender === "user",
+    messageId,
+    selectedMessages,
+  });
+
+  useEffect(() => {
+    if (selectedMessages.includes(messageId)) {
+      setIsSelected(true);
+    } else {
+      setIsSelected(false);
+    }
+  }, [selectedMessages, messageId]);
+
   if (type === "system_message") {
     return (
       <div className="flex w-full justify-center my-2 px-4">
@@ -94,7 +104,6 @@ const Message = ({
       </div>
     );
   }
-
   const handleDoubleClick = () => {
     if (handleReplyClick) {
       handleReplyClick();
@@ -107,15 +116,7 @@ const Message = ({
       const action = selectedMessages.includes(messageId) ? 'unselect' : 'select';
       handleSelectMessages(action);
     }
-  }
-
-  useEffect(() => {
-    if (selectedMessages.includes(messageId)) {
-      setIsSelected(true);
-    } else {
-      setIsSelected(false);
-    }
-  }, [selectedMessages, messageId]);
+  };
 
   const senderName = isBot ? t("aray-bot") : isUser ? "" : sender;
 
@@ -170,9 +171,15 @@ const Message = ({
       <ContextMenu onOpenChange={(open) => setIsMenuOpen(open)}>
         <ContextMenuTrigger onDoubleClick={handleDoubleClick}>
           <div className={messageClasses}>
-            {replyToMessage && reply_message_id && 
-              <ReplyToMessageContent reply_message_id={reply_message_id} goToMessage={goToMessage} isUser={isUser} replyToMessage={replyToMessage} t={t} />
-            }
+            {replyToMessage && reply_message_id && (
+              <ReplyToMessageContent
+                reply_message_id={reply_message_id}
+                goToMessage={goToMessage}
+                isUser={isUser}
+                replyToMessage={replyToMessage}
+                t={t}
+              />
+            )}
             {isPinned && (
               <p
                 className={`text-xs text-muted-foreground flex items-center gap-1 mb-1 ${
@@ -182,22 +189,27 @@ const Message = ({
                 <Icons.Pin
                   fill={isUser ? "#ffffff" : "#64748B"}
                   className="w-3 h-3"
-                />{" "}
+                />
                 {t("pinned")}
               </p>
             )}
             {forwarded_from && (
-              <p onClick={(e) => {
-                e.stopPropagation();
-                createPrivateChat(forwarded_from)
-              }} className={`text-xs flex items-center gap-1 mb-1 ${isUser ? "text-white" : "text-muted-foreground"} cursor-pointer`}>
+              <p
+                onClick={(e) => {
+                  e.stopPropagation();
+                  createPrivateChat(forwarded_from);
+                }}
+                className={`text-xs flex items-center gap-1 mb-1 ${
+                  isUser ? "text-white" : "text-muted-foreground"
+                } cursor-pointer`}
+              >
                 <Icons.Forward fill={isUser ? "#ffffff" : "#64748B"} />
-                {t("forwarded_from")} {forwarded_from_first_name} {forwarded_from_last_name}
+                {t("forwarded_from")} {forwarded_from_first_name}{" "}
+                {forwarded_from_last_name}
               </p>
             )}
             {renderedMedia}
             <p className={textClasses}>{message}</p>
-
             <div className="flex justify-end">
               <p
                 className={`text-[10px] ${
@@ -213,7 +225,8 @@ const Message = ({
                     {t("edited")}
                   </span>
                 )}
-                {timestamp} <Icons.Checks fill={isUser ? "#ffffff" : "#64748B"} />
+                {timestamp}
+                <Icons.Checks fill={isUser ? "#ffffff" : "#64748B"} />
               </p>
             </div>
           </div>
