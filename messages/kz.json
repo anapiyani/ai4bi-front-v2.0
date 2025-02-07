@@ -134,8 +134,18 @@
 		"unselect_all": "Барлық таңдауды өшіру",
 		"delete_selected": "Таңдалғандарды жою",
 		"forward_selected": "Таңдалғандарды жіберу",
-		"no-users-found": "Пайдаланушылар табылмады"
+		"no-users-found": "Пайдаланушылар табылмады",
+		"refuse-participation": "Тендерден шығу",
+		"status": "Статус",
+		"region": "Аймақ",
+		"construction": "Құрылыс",
+		"project-name": "Жоба аты",
+		"portal-id": "Портал ID",
+		"lot-information": "Лот ақпараты",
+		"go to the table": "Жүйеге өту",
+		"technical-council-date": "Тех. кеңестің күні",
+		"auction-date": "Тендердің күні",
+		"participants": "Қатысушылар"
 	}
 }
-
 

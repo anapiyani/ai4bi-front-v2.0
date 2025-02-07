@@ -134,7 +134,18 @@
 		"unselect_all": "Снять все выборы",
 		"delete_selected": "Удалить выбранные",
 		"forward_selected": "Переслать выбранные",
-		"no-users-found": "Пользователи не найдены"
+		"no-users-found": "Пользователи не найдены",
+		"refuse-participation": "Отказаться от участия в тендере",
+		"status": "Статус",
+		"region": "Регион",
+		"construction": "Строительство",
+		"project-name": "Название проекта",
+		"portal-id": "ID портала",
+		"lot-information": "Информация о лоте",
+		"go to the table": "Перейти к таблице",
+		"technical-council-date": "Дата технического совета",
+		"auction-date": "Дата тендера",
+		"participants": "Участники"
 	}
 }
 
