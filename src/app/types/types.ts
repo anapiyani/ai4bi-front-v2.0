@@ -187,18 +187,7 @@ export interface MessageProps {
 	counter?: number | null;
   reply_message_id: string | null;
   goToMessage: (messageId: string) => void;
-  replyToMessage?: {
-    sender: string;
-    content: string;
-    has_attachments: boolean;
-    media: string[] | null | {
-      extension: string;
-      media_id: string;
-      media_type: "image" | "video" | "audio" | "file";
-      mime_type: string;
-      name: string;
-    }[]
-  } | null;
+  replyToMessage?: ReplyToMessage;
   createPrivateChat: (userId: string) => void;
   isEdited: boolean;
   handlePin: (message_id: string) => void;
@@ -206,7 +195,7 @@ export interface MessageProps {
 	handleForward: () => void;
   isPinned: boolean;
   media: Media[] | string[] | null | undefined;
-	handleSelectMessages: (action: "select" | "unselect" | "select_all" | "unselect_all" | "delete_selected" | "forward_selected") => void;
+	handleSelectMessages: (action: SelectActions) => void;
 	selectedMessages: string[];
 }
 
@@ -240,3 +229,18 @@ export type CreatePrivateChatResponse = {
     removed_at: string | null;
   }[]
 }
+
+export type SelectActions = "select" | "unselect" | "select_all" | "unselect_all" | "delete_selected" | "forward_selected"
+
+export type ReplyToMessage = {
+    sender: string;
+    content: string;
+    has_attachments: boolean;
+    media: string[] | null | {
+      extension: string;
+      media_id: string;
+      media_type: "image" | "video" | "audio" | "file";
+      mime_type: string;
+      name: string;
+    }[]
+  } | null;
