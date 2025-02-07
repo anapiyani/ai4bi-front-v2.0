@@ -10,6 +10,7 @@ import ChatMenu from "../../components/Chat/ChatMenu/ChatMenu"
 import DeleteMessage from "../../components/Chat/DeleteMessage"
 import ChatContent from "../../components/ChatContent"
 import { useChatWebSocket } from "../../hooks/useChatWebSocket"
+import { ReceivedChats } from '../../types/types'
 import ChatListItem from "./components/ChatListItem"
 import { SearchBar } from "./components/SearchBar"
 import { CHAT_TABS } from "./config/ChatTabs"
@@ -22,7 +23,7 @@ const ChatMode = () => {
   const chatId = searchParams.get("id")
   const [openMenu, setOpenMenu] = useState<boolean>(false)
   const [selectedConversationType, setSelectedConversationType] = useState<"auction_chat" | "private">()
-  const [messageId, setMessageId] = useState<string | null>(null)
+  const [messageIds, setMessageIds] = useState<string[] | null>(null)
   const [isDeleteMessageOpen, setIsDeleteMessageOpen] = useState<boolean>(false)
   const {
     isConnected,
@@ -50,15 +51,21 @@ const ChatMode = () => {
     setOpenMenu(false)
   }
 
-  const handleOpenDeleteMessage = (messageId: string) => {
+  const handleOpenDeleteMessage = (messageId: string | string[]) => {
     setIsDeleteMessageOpen(true)
-    setMessageId(messageId)
+    if (Array.isArray(messageId)) {
+      setMessageIds(messageId)
+    } else {
+      setMessageIds([messageId])
+    }
   }
 
   const handleDeleteMessage = () => {
     setIsDeleteMessageOpen(false)
-    if (messageId) {
-      deleteMessage(messageId)
+    if (messageIds) {
+      messageIds.forEach((id) => {
+        deleteMessage(id)
+      })
       toast.success(t("message-deleted"))
     }
   }
@@ -85,7 +92,6 @@ const ChatMode = () => {
       setOpenMenu(false) 
     }
   }, [selectedConversation, conversations])
-
 
   return (
     <div className="w-full flex flex-col lg:flex-row bg-primary-foreground justify-center">
@@ -134,7 +140,8 @@ const ChatMode = () => {
                     conversation.chat_type === "auction_chat" ? (
                       <ChatListItem
                         key={conversation.id}
-                        data={conversation}
+                        data={conversation as ReceivedChats}
+                        typingStatuses={typingStatuses}
                         t={t}
                         onClick={() => {
                           handleItemClick(conversation.id)
@@ -154,7 +161,8 @@ const ChatMode = () => {
                   conversation.chat_type === "private" ? (
                     <ChatListItem
                       key={conversation.id}
-                      data={conversation}
+                      data={conversation as ReceivedChats}
+                      typingStatuses={typingStatuses}
                       t={t}
                       onClick={() => {
                         handleItemClick(conversation.id)
@@ -183,6 +191,7 @@ const ChatMode = () => {
           sendChatMessage={sendChatMessage}
           handleTyping={handleTyping}
           scrollRef={scrollRef}
+          participants={conversations.find((c) => c.id === selectedConversation)?.participants || []}
           handleOpenDeleteMessage={handleOpenDeleteMessage}
           handlePinMessage={handlePinMessage}
           handleUnpinMessage={handleUnpinMessage}
@@ -203,6 +212,7 @@ const ChatMode = () => {
             type={selectedConversationType}
             setOpenMenu={setOpenMenu}
             name={conversations.find((c) => c.id === selectedConversation)?.name || t("chat")}
+            participants={conversations.find((c) => c.id === selectedConversation)?.participants || []}
           />
         </div>
       )}

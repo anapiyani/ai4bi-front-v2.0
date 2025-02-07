@@ -124,7 +124,17 @@
 		"no_messages_yet": "Хабарлама жоқ",
 		"forwarded_from": "Жіберілген",
 		"isTyping": "жазып жатыр...",
-		"forward-message": "Хабарлама жіберу"
+		"isRecording": "аудио жазып жатыр...",
+		"forward-message": "Хабарлама жіберу",
+		"images": "Фото",
+		"videos": "Видео",
+		"medias": "Медиа",
+		"select": "Таңдау",
+		"unselect": "Таңдауды өшіру",
+		"unselect_all": "Барлық таңдауды өшіру",
+		"delete_selected": "Таңдалғандарды жою",
+		"forward_selected": "Таңдалғандарды жіберу",
+		"no-users-found": "Пайдаланушылар табылмады"
 	}
 }
 

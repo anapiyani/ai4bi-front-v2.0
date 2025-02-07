@@ -46,36 +46,51 @@ export type MyData = {
 	uuid: string
 }
 
+export type Media = {
+	extension: string;
+	media_id: string;
+	media_type: "image" | "video" | "audio" | "file";
+	mime_type: string;
+	name: string;
+	size: number;
+}
+
+export type LastMessage = {
+	chat_id: string | null;
+	content: string | null;
+	counter: number | null;
+	deleted_at: string | null;
+	delivered_at: string | null;
+	edited_at: string | null;
+	is_deleted: boolean | null;
+	is_edited: boolean | null;
+	media_ids: string[] | null;
+	message_id: string | null;
+	reply_message_id: string | null;
+	send_at: string | null;
+	sender_first_name: string | null;
+	sender_id: string | null;
+	media: Media[] | null;	
+	has_attachements: boolean | null;
+	sender_last_name: string | null;
+	type: string | null;
+  is_pinned?: boolean | null;
+} 
 export type Conversation = {
   id: string;
   name: string;
   chat_type: "private" | "auction_chat";
-  lastMessage: {
-		chat_id: string | null;
-		content: string | null;
-		counter: number | null;
-		deleted_at: string | null;
-		delivered_at: string | null;
-		edited_at: string | null;
-		is_deleted: boolean | null;
-		is_edited: boolean | null;
-		media_ids: string[] | null;
-		message_id: string | null;
-		reply_message_id: string | null;
-		send_at: string | null;
-		sender_first_name: string | null;
-		sender_id: string | null;
-		sender_last_name: string | null;
-		type: string | null;
-    is_pinned?: boolean | null;
-	} | null | string;
+  lastMessage: LastMessage | null | string;
+	participants: ChatParticipants[]
 }
 
 export interface ReceivedChats extends Conversation {
 	chat_id: string;
 	created_at: string;
 	participants: ChatParticipants[];
-	last_message: Conversation['lastMessage'] | null;
+	last_message: LastMessage | null | string;
+	unread_count: number;
+	updated_at: string | null;
 }
 
 export type ChatParticipants = {
@@ -84,6 +99,7 @@ export type ChatParticipants = {
 	role: string;
 	created_at: string;
 	removed_at: string | null;
+	username: string;
 }
 
 export type ChatMessage = {
@@ -103,15 +119,8 @@ export type ChatMessage = {
 	is_voice_message?: boolean;
 	reply_to?: string | null;
   is_edited?: boolean;
-	media?: string[] | null | {
-		extension: string;
-		media_id: string;
-		media_type: "image" | "video" | "audio" | "file";
-		mime_type: string;
-		name: string;
-		size: number;
-	};
-	has_attachments?: boolean;
+	media?: Media[] | null | string[];
+	has_attachements?: boolean;
   is_pinned?: boolean;
 	// tagged_user_id?: string | null;
 }
@@ -125,13 +134,14 @@ export type ChatContentProps = {
 	chatId: string | null;
   selectedConversation: string | null;
   title: string;
+	participants: ChatParticipants[];
   messages: ChatMessage[];
   isConnected: boolean;
   newMessage: string;
   setNewMessage: (message: string) => void;
-  sendChatMessage: (reply?: ChatMessage | null, media?: string[] | null) => void;
+  sendChatMessage: (reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean) => void;
   scrollRef: React.RefObject<HTMLDivElement>;
-  handleOpenDeleteMessage: (messageId: string) => void;
+  handleOpenDeleteMessage: (messageId: string | string[]) => void;
   createPrivateChat: (userId: string) => void;
   sendEditMessage: (message: ChatMessage) => void;
   setOpenMenu: (open: boolean) => void;
@@ -177,32 +187,16 @@ export interface MessageProps {
 	counter?: number | null;
   reply_message_id: string | null;
   goToMessage: (messageId: string) => void;
-  replyToMessage?: {
-    sender: string;
-    content: string;
-    has_attachments: boolean;
-    media: string[] | null | {
-      extension: string;
-      media_id: string;
-      media_type: "image" | "video" | "audio" | "file";
-      mime_type: string;
-      name: string;
-    }[]
-  } | null;
+  replyToMessage?: ReplyToMessage;
   createPrivateChat: (userId: string) => void;
   isEdited: boolean;
   handlePin: (message_id: string) => void;
   handleUnpin: (message_id: string) => void;
 	handleForward: () => void;
   isPinned: boolean;
-  media: {
-    extension: string;
-		media_id: string;
-		media_type: "image" | "video" | "audio" | "file";
-		mime_type: string;
-		name: string;
-		size: number;
-  }[] | string[] | null | undefined;
+  media: Media[] | string[] | null | undefined;
+	handleSelectMessages: (action: SelectActions) => void;
+	selectedMessages: string[];
 }
 
 export type ForwardData = {
@@ -217,3 +211,36 @@ export type TypingStatus = {
 	user_first_name: string;
 	status: "typing" | "recording" | "stopped";
 }
+
+
+export type CreatePrivateChatResponse = {
+  chat_id: string;
+  name: string;
+  chat_type: "private";
+  created_at: string;
+  updated_at: string;
+  participants: {
+    chat_participant_id: string;
+    user_id: string;
+    chat_id: string;
+    role: string;
+    created_at: string;
+    username: string;
+    removed_at: string | null;
+  }[]
+}
+
+export type SelectActions = "select" | "unselect" | "select_all" | "unselect_all" | "delete_selected" | "forward_selected"
+
+export type ReplyToMessage = {
+    sender: string;
+    content: string;
+    has_attachments: boolean;
+    media: string[] | null | {
+      extension: string;
+      media_id: string;
+      media_type: "image" | "video" | "audio" | "file";
+      mime_type: string;
+      name: string;
+    }[]
+  } | null;

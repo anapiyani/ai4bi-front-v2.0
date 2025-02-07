@@ -2,7 +2,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { SearchBar } from '../../dashboard/ChatMode/components/SearchBar'
 import { Conversation } from '../../types/types'
 
-const ForwardMessage = ({open, onClose, t, conversations, handleForward, forwardMessageId}: {open: boolean, onClose: () => void, t: any, conversations: Conversation[], handleForward: (message_id: string, target_chat_id: string) => void, forwardMessageId: string}) => {
+const ForwardMessage = ({open, onClose, t, conversations, handleForward, forwardMessageIds}: {open: boolean, onClose: () => void, t: any, conversations: Conversation[], handleForward: (message_ids: string[], target_chat_id: string) => void, forwardMessageIds: string[]}) => {
 	return (
 		<Dialog open={open}  onOpenChange={(isOpen) => {
 			if (!isOpen) {
@@ -17,7 +17,7 @@ const ForwardMessage = ({open, onClose, t, conversations, handleForward, forward
 					<SearchBar />
 					{
 						conversations.map((conversation) => (
-							<div onClick={() => handleForward(forwardMessageId, conversation.id)} key={conversation.id} className='flex items-center justify-between gap-2 my-2 px-3 cursor-pointer'>
+							<div onClick={() => handleForward(forwardMessageIds, conversation.id)} key={conversation.id} className='flex items-center justify-between gap-2 my-2 px-3 cursor-pointer'>
 								<div className='cursor-pointer'>
 									<p>{conversation.name}</p>
 								</div>

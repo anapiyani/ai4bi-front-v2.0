@@ -3,12 +3,14 @@ import botProgress from "@/public/assets/bot/botProgess.json"
 import lottie from 'lottie-web'
 import { useEffect, useRef } from 'react'
 interface AudioVisualizerProps {
-	type?: "speaking" | "progress" | "default" | "listening"
+	type?: "speaking" | "progress" | "default" | "listening" | "user-paused"
   stream: MediaStream | null
   small?: boolean
+  userSpeaking?: boolean
+  recordingDuration?: number
 }
 
-const BotVisualizer = ({ type = "default", stream, small = false }: AudioVisualizerProps) => {
+const BotVisualizer = ({ type = "default", stream, small = false, userSpeaking = false, recordingDuration = 0 }: AudioVisualizerProps) => {
 	switch (type) {
 		case "speaking":
 			const BotSpeaking = ({ stream, small = false }: AudioVisualizerProps) => {
@@ -23,8 +25,12 @@ const BotVisualizer = ({ type = "default", stream, small = false }: AudioVisuali
 				
 						if (!canvas || !ctx) return
 			
-						const containerWidth = small ? 76 : 392
-						const containerHeight = 76
+						const containerWidth = small
+						? 76
+						: userSpeaking
+						? 785
+						: 392
+						const containerHeight = userSpeaking ? 47 : 76
 						const dpr = window.devicePixelRatio || 1
 						canvas.width = containerWidth * dpr
 						canvas.height = containerHeight * dpr
@@ -46,24 +52,24 @@ const BotVisualizer = ({ type = "default", stream, small = false }: AudioVisuali
 						const draw = () => {
 							if (!ctx || !analyserRef.current) return
 				
-							const bufferLength = small ? 3 : 23
+							const bufferLength = small ? 3 : userSpeaking ? 30 : 23
 							const dataArray = new Uint8Array(bufferLength)
 							analyserRef.current.getByteFrequencyData(dataArray)
 				
 							ctx.clearRect(0, 0, containerWidth, containerHeight)
 				
-							const barWidth = small ? 3 : 5
-							const barGap = small ? 4 : 8
+							const barWidth = small ? 3 : userSpeaking ? 3 : 5
+							const barGap = small ? 4 : userSpeaking ? 8 : 8
 							const centerX = containerWidth / 2
 							const centerY = containerHeight / 2
 				
 							dataArray.forEach((value, index) => {
-								const barHeight = Math.max((value / 255) * containerHeight * 0.7, small ? 5 : 10)
+								const barHeight = Math.max((value / 255) * containerHeight * 0.7, small ? 5 : userSpeaking ? 4 : 10)
 								
 								const leftX = centerX - (index + 1) * (barWidth + barGap) + barGap / 2
 								const rightX = centerX + index * (barWidth + barGap) + barGap / 2
 				
-								ctx.fillStyle = 'white'
+								ctx.fillStyle = userSpeaking ? '#64748B' : 'white'
 								
 								ctx.beginPath()
 								ctx.roundRect(
@@ -106,7 +112,7 @@ const BotVisualizer = ({ type = "default", stream, small = false }: AudioVisuali
 								const leftX = centerX - (i + 1) * (barWidth + barGap) + barGap / 2
 								const rightX = centerX + i * (barWidth + barGap) + barGap / 2
 				
-								ctx.fillStyle = 'white'
+								ctx.fillStyle = userSpeaking ? '#64748B' : 'white'
 								
 								ctx.beginPath()
 								ctx.roundRect(
@@ -146,9 +152,27 @@ const BotVisualizer = ({ type = "default", stream, small = false }: AudioVisuali
 					}, [stream, small])
 					
 					return (
-						<div className={"flex justify-center items-center bg-gradient-to-r from-[#0284C7] to-[#77BAAA] overflow-hidden p-px rounded-lg " + (small ? "w-[76px] h-[76px]" : "w-full h-20")}>
-							<canvas ref={canvasRef} className="w-full h-full" />
-						</div>
+						<div
+						className={
+							"flex justify-center items-center overflow-hidden p-px rounded-lg " +
+							(userSpeaking
+								? "w-full h-[40px] bg-white relative" 
+								: small
+								? "w-[76px] h-[76px] bg-gradient-to-r from-[#0284C7] to-[#77BAAA]" 
+								: "w-full h-20 bg-gradient-to-r from-[#0284C7] to-[#77BAAA]"       
+							)
+						}
+					>
+						<canvas ref={canvasRef} className="w-full h-full" />
+						{userSpeaking && (
+								<p className="text-xs text-muted-foreground absolute bottom-3 right-3">
+									{
+										`${Math.floor(recordingDuration / 60000).toString().padStart(2, '0')}:` +
+										`${Math.floor((recordingDuration % 60000) / 1000).toString().padStart(2, '0')}`
+									}
+								</p>
+							)}
+					</div>
 					)
 			}
 
@@ -170,8 +194,16 @@ const BotVisualizer = ({ type = "default", stream, small = false }: AudioVisuali
 				}, [])
 
 				return (
-					<div className={"flex justify-center items-center bg-gradient-to-r from-[#0284C7] to-[#77BAAA] overflow-hidden p-px rounded-lg " + (small ? "w-[76px] h-[76px]" : "w-full h-20")}>
+					<div className={"flex justify-center items-center bg-gradient-to-r from-[#0284C7] to-[#77BAAA] overflow-hidden relative p-px rounded-lg " + (small ? "w-[76px] h-[76px]" : "w-full h-20")}>
 						<div ref={lottieRef} className={small ? "w-[76px] h-[76px]" : "w-full h-40"}></div>
+						{userSpeaking && (
+							<span className="text-xs text-muted-foreground absolute bottom-3 right-2">
+								{
+									`${Math.floor(recordingDuration / 60000).toString().padStart(2, '0')}:` +
+									`${Math.floor((recordingDuration % 60000) / 1000).toString().padStart(2, '0')}`
+								}
+							</span>
+						)}
 					</div>
 				)
 			}
@@ -200,6 +232,30 @@ const BotVisualizer = ({ type = "default", stream, small = false }: AudioVisuali
 				)
 			}
 			return <BotListening small={small} />;
+		case "user-paused":
+			const BotUserPaused = ({ small }: { small?: boolean }) => {
+				return (
+					<div className='flex justify-center items-center bg-white overflow-hidden p-px rounded-lg h-10 w-full gap-1 px-14 relative'>
+						{
+							Array(65).fill('.').map((dot, i) => (
+								<span key={i} className="text-muted-foreground flex items-center justify-center h-full w-full">
+									<span className="w-[3px] h-1 bg-muted-foreground rounded-full"></span>
+								</span>
+							))
+						}
+						{userSpeaking && (
+							<p className="text-xs text-muted-foreground absolute bottom-3 right-3">
+								{
+									`${Math.floor(recordingDuration / 60000).toString().padStart(2, '0')}:` +
+									`${Math.floor((recordingDuration % 60000) / 1000).toString().padStart(2, '0')}`
+								}
+							</p>
+						)}
+					</div>
+				)
+			}
+			return <BotUserPaused small={small} />;
+
 		case "default":
 		default:
 			const BotDefault = ({ small }: { small?: boolean }) => {
