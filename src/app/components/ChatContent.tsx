@@ -7,7 +7,7 @@ import { useTranslations } from "next-intl"
 import { useEffect, useState } from "react"
 import { getCookie } from "../api/service/cookie"
 import { useGoToMessage } from '../hooks/useGoToMessage'
-import { ChatContentProps, ChatMessage } from "../types/types"
+import { ChatContentProps, ChatMessage, SelectActions } from "../types/types"
 import DropZoneModal from './Chat/Files/DropZoneModal'
 import ForwardMessage from './Chat/ForwardMessage'
 import { useCreatePrivateChat } from './Chat/hooks/useCreatePrivateChat'
@@ -152,7 +152,7 @@ const ChatContent = ({
   }
 
   const handleSelectMessages = (
-    action: "select" | "unselect" | "select_all" | "unselect_all" | "delete_selected" | "forward_selected",
+    action: SelectActions,
     messageId?: string
   ) => {
     switch (action) {
@@ -227,7 +227,7 @@ const ChatContent = ({
                       goToMessage={goToMessage} 
                       createPrivateChat={handleCreateOrOpenChat}
                       message={message.content}
-                      handleSelectMessages={(action: "select" | "unselect" | "select_all" | "unselect_all" | "delete_selected" | "forward_selected") => handleSelectMessages(action, message.id)}
+                      handleSelectMessages={(action: SelectActions) => handleSelectMessages(action, message.id)}
                       selectedMessages={selectedMessages}
                       sender={
                         (message.authorId &&

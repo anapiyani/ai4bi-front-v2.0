@@ -1,3 +1,4 @@
+import { SelectActions } from '../../types/types'
 import Icons from '../Icons'
 
 type ContextMenuItemsProps = {
@@ -8,7 +9,7 @@ type ContextMenuItemsProps = {
   handleUnpin: (messageId: string) => void;
   handleEditClick: () => void;
   handleOpenDeleteMessage: (messageId: string) => void;
-  handleSelectMessages: (action: "select" | "unselect" | "select_all" | "unselect_all" | "delete_selected" | "forward_selected") => void;
+  handleSelectMessages: (action: SelectActions) => void;
   t: (key: string) => string;
 	isAdmin: boolean;
 	isPinned: boolean;

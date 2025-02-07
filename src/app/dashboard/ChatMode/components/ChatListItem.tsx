@@ -4,7 +4,7 @@ import { motion } from "framer-motion"
 import React from 'react'
 
 type ChatListItemProps = {
-  data: ReceivedChats; // any for now
+  data: ReceivedChats; 
   onClick: () => void;
   isSelected: boolean;
   index: number;
