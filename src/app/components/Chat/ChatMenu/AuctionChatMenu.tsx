@@ -1,48 +1,52 @@
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { ChatParticipants } from '@/src/app/types/types'
 import NotificationBell from '../../Alerts/Notification/NotificationBell'
 
 
-const AuctionChatMenu = ({t}: {t: any}) => {
+const AuctionChatMenu = (
+	{name, status, region, construction, project_name, portal_id, lot_information, auction_date, technical_council_date, participants, t}
+	: 
+	{name: string, status: string, region: string, construction: string, project_name: string, portal_id: string, lot_information: string, auction_date: string, technical_council_date: string, participants: ChatParticipants[], t: any}) => {
 	return (
-		<div className="flex flex-col gap-2">
-			<div>
-				<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius molestias non accusamus similique porro neque.</p>
+		<div className="flex flex-col gap-4">
+			<div className='flex'>
+				<p className='text-sm font-medium'>{name}</p>
 			</div>
-			<div>
-				<p>Status</p>
-				<p>Icon and text</p>
+			<div className='flex flex-col gap-0.5'>
+				<p className='text-xs text-muted-foreground'>{t("status")}</p>
+				<p className='text-xs text-green-500'>{status}</p>
 			</div>
-			<div>
-				<p>Region</p>
-				<p>Text</p>
+			<div className='flex flex-col gap-0.5'>
+				<p className='text-xs text-muted-foreground'>{t("region")}</p>
+				<p className='text-xs'>{region}</p>
 			</div>
-			<div>
-				<p>Construction</p>
-				<p>Lorem ipsum dolor sit amet consectetur.</p>
+			<div className='flex flex-col gap-0.5'>
+				<p className='text-xs text-muted-foreground'>{t("construction")}</p>
+				<p className='text-xs'>{construction}</p>
 			</div>
-			<div>
-				<p>Project name</p>
-				<p>Something and something</p>
+			<div className='flex flex-col gap-0.5'>
+				<p className='text-xs text-muted-foreground'>{t("project-name")}</p>
+				<p className='text-xs'>{project_name}</p>
 			</div>
-			<div>
-				<p>Portal ID</p>
-				<p>1234567890</p>
+			<div className='flex flex-col gap-0.5'>
+				<p className='text-xs text-muted-foreground'>{t("portal-id")}</p>
+				<p className='text-xs'>{portal_id}</p>
 			</div>
-			<div>
-				<p>Lot information</p>
-				<p>Here will be link to table</p>
+			<div className='flex flex-col gap-0.5'>
+				<p className='text-xs text-muted-foreground'>{t("lot-information")}</p>
+				<a href='#' className='text-xs text-primary'>{t("go to the table")}</a>
 			</div>
 			<div>
 				<NotificationBell />
 			</div>
-			<div>
-				<p>Technical concuil date</p>
-				<p>23 january 2025</p>
+			<div className='flex flex-col gap-0.5'>
+				<p className='text-xs text-muted-foreground'>{t("technical-council-date")}</p>
+				<p className='text-xs'>{technical_council_date}</p>
 			</div>
-			<div>
-				<p>Auction date</p>
-				<p>23 january 2025</p>
+			<div className='flex flex-col gap-0.5'>
+				<p className='text-xs text-muted-foreground'>{t("auction-date")}</p>
+				<p className='text-xs'>{auction_date}</p>
 			</div>
 			<div>
 				<Tabs defaultValue="participants" className="w-full">
@@ -52,8 +56,19 @@ const AuctionChatMenu = ({t}: {t: any}) => {
             <TabsTrigger value="file" className='w-full bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none data-[state=active]:bg-transparent'>{t("file")}</TabsTrigger>
           </TabsList>
 					<TabsContent value="participants">
-						<div className='flex flex-col gap-2 w-full justify-center items-center'>
-							<p className='text-sm text-muted-foreground'>{t("there-are-no-participants-yet")}</p>
+						<div className='flex flex-col gap-2 w-full justify-center items-start'>
+							{
+								participants.map((participant) => (
+									<div className='flex flex-col gap-0.5' key={participant.chat_participant_id}>
+										<div className='flex items-center gap-2 justify-center'>
+											<div className='w-6 h-6 rounded-full bg-transparent border border-border bg-muted flex items-center justify-center'>
+												{participant.username.charAt(0).toUpperCase()}
+											</div>
+											<p className='text-sm'>{participant.username}</p>
+										</div>
+									</div>
+								))
+							}
 						</div>
 					</TabsContent>
           <TabsContent value="photo-video">
@@ -68,9 +83,9 @@ const AuctionChatMenu = ({t}: {t: any}) => {
           </TabsContent>
         </Tabs>
 			</div>
-			<div>
-				<Button variant="outline">
-					Отказаться от участия в тендере
+			<div className='flex justify-center mt-3'>
+				<Button className='bg-secondary hover:bg-secondary/80' variant="outline">
+					{t("refuse-participation")}
 				</Button>
 			</div>
 		</div>

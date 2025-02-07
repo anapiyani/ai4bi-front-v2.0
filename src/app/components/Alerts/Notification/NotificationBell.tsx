@@ -9,7 +9,7 @@ const Notification = () => {
 		<div className='flex gap-2 w-full justify-between'>
 			<div className='flex items-center gap-2'>
 				<Icons.Bell />
-				<p className='text-base '>{t("notification")}</p>
+				<p className='text-xs'>{t("notification")}</p>
 			</div>
 			<div className='flex items-center gap-2'>
 				<Switch onCheckedChange={(e) => {
