@@ -6,7 +6,7 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { getCookie } from "../../api/service/cookie"
 import useRenderMediaContent from '../../hooks/useRenderMediaContent'
 import { MessageProps } from '../../types/types'
@@ -108,6 +108,14 @@ const Message = ({
       handleSelectMessages(action);
     }
   }
+
+  useEffect(() => {
+    if (selectedMessages.includes(messageId)) {
+      setIsSelected(true);
+    } else {
+      setIsSelected(false);
+    }
+  }, [selectedMessages, messageId]);
 
   const senderName = isBot ? t("aray-bot") : isUser ? "" : sender;
 
