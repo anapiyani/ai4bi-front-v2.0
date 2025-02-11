@@ -169,18 +169,15 @@ export const useChatWebSocket = () => {
     setMessagesByChat((prev) => {
       const existing = prev[chatId] || [];
       const allMsgs = [...existing, ...newMsgs];
-
       const uniqueMessages = allMsgs.reduce<ChatMessage[]>((acc, msg) => {
         if (!acc.find(m => m.id === msg.id)) {
           acc.push(msg);
         }
         return acc;
       }, []);
-  
       uniqueMessages.sort(
         (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
       );
-  
       return { ...prev, [chatId]: uniqueMessages };
     });
   }, []);
@@ -190,7 +187,6 @@ export const useChatWebSocket = () => {
   // handleChatCreated функция которая обрабатывает создание нового чата
   // ---------------------------------------------------------------------------
   const handleChatCreated = (data: any) => {
-    console.log("[handleChatCreated] Chat created or received:", data);
     const newChat: Conversation = {
       id: data.chat_id,
       name: data.name || `Chat ${data.chat_id}`,
@@ -233,7 +229,6 @@ export const useChatWebSocket = () => {
   // handleChatsReceived
   // ---------------------------------------------------------------------------
   const handleChatsReceived = (chats: ReceivedChats[]) => {
-    console.log("[handleChatsReceived] Chats received:", chats);
     const transformed = chats.map((chat) => ({
       id: chat.chat_id,
       name: chat.name || `Chat ${chat.chat_id}`,
@@ -454,7 +449,6 @@ export const useChatWebSocket = () => {
   // subscribeToChatRoom
   // ---------------------------------------------------------------------------
   const subscribeToChatRoom = (chatId: string) => {
-    console.log("[subscribeToChatRoom] Subscribing to chat room:", chatId);
     sendMessage({
       type: "subscribe",
       channel: "chat_room",
@@ -506,7 +500,6 @@ export const useChatWebSocket = () => {
   // handleShowNotification
   // ---------------------------------------------------------------------------
   const handleShowNotification = (message: any) => {
-    console.log("notification data: ", message.data);
     HotToast((t) => (
       message.data.content
     ), {
@@ -597,7 +590,6 @@ export const useChatWebSocket = () => {
   // unsubscribeToChatRoom
   // ---------------------------------------------------------------------------
   const unsubscribeToChatRoom = (chatId: string) => {
-    console.log("[unsubscribeToChatRoom] Unsubscribing from chat room:", chatId);
     sendMessage({
       type: "unsubscribe",
       channel: "chat_room",
@@ -624,7 +616,6 @@ export const useChatWebSocket = () => {
       auction_id: auctionId,
       participants: []
     });
-    console.log("[createAuctionChat] Request:", request);
     sendMessage(request);
   };
 
@@ -647,7 +638,6 @@ export const useChatWebSocket = () => {
     if (!currentUser) return;
     const request = createRpcRequest("getChats", {});
     sendMessage(request);
-    console.log("[getChats] Request:", request);
   };
 
   // ---------------------------------------------------------------------------
@@ -661,7 +651,6 @@ export const useChatWebSocket = () => {
       page_size: 100
     });
     sendMessage(request);
-    console.log("[getChatMessages] Request:", request);
   };
 
   // ---------------------------------------------------------------------------
@@ -674,7 +663,6 @@ export const useChatWebSocket = () => {
       last_read_counter: counter
     });
     sendMessage(request);
-    console.log("[handleReadMessage] Request:", request);
   }
 
 
@@ -772,7 +760,6 @@ export const useChatWebSocket = () => {
   // handleSubscribeToNotfications
   // ---------------------------------------------------------------------------
   const handleSubscribeToNotfications = () => {
-    console.log("[handleSubscribeToNotfications] Subscribing to notifications:");
     sendMessage({
       type: "subscribe",
       channel: "notifications",
