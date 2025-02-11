@@ -102,6 +102,9 @@ export const useChatWebSocket = () => {
         case "delete_message":
           handleReceivedDeleteMessage(message.data);
           break;
+        case "read_message":
+          getChats()
+          break;
         case "new_message":
           const msgData = message.data.message;
           const chatId = message.chat_id || message.data.chat_id;
@@ -165,12 +168,23 @@ export const useChatWebSocket = () => {
   const addMessagesToChat = useCallback((chatId: string, newMsgs: ChatMessage[]) => {
     setMessagesByChat((prev) => {
       const existing = prev[chatId] || [];
-      const merged = [...existing, ...newMsgs].sort(
+      const allMsgs = [...existing, ...newMsgs];
+
+      const uniqueMessages = allMsgs.reduce<ChatMessage[]>((acc, msg) => {
+        if (!acc.find(m => m.id === msg.id)) {
+          acc.push(msg);
+        }
+        return acc;
+      }, []);
+  
+      uniqueMessages.sort(
         (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
       );
-      return { ...prev, [chatId]: merged };
+  
+      return { ...prev, [chatId]: uniqueMessages };
     });
   }, []);
+  
 
   // ---------------------------------------------------------------------------
   // handleChatCreated функция которая обрабатывает создание нового чата
