@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { motion } from "framer-motion"
 import { useLocale, useTranslations } from "next-intl"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useEffect, useState } from "react"
+import { memo, useEffect, useState } from "react"
 import toast from 'react-hot-toast'
 import ChatMenu from "../../components/Chat/ChatMenu/ChatMenu"
 import DeleteMessage from "../../components/Chat/DeleteMessage"
@@ -34,7 +34,6 @@ const ChatMode = () => {
     setNewMessage,
     newMessage,
     sendChatMessage,
-    scrollRef,
     deleteMessage,
     createPrivateChat,
     sendEditMessage,
@@ -190,7 +189,6 @@ const ChatMode = () => {
           newMessage={newMessage}
           sendChatMessage={sendChatMessage}
           handleTyping={handleTyping}
-          scrollRef={scrollRef}
           participants={conversations.find((c) => c.id === selectedConversation)?.participants || []}
           handleOpenDeleteMessage={handleOpenDeleteMessage}
           handlePinMessage={handlePinMessage}
@@ -221,4 +219,4 @@ const ChatMode = () => {
   )
 }
 
-export default ChatMode
+export default memo(ChatMode);

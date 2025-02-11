@@ -4,7 +4,7 @@ import { toast } from '@/components/ui/use-toast'
 import ChatHeader from "@/src/app/components/Chat/ChatHeader"
 import dayjs from "dayjs"
 import { useTranslations } from "next-intl"
-import { useEffect, useState } from "react"
+import { memo, useEffect, useRef, useState } from "react"
 import { getCookie } from "../api/service/cookie"
 import { useGoToMessage } from '../hooks/useGoToMessage'
 import { ChatContentProps, ChatMessage, SelectActions } from "../types/types"
@@ -26,9 +26,7 @@ const ChatContent = ({
   newMessage,
   setNewMessage,
   sendChatMessage,
-  scrollRef,
   handleOpenDeleteMessage,
-  createPrivateChat,
   sendEditMessage,
   setOpenMenu,
   handlePinMessage,
@@ -53,40 +51,55 @@ const ChatContent = ({
   const [lastSeenCounter, setLastSeenCounter] = useState(0);
   const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
   const {mutate: createPrivateChatMutation, isPending: isCreatingPrivateChat} = useCreatePrivateChat();
+  const messagesRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!messagesRef.current) return;
+    messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+  }, [messages, selectedConversation]);
 
   useEffect(() => {
-    const checkVisibleMessage = () => {
-      if (!scrollRef.current) return;
-      const messageElements = scrollRef.current.querySelectorAll(".message-item");
+    if (!messagesRef.current) return;
+    let lastSeenCounter = 0;
+    let scrollTimer: NodeJS.Timeout | null = null;
+    let readTimer: NodeJS.Timeout | null = null;
+
+    const checkVisibleMessages = () => {
+      if (!messagesRef.current) return;
+      const messageElems = messagesRef.current.querySelectorAll<HTMLDivElement>(".message-item");
       let maxVisibleCounter = lastSeenCounter;
-      messageElements.forEach((el) => {
+      messageElems.forEach((el) => {
         const rect = el.getBoundingClientRect();
         if (rect.top >= 0 && rect.bottom <= window.innerHeight) {
-          const counter = parseInt(el.getAttribute("data-counter") || "0", 10);
-          if (counter > maxVisibleCounter) {
-            maxVisibleCounter = counter;
+          const c = parseInt(el.getAttribute("data-counter") || "0", 10);
+          if (c > maxVisibleCounter) {
+            maxVisibleCounter = c;
           }
         }
       });
       if (maxVisibleCounter > lastSeenCounter) {
-        setLastSeenCounter(maxVisibleCounter);
-        handleReadMessage(maxVisibleCounter);
+        lastSeenCounter = maxVisibleCounter;
       }
     };
-
-    const interval = setInterval(checkVisibleMessage, 3000);
-
     const handleScroll = () => {
-      checkVisibleMessage();
+      if (scrollTimer) clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => {
+        checkVisibleMessages();
+      }, 1000);
     };
-    scrollRef.current?.addEventListener("scroll", handleScroll);
-
+    readTimer = setInterval(() => {
+      if (lastSeenCounter > 0) {
+        handleReadMessage(lastSeenCounter);
+      }
+    }, 5000);
+    messagesRef.current.addEventListener("scroll", handleScroll);
+    checkVisibleMessages();
     return () => {
-      clearInterval(interval);
-      scrollRef.current?.removeEventListener("scroll", handleScroll);
+      if (scrollTimer) clearTimeout(scrollTimer);
+      if (readTimer) clearInterval(readTimer);
+      messagesRef.current?.removeEventListener("scroll", handleScroll);
     };
-  }, [lastSeenCounter, selectedConversation, scrollRef]);
-
+  }, [selectedConversation, handleReadMessage]);
+  
   const handleReplyClick = (message: ChatMessage) => {
     setReplyTo(message);
   };
@@ -204,7 +217,7 @@ const ChatContent = ({
         />
       </div>
       <div className="flex-grow overflow-y-auto">
-        <div className="h-[calc(100vh-240px)] overflow-y-auto" ref={scrollRef}>
+        <div className="h-[calc(100vh-240px)] overflow-y-auto" ref={messagesRef}>
           <div className="flex flex-col gap-2 px-4 py-2">
             <div className="flex flex-col gap-1 ">
               {messages
@@ -330,4 +343,4 @@ const ChatContent = ({
   );
 };
 
-export default ChatContent;
+export default memo(ChatContent);
