@@ -1,18 +1,17 @@
 "use client"
 import { toast } from '@/components/ui/use-toast'
+import { useWS } from "@/src/app/api/provider/WebSocketProvider"
 import dayjs from 'dayjs'
 import { useTranslations } from 'next-intl'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast as HotToast } from 'react-hot-toast'
 import { getCookie } from '../api/service/cookie'
-import { useWebSocket } from '../api/service/useWebSocket'
 import { ChatMessage, Conversation, ForwardData, LastMessage, MessagesRecord, ReceivedChats, TypingStatus } from '../types/types'
 
-const WS_URL = process.env.NEXT_PUBLIC_WS_URL || "ws://staging.ai4bi.kz/ws/";
 
 export const useChatWebSocket = () => {
   const t = useTranslations("dashboard")
-  const { sendMessage, isConnected, lastMessage } = useWebSocket(WS_URL);
+  const { sendMessage, isConnected, lastMessage } = useWS();
 
   const [currentUser, setCurrentUser] = useState<string | null>(null);
   const [conversations, setConversations] = useState<Conversation[]>([]);
