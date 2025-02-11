@@ -2,11 +2,11 @@
 import { toast } from '@/components/ui/use-toast'
 import dayjs from 'dayjs'
 import { useTranslations } from 'next-intl'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast as HotToast } from 'react-hot-toast'
 import { getCookie } from '../api/service/cookie'
 import { useWebSocket } from '../api/service/useWebSocket'
-import { ChatMessage, Conversation, ForwardData, LastMessage, ReceivedChats, TypingStatus } from '../types/types'
+import { ChatMessage, Conversation, ForwardData, LastMessage, MessagesRecord, ReceivedChats, TypingStatus } from '../types/types'
 
 const WS_URL = process.env.NEXT_PUBLIC_WS_URL || "ws://staging.ai4bi.kz/ws/";
 
@@ -17,7 +17,7 @@ export const useChatWebSocket = () => {
   const [currentUser, setCurrentUser] = useState<string | null>(null);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messagesByChat, setMessagesByChat] = useState<MessagesRecord>({});
   const [typingStatuses, setTypingStatuses] = useState<TypingStatus[]>([]);
   const typingTimeoutsRef = useRef<{ [chatId: string]: NodeJS.Timeout }>({});
   const [newMessage, setNewMessage] = useState("");
@@ -159,6 +159,19 @@ export const useChatWebSocket = () => {
     console.log("[handleWebSocketMessage] Unhandled message:", message);
   };
 
+  // --------------------------------------
+  // addMessagesToChat функция которая добавляет новые сообщения в чат
+  // --------------------------------------
+  const addMessagesToChat = useCallback((chatId: string, newMsgs: ChatMessage[]) => {
+    setMessagesByChat((prev) => {
+      const existing = prev[chatId] || [];
+      const merged = [...existing, ...newMsgs].sort(
+        (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+      );
+      return { ...prev, [chatId]: merged };
+    });
+  }, []);
+
   // ---------------------------------------------------------------------------
   // handleChatCreated функция которая обрабатывает создание нового чата
   // ---------------------------------------------------------------------------
@@ -234,7 +247,8 @@ export const useChatWebSocket = () => {
   // ---------------------------------------------------------------------------
   // handleMessagesReceived
   // ---------------------------------------------------------------------------
-  const handleMessagesReceived = (msgs: any[]) => {
+  const handleMessagesReceived = useCallback((msgs: any[]) => {
+    if (!selectedConversation) return;
     const transformedMessages: ChatMessage[] = msgs
       .sort((a, b) => new Date(a.send_at).getTime() - new Date(b.send_at).getTime()) 
       .map((message: any) => ({
@@ -256,13 +270,14 @@ export const useChatWebSocket = () => {
         media: message.media?.length > 0 ? message.media : null,
         has_attachements: Boolean(message.media?.length),
       }));
-    setMessages(transformedMessages);
-  };
+    addMessagesToChat(selectedConversation, transformedMessages);
+  }, [selectedConversation]);
 
   // ---------------------------------------------------------------------------
   // handleMessageReceived
   // ---------------------------------------------------------------------------
-  const handleMessageReceived = (msg: any) => {
+  const handleMessageReceived = useCallback((msg: any) => {
+    const chatId = msg.chat_id;
     const realId = msg.message_id
     const replyId = msg.reply_message_id || msg.reply_to || null;
 
@@ -280,11 +295,11 @@ export const useChatWebSocket = () => {
       reply_to: replyId,
       counter: msg.counter,
     };
-
-    // Remove any pending messages with the same content, then add the new message
-    setMessages((prev) => {
-      const filtered = prev.filter((m) => !(m.pending && m.content === msg.content));
-      return [...filtered, newMsg];
+    
+    setMessagesByChat((prev) => {
+      const existingMessages = prev[chatId] || [];
+      const filtered = existingMessages.filter((m) => !(m.pending && m.content === msg.content));
+      return { ...prev, [chatId]: [...filtered, newMsg] };
     });
 
     setConversations((prev) =>
@@ -332,36 +347,44 @@ export const useChatWebSocket = () => {
     if (isSentMessage) {
       sentMessageIdsRef.current.delete(msg.id);
     }
-  };
+  }, []);
 
   // ---------------------------------------------------------------------------
   // handleReceivedEditedMessage
   // ---------------------------------------------------------------------------
-  const handleReceivedEditedMessage = (message: any) => {
-    console.log("handleReceivedEditedMessage", message);
-    setMessages((prev) =>
-      prev.map((m) =>
-        m.id === message.message_id ? { ...m, content: message.content, is_edited: message.is_edited } : m
-      )
-    );
-  };
+  const handleReceivedEditedMessage = useCallback((message: any) => {
+    const { message_id, content, is_edited } = message;
+    setMessagesByChat((prev) => {
+      const updated = { ...prev };
+      for (const cId of Object.keys(updated)) {
+        updated[cId] = updated[cId].map((m) =>
+          m.id === message_id ? { ...m, content, is_edited } : m
+        );
+      }
+      return updated;
+    });
+  }, []);
 
   // ---------------------------------------------------------------------------
   // handleReceivedPinStatusChange
   // ---------------------------------------------------------------------------
-  const handleReceivedPinStatusChange = (message: any, isPinned: boolean) => {
-    console.log(`handleReceivedPin${isPinned ? '' : 'Un'}Message`, message);
-    setMessages((prev) =>
-      prev.map((m) =>
-        m.id === message.message_id ? { ...m, is_pinned: isPinned } : m
-      )
-    );
-  }
+  const handleReceivedPinStatusChange = useCallback((message: any, isPinned: boolean) => {
+    const { message_id } = message;
+    setMessagesByChat((prev) => {
+      const updated = { ...prev };
+      for (const cId of Object.keys(updated)) {
+        updated[cId] = updated[cId].map((m) =>
+          m.id === message_id ? { ...m, is_pinned: isPinned } : m
+        );
+      }
+      return updated;
+    });
+  }, []);
 
   // ---------------------------------------------------------------------------
   // handleNewParticipant
   // ---------------------------------------------------------------------------
-  const handleNewParticipant = (message: any) => {
+  const handleNewParticipant = useCallback((message: any) => {
     const { chat_id, data } = message;
     const { user_id } = data;
 
@@ -374,17 +397,14 @@ export const useChatWebSocket = () => {
       });
       return;
     }
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: `${user_id}-${dayjs().toISOString()}-${Math.random()}`,
-        sender_first_name: "System",
-        sender_last_name: "",
-        content: `User ${user_id} joined the chat`,
-        timestamp: dayjs().toISOString(),
-        chat_id,
-      },
-    ]);
+    addMessagesToChat(chat_id, [{
+      id: `${user_id}-${dayjs().toISOString()}-${Math.random()}`,
+      sender_first_name: "System",
+      sender_last_name: "",
+      content: `User ${user_id} joined the chat`,
+      timestamp: dayjs().toISOString(),
+      chat_id,
+    }]);
     const newChat: Conversation = {
       id: chat_id,
       name: `User ${user_id} Joined`,
@@ -414,7 +434,7 @@ export const useChatWebSocket = () => {
     };
     setConversations((prev) => [...prev, newChat]);
     setSelectedConversation(chat_id);
-  };
+  }, []);
 
   // ---------------------------------------------------------------------------
   // subscribeToChatRoom
@@ -431,35 +451,42 @@ export const useChatWebSocket = () => {
   // ---------------------------------------------------------------------------
   // handlePinMessage
   // ---------------------------------------------------------------------------
-  const handlePinMessage = ({chat_id, message_id}: {chat_id: string, message_id: string}) => {
-      setMessages((prev) =>
-        prev.map((m) =>
-          m.id === message_id ? { ...m, is_pinned: true } : m
-        )
-      );
+  const handlePinMessage = useCallback(({chat_id, message_id}: {chat_id: string, message_id: string}) => {
+      setMessagesByChat((prev) => {
+        const updated = { ...prev };
+        for (const cId of Object.keys(updated)) {
+          updated[cId] = updated[cId].map((m) =>
+            m.id === message_id ? { ...m, is_pinned: true } : m
+        );
+      }
+      return updated;
+    });
   
     sendMessage(createRpcRequest("pinMessage", {
       chat_id,
       message_id
     }));
-  }
+  }, []);
 
   // ---------------------------------------------------------------------------
   // handleUnpinMessage
   // ---------------------------------------------------------------------------
-  const handleUnpinMessage = ({chat_id, message_id}: {chat_id: string, message_id: string}) => {
-
-     setMessages((prev) =>
-        prev.map((m) =>
+  const handleUnpinMessage = useCallback(({chat_id, message_id}: {chat_id: string, message_id: string}) => {
+    setMessagesByChat((prev) => {
+      const updated = { ...prev };
+      for (const cId of Object.keys(updated)) {
+        updated[cId] = updated[cId].map((m) =>
           m.id === message_id ? { ...m, is_pinned: false } : m
-        )
-      );
-
+        );
+      }
+      return updated;
+    });
+    
     sendMessage(createRpcRequest("unpinMessage", {
       chat_id,
       message_id
     }));
-  }
+  }, []);
 
   // ---------------------------------------------------------------------------
   // handleShowNotification
@@ -509,10 +536,16 @@ export const useChatWebSocket = () => {
   // ---------------------------------------------------------------------------
   // handleReceivedDeleteMessage
   // ---------------------------------------------------------------------------
-  const handleReceivedDeleteMessage = (message: any) => {
-    setMessages((prev) => prev.filter((m) => m.id !== message.message_id));
+  const handleReceivedDeleteMessage = useCallback((message: any) => {
+    setMessagesByChat((prev) => {
+      const updated = { ...prev };
+      for (const cId of Object.keys(updated)) {
+        updated[cId] = updated[cId].filter((m) => m.id !== message.message_id);
+      }
+      return updated;
+    });
     setConversations((prev) => prev.map((c) => c.id === message.chat_id ? { ...c, lastMessage: null } : c));
-  }
+  }, []);
 
   // ---------------------------------------------------------------------------
   // handleTypingStatus
@@ -646,7 +679,7 @@ export const useChatWebSocket = () => {
   // ---------------------------------------------------------------------------
   // sendChatMessage
   // ---------------------------------------------------------------------------
-  const sendChatMessage = (reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean) => {
+  const sendChatMessage = useCallback((reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean) => {
     if (!selectedConversation) return;
     const replyId = reply?.id ?? null;
     const rpcId = Date.now().toString();
@@ -666,10 +699,9 @@ export const useChatWebSocket = () => {
       chat_id: selectedConversation,
       reply_to: replyId,
     };
-    console.log("gonna send", pendingMsg)
-    setMessages((prev) => {
-      const filtered = prev.filter((m) => !(m.pending && m.content === content));
-      return [...filtered, pendingMsg];
+    setMessagesByChat((prev) => {
+      const existing = prev[selectedConversation] || [];
+      return { ...prev, [selectedConversation]: [...existing, pendingMsg] };
     });
 
     sentMessageIdsRef.current.add(rpcId);
@@ -690,19 +722,25 @@ export const useChatWebSocket = () => {
     notificationAudioRef.current.play().catch((error) => {
       console.error("Failed to play notification.mp3:", error);
     });
-  };
+  }, [selectedConversation, newMessage, addMessagesToChat, sendMessage]);
 
   // ---------------------------------------------------------------------------
   // deleteMessage
   // ---------------------------------------------------------------------------
-  const deleteMessage = (messageId: string) => {
+  const deleteMessage = useCallback((messageId: string) => {
     if (!selectedConversation) return;
     sendMessage(createRpcRequest("deleteMessage", {
       message_id: messageId,
       chat_id: selectedConversation
     }));
-    setMessages((prev) => prev.filter((m) => m.id !== messageId));
-  };
+    setMessagesByChat((prev) => {
+      const updated = { ...prev };
+      for (const cId of Object.keys(updated)) {
+        updated[cId] = updated[cId].filter((m) => m.id !== messageId);
+      }
+      return updated;
+    });
+  }, [selectedConversation, sendMessage]);
 
   // ---------------------------------------------------------------------------
   // handleEditMessage
@@ -809,7 +847,7 @@ export const useChatWebSocket = () => {
     }, 100);
 
     return () => clearTimeout(scrollTimeout);
-  }, [messages, selectedConversation]);
+  }, [messagesByChat, selectedConversation]);
 
   return {
     // WebSocket states
@@ -823,8 +861,8 @@ export const useChatWebSocket = () => {
     setConversations,
     selectedConversation,
     setSelectedConversation,
-    messages,
-    setMessages,
+    messagesByChat,
+    setMessagesByChat,
     // Draft message
     newMessage,
     setNewMessage,

@@ -29,7 +29,8 @@ const ChatMode = () => {
     isConnected,
     conversations,
     setSelectedConversation,
-    messages,
+    messagesByChat,
+    setMessagesByChat,
     selectedConversation,
     setNewMessage,
     newMessage,
@@ -182,7 +183,7 @@ const ChatMode = () => {
         <ChatContent
           chatId={chatId || ""}
           selectedConversation={selectedConversation}
-          messages={messages}
+          messages={messagesByChat[selectedConversation || ""] || []}
           title={conversations.find((c) => c.id === selectedConversation)?.name || t("chat")}
           isConnected={isConnected}
           setNewMessage={setNewMessage}
