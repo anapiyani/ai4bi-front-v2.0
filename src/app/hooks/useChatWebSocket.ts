@@ -1,23 +1,22 @@
 "use client"
 import { toast } from '@/components/ui/use-toast'
+import { useWS } from "@/src/app/api/provider/WebSocketProvider"
 import dayjs from 'dayjs'
 import { useTranslations } from 'next-intl'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast as HotToast } from 'react-hot-toast'
 import { getCookie } from '../api/service/cookie'
-import { useWebSocket } from '../api/service/useWebSocket'
-import { ChatMessage, Conversation, ForwardData, LastMessage, ReceivedChats, TypingStatus } from '../types/types'
+import { ChatMessage, Conversation, ForwardData, LastMessage, MessagesRecord, ReceivedChats, TypingStatus } from '../types/types'
 
-const WS_URL = process.env.NEXT_PUBLIC_WS_URL || "ws://staging.ai4bi.kz/ws/";
 
 export const useChatWebSocket = () => {
   const t = useTranslations("dashboard")
-  const { sendMessage, isConnected, lastMessage } = useWebSocket(WS_URL);
+  const { sendMessage, isConnected, lastMessage } = useWS();
 
   const [currentUser, setCurrentUser] = useState<string | null>(null);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messagesByChat, setMessagesByChat] = useState<MessagesRecord>({});
   const [typingStatuses, setTypingStatuses] = useState<TypingStatus[]>([]);
   const typingTimeoutsRef = useRef<{ [chatId: string]: NodeJS.Timeout }>({});
   const [newMessage, setNewMessage] = useState("");
@@ -39,7 +38,7 @@ export const useChatWebSocket = () => {
   const sentMessageIdsRef = useRef<Set<string>>(new Set());
 
   // ---------------------------------------------------------------------------
-  // handleWebSocketMessage
+  // handleWebSocketMessage функция которая обрабатывает все сообщения от сервера
   // ---------------------------------------------------------------------------
   const handleWebSocketMessage = (rawMsg: any) => {
     let message: any;
@@ -55,61 +54,61 @@ export const useChatWebSocket = () => {
       return;
     }
 
-    // --- JSONRpc response ---
     if (message.jsonrpc === "2.0" && message.result) {
-      // 1) A newly created/returned chat
       if (message.result.chat_id) {
         handleChatCreated(message.result);
-
-      // 2) A newly created message
       } else if (message.result.message_id) {
         handleMessageReceived(message.result);
-
-      // 3) A list of chats or other data
       } else if (Array.isArray(message.result)) {
         handleChatsReceived(message.result);
-      // 4) A paginated set of messages
       } else if (message.result.count && message.result.messages) {
         handleMessagesReceived(message.result.messages);
       }
       return;
     }
 
-    // --- (B) "subscribe" or "auth" confirmation ---
     if (message.type === "auth" || message.type === "subscribe") {
-      getChats(); // Re-fetch chats whenever we subscribe
+      getChats();
       return;
     }
 
-    // --- (C) Real-time "message" type updates (new_chat, new_message, new_participant, etc.) ---
     if (message.type === "message") {
-      if (message.event === "new_chat") {
-        // Handle a newly created chat
-        handleChatCreated({
-          chat_id: message.data.id,
-          name: message.data.user?.name || `Chat with ${message.data.id}`,
-        });
-      } else if (message.event === "edit_message") {
-        const editedMsg = message.data.message;
-        const formattedEditedMessage = {
-          message_id: editedMsg.message_id,
-          content: editedMsg.content,
-          is_edited: true
-        }
-        handleReceivedEditedMessage(formattedEditedMessage);
-      } else if (message.event === "typing_status") {
-        handleTypingStatus(message.data);
-      } else if (message.event === "pin_message") {
-        handleReceivedPinStatusChange(message.data, true);
-      } else if (message.event === "unpin_message") {
-        handleReceivedPinStatusChange(message.data, false);
-      } else if (message.event === "delete_message") {
-        handleReceivedDeleteMessage(message.data);
-      }else if (message.event === "new_message") {
-        const msgData = message.data.message;
-        const chatId = message.chat_id || message.data.chat_id;
-        if (message.channel?.startsWith("chat_room")) {
-          const formattedMessage = {
+      switch (message.event) {
+        case "new_chat":
+          handleChatCreated({
+            chat_id: message.data.id,
+            name: message.data.user?.name || `Chat with ${message.data.id}`,
+          });
+          break;
+        case "edit_message":
+          const editedMsg = message.data.message;
+          const formattedEditedMessage = {
+            message_id: editedMsg.message_id,
+            content: editedMsg.content,
+            is_edited: true
+          }
+          handleReceivedEditedMessage(formattedEditedMessage);
+          break;
+        case "typing_status":
+          handleTypingStatus(message.data);
+          break;
+        case "pin_message":
+          handleReceivedPinStatusChange(message.data, true);
+          break;
+        case "unpin_message":
+          handleReceivedPinStatusChange(message.data, false);
+          break;
+        case "delete_message":
+          handleReceivedDeleteMessage(message.data);
+          break;
+        case "read_message":
+          getChats()
+          break;
+        case "new_message":
+          const msgData = message.data.message;
+          const chatId = message.chat_id || message.data.chat_id;
+          if (message.channel?.startsWith("chat_room")) {
+            const formattedMessage = {
               message_id: msgData.message_id,
               chat_id: chatId,
               sender_first_name: msgData.sender_first_name,
@@ -125,52 +124,68 @@ export const useChatWebSocket = () => {
               reply_message_id: msgData.reply_message_id,
               media: msgData.media,
               is_pinned: msgData.is_pinned,
-          };
-          handleMessageReceived(formattedMessage);
-        } 
-        else if (message.channel?.startsWith("chat_updates")) {
-          getChats();
-          setConversations((prev) =>
-            prev.map((c) => (c.id === chatId ? { ...c, lastMessage: { ...msgData, is_edited: msgData.is_edited || false } } : c))
-          );
-          const isNotFromCurrentUser = String(message.data.message.sender_id) !== String(currentUserRef.current);
-          const isInDifferentChat = message.data.message.chat_id !== selectedConversation;
-      
-          if (isNotFromCurrentUser && isInDifferentChat) {
-            notification2AudioRef.current.play().catch((error) => {
-              console.error("Failed to play notification2.mp3:", error);
-            });
+            };
+            handleMessageReceived(formattedMessage);
+          } 
+          else if (message.channel?.startsWith("chat_updates")) {
+            getChats();
+            setConversations((prev) =>
+              prev.map((c) => (c.id === chatId ? { ...c, lastMessage: { ...msgData, is_edited: msgData.is_edited || false } } : c))
+            );
+            const isNotFromCurrentUser = String(message.data.message.sender_id) !== String(currentUserRef.current);
+            const isInDifferentChat = message.data.message.chat_id !== selectedConversation;
+        
+            if (isNotFromCurrentUser && isInDifferentChat) {
+              notification2AudioRef.current.play().catch((error) => {
+                console.error("Failed to play notification2.mp3:", error);
+              });
+            }
+        
+            if (message.data.message.message_id) {
+              sentMessageIdsRef.current.delete(message.data.message.message_id);
+            }
           }
-      
-          if (message.data.message.message_id) {
-            sentMessageIdsRef.current.delete(message.data.message.message_id);
-          }
-        }
-      } else if (message.event === "new_participant") {
-        handleNewParticipant(message);
+          break;
+        case "new_participant":
+          handleNewParticipant(message);
+          break;
       }
       return;
-    // 5) User mentioned in a message in another chat
     } else if (message.type === "notifications") {
       handleShowNotification(message);
     }
-
-    // --- (D) Other message types (e.g. "message_received" ack) ---
     if (message.type === "message_received") {
       console.log("[handleWebSocketMessage] message_received ack:", message);
       return;
     }
-
-    // --- (E) Fallback / unhandled ---
-    if (message.error)
     console.log("[handleWebSocketMessage] Unhandled message:", message);
   };
 
+  // --------------------------------------
+  // addMessagesToChat функция которая добавляет новые сообщения в чат
+  // --------------------------------------
+  const addMessagesToChat = useCallback((chatId: string, newMsgs: ChatMessage[]) => {
+    setMessagesByChat((prev) => {
+      const existing = prev[chatId] || [];
+      const allMsgs = [...existing, ...newMsgs];
+      const uniqueMessages = allMsgs.reduce<ChatMessage[]>((acc, msg) => {
+        if (!acc.find(m => m.id === msg.id)) {
+          acc.push(msg);
+        }
+        return acc;
+      }, []);
+      uniqueMessages.sort(
+        (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+      );
+      return { ...prev, [chatId]: uniqueMessages };
+    });
+  }, []);
+  
+
   // ---------------------------------------------------------------------------
-  // handleChatCreated
+  // handleChatCreated функция которая обрабатывает создание нового чата
   // ---------------------------------------------------------------------------
   const handleChatCreated = (data: any) => {
-    console.log("[handleChatCreated] Chat created or received:", data);
     const newChat: Conversation = {
       id: data.chat_id,
       name: data.name || `Chat ${data.chat_id}`,
@@ -207,14 +222,12 @@ export const useChatWebSocket = () => {
     });
 
     setSelectedConversation(data.chat_id);
-    subscribeToChatRoom(data.chat_id);
   };
 
   // ---------------------------------------------------------------------------
   // handleChatsReceived
   // ---------------------------------------------------------------------------
   const handleChatsReceived = (chats: ReceivedChats[]) => {
-    console.log("[handleChatsReceived] Chats received:", chats);
     const transformed = chats.map((chat) => ({
       id: chat.chat_id,
       name: chat.name || `Chat ${chat.chat_id}`,
@@ -228,9 +241,22 @@ export const useChatWebSocket = () => {
   };
 
   // ---------------------------------------------------------------------------
+  // createRPCRequest функция для отправки RPC запросов
+  // ---------------------------------------------------------------------------
+  function createRpcRequest(method: string, params: Record<string, any> = {}): any {
+    return {
+      jsonrpc: "2.0",
+      method,
+      params,
+      id: Date.now().toString(),
+    };
+  }
+
+  // ---------------------------------------------------------------------------
   // handleMessagesReceived
   // ---------------------------------------------------------------------------
-  const handleMessagesReceived = (msgs: any[]) => {
+  const handleMessagesReceived = useCallback((msgs: any[]) => {
+    if (!selectedConversation) return;
     const transformedMessages: ChatMessage[] = msgs
       .sort((a, b) => new Date(a.send_at).getTime() - new Date(b.send_at).getTime()) 
       .map((message: any) => ({
@@ -252,13 +278,14 @@ export const useChatWebSocket = () => {
         media: message.media?.length > 0 ? message.media : null,
         has_attachements: Boolean(message.media?.length),
       }));
-    setMessages(transformedMessages);
-  };
+    addMessagesToChat(selectedConversation, transformedMessages);
+  }, [selectedConversation]);
 
   // ---------------------------------------------------------------------------
   // handleMessageReceived
   // ---------------------------------------------------------------------------
-  const handleMessageReceived = (msg: any) => {
+  const handleMessageReceived = useCallback((msg: any) => {
+    const chatId = msg.chat_id;
     const realId = msg.message_id
     const replyId = msg.reply_message_id || msg.reply_to || null;
 
@@ -276,11 +303,11 @@ export const useChatWebSocket = () => {
       reply_to: replyId,
       counter: msg.counter,
     };
-
-    // Remove any pending messages with the same content, then add the new message
-    setMessages((prev) => {
-      const filtered = prev.filter((m) => !(m.pending && m.content === msg.content));
-      return [...filtered, newMsg];
+    
+    setMessagesByChat((prev) => {
+      const existingMessages = prev[chatId] || [];
+      const filtered = existingMessages.filter((m) => !(m.pending && m.content === msg.content));
+      return { ...prev, [chatId]: [...filtered, newMsg] };
     });
 
     setConversations((prev) =>
@@ -328,36 +355,44 @@ export const useChatWebSocket = () => {
     if (isSentMessage) {
       sentMessageIdsRef.current.delete(msg.id);
     }
-  };
+  }, []);
 
   // ---------------------------------------------------------------------------
   // handleReceivedEditedMessage
   // ---------------------------------------------------------------------------
-  const handleReceivedEditedMessage = (message: any) => {
-    console.log("handleReceivedEditedMessage", message);
-    setMessages((prev) =>
-      prev.map((m) =>
-        m.id === message.message_id ? { ...m, content: message.content, is_edited: message.is_edited } : m
-      )
-    );
-  };
+  const handleReceivedEditedMessage = useCallback((message: any) => {
+    const { message_id, content, is_edited } = message;
+    setMessagesByChat((prev) => {
+      const updated = { ...prev };
+      for (const cId of Object.keys(updated)) {
+        updated[cId] = updated[cId].map((m) =>
+          m.id === message_id ? { ...m, content, is_edited } : m
+        );
+      }
+      return updated;
+    });
+  }, []);
 
   // ---------------------------------------------------------------------------
   // handleReceivedPinStatusChange
   // ---------------------------------------------------------------------------
-  const handleReceivedPinStatusChange = (message: any, isPinned: boolean) => {
-    console.log(`handleReceivedPin${isPinned ? '' : 'Un'}Message`, message);
-    setMessages((prev) =>
-      prev.map((m) =>
-        m.id === message.message_id ? { ...m, is_pinned: isPinned } : m
-      )
-    );
-  }
+  const handleReceivedPinStatusChange = useCallback((message: any, isPinned: boolean) => {
+    const { message_id } = message;
+    setMessagesByChat((prev) => {
+      const updated = { ...prev };
+      for (const cId of Object.keys(updated)) {
+        updated[cId] = updated[cId].map((m) =>
+          m.id === message_id ? { ...m, is_pinned: isPinned } : m
+        );
+      }
+      return updated;
+    });
+  }, []);
 
   // ---------------------------------------------------------------------------
   // handleNewParticipant
   // ---------------------------------------------------------------------------
-  const handleNewParticipant = (message: any) => {
+  const handleNewParticipant = useCallback((message: any) => {
     const { chat_id, data } = message;
     const { user_id } = data;
 
@@ -370,17 +405,14 @@ export const useChatWebSocket = () => {
       });
       return;
     }
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: `${user_id}-${dayjs().toISOString()}-${Math.random()}`,
-        sender_first_name: "System",
-        sender_last_name: "",
-        content: `User ${user_id} joined the chat`,
-        timestamp: dayjs().toISOString(),
-        chat_id,
-      },
-    ]);
+    addMessagesToChat(chat_id, [{
+      id: `${user_id}-${dayjs().toISOString()}-${Math.random()}`,
+      sender_first_name: "System",
+      sender_last_name: "",
+      content: `User ${user_id} joined the chat`,
+      timestamp: dayjs().toISOString(),
+      chat_id,
+    }]);
     const newChat: Conversation = {
       id: chat_id,
       name: `User ${user_id} Joined`,
@@ -410,14 +442,12 @@ export const useChatWebSocket = () => {
     };
     setConversations((prev) => [...prev, newChat]);
     setSelectedConversation(chat_id);
-    subscribeToChatRoom(chat_id);
-  };
+  }, []);
 
   // ---------------------------------------------------------------------------
   // subscribeToChatRoom
   // ---------------------------------------------------------------------------
   const subscribeToChatRoom = (chatId: string) => {
-    console.log("[subscribeToChatRoom] Subscribing to chat room:", chatId);
     sendMessage({
       type: "subscribe",
       channel: "chat_room",
@@ -428,55 +458,47 @@ export const useChatWebSocket = () => {
   // ---------------------------------------------------------------------------
   // handlePinMessage
   // ---------------------------------------------------------------------------
-  const handlePinMessage = ({chat_id, message_id}: {chat_id: string, message_id: string}) => {
-      setMessages((prev) =>
-        prev.map((m) =>
-          m.id === message_id ? { ...m, is_pinned: true } : m
-        )
-      );
+  const handlePinMessage = useCallback(({chat_id, message_id}: {chat_id: string, message_id: string}) => {
+      setMessagesByChat((prev) => {
+        const updated = { ...prev };
+        for (const cId of Object.keys(updated)) {
+          updated[cId] = updated[cId].map((m) =>
+            m.id === message_id ? { ...m, is_pinned: true } : m
+        );
+      }
+      return updated;
+    });
   
-    const rpcId = Date.now().toString();
-    const request = {
-      jsonrpc: "2.0",
-      method: "pinMessage",
-      params: {
-        chat_id: chat_id,
-        message_id: message_id,
-      },
-      id: rpcId,
-    }
-    sendMessage(request)
-  }
+    sendMessage(createRpcRequest("pinMessage", {
+      chat_id,
+      message_id
+    }));
+  }, []);
 
   // ---------------------------------------------------------------------------
   // handleUnpinMessage
   // ---------------------------------------------------------------------------
-  const handleUnpinMessage = ({chat_id, message_id}: {chat_id: string, message_id: string}) => {
-
-     setMessages((prev) =>
-        prev.map((m) =>
+  const handleUnpinMessage = useCallback(({chat_id, message_id}: {chat_id: string, message_id: string}) => {
+    setMessagesByChat((prev) => {
+      const updated = { ...prev };
+      for (const cId of Object.keys(updated)) {
+        updated[cId] = updated[cId].map((m) =>
           m.id === message_id ? { ...m, is_pinned: false } : m
-        )
-      );
-
-    const rpcId = Date.now().toString();
-    const request = {
-      jsonrpc: "2.0",
-      method: "unpinMessage",
-      params: {
-        chat_id: chat_id,
-        message_id: message_id,
-      },
-      id: rpcId,
-    }
-    sendMessage(request)
-  }
+        );
+      }
+      return updated;
+    });
+    
+    sendMessage(createRpcRequest("unpinMessage", {
+      chat_id,
+      message_id
+    }));
+  }, []);
 
   // ---------------------------------------------------------------------------
   // handleShowNotification
   // ---------------------------------------------------------------------------
   const handleShowNotification = (message: any) => {
-    console.log("notification data: ", message.data);
     HotToast((t) => (
       message.data.content
     ), {
@@ -501,42 +523,35 @@ export const useChatWebSocket = () => {
   // ---------------------------------------------------------------------------
   const handleGetChatInfo = () => {
     if (!selectedConversation) return;
-    const rpcId = Date.now().toString();
-    sendMessage({
-      jsonrpc: "2.0",
-      method: "getChatInfo",
-      params: {
-        chat_id: selectedConversation,
-      },
-      id: rpcId,
-    });
+    sendMessage(createRpcRequest("getChatInfo", {
+      chat_id: selectedConversation
+    }));
   }
 
   // ---------------------------------------------------------------------------
   // handleTyping
   // ---------------------------------------------------------------------------
   const handleTyping = (status: "typing" | "recording" | "stopped", chat_id: string) => {
-    const rpcId = Date.now().toString();
-    const request = {
-      jsonrpc: "2.0",
-      method: "setTypingStatus",
-      params: {
-        status: status,
-        chat_id: chat_id,
-        user_first_name: getCookie('first_name'),
-      },
-      id: rpcId,
-    }
-    sendMessage(request)
+    sendMessage(createRpcRequest("setTypingStatus", {
+      status,
+      chat_id,
+      user_first_name: getCookie('first_name')
+    }));
   }
 
   // ---------------------------------------------------------------------------
   // handleReceivedDeleteMessage
   // ---------------------------------------------------------------------------
-  const handleReceivedDeleteMessage = (message: any) => {
-    setMessages((prev) => prev.filter((m) => m.id !== message.message_id));
+  const handleReceivedDeleteMessage = useCallback((message: any) => {
+    setMessagesByChat((prev) => {
+      const updated = { ...prev };
+      for (const cId of Object.keys(updated)) {
+        updated[cId] = updated[cId].filter((m) => m.id !== message.message_id);
+      }
+      return updated;
+    });
     setConversations((prev) => prev.map((c) => c.id === message.chat_id ? { ...c, lastMessage: null } : c));
-  }
+  }, []);
 
   // ---------------------------------------------------------------------------
   // handleTypingStatus
@@ -574,7 +589,6 @@ export const useChatWebSocket = () => {
   // unsubscribeToChatRoom
   // ---------------------------------------------------------------------------
   const unsubscribeToChatRoom = (chatId: string) => {
-    console.log("[unsubscribeToChatRoom] Unsubscribing from chat room:", chatId);
     sendMessage({
       type: "unsubscribe",
       channel: "chat_room",
@@ -586,32 +600,21 @@ export const useChatWebSocket = () => {
   // createPrivateChat (JSON-RPC request)
   // ---------------------------------------------------------------------------
   const createPrivateChat = (userId: string) => {
-    const rpcId = Date.now().toString();
-    sendMessage({
-      jsonrpc: "2.0",
-      method: "createPrivateChat",
-      params: { user_id: userId },
-      id: rpcId,
-    });
+    sendMessage(createRpcRequest("createPrivateChat", {
+      user_id: userId
+    }));
   };
 
   // ---------------------------------------------------------------------------
   // createAuctionChat (JSON-RPC request)
   // ---------------------------------------------------------------------------
   const createAuctionChat = (auctionName: string, auctionId: number) => {
-    const rpcId = Date.now().toString();
-    const request = {
-      jsonrpc: "2.0",
-      method: "createAuctionChat",
-      params: {
-        name: auctionName,
-        type: "auction_chat",
-        auction_id: auctionId,
-        participants: [],
-      },
-      id: rpcId,
-    };
-    console.log("[createAuctionChat] Request:", request);
+    const request = createRpcRequest("createAuctionChat", {
+      name: auctionName,
+      type: "auction_chat", 
+      auction_id: auctionId,
+      participants: []
+    });
     sendMessage(request);
   };
 
@@ -620,17 +623,11 @@ export const useChatWebSocket = () => {
   // ---------------------------------------------------------------------------
   const addAuctionChatParticipant = (user_id: string) => {
     if (!selectedConversation) return;
-    const rpcId = Date.now().toString();
-    sendMessage({
-      jsonrpc: "2.0",
-      method: "addParticipant",
-      params: {
-        user_id,
-        chat_id: selectedConversation,
-        role: "user",
-      },
-      id: rpcId,
-    });
+    sendMessage(createRpcRequest("addParticipant", {
+      user_id,
+      chat_id: selectedConversation,
+      role: "user"
+    }));
   };
 
   // ---------------------------------------------------------------------------
@@ -638,15 +635,8 @@ export const useChatWebSocket = () => {
   // ---------------------------------------------------------------------------
   const getChats = () => {
     if (!currentUser) return;
-    const rpcId = Date.now().toString();
-    const request = {
-      jsonrpc: "2.0",
-      method: "getChats",
-      id: rpcId,
-      params: {},
-    };
+    const request = createRpcRequest("getChats", {});
     sendMessage(request);
-    console.log("[getChats] Request:", request);
   };
 
   // ---------------------------------------------------------------------------
@@ -654,19 +644,12 @@ export const useChatWebSocket = () => {
   // ---------------------------------------------------------------------------
   const getChatMessages = () => {
     if (!selectedConversation) return;
-    const rpcId = Date.now().toString();
-    const request = {
-      jsonrpc: "2.0",
-      method: "getMessages",
-      id: rpcId,
-      params: {
-        chat_id: selectedConversation,
-        page: 1,
-        page_size: 100,
-      },
-    };
+    const request = createRpcRequest("getMessages", {
+      chat_id: selectedConversation,
+      page: 1,
+      page_size: 100
+    });
     sendMessage(request);
-    console.log("[getChatMessages] Request:", request);
   };
 
   // ---------------------------------------------------------------------------
@@ -674,18 +657,11 @@ export const useChatWebSocket = () => {
   // ---------------------------------------------------------------------------
   const handleReadMessage = (counter: number) => {
     if (!selectedConversation) return;
-    const rpcId = Date.now().toString();
-    const request = {
-      jsonrpc: "2.0",
-      method: "readMessage",
-      params: {
-        chat_id: selectedConversation,
-        last_read_counter: counter,
-      },
-      id: rpcId,
-    };
+    const request = createRpcRequest("readMessage", {
+      chat_id: selectedConversation,
+      last_read_counter: counter
+    });
     sendMessage(request);
-    console.log("[handleReadMessage] Request:", request);
   }
 
 
@@ -694,23 +670,17 @@ export const useChatWebSocket = () => {
   // ---------------------------------------------------------------------------
   const handleForwardMessage = (forwardData: ForwardData) => {
     const { message_ids, source_chat_id, target_chat_id } = forwardData;
-    const rpcId = Date.now().toString();
-    sendMessage({
-      jsonrpc: "2.0",
-      method: "forwardMessages",
-      id: rpcId,
-      params: {
-        message_ids,
-        source_chat_id,
-        target_chat_id,
-      },
-    });
+    sendMessage(createRpcRequest("forwardMessages", {
+      message_ids,
+      source_chat_id,
+      target_chat_id
+    }));
   }
 
   // ---------------------------------------------------------------------------
   // sendChatMessage
   // ---------------------------------------------------------------------------
-  const sendChatMessage = (reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean) => {
+  const sendChatMessage = useCallback((reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean) => {
     if (!selectedConversation) return;
     const replyId = reply?.id ?? null;
     const rpcId = Date.now().toString();
@@ -730,77 +700,65 @@ export const useChatWebSocket = () => {
       chat_id: selectedConversation,
       reply_to: replyId,
     };
-    console.log("gonna send", pendingMsg)
-    setMessages((prev) => {
-      const filtered = prev.filter((m) => !(m.pending && m.content === content));
-      return [...filtered, pendingMsg];
+    setMessagesByChat((prev) => {
+      const existing = prev[selectedConversation] || [];
+      return { ...prev, [selectedConversation]: [...existing, pendingMsg] };
     });
 
     sentMessageIdsRef.current.add(rpcId);
 
     // Send as JSON-RPC
-    sendMessage({
-        jsonrpc: "2.0",
-        method: "sendMessage",
-        params: {
-          chat_id: selectedConversation,
-          content,
-          is_pinned: false,
-          has_attachments: !!media?.length,
-          media: media || null,
-          is_voice_message: is_voice_message ?? false,
-          reply_to: replyId,
-          timestamp: dayjs().toISOString(),
-        },
-        id: rpcId,
-    });
+    sendMessage(createRpcRequest("sendMessage", {
+      chat_id: selectedConversation,
+      content,
+      is_pinned: false,
+      has_attachments: !!media?.length,
+      media: media || null,
+      is_voice_message: is_voice_message ?? false,
+      reply_to: replyId,
+      timestamp: dayjs().toISOString()
+    }));
+    
     setNewMessage("");
     notificationAudioRef.current.play().catch((error) => {
       console.error("Failed to play notification.mp3:", error);
     });
-  };
+  }, [selectedConversation, newMessage, addMessagesToChat, sendMessage]);
 
   // ---------------------------------------------------------------------------
   // deleteMessage
   // ---------------------------------------------------------------------------
-  const deleteMessage = (messageId: string) => {
+  const deleteMessage = useCallback((messageId: string) => {
     if (!selectedConversation) return;
-    const rpcId = Date.now().toString();
-    sendMessage({
-      jsonrpc: "2.0",
-      method: "deleteMessage",
-      id: rpcId,
-      params: {
-        message_id: messageId,
-        chat_id: selectedConversation,
-      },
+    sendMessage(createRpcRequest("deleteMessage", {
+      message_id: messageId,
+      chat_id: selectedConversation
+    }));
+    setMessagesByChat((prev) => {
+      const updated = { ...prev };
+      for (const cId of Object.keys(updated)) {
+        updated[cId] = updated[cId].filter((m) => m.id !== messageId);
+      }
+      return updated;
     });
-    setMessages((prev) => prev.filter((m) => m.id !== messageId));
-  };
+  }, [selectedConversation, sendMessage]);
 
   // ---------------------------------------------------------------------------
   // handleEditMessage
   // ---------------------------------------------------------------------------
   const sendEditMessage = (message: ChatMessage) => {
     if (!selectedConversation) return;
-    const rpcId = Date.now().toString();
-    sendMessage({
-      jsonrpc: "2.0",
-      method: "editMessage",
-      id: rpcId,
-      params: {
-        message_id: message.id,
-        chat_id: selectedConversation,
-        content: message.content,
-      },
-    });
+    sendMessage(createRpcRequest("editMessage", {
+      message_id: message.id,
+      chat_id: selectedConversation,
+      content: message.content
+    }));
   };
 
   // ---------------------------------------------------------------------------
   // handleSubscribeToNotfications
   // ---------------------------------------------------------------------------
   const handleSubscribeToNotfications = () => {
-    console.log("[handleSubscribeToNotfications] Subscribing to notifications:");
     sendMessage({
       type: "subscribe",
       channel: "notifications",
@@ -818,10 +776,13 @@ export const useChatWebSocket = () => {
     // Subscribe to the newly selected conversation
     if (selectedConversation && isConnected) {
       subscribeToChatRoom(selectedConversation);
-      handleSubscribeToNotfications();
     }
     prevConversationRef.current = selectedConversation;
   }, [selectedConversation, isConnected]);
+
+  useEffect(() => {
+    handleSubscribeToNotfications();
+  }, [isConnected]);
 
   // ---------------------------------------------------------------------------
   // Initialize currentUser from cookies
@@ -886,7 +847,7 @@ export const useChatWebSocket = () => {
     }, 100);
 
     return () => clearTimeout(scrollTimeout);
-  }, [messages, selectedConversation]);
+  }, [messagesByChat, selectedConversation]);
 
   return {
     // WebSocket states
@@ -900,8 +861,8 @@ export const useChatWebSocket = () => {
     setConversations,
     selectedConversation,
     setSelectedConversation,
-    messages,
-    setMessages,
+    messagesByChat,
+    setMessagesByChat,
     // Draft message
     newMessage,
     setNewMessage,

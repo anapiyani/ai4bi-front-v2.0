@@ -78,6 +78,11 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        neutrals: {
+          DEFAULT: "#555E68",
+          secondary: "#F5F5F5",
+          muted: "#737373"
+        },
         'bi-gray': '#555E68',
         'sec-txt': '#32383E',
         "muted-foreground": "#64748B",

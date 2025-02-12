@@ -144,7 +144,10 @@
 		"go to the table": "Go to the table",
 		"technical-council-date": "Technical council date",
 		"auction-date": "Auction date",
-		"participants": "Participants"
+		"participants": "Participants",
+		"leave-chat": "Leave chat",
+		"add-participant": "Add participant",
+		"search-by-name/email": "Search by name/email"
 	}
 }
 

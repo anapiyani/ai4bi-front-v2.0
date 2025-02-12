@@ -145,7 +145,10 @@
 		"go to the table": "Жүйеге өту",
 		"technical-council-date": "Тех. кеңестің күні",
 		"auction-date": "Тендердің күні",
-		"participants": "Қатысушылар"
+		"participants": "Қатысушылар",
+		"leave-chat": "Чаттан шығу",
+		"add-participant": "Қатысушы қосу",
+		"search-by-name/email": "Аты бойынша/email бойынша іздеу"
 	}
 }
 
