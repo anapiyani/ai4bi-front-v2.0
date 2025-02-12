@@ -140,7 +140,6 @@ export type ChatContentProps = {
   newMessage: string;
   setNewMessage: (message: string) => void;
   sendChatMessage: (reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean) => void;
-  scrollRef: React.RefObject<HTMLDivElement>;
   handleOpenDeleteMessage: (messageId: string | string[]) => void;
   createPrivateChat: (userId: string) => void;
   sendEditMessage: (message: ChatMessage) => void;
@@ -244,3 +243,7 @@ export type ReplyToMessage = {
       name: string;
     }[]
   } | null;
+
+export type MessagesRecord = {
+	[chatId: string]: ChatMessage[]
+}

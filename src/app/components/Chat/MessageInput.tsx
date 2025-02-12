@@ -357,7 +357,6 @@ const MessageInput = ({
             <motion.button
               key="send-icon"
               type="submit"
-              onClick={handleSend}
               className="bg-primary rounded-full p-2"
               initial={{ scale: 0.7, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
