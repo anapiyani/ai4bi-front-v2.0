@@ -394,9 +394,7 @@ export const useChatWebSocket = () => {
   // ---------------------------------------------------------------------------
   const handleNewParticipant = useCallback((message: any) => {
     const { chat_id, data } = message;
-    const { user_id } = data;
 
-    // If the chat already exists in our list, we may do something else
     const chatExists = conversations.some((conv) => conv.id === chat_id);
     if (chatExists) {
       toast({
@@ -405,42 +403,7 @@ export const useChatWebSocket = () => {
       });
       return;
     }
-    addMessagesToChat(chat_id, [{
-      id: `${user_id}-${dayjs().toISOString()}-${Math.random()}`,
-      sender_first_name: "System",
-      sender_last_name: "",
-      content: `User ${user_id} joined the chat`,
-      timestamp: dayjs().toISOString(),
-      chat_id,
-    }]);
-    const newChat: Conversation = {
-      id: chat_id,
-      name: `User ${user_id} Joined`,
-      chat_type: "auction_chat",
-      lastMessage: {
-        chat_id: chat_id,
-        content: `User ${user_id} joined the chat`,
-        counter: null,
-        deleted_at: null,
-        delivered_at: null,
-        edited_at: null,
-        is_deleted: false,
-        is_edited: false,
-        media_ids: null,
-        message_id: null,
-        has_attachements: false,
-        media: null,
-        is_pinned: false,
-        reply_message_id: null,
-        send_at: null,
-        sender_first_name: null,
-        sender_id: null,
-        sender_last_name: null,
-        type: null,
-      },
-      participants: []
-    };
-    setConversations((prev) => [...prev, newChat]);
+    getChats();
     setSelectedConversation(chat_id);
   }, []);
 
@@ -627,6 +590,20 @@ export const useChatWebSocket = () => {
       user_id,
       chat_id: selectedConversation,
       role: "user"
+    }));
+  };
+
+  // ---------------------------------------------------------------------------
+  // Add participants to auction chat (JSON-RPC request)
+  // ---------------------------------------------------------------------------
+  const addParticipantsToAuctionChat = (user_ids: string[]) => {
+    if (!selectedConversation) return;
+    sendMessage(createRpcRequest("batchAddParticipants", {
+      participants: user_ids.map((id: string) => ({
+        user_id: id,
+        chat_id: selectedConversation,
+        role: "user"
+      }))
     }));
   };
 
@@ -881,6 +858,7 @@ export const useChatWebSocket = () => {
     handleUnpinMessage,
     handleForwardMessage,
     handleTyping,
+    addParticipantsToAuctionChat,
     handleReadMessage,
     typingStatuses,
   };

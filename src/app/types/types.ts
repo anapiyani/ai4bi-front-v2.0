@@ -204,6 +204,20 @@ export type ForwardData = {
 	target_chat_id: string;
 }
 
+export type AutoCompleteResponse = {
+	created_at: string;
+	deleted_at: string | null;
+	email: string;
+	first_name: string;
+	last_name: string;
+	middle_name: string;
+	phone: string;
+	role: string;
+	updated_at: string | null;
+	username: string;
+	uuid: string;
+}
+
 export type TypingStatus = {
 	chat_id: string;
 	user_id: string;

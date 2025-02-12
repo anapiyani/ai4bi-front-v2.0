@@ -43,7 +43,8 @@ const ChatMode = () => {
     handleForwardMessage,
     handleTyping,
     typingStatuses,
-    handleReadMessage
+    handleReadMessage,
+    addParticipantsToAuctionChat
   } = useChatWebSocket()
 
   const handleItemClick = (id: string) => {
@@ -212,6 +213,7 @@ const ChatMode = () => {
             setOpenMenu={setOpenMenu}
             name={conversations.find((c) => c.id === selectedConversation)?.name || t("chat")}
             participants={conversations.find((c) => c.id === selectedConversation)?.participants || []}
+            addParticipantsToAuctionChat={addParticipantsToAuctionChat}
           />
         </div>
       )}

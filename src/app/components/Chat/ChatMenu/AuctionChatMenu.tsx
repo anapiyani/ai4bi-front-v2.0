@@ -1,19 +1,39 @@
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/Checkbox'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { ChatParticipants } from '@/src/app/types/types'
+import { AutoCompleteResponse, ChatParticipants } from '@/src/app/types/types'
 import { useState } from 'react'
 import NotificationBell from '../../Alerts/Notification/NotificationBell'
 import Icons from '../../Icons'
+import useAutoComplete from './hooks/useAutocomplete'
 
+type AuctionChatMenuProps = {
+	name: string;
+	status: string;
+	region: string;
+	construction: string;
+	project_name: string;
+	portal_id: string;
+	lot_information: string;
+	auction_date: string;
+	technical_council_date: string;
+	participants: ChatParticipants[];
+	t: any;
+	addParticipantsToAuctionChat: (user_ids: string[]) => void;
+}
 
 const AuctionChatMenu = (
-	{name, status, region, construction, project_name, portal_id, lot_information, auction_date, technical_council_date, participants, t}
-	: 
-	{name: string, status: string, region: string, construction: string, project_name: string, portal_id: string, lot_information: string, auction_date: string, technical_council_date: string, participants: ChatParticipants[], t: any}) => {
-		const [openAddParticipant, setOpenAddParticipant] = useState<boolean>(false);
-		const [search, setSearch] = useState<string>("");
-		const [selectedParticipants, setSelectedParticipants] = useState<string[]>([]);
+	{name, status, region, construction, project_name, portal_id, lot_information, auction_date, technical_council_date, participants, t, addParticipantsToAuctionChat}
+	: AuctionChatMenuProps) => {
+	const [openAddParticipant, setOpenAddParticipant] = useState<boolean>(false);
+	const { results, handleSearch, isFetching } = useAutoComplete();
+	const [selectedParticipants, setSelectedParticipants] = useState<AutoCompleteResponse[]>([]);
+
+	const handleAddParticipants = () => {
+		addParticipantsToAuctionChat(selectedParticipants.map((participant) => participant.uuid));
+		setOpenAddParticipant(false);
+	}
 
 	return (
 		<div className="flex flex-col gap-4">
@@ -69,11 +89,11 @@ const AuctionChatMenu = (
 							{
 								participants.map((participant) => (
 									<div className='flex flex-col gap-0.5' key={participant.chat_participant_id}>
-										<div className='flex items-center gap-2 justify-center'>
+										<div className='flex items-center gap-2 my-1 justify-center'>
 											<div className='w-6 h-6 rounded-full bg-transparent border border-border bg-muted flex items-center justify-center'>
 												{participant.username.charAt(0).toUpperCase()}
 											</div>
-											<p className='text-sm'>{participant.username}</p>
+											<p className='text-base'>{participant.username}</p>
 										</div>
 									</div>
 								))
@@ -82,13 +102,52 @@ const AuctionChatMenu = (
 							) : (
 								<div className='flex flex-col gap-2 w-full justify-center items-start'>
 									<div className="flex gap-2 items-center w-full">
-										<Input placeholder={t("search-by-name/email")} />
-										<Button className='bg-primary text-white hover:bg-primary/90'>
+										<Input onChange={handleSearch} placeholder={t("search-by-name/email")} />
+										<Button disabled={selectedParticipants.length === 0} onClick={handleAddParticipants} className='bg-primary text-white hover:bg-primary/90'>
 											<Icons.Plus fill='white' />
 										</Button>
 									</div>
-									<div className='flex flex-col gap-2 w-full justify-center items-start'>
-										  {/* search results */}
+									<div className='flex flex-col w-full justify-center items-start'>
+										{
+											selectedParticipants.map((participant) => (
+												<div className='flex items-center gap-2 mt-1' key={participant.uuid}>
+													<Checkbox checked={true} onCheckedChange={(checked) => {
+														if (checked) {
+															setSelectedParticipants([...selectedParticipants, participant]);
+														} else {
+															setSelectedParticipants(selectedParticipants.filter((p) => p.uuid !== participant.uuid));
+														}
+													}} />
+													<p>{participant.first_name} {participant.last_name}</p>
+												</div>
+											))
+										}
+										{results.map((result) => (
+											<div className='flex items-center mt-1' key={result.uuid}>
+												{
+													selectedParticipants.some((participant) => participant.uuid === result.uuid) ? (
+														null
+													) : (
+														<div className='flex items-center gap-2'>
+															<Checkbox checked={selectedParticipants.some((participant) => participant.uuid === result.uuid)} onCheckedChange={(checked) => {
+																if (checked) {
+																	setSelectedParticipants([...selectedParticipants, result]);
+																} else {
+																	setSelectedParticipants(selectedParticipants.filter((participant) => participant.uuid !== result.uuid));
+																}
+															}} />
+															<p>{result.first_name} {result.last_name}</p>
+														</div>
+													)
+												}
+											</div>
+										))}
+									</div>
+									<div className='flex flex-col gap-2 w-full justify-center items-start mt-2'>
+										<Button variant='outline' onClick={() => {
+											setOpenAddParticipant(false);
+											setSelectedParticipants([]);
+										}} className='w-full'>{t("back")}</Button>
 									</div>
 								</div>
 							)

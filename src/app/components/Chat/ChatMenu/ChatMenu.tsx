@@ -6,7 +6,16 @@ import Icons from '../../Icons'
 import AuctionChatMenu from './AuctionChatMenu'
 import PrivateChatMenu from './PrivateChatMenu'
 
-const ChatMenu = ({type, setOpenMenu, name, participants}: {type?: "auction_chat" | "private", setOpenMenu: (open: boolean) => void, name: string, participants: ChatParticipants[]}) => {
+interface ChatMenuProps {
+  type?: "auction_chat" | "private";
+  setOpenMenu: (open: boolean) => void;
+  name: string;
+  participants: ChatParticipants[];
+  addParticipantsToAuctionChat: (user_ids: string[]) => void;
+}
+
+
+const ChatMenu = ({type, setOpenMenu, name, participants, addParticipantsToAuctionChat}: ChatMenuProps) => {
 	const t = useTranslations("dashboard");
 
   return (
@@ -19,7 +28,23 @@ const ChatMenu = ({type, setOpenMenu, name, participants}: {type?: "auction_chat
             <Icons.Close />
           </Button>
         </div>
-        {type === "private" ? <PrivateChatMenu t={t} participants={participants} /> : <AuctionChatMenu t={t} name={name} status={"Подача заявок"} region={"Астана"} construction={"Трансформаторная подстанция и распределительный пункт"} project_name={"GreenLine.Astra"} portal_id={"00-090812"} lot_information={"#"} auction_date={"23 января 2025"} technical_council_date={"26 января 2025"} participants={participants} />}
+        {type === "private" ? 
+        <PrivateChatMenu t={t} participants={participants} /> 
+        : 
+        <AuctionChatMenu 
+          t={t}
+          name={name}
+          status={"Подача заявок"} 
+          region={"Астана"}
+          construction={"Трансформаторная подстанция и распределительный пункт"} 
+          project_name={"GreenLine.Astra"} 
+          portal_id={"00-090812"} 
+          lot_information={"#"} 
+          auction_date={"23 января 2025"} 
+          technical_council_date={"26 января 2025"} 
+          participants={participants} 
+          addParticipantsToAuctionChat={addParticipantsToAuctionChat} 
+        />}
       </div>
     </div>
   )
