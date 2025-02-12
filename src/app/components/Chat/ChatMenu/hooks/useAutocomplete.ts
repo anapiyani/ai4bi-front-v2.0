@@ -48,7 +48,8 @@ const useAutoComplete = () => {
 		results, 
 		handleSearch, 
 		handleResults,
-		isFetching,
+		setResults,
+		setSearch
 	};
 }
 

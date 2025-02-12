@@ -27,7 +27,7 @@ const AuctionChatMenu = (
 	{name, status, region, construction, project_name, portal_id, lot_information, auction_date, technical_council_date, participants, t, addParticipantsToAuctionChat}
 	: AuctionChatMenuProps) => {
 	const [openAddParticipant, setOpenAddParticipant] = useState<boolean>(false);
-	const { results, handleSearch, isFetching } = useAutoComplete();
+	const { results, handleSearch, setResults, setSearch } = useAutoComplete();
 	const [selectedParticipants, setSelectedParticipants] = useState<AutoCompleteResponse[]>([]);
 
 	const handleAddParticipants = () => {
@@ -147,6 +147,8 @@ const AuctionChatMenu = (
 										<Button variant='outline' onClick={() => {
 											setOpenAddParticipant(false);
 											setSelectedParticipants([]);
+											setResults([]);
+											setSearch("");
 										}} className='w-full'>{t("back")}</Button>
 									</div>
 								</div>
