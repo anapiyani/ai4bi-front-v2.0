@@ -42,7 +42,7 @@ export const AudioPlayer = ({ src, isUser, name }: { src: string; isUser: boolea
 		<div className="flex gap-2 w-full min-w-[250px] justify-between items-center">
 			<Button
 				variant="outline"
-					className={`rounded-full p-2 ${isUser ? 'bg-white hover:bg-white/80' : 'bg-muted-foreground hover:bg-muted-foreground/80'}`}
+					className={`rounded-full p-2 ${isUser ? 'bg-white hover:bg-white/80' : 'bg-neutrals-muted hover:bg-neutrals-muted/80'}`}
 					size="icon"
 					onClick={togglePlayPause}
 				>
@@ -73,7 +73,7 @@ export const AudioPlayer = ({ src, isUser, name }: { src: string; isUser: boolea
 									className="w-[3px] rounded-full bg-opacity-50"
 									style={{
 										height: `${height}px`,
-										backgroundColor: isUser ? '#ffff' : '#64748b',
+										backgroundColor: isUser ? '#ffff' : '#737373',
 									}}
 								/>
 							))}
@@ -92,7 +92,7 @@ export const AudioPlayer = ({ src, isUser, name }: { src: string; isUser: boolea
 										className="w-[3px] rounded-full"
 										style={{
 											height: `${height}px`,
-											backgroundColor: isUser ? '#f97316' : '#f97316',
+											backgroundColor: isUser ? '#f97316' : '#737373',
 										}}
 									/>
 								))}

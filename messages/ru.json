@@ -145,7 +145,10 @@
 		"go to the table": "Перейти к таблице",
 		"technical-council-date": "Дата технического совета",
 		"auction-date": "Дата тендера",
-		"participants": "Участники"
+		"participants": "Участники",
+		"leave-chat": "Покинуть чат",
+		"add-participant": "Добавить участника",
+		"search-by-name/email": "Поиск по имени/email"
 	}
 }
 

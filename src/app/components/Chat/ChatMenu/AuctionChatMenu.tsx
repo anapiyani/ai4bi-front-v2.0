@@ -1,13 +1,20 @@
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ChatParticipants } from '@/src/app/types/types'
+import { useState } from 'react'
 import NotificationBell from '../../Alerts/Notification/NotificationBell'
+import Icons from '../../Icons'
 
 
 const AuctionChatMenu = (
 	{name, status, region, construction, project_name, portal_id, lot_information, auction_date, technical_council_date, participants, t}
 	: 
 	{name: string, status: string, region: string, construction: string, project_name: string, portal_id: string, lot_information: string, auction_date: string, technical_council_date: string, participants: ChatParticipants[], t: any}) => {
+		const [openAddParticipant, setOpenAddParticipant] = useState<boolean>(false);
+		const [search, setSearch] = useState<string>("");
+		const [selectedParticipants, setSelectedParticipants] = useState<string[]>([]);
+
 	return (
 		<div className="flex flex-col gap-4">
 			<div className='flex'>
@@ -56,7 +63,9 @@ const AuctionChatMenu = (
             <TabsTrigger value="file" className='w-full bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none data-[state=active]:bg-transparent'>{t("file")}</TabsTrigger>
           </TabsList>
 					<TabsContent value="participants">
-						<div className='flex flex-col gap-2 w-full justify-center items-start'>
+						{
+							!openAddParticipant ? (
+								<div className='flex flex-col gap-2 w-full justify-center items-start'>
 							{
 								participants.map((participant) => (
 									<div className='flex flex-col gap-0.5' key={participant.chat_participant_id}>
@@ -70,6 +79,20 @@ const AuctionChatMenu = (
 								))
 							}
 						</div>
+							) : (
+								<div className='flex flex-col gap-2 w-full justify-center items-start'>
+									<div className="flex gap-2 items-center w-full">
+										<Input placeholder={t("search-by-name/email")} />
+										<Button className='bg-primary text-white hover:bg-primary/90'>
+											<Icons.Plus fill='white' />
+										</Button>
+									</div>
+									<div className='flex flex-col gap-2 w-full justify-center items-start'>
+										  {/* search results */}
+									</div>
+								</div>
+							)
+						}
 					</TabsContent>
           <TabsContent value="photo-video">
             <div className='flex flex-col gap-2 w-full justify-center items-center'>
@@ -83,11 +106,21 @@ const AuctionChatMenu = (
           </TabsContent>
         </Tabs>
 			</div>
-			<div className='flex justify-center mt-3'>
-				<Button className='bg-secondary hover:bg-secondary/80' variant="outline">
-					{t("refuse-participation")}
-				</Button>
-			</div>
+			{
+				!openAddParticipant && (
+					<div className='flex flex-col gap-2 justify-center mt-3'>
+						<Button onClick={() => {
+							setOpenAddParticipant(true);
+						}} className='bg-neutrals-muted-10 hover:bg-neutrals-muted/10 flex items-center gap-1' variant="outline">
+							<Icons.Plus />
+							{t("add-participant")}
+						</Button>
+						<Button variant="outline">
+							{t("leave-chat")}
+						</Button>
+					</div>
+				)
+			}
 		</div>
 	)
 }

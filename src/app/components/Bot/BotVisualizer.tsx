@@ -69,7 +69,7 @@ const BotVisualizer = ({ type = "default", stream, small = false, userSpeaking =
 								const leftX = centerX - (index + 1) * (barWidth + barGap) + barGap / 2
 								const rightX = centerX + index * (barWidth + barGap) + barGap / 2
 				
-								ctx.fillStyle = userSpeaking ? '#64748B' : 'white'
+								ctx.fillStyle = userSpeaking ? '#737373' : 'white'
 								
 								ctx.beginPath()
 								ctx.roundRect(
@@ -112,7 +112,7 @@ const BotVisualizer = ({ type = "default", stream, small = false, userSpeaking =
 								const leftX = centerX - (i + 1) * (barWidth + barGap) + barGap / 2
 								const rightX = centerX + i * (barWidth + barGap) + barGap / 2
 				
-								ctx.fillStyle = userSpeaking ? '#64748B' : 'white'
+								ctx.fillStyle = userSpeaking ? '#737373' : 'white'
 								
 								ctx.beginPath()
 								ctx.roundRect(

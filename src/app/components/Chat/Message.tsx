@@ -121,14 +121,14 @@ const Message = ({
   const senderName = isBot ? t("aray-bot") : isUser ? "" : sender;
 
   const avatarClasses = `w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-    isBot ? "bg-primary text-white" : "bg-input text-secondary-foreground"
+    isBot ? "bg-primary text-white" : "border border-neutrals-muted text-neutrals-muted"
   }`;
 
   const messageClasses = `flex flex-col p-2 rounded-lg w-fit min-w-[120px] ${
     isBot
       ? "bg-gradient-to-r from-[#0284C7] to-[#77BAAA]"
       : isUser
-      ? "bg-muted-foreground ml-auto text-white"
+      ? "bg-neutrals-muted ml-auto text-white"
       : "bg-primary-foreground"
   }`;
 
@@ -144,7 +144,7 @@ const Message = ({
         isUser ? "w-full flex justify-end" : ""
       } ${
         isMenuOpen || isSelected
-          ? "bg-[#0E749040] hover:bg-[#0E749040] transition-colors duration-200 rounded-lg"
+          ? "bg-[#4F4F4F20] hover:bg-[#4F4F4F20] transition-colors duration-200 rounded-lg"
           : "bg-transparent hover:bg-transparent transition-colors duration-200"
       }`}
       onClick={handleMessageClick}
@@ -153,7 +153,7 @@ const Message = ({
         <div className="flex items-center gap-2">
           {!isUser && <div className={avatarClasses}>{avatarText}</div>}
           <p
-            className={`text-base font-medium text-muted-foreground cursor-pointer ${
+            className={`text-base font-medium text-neutrals-muted cursor-pointer ${
               isUser ? "ml-auto" : ""
             }`}
             onClick={(e) => {
@@ -182,7 +182,7 @@ const Message = ({
             )}
             {isPinned && (
               <p
-                className={`text-xs text-muted-foreground flex items-center gap-1 mb-1 ${
+                className={`text-xs text-neutrals-muted flex items-center gap-1 mb-1 ${
                   isUser ? "text-white" : ""
                 }`}
               >
@@ -200,7 +200,7 @@ const Message = ({
                   createPrivateChat(forwarded_from);
                 }}
                 className={`text-xs flex items-center gap-1 mb-1 ${
-                  isUser ? "text-white" : "text-muted-foreground"
+                  isUser ? "text-white" : "text-neutrals-muted"
                 } cursor-pointer`}
               >
                 <Icons.Forward fill={isUser ? "#ffffff" : "#64748B"} />
@@ -213,13 +213,13 @@ const Message = ({
             <div className="flex justify-end">
               <p
                 className={`text-[10px] ${
-                  isUser ? "text-white" : "text-muted-foreground"
+                  isUser ? "text-white" : "text-neutrals-muted"
                 } flex items-center gap-1`}
               >
                 {isEdited && (
                   <span
                     className={`text-[10px] italic ${
-                      isUser ? "text-white" : "text-muted-foreground"
+                      isUser ? "text-white" : "text-neutrals-muted"
                     }`}
                   >
                     {t("edited")}

@@ -216,7 +216,7 @@ const ChatContent = ({
           handleUnpinMessage={(messageId: string) => handlePinUnpin(messageId, true)} 
         />
       </div>
-      <div className="flex-grow overflow-y-auto">
+      <div className="flex-grow overflow-y-auto bg-neutrals-secondary">
         <div className="h-[calc(100vh-240px)] overflow-y-auto" ref={messagesRef}>
           <div className="flex flex-col gap-2 px-4 py-2">
             <div className="flex flex-col gap-1 ">
