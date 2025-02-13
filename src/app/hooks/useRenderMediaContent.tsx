@@ -8,7 +8,8 @@ import { AudioPlayer } from './useAudioPlayer'
 export function useRenderMediaContent(
   media: string[] | string | Media[] | Media | null | undefined,
   t: (key: string) => string,
-  isUser: boolean
+  isUser: boolean,
+  small?: boolean
 ) {
   const renderSingleMedia = React.useCallback(
     (item: string | Media) => {
@@ -18,9 +19,9 @@ export function useRenderMediaContent(
             <img
               src={`https://staging.ai4bi.kz/media/show_inline/${item}`}
               alt="media"
-              width={300}
+              width={small ? 100 : 300}
 							className='rounded-lg'
-              height={300}
+              height={small ? 100 : 300}
 							onLoad={(e) => {
 								e.currentTarget.style.display = 'block';
 								e.currentTarget.nextElementSibling?.remove();
@@ -33,16 +34,16 @@ export function useRenderMediaContent(
           </div>
         )
       } else {
-        const { media_id, media_type, name, size } = item
-        switch (media_type) {
+        const { media_id, media_type, name, size, type } = item;
+        switch (media_type || type) {
           case "image":
             return (
               <div className="flex justify-center gap-2 items-center mb-2 rounded">
                 <img
                   src={`https://staging.ai4bi.kz/media/show_inline/${media_id}`}
                   alt={name || "media"}
-                  width={300}
-                  height={300}
+                  width={small ? 100 : 300}
+                  height={small ? 100 : 300}
                   className='rounded-lg'
                   onLoad={(e) => {
                     e.currentTarget.style.display = 'block';
@@ -72,6 +73,7 @@ export function useRenderMediaContent(
 								<a href={`https://staging.ai4bi.kz/media/download/${media_id}`} rel="noopener noreferrer" className="flex gap-2 h-full w-full">
 									<div className='flex justify-center items-center bg-neutrals-secondary rounded px-3 py-3'>
 										{media_type === "file" && <Icons.PDF className='w-6 h-6 text-neutrals-muted' />}
+                    { type === "file" && <Icons.PDF className='w-6 h-6 text-neutrals-muted' />}
 										{media_type === "video" && <Icons.Video className='w-6 h-6 text-neutrals-muted' fill='#0891b2' />}
 									</div>
 									<div className="flex flex-col gap-1 py-1">

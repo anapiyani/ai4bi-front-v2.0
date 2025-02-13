@@ -2,12 +2,14 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/Checkbox'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useRenderMediaContent } from '@/src/app/hooks/useRenderMediaContent'
 import { AutoCompleteResponse, ChatParticipants } from '@/src/app/types/types'
-import { useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
 import NotificationBell from '../../Alerts/Notification/NotificationBell'
 import Icons from '../../Icons'
 import useAutoComplete from './hooks/useAutocomplete'
-
+import { useGetChatMedia } from './hooks/useGetChatMedia'
 type AuctionChatMenuProps = {
 	name: string;
 	status: string;
@@ -21,20 +23,33 @@ type AuctionChatMenuProps = {
 	participants: ChatParticipants[];
 	t: any;
 	addParticipantsToAuctionChat: (user_ids: string[]) => void;
+	chatId: string;
 }
 
 const AuctionChatMenu = (
-	{name, status, region, construction, project_name, portal_id, lot_information, auction_date, technical_council_date, participants, t, addParticipantsToAuctionChat}
+	{name, status, region, construction, project_name, portal_id, lot_information, auction_date, technical_council_date, participants, t, addParticipantsToAuctionChat, chatId}
 	: AuctionChatMenuProps) => {
+	const queryClient = useQueryClient();
 	const [openAddParticipant, setOpenAddParticipant] = useState<boolean>(false);
 	const { results, handleSearch, setResults, setSearch } = useAutoComplete();
 	const [selectedParticipants, setSelectedParticipants] = useState<AutoCompleteResponse[]>([]);
+	const [openedTab, setOpenedTab] = useState<"participants" | "image" | "file">("participants");
+	const { data: chatMedia, isLoading, isError, refetch } = useGetChatMedia(
+		chatId, 
+		openedTab === "file" ? "file" : "image"
+	);
+	const renderedMedia = useRenderMediaContent(chatMedia?.media, t, false, true);
 
+	useEffect(() => {
+		refetch();
+	}, [openedTab]);
+	
 	const handleAddParticipants = () => {
 		addParticipantsToAuctionChat(selectedParticipants.map((participant) => participant.uuid));
 		setOpenAddParticipant(false);
+		setSelectedParticipants([]);
 	}
-	
+
 	return (
 		<div className="flex flex-col gap-4">
 			<div className='flex'>
@@ -76,11 +91,11 @@ const AuctionChatMenu = (
 				<p className='text-xs'>{auction_date}</p>
 			</div>
 			<div>
-				<Tabs defaultValue="participants" className="w-full">
+				<Tabs defaultValue={openedTab} className="w-full">
           <TabsList className='w-full flex justify-between items-center bg-transparent border-none rounded-none'>
-						<TabsTrigger value="participants" className='w-full bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none data-[state=active]:bg-transparent'>{t("participants")}</TabsTrigger>
-            <TabsTrigger value="photo-video" className='w-full bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none data-[state=active]:bg-transparent'>{t("photo-video")}</TabsTrigger>
-            <TabsTrigger value="file" className='w-full bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none data-[state=active]:bg-transparent'>{t("file")}</TabsTrigger>
+						<TabsTrigger onClick={() => setOpenedTab("participants")} value="participants" className='w-full bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none data-[state=active]:bg-transparent'>{t("participants")}</TabsTrigger>
+            <TabsTrigger onClick={() => setOpenedTab("image")} value="image" className='w-full bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none data-[state=active]:bg-transparent'>{t("photo-video")}</TabsTrigger>
+            <TabsTrigger onClick={() => setOpenedTab("file")} value="file" className='w-full bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none data-[state=active]:bg-transparent'>{t("file")}</TabsTrigger>
           </TabsList>
 					<TabsContent value="participants">
 						{
@@ -155,14 +170,30 @@ const AuctionChatMenu = (
 							)
 						}
 					</TabsContent>
-          <TabsContent value="photo-video">
+          <TabsContent value="image">
             <div className='flex flex-col gap-2 w-full justify-center items-center'>
-              <p className='text-sm text-muted-foreground'>{t("there-are-no-photos-or-videos-yet")}</p>
-            </div>
+							{
+								chatMedia?.type === "image" || chatMedia?.media.length && chatMedia?.media.length > 0 ? (
+									<div className='grid grid-cols-3 gap-2 w-full justify-center items-center'>
+										{renderedMedia}
+									</div>
+								) : (
+									<p className='text-sm text-muted-foreground'>{t("there-are-no-photos-or-videos-yet")}</p>
+								)
+							}
+						</div>
           </TabsContent>
           <TabsContent value="file">
             <div className='flex flex-col gap-2 w-full justify-center items-center'>
-              <p className='text-sm text-muted-foreground'>{t("there-are-no-files-yet")}</p>
+             {
+							chatMedia?.type === "file" || chatMedia?.media.length && chatMedia?.media.length > 0 ? (
+								<div className='flex flex-col gap-2 w-full justify-center items-center'>
+									{renderedMedia}
+								</div>
+							) : (
+								<p className='text-sm text-muted-foreground'>{t("there-are-no-files-yet")}</p>
+							)
+						 }
             </div>
           </TabsContent>
         </Tabs>

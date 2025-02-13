@@ -52,7 +52,12 @@ export type Media = {
 	media_type: "image" | "video" | "audio" | "file";
 	mime_type: string;
 	name: string;
+	type?: "image" | "file";
 	size: number;
+	media_metadata?: {
+		original_filename: string;
+	};
+	message_id?: string;
 }
 
 export type LastMessage = {
@@ -260,4 +265,10 @@ export type ReplyToMessage = {
 
 export type MessagesRecord = {
 	[chatId: string]: ChatMessage[]
+}
+
+export type ChatPanelMedia = {
+	total: number;
+	media: Media[]
+	type?: "image" | "file"
 }

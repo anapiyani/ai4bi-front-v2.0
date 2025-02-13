@@ -12,10 +12,11 @@ interface ChatMenuProps {
   name: string;
   participants: ChatParticipants[];
   addParticipantsToAuctionChat: (user_ids: string[]) => void;
+  chatId: string;
 }
 
 
-const ChatMenu = ({type, setOpenMenu, name, participants, addParticipantsToAuctionChat}: ChatMenuProps) => {
+const ChatMenu = ({type, setOpenMenu, name, participants, addParticipantsToAuctionChat, chatId}: ChatMenuProps) => {
 	const t = useTranslations("dashboard");
 
   return (
@@ -44,6 +45,7 @@ const ChatMenu = ({type, setOpenMenu, name, participants, addParticipantsToAucti
           technical_council_date={"26 января 2025"} 
           participants={participants} 
           addParticipantsToAuctionChat={addParticipantsToAuctionChat} 
+          chatId={chatId}
         />}
       </div>
     </div>

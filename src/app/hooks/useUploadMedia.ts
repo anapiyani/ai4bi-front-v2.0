@@ -49,26 +49,37 @@ export const useUploadMedia = () => {
     },
   });
 };
-
 export const getMediaKeys = createQueryKeys("getMedia");
 
-const getSignleMediaData = (uuid: string) => {
-	return get(`/media/show_inline/${uuid}`)
-}
+
+const getSingleMediaData = (uuid: string) => {
+  return get<Blob>(`/media/show_inline/${uuid}`, {
+    responseType: "blob",
+  });
+};
 
 const getMultipleMediaData = (uuids: string[]) => {
-	return get(`/media/show_inline/${uuids}`)
-}
+  return Promise.all(
+    uuids.map((uuid) =>
+      get<Blob>(`/media/show_inline/${uuid}`, { responseType: "blob" })
+    )
+  );
+};
 
 export const useGetMedia = (uuids: string | string[]) => {
-	return useQuery({
-		queryKey: getMediaKeys.all,
-		queryFn: () => {
-			if (Array.isArray(uuids)) {
-				return getMultipleMediaData(uuids)
-			} else {
-				return getSignleMediaData(uuids)
-			}
-		},
-	})
-}
+  const queryKey = Array.isArray(uuids)
+    ? [getMediaKeys.all, ...uuids]
+    : [getMediaKeys.all, uuids];
+
+  return useQuery<Blob[]>({
+    queryKey,
+    queryFn: () => {
+      if (Array.isArray(uuids)) {
+        return getMultipleMediaData(uuids);
+      } else {
+        return getSingleMediaData(uuids).then((blob) => [blob]);
+      }
+    },
+    staleTime: 1000 * 60, // 1 minute, for example
+  });
+};
