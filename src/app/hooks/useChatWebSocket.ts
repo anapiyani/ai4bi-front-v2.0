@@ -404,6 +404,7 @@ export const useChatWebSocket = () => {
       return;
     }
     getChats();
+    getChatMessages();
     setSelectedConversation(chat_id);
   }, []);
 

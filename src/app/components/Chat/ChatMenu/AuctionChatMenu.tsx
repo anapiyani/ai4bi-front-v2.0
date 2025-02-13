@@ -34,7 +34,7 @@ const AuctionChatMenu = (
 		addParticipantsToAuctionChat(selectedParticipants.map((participant) => participant.uuid));
 		setOpenAddParticipant(false);
 	}
-
+	
 	return (
 		<div className="flex flex-col gap-4">
 			<div className='flex'>
@@ -43,7 +43,7 @@ const AuctionChatMenu = (
 			<div className='flex flex-col gap-0.5'>
 				<p className='text-xs text-muted-foreground'>{t("status")}</p>
 				<p className='text-xs text-green-500'>{status}</p>
-			</div>
+			</div>	
 			<div className='flex flex-col gap-0.5'>
 				<p className='text-xs text-muted-foreground'>{t("region")}</p>
 				<p className='text-xs'>{region}</p>

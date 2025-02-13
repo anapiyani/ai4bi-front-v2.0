@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { motion } from "framer-motion"
 import { useLocale, useTranslations } from "next-intl"
@@ -7,13 +8,15 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { memo, useEffect, useState } from "react"
 import toast from 'react-hot-toast'
 import ChatMenu from "../../components/Chat/ChatMenu/ChatMenu"
+import ConstructModal from '../../components/Chat/ConstructModal'
 import DeleteMessage from "../../components/Chat/DeleteMessage"
 import ChatContent from "../../components/ChatContent"
+import Icons from '../../components/Icons'
 import { useChatWebSocket } from "../../hooks/useChatWebSocket"
 import { ReceivedChats } from '../../types/types'
 import ChatListItem from "./components/ChatListItem"
 import { SearchBar } from "./components/SearchBar"
-import { CHAT_TABS } from "./config/ChatTabs"
+import { CHAT_TABS, CONSTRUCT_TABS } from "./config/ChatTabs"
 
 const ChatMode = () => {
   const t = useTranslations("dashboard")
@@ -23,6 +26,7 @@ const ChatMode = () => {
   const chatId = searchParams.get("id")
   const [openMenu, setOpenMenu] = useState<boolean>(false)
   const [selectedConversationType, setSelectedConversationType] = useState<"auction_chat" | "private">()
+  const [constructModalOpen, setConstructModalOpen] = useState<boolean>(false)
   const [messageIds, setMessageIds] = useState<string[] | null>(null)
   const [isDeleteMessageOpen, setIsDeleteMessageOpen] = useState<boolean>(false)
   const {
@@ -96,28 +100,49 @@ const ChatMode = () => {
 
   return (
     <div className="w-full flex flex-col lg:flex-row bg-primary-foreground justify-center">
-      <aside className="w-full lg:w-1/3 bg-primary-foreground h-full px-4 lg:px-6 py-6 lg:py-6">
+      <aside className="w-full lg:w-1/3 bg-primary-foreground h-full px-3 py-6 lg:py-6">
         <Tabs defaultValue="your-auctions">
           <div className="flex flex-col gap-1">
-            <TabsList className="flex flex-row gap-2 border-none justify-start">
-              <TabsTrigger
-                value="your-auctions"
-                className="text-muted-foreground font-semibold text-lg data-[state=active]:bg-transparent data-[state=active]:text-primary"
-              >
-                {t("your-auctions")}
-              </TabsTrigger>
-              <p className="text-border font-semibold text-lg">|</p>
-              <TabsTrigger
-                value="private-chats"
-                className="text-muted-foreground font-semibold text-lg data-[state=active]:bg-transparent data-[state=active]:text-primary"
-              >
-                {t("private-chats")}
-              </TabsTrigger>
-            </TabsList>
+            <div className='flex justify-between items-center'>
+              <TabsList className="flex flex-row gap-2 border-none justify-start">
+                <TabsTrigger
+                  value="your-auctions"
+                  className="text-muted-foreground font-semibold text-base data-[state=active]:bg-transparent p-0 data-[state=active]:text-primary"
+                >
+                  {t("your-auctions")}
+                </TabsTrigger>
+                <p className="text-border font-semibold text-sm">|</p>
+                <TabsTrigger
+                  value="private-chats"
+                  className="text-muted-foreground font-semibold text-base data-[state=active]:bg-transparent p-0 data-[state=active]:text-primary"
+                >
+                  {t("private-chats")}
+                </TabsTrigger>
+                <p className="text-border font-semibold text-sm">|</p>
+                <TabsTrigger
+                  value="constructs"
+                  className="text-muted-foreground font-semibold text-base data-[state=active]:bg-transparent p-0 data-[state=active]:text-primary"
+                >
+                  {t("constructs")}
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="constructs" className="h-full flex justify-center items-center">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.1 }}
+                  className="w-full h-full flex justify-center items-center"
+                >
+                  <Button onClick={() => setConstructModalOpen(true)} className="w-full h-full p-1 border-none bg-neutrals-secondary" variant="outline" size="icon">
+                    <Icons.Plus fill="#4F4F4F" />
+                  </Button>
+                </motion.div>
+              </TabsContent>
+            </div>
             <SearchBar />
             <TabsContent value="your-auctions">
               <Tabs className="w-full" defaultValue="all">
-                <TabsList className="grid grid-cols-2 md:grid-cols-4 lg:flex lg:flex-row gap-2 lg:gap-0 mb-4 border-none">
+                <TabsList className="grid grid-cols-2 md:grid-cols-4 lg:flex lg:flex-row gap-2 lg:gap-0 mb-4 border-none justify-start">
                   {CHAT_TABS.map((tab, index) => (
                     <motion.div
                       key={tab.value}
@@ -176,6 +201,32 @@ const ChatMode = () => {
                 )}
               </div>
             </TabsContent>
+            <TabsContent value="constructs">
+              <Tabs className="w-full" defaultValue="all">
+                <TabsList className="grid grid-cols-2 md:grid-cols-4 lg:flex lg:flex-row gap-2 lg:gap-0 mb-4 border-none justify-start ">
+                  {CONSTRUCT_TABS.map((tab, index) => (
+                    <motion.div
+                      key={tab.value}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.1 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <TabsTrigger
+                        key={tab.value}
+                        value={tab.value}
+                        className={`w-full lg:w-auto  ${locale === "kz" ? "text-[13px]" : "text-sm"} whitespace-nowrap`}
+                      >
+                        {t(tab.translationKey)}
+                      </TabsTrigger>
+                    </motion.div>
+                  ))}
+                </TabsList>
+              </Tabs>
+              <div>
+                Here will be chats for the selected construct...
+              </div>
+            </TabsContent>
           </div>
         </Tabs>
       </aside>
@@ -217,6 +268,15 @@ const ChatMode = () => {
           />
         </div>
       )}
+      {
+        constructModalOpen && (
+          <ConstructModal 
+            constructModalOpen={constructModalOpen} 
+            setConstructModalOpen={setConstructModalOpen}
+            t={t}
+          />
+        )
+      }
       <DeleteMessage isOpen={isDeleteMessageOpen} onClose={handleCloseDeleteMessage} onDelete={handleDeleteMessage} />
     </div>
   )

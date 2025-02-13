@@ -56,7 +56,7 @@
 		"tech-con-finished-you-want-participate-auction": "Тех. кеңес аяқталды. Сіз тендерге қатысуға келісіміңізді қабылдайсыз?",
 		"tech-con-want-participate": "Осы тендердің техникалық кеңесіне қатысу?",
 		"you-have-48-hours-to-make-a-confirmation": "Сіздің қатысуыңызды қабылдауыңыз үшін 48 сағат бар.",
-		"your-auctions": "Сіздің тендерлеріңіз",
+		"your-auctions": "Тендерлер",
 		"all": "Барлығы",
 		"active": "Активті",
 		"published": "Шығарылған",
@@ -83,7 +83,7 @@
 		"delete": "Жою",
 		"chat": "Чат",
 		"no-messages-yet": "Жаңа хабарлама жоқ",
-		"private-chats": "Жеке хабарламалар",
+		"private-chats": "Жеке чаттар",
 		"pin": "Бекіту",
 		"edit": "Өзгерту",
 		"reply": "Жауап беру",
@@ -148,7 +148,16 @@
 		"participants": "Қатысушылар",
 		"leave-chat": "Чаттан шығу",
 		"add-participant": "Қатысушы қосу",
-		"search-by-name/email": "Аты бойынша/email бойынша іздеу"
+		"search-by-name/email": "Аты бойынша/email бойынша іздеу",
+		"constructs": "Конструктивтер",
+		"Astana": "Астана",
+		"Almaty": "Алматы",
+		"Shymkent": "Шымкент",
+		"Karagandy": "Караганда",
+		"Aktobe": "Актобе",
+		"Taraz": "Тараз",
+		"choose_construct": "Конструктивті таңдаңыз",
+		"save_chosen": "Таңдалғандарды сақтау"
 	}
 }
 

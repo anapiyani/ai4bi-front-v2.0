@@ -147,7 +147,16 @@
 		"participants": "Participants",
 		"leave-chat": "Leave chat",
 		"add-participant": "Add participant",
-		"search-by-name/email": "Search by name/email"
+		"search-by-name/email": "Search by name/email",
+		"constructs": "Constructs",
+		"Astana": "Astana",
+		"Almaty": "Almaty",
+		"Shymkent": "Shymkent",
+		"Karagandy": "Karagandy",
+		"Aktobe": "Aktobe",
+		"Taraz": "Taraz",
+		"choose_construct": "Choose construct",
+		"save_chosen": "Save chosen"
 	}
 }
 

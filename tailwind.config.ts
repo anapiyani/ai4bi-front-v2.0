@@ -58,6 +58,9 @@ const config = {
           DEFAULT: "#DC2626",
           foreground: "#F8FAFC",
         },
+        brand:  {
+          gray: "#4F4F4F"
+        },
         muted: {
           DEFAULT: "#E2E8F0",
           foreground: "#64748B",
