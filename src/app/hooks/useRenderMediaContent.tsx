@@ -1,10 +1,9 @@
 import React from "react"
 import Icons from '../components/Icons'
-import Spinner from '../components/Spinner'
 import { Media } from "../types/types"
-import { AudioPlayer } from './useAudioPlayer'
+import { ImageMedia } from './RenderMediaItems.tsx/Image'
 
-
+import AudioMedia from './RenderMediaItems.tsx/Audio'
 export function useRenderMediaContent(
   media: string[] | string | Media[] | Media | null | undefined,
   t: (key: string) => string,
@@ -15,56 +14,16 @@ export function useRenderMediaContent(
     (item: string | Media) => {
       if (typeof item === "string") {
         return (
-          <div className="flex justify-center gap-2 items-center mb-2 rounded-lg">
-            <img
-              src={`https://staging.ai4bi.kz/media/show_inline/${item}`}
-              alt="media"
-              width={small ? 100 : 300}
-							className='rounded-lg'
-              height={small ? 100 : 300}
-							onLoad={(e) => {
-								e.currentTarget.style.display = 'block';
-								e.currentTarget.nextElementSibling?.remove();
-							}}
-							style={{ display: 'none' }}
-						/>
-						<div className="loading animate-pulse text-sm text-muted-foreground">
-							<Spinner className="w-8 h-8 text-primary" />
-						</div>
-          </div>
+          <ImageMedia t={t} mediaId={item} small={small} />
         )
       } else {
         const { media_id, media_type, name, size, type } = item;
         switch (media_type || type) {
           case "image":
-            return (
-              <div className="flex justify-center gap-2 items-center mb-2 rounded">
-                <img
-                  src={`https://staging.ai4bi.kz/media/show_inline/${media_id}`}
-                  alt={name || "media"}
-                  width={small ? 100 : 300}
-                  height={small ? 100 : 300}
-                  className='rounded-lg'
-                  onLoad={(e) => {
-                    e.currentTarget.style.display = 'block';
-                    e.currentTarget.nextElementSibling?.remove();
-                  }}
-                  style={{ display: 'none' }}
-                />
-                <div className="loading animate-pulse text-sm text-muted-foreground">
-									<Spinner className="w-16 h-16 text-primary" />
-								</div>
-              </div>
-            )
+            return <ImageMedia t={t} mediaId={media_id} name={name} small={small} />
 
           case "audio":
-            const src = `https://staging.ai4bi.kz/media/show_inline/${media_id}`
-            return (
-              <div className="flex justify-center gap-2 items-center mb-2 rounded-lg">
-                <AudioPlayer src={src} isUser={isUser} name={name} />
-              </div>
-            )
-
+            return <AudioMedia name={name} small={small} isUser={isUser} t={t} mediaId={media_id} />
           case "file":
           case "video":
           default:

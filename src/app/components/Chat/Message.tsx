@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/context-menu"
 import React, { useEffect, useState } from "react"
 import { getCookie } from "../../api/service/cookie"
-import { useRenderMediaContent } from '../../hooks/useRenderMediaContent'
+import useRenderMediaContent from '../../hooks/useRenderMediaContent'
 import { MessageProps } from '../../types/types'
 import Icons from "../Icons"
 import useContextMenuItems from './ContextMenuItems'

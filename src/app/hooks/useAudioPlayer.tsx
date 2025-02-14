@@ -3,7 +3,7 @@ import React from 'react'
 import Icons from '../components/Icons'
 
 
-export const AudioPlayer = ({ src, isUser, name }: { src: string; isUser: boolean; name: string }) => {
+export const AudioPlayer = ({ src, isUser }: { src: string; isUser: boolean }) => {
 	const [isPlaying, setIsPlaying] = React.useState(false)
   const [currentTime, setCurrentTime] = React.useState(0)
   const [duration, setDuration] = React.useState(0)
