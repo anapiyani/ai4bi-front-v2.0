@@ -7,13 +7,15 @@ import { useShowInlineAudio } from '../useUploadMedia'
 
 const AudioMedia = ({ mediaId, name, small, t, isUser }: { mediaId: string, name: string, small: boolean | undefined, t: any, isUser: boolean }) => {
   const { data: audioBlob, isLoading } = useShowInlineAudio(mediaId)
-  
+  console.log(audioBlob);
 	const audioUrl = useMemo(() => {
 		if (audioBlob instanceof Blob) {
 			return URL.createObjectURL(audioBlob);
 		}
 		return null;
 	}, [audioBlob]);
+
+  console.log(audioUrl);
   
   const waveformRef = useRef<HTMLDivElement>(null)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -34,7 +36,7 @@ const AudioMedia = ({ mediaId, name, small, t, isUser }: { mediaId: string, name
     const waveSurfer = WaveSurfer.create({
       container: waveformRef.current,
       waveColor: isUser ? '#ffffff80' : '#00000040',
-      progressColor: isUser ? 'blue' : 'red',
+      progressColor: isUser ? '#F97316' : '#F97316',
       height: 30,
       barWidth: 4,
       barGap: 3,
