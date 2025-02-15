@@ -60,14 +60,12 @@ const AudioMedia = ({ mediaId, name, small, t, isUser }: { mediaId: string, name
       setIsPlaying(false)
     })
 
-    // If you want clicking on the waveform itself to toggle play:
     const waveformEl = waveformRef.current
     waveformEl.addEventListener('click', togglePlay)
 
     return () => {
       waveSurfer.destroy()
       waveformEl.removeEventListener('click', togglePlay)
-      // Revoke the object URL to free memory.
       if (audioUrl) URL.revokeObjectURL(audioUrl)
     }
   }, [audioUrl, isUser, togglePlay])
@@ -87,8 +85,6 @@ const AudioMedia = ({ mediaId, name, small, t, isUser }: { mediaId: string, name
 			</div>
 		)
 	}
-
-	console.log(audioBlob);
 
   return (
     <div className='flex items-center gap-3 mb-2 rounded-lg p-2 w-fit'>
