@@ -15,7 +15,6 @@ export function useRenderMediaContent(
     (item: string | Media) => {
       if (typeof item === "string") {
         return (
-          // <ImageMedia t={t} mediaId={item} small={small} />
           <div className='flex justify-center gap-2 items-center mb-2 rounded'>
             <Skeleton className='w-[300px] h-[300px] rounded-lg' />
           </div>
@@ -27,7 +26,6 @@ export function useRenderMediaContent(
             return <ImageMedia t={t} mediaId={media_id} name={name} small={small} />
 
           case "audio":
-            console.log(item);
             return <AudioMedia name={name} small={small} isUser={isUser} t={t} mediaId={media_id} />
           case "file":
           case "video":

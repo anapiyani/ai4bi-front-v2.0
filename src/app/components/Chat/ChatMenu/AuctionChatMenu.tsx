@@ -1,11 +1,12 @@
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/Checkbox'
 import { Input } from '@/components/ui/input'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useRenderMediaContent } from '@/src/app/hooks/useRenderMediaContent'
 import { AutoCompleteResponse, ChatParticipants } from '@/src/app/types/types'
 import { useQueryClient } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import NotificationBell from '../../Alerts/Notification/NotificationBell'
 import Icons from '../../Icons'
 import useAutoComplete from './hooks/useAutocomplete'
@@ -39,10 +40,6 @@ const AuctionChatMenu = (
 		openedTab === "file" ? "file" : "image"
 	);
 	const renderedMedia = useRenderMediaContent(chatMedia?.media, t, false, true);
-
-	useEffect(() => {
-		refetch();
-	}, [openedTab]);
 	
 	const handleAddParticipants = () => {
 		addParticipantsToAuctionChat(selectedParticipants.map((participant) => participant.uuid));
@@ -91,12 +88,40 @@ const AuctionChatMenu = (
 				<p className='text-xs'>{auction_date}</p>
 			</div>
 			<div>
-				<Tabs defaultValue={openedTab} className="w-full">
-          <TabsList className='w-full flex justify-between items-center bg-transparent border-none rounded-none'>
-						<TabsTrigger onClick={() => setOpenedTab("participants")} value="participants" className='w-full bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none data-[state=active]:bg-transparent'>{t("participants")}</TabsTrigger>
-            <TabsTrigger onClick={() => setOpenedTab("image")} value="image" className='w-full bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none data-[state=active]:bg-transparent'>{t("photo-video")}</TabsTrigger>
-            <TabsTrigger onClick={() => setOpenedTab("file")} value="file" className='w-full bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none data-[state=active]:bg-transparent'>{t("file")}</TabsTrigger>
-          </TabsList>
+				<Tabs   value={openedTab}
+					onValueChange={(value) => {
+						setOpenedTab(value as "participants" | "image" | "file");
+						if (value === 'image' || value === 'file') {
+							refetch();
+						}
+					}}
+					className="w-full"
+				>
+					<TabsList className="w-full flex justify-between items-center bg-transparent border-none rounded-none">
+						<TabsTrigger
+							value="participants"
+							className='w-full bg-transparent data-[state=active]:text-primary
+												data-[state=active]:border-b-2 data-[state=active]:border-primary
+												rounded-none data-[state=active]:bg-transparent'>
+							{t("participants")}
+						</TabsTrigger>
+
+						<TabsTrigger
+							value="image"
+							className='w-full bg-transparent data-[state=active]:text-primary
+												data-[state=active]:border-b-2 data-[state=active]:border-primary
+												rounded-none data-[state=active]:bg-transparent'>
+							{t("photo-video")}
+						</TabsTrigger>
+
+						<TabsTrigger
+							value="file"
+							className='w-full bg-transparent data-[state=active]:text-primary
+												data-[state=active]:border-b-2 data-[state=active]:border-primary
+												rounded-none data-[state=active]:bg-transparent'>
+							{t("file")}
+						</TabsTrigger>
+					</TabsList>
 					<TabsContent value="participants">
 						{
 							!openAddParticipant ? (
@@ -173,7 +198,7 @@ const AuctionChatMenu = (
           <TabsContent value="image">
             <div className='flex flex-col gap-2 w-full justify-center items-center'>
 							{
-								chatMedia?.type === "image" || chatMedia?.media.length && chatMedia?.media.length > 0 ? (
+								chatMedia?.type === "image" && chatMedia?.media.length && chatMedia?.media.length > 0 && !isLoading ? (
 									<div className='grid grid-cols-3 gap-2 w-full justify-center items-center'>
 										{renderedMedia}
 									</div>
@@ -181,17 +206,31 @@ const AuctionChatMenu = (
 									<p className='text-sm text-muted-foreground'>{t("there-are-no-photos-or-videos-yet")}</p>
 								)
 							}
+							{
+								isLoading && (
+									<div className='flex flex-col gap-2 w-full justify-center items-center'>
+										<Skeleton className='w-full h-[300px] rounded-lg' />
+									</div>
+								)
+							}
 						</div>
           </TabsContent>
           <TabsContent value="file">
             <div className='flex flex-col gap-2 w-full justify-center items-center'>
              {
-							chatMedia?.type === "file" || chatMedia?.media.length && chatMedia?.media.length > 0 ? (
+							chatMedia?.type === "file" && chatMedia?.media.length && chatMedia?.media.length > 0 && !isLoading ? (
 								<div className='flex flex-col gap-2 w-full justify-center items-center'>
 									{renderedMedia}
 								</div>
 							) : (
 								<p className='text-sm text-muted-foreground'>{t("there-are-no-files-yet")}</p>
+							)
+						 }
+						 {
+							isLoading && (
+								<div className='flex flex-col gap-2 w-full justify-center items-center'>
+									<Skeleton className='w-full h-[300px] rounded-lg' />
+								</div>
 							)
 						 }
             </div>

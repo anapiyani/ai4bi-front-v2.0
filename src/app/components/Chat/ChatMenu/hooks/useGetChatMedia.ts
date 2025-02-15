@@ -13,7 +13,13 @@ export const useGetChatMedia = (chatId: string, type: "file" | "image") => {
 	return useQuery<ChatPanelMedia, Error, ChatPanelMedia>(
     {
       queryKey: [getChatMediaKey, { chat_id: chatId, type }],
-      queryFn: () => getChatMedia({ chat_id: chatId, type }),
+			queryFn: async () => {
+				const data = await getChatMedia({ chat_id: chatId, type });
+				return {
+					...data,
+					type,
+				};
+			},
       staleTime: Infinity,
       gcTime: 1000 * 60 * 5,
       enabled: Boolean(chatId && type),

@@ -32,7 +32,6 @@ const AudioMedia = ({ mediaId, name, small, t, isUser }: { mediaId: string, name
 	
   useEffect(() => {
     if (!audioUrl || !waveformRef.current) return
-
     const waveSurfer = WaveSurfer.create({
       container: waveformRef.current,
       waveColor: isUser ? '#ffffff80' : '#00000040',
