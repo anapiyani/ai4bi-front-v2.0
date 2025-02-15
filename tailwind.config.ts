@@ -84,7 +84,8 @@ const config = {
         neutrals: {
           DEFAULT: "#555E68",
           secondary: "#F5F5F5",
-          muted: "#737373"
+          muted: "#737373",
+          border: "#D4D4D4"
         },
         'bi-gray': '#555E68',
         'sec-txt': '#32383E',

@@ -157,7 +157,10 @@
 		"Aktobe": "Актобе",
 		"Taraz": "Тараз",
 		"choose_construct": "Конструктивті таңдаңыз",
-		"save_chosen": "Таңдалғандарды сақтау"
+		"save_chosen": "Таңдалғандарды сақтау",
+		"in_city": "қаласында",
+		"no_city_chosen": "Қала таңдалмады",
+		"already_chosen_constructs_placeholder": "Сіздің таңдауыңыз"
 	}
 }
 

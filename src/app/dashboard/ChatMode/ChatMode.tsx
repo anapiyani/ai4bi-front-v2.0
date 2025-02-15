@@ -271,8 +271,8 @@ const ChatMode = () => {
       )}
       {
         constructModalOpen && (
-          <ConstructModal 
-            constructModalOpen={constructModalOpen} 
+          <ConstructModal
+            constructModalOpen={constructModalOpen}
             setConstructModalOpen={setConstructModalOpen}
             t={t}
           />

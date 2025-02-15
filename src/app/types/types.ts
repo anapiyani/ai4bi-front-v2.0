@@ -272,3 +272,9 @@ export type ChatPanelMedia = {
 	media: Media[]
 	type?: "image" | "file"
 }
+
+export type InterestsResponse = {
+	interests_id: string;
+	name: string;
+	city: string;
+}

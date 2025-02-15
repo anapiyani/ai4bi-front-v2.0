@@ -156,7 +156,11 @@
 		"Aktobe": "Aktobe",
 		"Taraz": "Taraz",
 		"choose_construct": "Choose construct",
-		"save_chosen": "Save chosen"
+		"save_chosen": "Save chosen",
+		"constructs_in": "Constructs in",
+		"no_city_chosen": "No city chosen",
+		"in_city": "in the city",
+		"already_chosen_constructs_placeholder": "Your choice"
 	}
 }
 

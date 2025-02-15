@@ -7,15 +7,12 @@ import { useShowInlineAudio } from '../useUploadMedia'
 
 const AudioMedia = ({ mediaId, name, small, t, isUser }: { mediaId: string, name: string, small: boolean | undefined, t: any, isUser: boolean }) => {
   const { data: audioBlob, isLoading } = useShowInlineAudio(mediaId)
-  console.log(audioBlob);
 	const audioUrl = useMemo(() => {
 		if (audioBlob instanceof Blob) {
 			return URL.createObjectURL(audioBlob);
 		}
 		return null;
 	}, [audioBlob]);
-
-  console.log(audioUrl);
   
   const waveformRef = useRef<HTMLDivElement>(null)
   const [isPlaying, setIsPlaying] = useState(false)
