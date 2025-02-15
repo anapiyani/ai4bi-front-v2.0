@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast as HotToast } from 'react-hot-toast'
 import { getCookie } from '../api/service/cookie'
-import { ChatMessage, Conversation, ForwardData, LastMessage, MessagesRecord, ReceivedChats, TypingStatus } from '../types/types'
+import { ChatMessage, Conversation, ForwardData, LastMessage, Media, MessagesRecord, ReceivedChats, TypingStatus } from '../types/types'
 
 
 export const useChatWebSocket = () => {
@@ -658,11 +658,22 @@ export const useChatWebSocket = () => {
   // ---------------------------------------------------------------------------
   // sendChatMessage
   // ---------------------------------------------------------------------------
-  const sendChatMessage = useCallback((reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean) => {
+  const sendChatMessage = useCallback((reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean, type?: "audio") => {
     if (!selectedConversation) return;
     const replyId = reply?.id ?? null;
     const rpcId = Date.now().toString();
     const content = newMessage.trim();
+    let pendingMedia: Media[] | null = null;
+    if (type === "audio") {
+      pendingMedia = [{
+        extension: "mp3",
+        media_id: media?.[0] ?? "",
+        media_type: "audio",
+        mime_type: "audio/mpeg",
+        name: "audio",
+        size: 0,
+      }]
+    }
     const pendingMsg: ChatMessage = {
       id: rpcId,
       authorId: getCookie("user_id"),
@@ -670,7 +681,7 @@ export const useChatWebSocket = () => {
       sender_last_name: "",
       content: content,
       is_pinned: false,
-      media: media || null,
+      media: pendingMedia || media || null,
       has_attachements: !!media?.length,
       is_voice_message: is_voice_message ?? false,
       timestamp: dayjs().toISOString(),
