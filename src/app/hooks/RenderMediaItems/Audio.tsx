@@ -101,11 +101,19 @@ const AudioMedia = ({ mediaId, name, small, t, isUser }: { mediaId: string, name
 						<Icons.Play className="w-6 h-6" stroke={isUser ? '#64748b' : 'white'} />
 				)}
       </Button>
-			<div className={`text-xs mt-1 ${isUser ? 'text-white/60' : 'text-black/60'}`}>
-          {formatTime(currentTime)} / {formatTime(duration)}
-      </div>
-      <div className="flex-grow" style={{ minWidth: '200px', maxWidth: '400px' }}>
-        <div ref={waveformRef} className='w-full' />
+      <div className={`text-xs mt-1 ${isUser ? 'text-white/60' : 'text-black/60'}`}>
+          {
+            isPlaying && currentTime > 0 ? (
+              `${formatTime(currentTime)} / ${formatTime(duration)}`
+            ) : (
+              `${formatTime(duration)}`
+            )
+          }
+        </div>
+      <div className='flex flex-col'>
+        <div className="flex-grow" style={{ minWidth: '200px', maxWidth: '200px' }}>
+          <div ref={waveformRef} className='w-full' />
+        </div>
       </div>
     </div>
   )

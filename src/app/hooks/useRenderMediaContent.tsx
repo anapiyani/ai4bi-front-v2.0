@@ -1,10 +1,10 @@
 import React from "react"
 import Icons from '../components/Icons'
 import { Media } from "../types/types"
-import { ImageMedia } from './RenderMediaItems.tsx/Image'
+import { ImageMedia } from './RenderMediaItems/Image'
 
 import { Skeleton } from '@/components/ui/skeleton'
-import AudioMedia from './RenderMediaItems.tsx/Audio'
+import AudioMedia from './RenderMediaItems/Audio'
 export function useRenderMediaContent(
   media: string[] | string | Media[] | Media | null | undefined,
   t: (key: string) => string,
