@@ -143,6 +143,7 @@ export type ChatContentProps = {
   messages: ChatMessage[];
   isConnected: boolean;
   newMessage: string;
+	handleCreateOrOpenChat: (toUser: string) => void;
   setNewMessage: (message: string) => void;
   sendChatMessage: (reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean, type?: "audio") => void;
   handleOpenDeleteMessage: (messageId: string | string[]) => void;
