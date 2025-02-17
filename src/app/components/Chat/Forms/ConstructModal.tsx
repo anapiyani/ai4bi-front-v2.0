@@ -9,21 +9,18 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Input } from '@/components/ui/input'
+import { getCookie } from '@/src/app/api/service/cookie'
+import { InterestsResponse } from '@/src/app/types/types'
 import { useLocale } from "next-intl"
 import { useEffect, useMemo, useState } from "react"
 import Icons from "../../Icons"
-import { useInterests } from "../hooks/useInterests"
+import { useAddInterests, useInterests } from "../hooks/useInterests"
 import Interests from './interests'
+
 type ConstructModalProps = {
   constructModalOpen: boolean;
   setConstructModalOpen: (open: boolean) => void;
   t: (key: string) => string;
-};
-
-export type InterestsResponse = {
-  interests_id: string;
-  name: string;
-  city: string;
 };
 
 const ConstructModal = ({
@@ -38,6 +35,7 @@ const ConstructModal = ({
   const [nowOpenCity, setNowOpenCity] = useState<string>("");
   const [chosenCities, setChosenCities] = useState<string[]>([]);
   const [chosenConstructs, setChosenConstructs] = useState<InterestsResponse[]>([]);
+  const addInterests = useAddInterests();
 
   useEffect(() => {
     if (interests && interests.length > 0) {
@@ -78,6 +76,15 @@ const ConstructModal = ({
   const chosenConstructsForCity = useMemo(() => {
      return chosenConstructs.filter((c) => c.city === nowOpenCity);
   }, [chosenConstructs, nowOpenCity]);
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await addInterests.mutateAsync({
+      interests_id: chosenConstructs.map((c) => c.interest_id),
+      user_id: getCookie("user_id") || ""
+    });
+    setConstructModalOpen(false);
+  }
 
   return (
     <Dialog open={constructModalOpen} onOpenChange={setConstructModalOpen}>
@@ -166,7 +173,7 @@ const ConstructModal = ({
                   <p className="text-sm font-normal text-brand-gray">{t("choose_all")}</p>
                 </div>
                 {constructsInOpenCity.map((construct) => (
-                  <div key={construct.interests_id}>
+                  <div key={construct.interest_id}>
                     <Interests 
                       construct={construct}
                       chosenConstructs={chosenConstructs}
@@ -197,18 +204,16 @@ const ConstructModal = ({
                     </div>
                     <div className="flex flex-col gap-1">
                       {
-                        chosenConstructs.length > 0 ? chosenConstructs.map((construct) => (
-                          construct.city === city && (
-                            <Interests 
-                              key={construct.interests_id}
-                              construct={construct} 
-                              chosenConstructs={chosenConstructs}
-                              setChosenConstructs={setChosenConstructs} 
-                              no_border={true} 
-                              setChosenCities={setChosenCities}
-                              chosenCities={chosenCities}
-                            /> 
-                          )
+                        chosenConstructs.length > 0 ? chosenConstructs.filter(construct => construct.city === city).map((construct) => (
+                          <Interests 
+                            key={construct.interest_id}
+                            construct={construct} 
+                            chosenConstructs={chosenConstructs}
+                            setChosenConstructs={setChosenConstructs} 
+                            no_border={true} 
+                            setChosenCities={setChosenCities}
+                            chosenCities={chosenCities}
+                          />
                         )) : (
                           <p className="text-sm px-2">{t("no_constructs_chosen")}</p>
                         )
@@ -228,8 +233,8 @@ const ConstructModal = ({
             {t("cancel")}
           </Button>
           <Button
-            onClick={() => {
-              setConstructModalOpen(false);
+            onClick={(e) => {
+              handleSave(e);
             }}
           >
             {t("save_chosen")}

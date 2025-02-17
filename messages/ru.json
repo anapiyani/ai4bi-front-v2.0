@@ -163,7 +163,8 @@
 		"in_city": "в г.",
 		"your_choice": "Ваш выбор",
 		"choose_all": "Выбрать все",
-		"no_constructs_chosen": "Никакой конструктив не выбран"
+		"no_constructs_chosen": "Никакой конструктив не выбран",
+		"choose_city_to_show_constructs": "Выберите город для отображения конструктивов"
 	}
 }
 

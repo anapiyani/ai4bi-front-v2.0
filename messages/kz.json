@@ -162,7 +162,8 @@
 		"no_city_chosen": "Қала таңдалмады",
 		"your_choice": "Сіздің таңдауыңыз",
 		"choose_all": "Барлығын таңдау",
-		"no_constructs_chosen": "Конструктив таңдалмады"
+		"no_constructs_chosen": "Конструктив таңдалмады",
+		"choose_city_to_show_constructs": "Конструктивтерді көрсету үшін қала таңдаңыз"
 	}
 }
 

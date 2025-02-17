@@ -274,7 +274,7 @@ export type ChatPanelMedia = {
 }
 
 export type InterestsResponse = {
-	interests_id: string;
+	interest_id: string;
 	name: string;
 	city: string;
 }
