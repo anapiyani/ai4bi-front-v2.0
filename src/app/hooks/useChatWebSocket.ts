@@ -606,6 +606,8 @@ export const useChatWebSocket = () => {
         role: "user"
       }))
     }));
+    getChatMessages();
+    getChats();
   };
 
   // ---------------------------------------------------------------------------

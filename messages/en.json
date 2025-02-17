@@ -163,7 +163,9 @@
 		"your_choice": "Your choice",
 		"choose_all": "Choose all",
 		"no_constructs_chosen": "No constructs chosen",
-		"choose_city_to_show_constructs": "Choose city to show constructs"
+		"choose_city_to_show_constructs": "Choose city to show constructs",
+		"city": "City",
+		"constructs_type": "Constructs type"
 	}
 }
 
