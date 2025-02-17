@@ -66,7 +66,7 @@ const ChatListItem = ({ data, onClick, isSelected, index, t, typingStatuses }: C
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: index * 0.1 }}
+      transition={{ duration: 0.2, delay: index * 0.1 }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
       className={`flex flex-col gap-2 hover:bg-secondary p-2 rounded-lg cursor-pointer relative ${

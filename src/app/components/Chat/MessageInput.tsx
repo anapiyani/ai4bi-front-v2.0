@@ -11,7 +11,7 @@ import BotVisualizer from '../Bot/BotVisualizer'
 import Icons from '../Icons'
 type MessageInputProps = {
   t: any;
-  sendChatMessage: (reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean) => void;
+  sendChatMessage: (reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean, type?: "audio") => void;
   isConnected: boolean;
   value: string;
   setNewMessage: (value: string) => void;
@@ -61,8 +61,8 @@ const MessageInput = ({
     mediaStream,
     handleStopRecording
   } = useAudioRecorder({ handleTypingChat,
-    onSendAudio: (id) => {
-      sendChatMessage(replyTo, [id], true);
+    onSendAudio: (id, type) => {
+      sendChatMessage(replyTo, [id], true, type);
     },
     chatId: chatId,
     outputFormat: "mp3"

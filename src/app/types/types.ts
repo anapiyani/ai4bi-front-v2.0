@@ -52,7 +52,12 @@ export type Media = {
 	media_type: "image" | "video" | "audio" | "file";
 	mime_type: string;
 	name: string;
+	type?: "image" | "file";
 	size: number;
+	media_metadata?: {
+		original_filename: string;
+	};
+	message_id?: string;
 }
 
 export type LastMessage = {
@@ -79,7 +84,7 @@ export type LastMessage = {
 export type Conversation = {
   id: string;
   name: string;
-  chat_type: "private" | "auction_chat";
+  chat_type: "private" | "auction_chat" | "group";
   lastMessage: LastMessage | null | string;
 	participants: ChatParticipants[]
 }
@@ -139,7 +144,7 @@ export type ChatContentProps = {
   isConnected: boolean;
   newMessage: string;
   setNewMessage: (message: string) => void;
-  sendChatMessage: (reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean) => void;
+  sendChatMessage: (reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean, type?: "audio") => void;
   handleOpenDeleteMessage: (messageId: string | string[]) => void;
   createPrivateChat: (userId: string) => void;
   sendEditMessage: (message: ChatMessage) => void;
@@ -204,6 +209,20 @@ export type ForwardData = {
 	target_chat_id: string;
 }
 
+export type AutoCompleteResponse = {
+	created_at: string;
+	deleted_at: string | null;
+	email: string;
+	first_name: string;
+	last_name: string;
+	middle_name: string;
+	phone: string;
+	role: string;
+	updated_at: string | null;
+	username: string;
+	uuid: string;
+}
+
 export type TypingStatus = {
 	chat_id: string;
 	user_id: string;
@@ -246,4 +265,16 @@ export type ReplyToMessage = {
 
 export type MessagesRecord = {
 	[chatId: string]: ChatMessage[]
+}
+
+export type ChatPanelMedia = {
+	total: number;
+	media: Media[]
+	type?: "image" | "file"
+}
+
+export type InterestsResponse = {
+	interest_id: string;
+	name: string;
+	city: string;
 }

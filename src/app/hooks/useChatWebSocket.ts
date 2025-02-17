@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast as HotToast } from 'react-hot-toast'
 import { getCookie } from '../api/service/cookie'
-import { ChatMessage, Conversation, ForwardData, LastMessage, MessagesRecord, ReceivedChats, TypingStatus } from '../types/types'
+import { ChatMessage, Conversation, ForwardData, LastMessage, Media, MessagesRecord, ReceivedChats, TypingStatus } from '../types/types'
 
 
 export const useChatWebSocket = () => {
@@ -394,9 +394,7 @@ export const useChatWebSocket = () => {
   // ---------------------------------------------------------------------------
   const handleNewParticipant = useCallback((message: any) => {
     const { chat_id, data } = message;
-    const { user_id } = data;
 
-    // If the chat already exists in our list, we may do something else
     const chatExists = conversations.some((conv) => conv.id === chat_id);
     if (chatExists) {
       toast({
@@ -405,42 +403,8 @@ export const useChatWebSocket = () => {
       });
       return;
     }
-    addMessagesToChat(chat_id, [{
-      id: `${user_id}-${dayjs().toISOString()}-${Math.random()}`,
-      sender_first_name: "System",
-      sender_last_name: "",
-      content: `User ${user_id} joined the chat`,
-      timestamp: dayjs().toISOString(),
-      chat_id,
-    }]);
-    const newChat: Conversation = {
-      id: chat_id,
-      name: `User ${user_id} Joined`,
-      chat_type: "auction_chat",
-      lastMessage: {
-        chat_id: chat_id,
-        content: `User ${user_id} joined the chat`,
-        counter: null,
-        deleted_at: null,
-        delivered_at: null,
-        edited_at: null,
-        is_deleted: false,
-        is_edited: false,
-        media_ids: null,
-        message_id: null,
-        has_attachements: false,
-        media: null,
-        is_pinned: false,
-        reply_message_id: null,
-        send_at: null,
-        sender_first_name: null,
-        sender_id: null,
-        sender_last_name: null,
-        type: null,
-      },
-      participants: []
-    };
-    setConversations((prev) => [...prev, newChat]);
+    getChats();
+    getChatMessages();
     setSelectedConversation(chat_id);
   }, []);
 
@@ -631,6 +595,20 @@ export const useChatWebSocket = () => {
   };
 
   // ---------------------------------------------------------------------------
+  // Add participants to auction chat (JSON-RPC request)
+  // ---------------------------------------------------------------------------
+  const addParticipantsToAuctionChat = (user_ids: string[]) => {
+    if (!selectedConversation) return;
+    sendMessage(createRpcRequest("batchAddParticipants", {
+      participants: user_ids.map((id: string) => ({
+        user_id: id,
+        chat_id: selectedConversation,
+        role: "user"
+      }))
+    }));
+  };
+
+  // ---------------------------------------------------------------------------
   // getChats (JSON-RPC request)
   // ---------------------------------------------------------------------------
   const getChats = () => {
@@ -680,11 +658,22 @@ export const useChatWebSocket = () => {
   // ---------------------------------------------------------------------------
   // sendChatMessage
   // ---------------------------------------------------------------------------
-  const sendChatMessage = useCallback((reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean) => {
+  const sendChatMessage = useCallback((reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean, type?: "audio") => {
     if (!selectedConversation) return;
     const replyId = reply?.id ?? null;
     const rpcId = Date.now().toString();
     const content = newMessage.trim();
+    let pendingMedia: Media[] | null = null;
+    if (type === "audio") {
+      pendingMedia = [{
+        extension: "mp3",
+        media_id: media?.[0] ?? "",
+        media_type: "audio",
+        mime_type: "audio/mpeg",
+        name: "audio",
+        size: 0,
+      }]
+    }
     const pendingMsg: ChatMessage = {
       id: rpcId,
       authorId: getCookie("user_id"),
@@ -692,7 +681,7 @@ export const useChatWebSocket = () => {
       sender_last_name: "",
       content: content,
       is_pinned: false,
-      media: media || null,
+      media: pendingMedia || media || null,
       has_attachements: !!media?.length,
       is_voice_message: is_voice_message ?? false,
       timestamp: dayjs().toISOString(),
@@ -881,6 +870,7 @@ export const useChatWebSocket = () => {
     handleUnpinMessage,
     handleForwardMessage,
     handleTyping,
+    addParticipantsToAuctionChat,
     handleReadMessage,
     typingStatuses,
   };

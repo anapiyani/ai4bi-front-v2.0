@@ -67,7 +67,7 @@ const Header = ({type, t, handlers, isMicrophoneOn}: HeaderProps) => {
 
 			case "chat":
 				return (
-					<div className={`${commonHeaderClasses} bg-muted-foreground`}>
+					<div className={`${commonHeaderClasses} bg-brand-gray`}>
 						<div className='flex items-center gap-2'>
 							<div><Icons.Data /></div>
 							<h2 className={`${commonTitleClasses} text-white`}>

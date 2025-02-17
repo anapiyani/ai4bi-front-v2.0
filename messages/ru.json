@@ -83,7 +83,7 @@
 		"turn-off-microphone": "Отключить микрофон",
 		"chat": "Чат",
 		"no-messages-yet": "Нет сообщений",
-		"private-chats": "Личные сообщения",
+		"private-chats": "Личные чаты",
 		"pin": "Закрепить",
 		"edit": "Редактировать",
 		"reply": "Ответить",
@@ -148,7 +148,23 @@
 		"participants": "Участники",
 		"leave-chat": "Покинуть чат",
 		"add-participant": "Добавить участника",
-		"search-by-name/email": "Поиск по имени/email"
+		"search-by-name/email": "Поиск по имени/email",
+		"constructs": "Конструктивы",
+		"Astana": "Астана",
+		"Almaty": "Алматы",
+		"Shymkent": "Шымкент",
+		"Karagandy": "Караганда",
+		"Aktobe": "Актобе",
+		"Taraz": "Тараз",
+		"choose_construct": "Выбор конструктива",
+		"save_chosen": "Сохранить выбранные",
+		"constructs_in": "Конструктивы г.",
+		"no_city_chosen": "Никакой из городов не выбран",
+		"in_city": "в г.",
+		"your_choice": "Ваш выбор",
+		"choose_all": "Выбрать все",
+		"no_constructs_chosen": "Никакой конструктив не выбран",
+		"choose_city_to_show_constructs": "Выберите город для отображения конструктивов"
 	}
 }
 

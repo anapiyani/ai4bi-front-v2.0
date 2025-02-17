@@ -9,7 +9,7 @@ import { useUploadMedia } from './useUploadMedia'
 type OutputFormat = 'mp3' | 'wav';
 interface UseAudioRecorderProps {
   handleTypingChat: (status: "typing" | "recording" | "stopped") => void;
-  onSendAudio?: (id: string) => void;
+  onSendAudio?: (id: string, type: "audio") => void;
   chatId: string;
   outputFormat?: OutputFormat;
 }
@@ -123,9 +123,9 @@ export function useAudioRecorder({ handleTypingChat, onSendAudio, chatId, output
         uploadMedia({ chat_id: chatId, files: [audioFile] }, {
           onSuccess: (data: UploadMediaResponse | UploadMediaResponse[]) => {
             if (Array.isArray(data)) {
-              data.forEach((item) => onSendAudio?.(item.uuid));
+              data.forEach((item) => onSendAudio?.(item.uuid, "audio"));
             } else {
-              onSendAudio?.(data.uuid);
+              onSendAudio?.(data.uuid, "audio");
             }
           },
         });
