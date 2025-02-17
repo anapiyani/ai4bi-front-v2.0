@@ -161,7 +161,9 @@
 		"constructs_in": "Конструктивы г.",
 		"no_city_chosen": "Никакой из городов не выбран",
 		"in_city": "в г.",
-		"already_chosen_constructs_placeholder": "Ваш выбор"
+		"your_choice": "Ваш выбор",
+		"choose_all": "Выбрать все",
+		"no_constructs_chosen": "Никакой конструктив не выбран"
 	}
 }
 

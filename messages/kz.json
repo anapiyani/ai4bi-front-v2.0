@@ -160,7 +160,9 @@
 		"save_chosen": "Таңдалғандарды сақтау",
 		"in_city": "қаласында",
 		"no_city_chosen": "Қала таңдалмады",
-		"already_chosen_constructs_placeholder": "Сіздің таңдауыңыз"
+		"your_choice": "Сіздің таңдауыңыз",
+		"choose_all": "Барлығын таңдау",
+		"no_constructs_chosen": "Конструктив таңдалмады"
 	}
 }
 

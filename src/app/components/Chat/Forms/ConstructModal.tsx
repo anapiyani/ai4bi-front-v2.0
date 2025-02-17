@@ -1,16 +1,19 @@
 import { Button } from "@/components/ui/button"
+import { Checkbox } from '@/components/ui/Checkbox'
 import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog"
+import { Input } from '@/components/ui/input'
 import { useLocale } from "next-intl"
 import { useEffect, useMemo, useState } from "react"
-import Icons from "../Icons"
-import { useInterests } from "./hooks/useInterests"
+import Icons from "../../Icons"
+import { useInterests } from "../hooks/useInterests"
+import Interests from './interests'
 type ConstructModalProps = {
   constructModalOpen: boolean;
   setConstructModalOpen: (open: boolean) => void;
@@ -31,8 +34,10 @@ const ConstructModal = ({
 	const locale = useLocale()
   const { data: interests } = useInterests(constructModalOpen);
   const [cities, setCities] = useState<string[]>([]);
+
   const [nowOpenCity, setNowOpenCity] = useState<string>("");
   const [chosenCities, setChosenCities] = useState<string[]>([]);
+  const [chosenConstructs, setChosenConstructs] = useState<InterestsResponse[]>([]);
 
   useEffect(() => {
     if (interests && interests.length > 0) {
@@ -53,20 +58,23 @@ const ConstructModal = ({
     }, {} as Record<string, string[]>);
   }, [sortedCities]);
 
+  
   const handleCityClick = (city: string) => {
-    if (chosenCities.includes(city)) {
-      setChosenCities(chosenCities.filter((c) => c !== city));
+    if (nowOpenCity === city) {
+      if (chosenCities.includes(city)) {
+        setChosenCities(chosenCities.filter((c) => c !== city));
+        setChosenConstructs(chosenConstructs.filter((c) => c.city !== city));
+      }
     } else {
-      setChosenCities([...chosenCities, city]);
+      setNowOpenCity(city);
     }
-    setNowOpenCity(city);
   };
 
-  const constructsInOpenCity = useMemo(() => {
+  const constructsInOpenCity: InterestsResponse[] = useMemo(() => {
     if (!nowOpenCity) return [];
     return interests?.filter((item) => item.city === nowOpenCity) || [];
   }, [interests, nowOpenCity]);
-	console.log(constructsInOpenCity)
+
 
   return (
     <Dialog open={constructModalOpen} onOpenChange={setConstructModalOpen}>
@@ -75,7 +83,7 @@ const ConstructModal = ({
           <DialogTitle className="text-lg">{t("choose_construct")}</DialogTitle>
         </DialogHeader>
         <DialogDescription className="w-full grid grid-cols-[20%_40%_40%] gap-2 flex-1 h-[calc(100vh-18rem)]">
-          <div className=" flex flex-col gap-2 justify-start overflow-y-auto">
+          <div className="flex flex-col gap-2 justify-start overflow-y-auto">
             {Object.entries(groupedCities).map(([letter, cityList]) => (
               <div key={letter}>
                 <h2 className="text-xs font-medium px-2 text-neutrals-muted">
@@ -109,29 +117,83 @@ const ConstructModal = ({
               </div>
             ))}
           </div>
-          <div className="h-full flex flex-col overflow-y-auto px-6">
+          <div className="flex flex-col gap-2 justify-start overflow-y-auto">
             {nowOpenCity ? (
               <div className="flex flex-col gap-2">
 								{
 									nowOpenCity && (
 										locale === "kz" ? (
-											<p className="text-base font-semibold text-brand-gray">{t("constructs")} {nowOpenCity} {t("in_city")}:</p>
+											<h2 className="text-base font-semibold text-brand-gray">{t("constructs")} {nowOpenCity} {t("in_city")}:</h2>
 										) : (
-											<p className="text-base font-semibold text-brand-gray">{t("constructs_in")} {nowOpenCity}:</p>
+											<h2 className="text-base font-semibold text-brand-gray">{t("constructs_in")} {nowOpenCity}:</h2>
 										)
 									)
 								}
+                <div className="flex items-center gap-2">
+                  <Input placeholder={t("search")} icon={<Icons.SearchInput />} />
+                </div>
+                <div className="flex items-center gap-2 ml-2 ">
+                  <Checkbox 
+                    onCheckedChange={() => setChosenConstructs(chosenConstructs.length === constructsInOpenCity.length ? [] : constructsInOpenCity)}
+                    checked={chosenConstructs.length === constructsInOpenCity.length}
+                    className="w-4 h-4"
+                  />
+                  <p className="text-sm font-normal text-brand-gray">{t("choose_all")}</p>
+                </div>
                 {constructsInOpenCity.map((construct) => (
-                  <div key={construct.interests_id}>{construct.name}</div>
+                  <div key={construct.interests_id}>
+                    <Interests 
+                      construct={construct}
+                      chosenConstructs={chosenConstructs}
+                      setChosenConstructs={setChosenConstructs}
+                      setChosenCities={setChosenCities}
+                      chosenCities={chosenCities}
+                    />
+                  </div>
                 ))}
               </div>
             ) : (
-              <p className="text-sm px-2">{t("no_city_chosen")}</p>
+              <div>
+                <h2 className="text-base font-semibold text-brand-gray">{t("constructs")}:</h2>
+                <p className="text-sm my-4">{t("no_city_chosen")}</p>
+              </div>
             )}
           </div>
 
-          <div className="h-full">
-            <p className="px-2">{t("already_chosen_constructs_placeholder")}</p>
+          <div className="flex flex-col gap-2 justify-start overflow-y-auto mr-4">
+            <h2 className="text-base font-semibold text-brand-gray">{t("your_choice")}:</h2>
+            <div className="flex flex-col gap-2">
+              {
+                chosenCities.length > 0 ? chosenCities.map((city) => (
+                  <div key={city} className="flex flex-col gap-2 my-4 mx-2">
+                    <div className='flex items-center gap-2'>
+                      <p className="text-sm font-semibold text-brand-gray">{city}</p>
+                      <hr className="w-full border-border ml-2"/>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      {
+                        chosenConstructs.length > 0 ? chosenConstructs.map((construct) => (
+                          construct.city === city && (
+                            <Interests 
+                              construct={construct} 
+                              chosenConstructs={chosenConstructs}
+                              setChosenConstructs={setChosenConstructs} 
+                              no_border={true} 
+                              setChosenCities={setChosenCities}
+                              chosenCities={chosenCities}
+                            /> 
+                          )
+                        )) : (
+                          <p className="text-sm px-2">{t("no_constructs_chosen")}</p>
+                        )
+                      }
+                    </div>
+                  </div>
+                )) : (
+                  <p className="text-sm my-2">{t("no_city_chosen")}</p>
+                )
+              }
+            </div>
           </div>
         </DialogDescription>
 

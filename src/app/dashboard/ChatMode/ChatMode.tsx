@@ -8,8 +8,8 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { memo, useEffect, useState } from "react"
 import toast from 'react-hot-toast'
 import ChatMenu from "../../components/Chat/ChatMenu/ChatMenu"
-import ConstructModal from '../../components/Chat/ConstructModal'
 import DeleteMessage from "../../components/Chat/DeleteMessage"
+import ConstructModal from '../../components/Chat/Forms/ConstructModal'
 import ChatContent from "../../components/ChatContent"
 import Icons from '../../components/Icons'
 import { useChatWebSocket } from "../../hooks/useChatWebSocket"
@@ -49,7 +49,7 @@ const ChatMode = () => {
     typingStatuses,
     handleReadMessage,
     addParticipantsToAuctionChat
-  } = useChatWebSocket()
+  } = useChatWebSocket() 
 
   const handleItemClick = (id: string) => {
     router.push(`/dashboard?active_tab=chat&id=${id}`)
