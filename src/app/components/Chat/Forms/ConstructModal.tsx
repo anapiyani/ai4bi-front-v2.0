@@ -74,7 +74,10 @@ const ConstructModal = ({
     if (!nowOpenCity) return [];
     return interests?.filter((item) => item.city === nowOpenCity) || [];
   }, [interests, nowOpenCity]);
-
+  
+  const chosenConstructsForCity = useMemo(() => {
+     return chosenConstructs.filter((c) => c.city === nowOpenCity);
+  }, [chosenConstructs, nowOpenCity]);
 
   return (
     <Dialog open={constructModalOpen} onOpenChange={setConstructModalOpen}>
@@ -134,8 +137,30 @@ const ConstructModal = ({
                 </div>
                 <div className="flex items-center gap-2 ml-2 ">
                   <Checkbox 
-                    onCheckedChange={() => setChosenConstructs(chosenConstructs.length === constructsInOpenCity.length ? [] : constructsInOpenCity)}
-                    checked={chosenConstructs.length === constructsInOpenCity.length}
+                    onCheckedChange={() => {
+                      if (
+                        chosenConstructsForCity.length === constructsInOpenCity.length
+                      ) {
+                        const newChosen = chosenConstructs.filter(
+                          (c) => c.city !== nowOpenCity
+                        );
+                        setChosenConstructs(newChosen);
+                        setChosenCities(chosenCities.filter((c) => c !== nowOpenCity));
+                      } else {
+                        const newChosen = [
+                          ...chosenConstructs.filter((c) => c.city !== nowOpenCity),
+                          ...constructsInOpenCity,
+                        ];
+                        setChosenConstructs(newChosen);
+                        if (!chosenCities.includes(nowOpenCity)) {
+                          setChosenCities([...chosenCities, nowOpenCity]);
+                        }
+                      }
+                    }}
+                    checked={
+                      chosenConstructsForCity.length === constructsInOpenCity.length &&
+                      constructsInOpenCity.length > 0
+                    }
                     className="w-4 h-4"
                   />
                   <p className="text-sm font-normal text-brand-gray">{t("choose_all")}</p>
