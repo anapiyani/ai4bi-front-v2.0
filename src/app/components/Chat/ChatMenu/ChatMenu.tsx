@@ -4,6 +4,7 @@ import { ChatParticipants } from '@/src/app/types/types'
 import { useTranslations } from 'next-intl'
 import Icons from '../../Icons'
 import AuctionChatMenu from './AuctionChatMenu'
+import GroupChatMenu from './GrouChatMenu'
 import PrivateChatMenu from './PrivateChatMenu'
 
 interface ChatMenuProps {
@@ -31,7 +32,7 @@ const ChatMenu = ({type, setOpenMenu, name, participants, addParticipantsToAucti
         </div>
         {type === "private" ? 
         <PrivateChatMenu  t={t} participants={participants} chatId={chatId} /> 
-        : 
+        : type === "auction_chat" ? 
         <AuctionChatMenu 
           t={t}
           name={name}
@@ -46,7 +47,18 @@ const ChatMenu = ({type, setOpenMenu, name, participants, addParticipantsToAucti
           participants={participants} 
           addParticipantsToAuctionChat={addParticipantsToAuctionChat} 
           chatId={chatId}
-        />}
+        />
+        : 
+        <GroupChatMenu 
+          name={name}
+          construction_type={"Электрика"}
+          city={"Астана"}
+          participants={participants}
+          t={t}
+          addParticipantsToAuctionChat={addParticipantsToAuctionChat}
+          chatId={chatId}
+        />
+        }
       </div>
     </div>
   )
