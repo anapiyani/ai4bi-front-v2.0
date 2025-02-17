@@ -98,7 +98,6 @@ const ChatMode = () => {
     }
   }, [selectedConversation, conversations])
 
-
   return (
     <div className="w-full flex flex-col lg:flex-row bg-primary-foreground justify-center">
       <aside className="w-full lg:w-1/3 bg-primary-foreground h-full px-3 py-6 lg:py-6">

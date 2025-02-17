@@ -30,7 +30,7 @@ const ChatMenu = ({type, setOpenMenu, name, participants, addParticipantsToAucti
           </Button>
         </div>
         {type === "private" ? 
-        <PrivateChatMenu t={t} participants={participants} /> 
+        <PrivateChatMenu  t={t} participants={participants} chatId={chatId} /> 
         : 
         <AuctionChatMenu 
           t={t}
