@@ -147,7 +147,25 @@
 		"participants": "Participants",
 		"leave-chat": "Leave chat",
 		"add-participant": "Add participant",
-		"search-by-name/email": "Search by name/email"
+		"search-by-name/email": "Search by name/email",
+		"constructs": "Constructs",
+		"Astana": "Astana",
+		"Almaty": "Almaty",
+		"Shymkent": "Shymkent",
+		"Karagandy": "Karagandy",
+		"Aktobe": "Aktobe",
+		"Taraz": "Taraz",
+		"choose_construct": "Choose construct",
+		"save_chosen": "Save chosen",
+		"constructs_in": "Constructs in",
+		"no_city_chosen": "No city chosen",
+		"in_city": "in the city",
+		"your_choice": "Your choice",
+		"choose_all": "Choose all",
+		"no_constructs_chosen": "No constructs chosen",
+		"choose_city_to_show_constructs": "Choose city to show constructs",
+		"city": "City",
+		"constructs_type": "Constructs type"
 	}
 }
 

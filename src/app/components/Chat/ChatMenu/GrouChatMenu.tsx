@@ -11,25 +11,20 @@ import NotificationBell from '../../Alerts/Notification/NotificationBell'
 import Icons from '../../Icons'
 import useAutoComplete from './hooks/useAutocomplete'
 import { useGetChatMedia } from './hooks/useGetChatMedia'
-type AuctionChatMenuProps = {
+
+type GroupChatMenuProps = {
 	name: string;
-	status: string;
-	region: string;
-	construction: string;
-	project_name: string;
-	portal_id: string;
-	lot_information: string;
-	auction_date: string;
-	technical_council_date: string;
+	construction_type: string;
+	city: string;
 	participants: ChatParticipants[];
 	t: any;
 	addParticipantsToAuctionChat: (user_ids: string[]) => void;
 	chatId: string;
 }
 
-const AuctionChatMenu = (
-	{name, status, region, construction, project_name, portal_id, lot_information, auction_date, technical_council_date, participants, t, addParticipantsToAuctionChat, chatId}
-	: AuctionChatMenuProps) => {
+const GroupChatMenu = (
+	{name, construction_type, city, participants, t, addParticipantsToAuctionChat, chatId}
+	: GroupChatMenuProps) => {
 	const queryClient = useQueryClient();
 	const [openAddParticipant, setOpenAddParticipant] = useState<boolean>(false);
 	const { results, handleSearch, setResults, setSearch } = useAutoComplete();
@@ -53,39 +48,15 @@ const AuctionChatMenu = (
 				<p className='text-sm font-medium'>{name}</p>
 			</div>
 			<div className='flex flex-col gap-0.5'>
-				<p className='text-xs text-muted-foreground'>{t("status")}</p>
-				<p className='text-xs text-green-500'>{status}</p>
+				<p className='text-xs text-muted-foreground'>{t("constructs_type")}</p>
+				<p className='text-xs'>{construction_type}</p>
 			</div>	
 			<div className='flex flex-col gap-0.5'>
-				<p className='text-xs text-muted-foreground'>{t("region")}</p>
-				<p className='text-xs'>{region}</p>
-			</div>
-			<div className='flex flex-col gap-0.5'>
-				<p className='text-xs text-muted-foreground'>{t("construction")}</p>
-				<p className='text-xs'>{construction}</p>
-			</div>
-			<div className='flex flex-col gap-0.5'>
-				<p className='text-xs text-muted-foreground'>{t("project-name")}</p>
-				<p className='text-xs'>{project_name}</p>
-			</div>
-			<div className='flex flex-col gap-0.5'>
-				<p className='text-xs text-muted-foreground'>{t("portal-id")}</p>
-				<p className='text-xs'>{portal_id}</p>
-			</div>
-			<div className='flex flex-col gap-0.5'>
-				<p className='text-xs text-muted-foreground'>{t("lot-information")}</p>
-				<a href='#' className='text-xs text-primary'>{t("go to the table")}</a>
+				<p className='text-xs text-muted-foreground'>{t("city")}</p>
+				<p className='text-xs'>{city}</p>
 			</div>
 			<div>
 				<NotificationBell />
-			</div>
-			<div className='flex flex-col gap-0.5'>
-				<p className='text-xs text-muted-foreground'>{t("technical-council-date")}</p>
-				<p className='text-xs'>{technical_council_date}</p>
-			</div>
-			<div className='flex flex-col gap-0.5'>
-				<p className='text-xs text-muted-foreground'>{t("auction-date")}</p>
-				<p className='text-xs'>{auction_date}</p>
 			</div>
 			<div>
 				<Tabs   value={openedTab}
@@ -256,4 +227,4 @@ const AuctionChatMenu = (
 	)
 }
 
-export default AuctionChatMenu;
+export default GroupChatMenu;
