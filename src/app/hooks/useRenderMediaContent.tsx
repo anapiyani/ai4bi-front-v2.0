@@ -53,7 +53,7 @@ export function useRenderMediaContent(
         }
       }
     },
-    [t]
+    [t, isUser, small]
   )
 
   const renderMedia = React.useMemo(() => {

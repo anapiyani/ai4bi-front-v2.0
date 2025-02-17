@@ -200,6 +200,7 @@ const ConstructModal = ({
                         chosenConstructs.length > 0 ? chosenConstructs.map((construct) => (
                           construct.city === city && (
                             <Interests 
+                              key={construct.interests_id}
                               construct={construct} 
                               chosenConstructs={chosenConstructs}
                               setChosenConstructs={setChosenConstructs} 

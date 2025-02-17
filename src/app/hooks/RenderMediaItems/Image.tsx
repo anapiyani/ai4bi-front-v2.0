@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import Image from 'next/image'
 import { useShowInlineImage } from '../useUploadMedia'
 
 
@@ -16,7 +17,7 @@ export const ImageMedia = ({ mediaId, name, small, t }: { mediaId: string; name?
 
   return (
     <div className="flex justify-center gap-2 items-center mb-2 rounded">
-      <img
+      <Image
         src={`data:image/png;base64,${picture?.image}`}
         alt={name || "media"}
         width={small ? 100 : 300}
