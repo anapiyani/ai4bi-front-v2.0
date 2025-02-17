@@ -1,6 +1,5 @@
 "use client";
 
-import { toast } from '@/components/ui/use-toast'
 import ChatHeader from "@/src/app/components/Chat/ChatHeader"
 import dayjs from "dayjs"
 import { useTranslations } from "next-intl"
@@ -10,7 +9,6 @@ import { useGoToMessage } from '../hooks/useGoToMessage'
 import { ChatContentProps, ChatMessage, SelectActions } from "../types/types"
 import DropZoneModal from './Chat/Files/DropZoneModal'
 import ForwardMessage from './Chat/ForwardMessage'
-import { useCreatePrivateChat } from './Chat/hooks/useCreatePrivateChat'
 import Message from "./Chat/Message"
 import MessageInput from "./Chat/MessageInput"
 import PinnedMessages from './Chat/PinnedMessages'
@@ -37,7 +35,8 @@ const ChatContent = ({
   typingStatuses,
   openMenu,
   handleForwardMessage,
-  conversations
+  conversations,
+  handleCreateOrOpenChat
 }: ChatContentProps) => {
   const t = useTranslations("dashboard");
   const [openRescheduleModal, setOpenRescheduleModal] = useState<boolean>(false);
@@ -50,7 +49,6 @@ const ChatContent = ({
   const goToMessage = useGoToMessage();
   const [lastSeenCounter, setLastSeenCounter] = useState(0);
   const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
-  const {mutate: createPrivateChatMutation, isPending: isCreatingPrivateChat} = useCreatePrivateChat();
   const messagesRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!messagesRef.current) return;
@@ -142,22 +140,6 @@ const ChatContent = ({
     setOpenForwardMessage(false);
     setForwardMessageIds(null);
     window.location.href = `/dashboard?active_tab=chat&id=${target_chat_id}`;
-  }
-
-  const handleCreateOrOpenChat = (toUser: string) => {
-    const user_id = getCookie("user_id");
-    if (!user_id) return;
-    createPrivateChatMutation({user_id: user_id, toUser: toUser}, {
-      onSuccess: (data) => {
-        window.location.href = `/dashboard?active_tab=chat&id=${data.chat_id}`;
-      },
-      onError: (error) => {
-        toast({
-          title: "Ошибка при создании чата",
-          description: error.message,
-        })
-      }
-    });
   }
 
   const handleTypingChat = (status: "typing" | "recording" | "stopped") => {
