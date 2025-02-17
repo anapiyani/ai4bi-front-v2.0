@@ -7,7 +7,7 @@ import AuctionChatMenu from './AuctionChatMenu'
 import PrivateChatMenu from './PrivateChatMenu'
 
 interface ChatMenuProps {
-  type?: "auction_chat" | "private";
+  type?: "auction_chat" | "private" | "group";
   setOpenMenu: (open: boolean) => void;
   name: string;
   participants: ChatParticipants[];
@@ -24,7 +24,7 @@ const ChatMenu = ({type, setOpenMenu, name, participants, addParticipantsToAucti
       className="w-full px-2 h-[calc(100vh-100px)] overflow-y-auto">
       <div className='flex flex-col gap-2 py-6 px-4 w-full'>
         <div className='flex justify-between items-center'>
-          <h2 className='text-primary font-semibold text-lg mb-2'>{type === "private" ? name : t("about-auction")}</h2>
+          <h2 className='text-primary font-semibold text-lg mb-2'>{type === "private" ? name : type === "group" ? name : t("about-auction")}</h2>
           <Button variant="ghost" size="icon" className='p-1' onClick={() => setOpenMenu(false)}>
             <Icons.Close />
           </Button>

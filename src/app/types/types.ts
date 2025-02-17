@@ -84,7 +84,7 @@ export type LastMessage = {
 export type Conversation = {
   id: string;
   name: string;
-  chat_type: "private" | "auction_chat";
+  chat_type: "private" | "auction_chat" | "group";
   lastMessage: LastMessage | null | string;
 	participants: ChatParticipants[]
 }

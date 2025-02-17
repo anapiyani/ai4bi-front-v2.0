@@ -25,7 +25,7 @@ const ChatMode = () => {
   const router = useRouter()
   const chatId = searchParams.get("id")
   const [openMenu, setOpenMenu] = useState<boolean>(false)
-  const [selectedConversationType, setSelectedConversationType] = useState<"auction_chat" | "private">()
+  const [selectedConversationType, setSelectedConversationType] = useState<"auction_chat" | "private" | "group">()
   const [constructModalOpen, setConstructModalOpen] = useState<boolean>(false)
   const [messageIds, setMessageIds] = useState<string[] | null>(null)
   const [isDeleteMessageOpen, setIsDeleteMessageOpen] = useState<boolean>(false)
@@ -97,6 +97,7 @@ const ChatMode = () => {
       setOpenMenu(false) 
     }
   }, [selectedConversation, conversations])
+
 
   return (
     <div className="w-full flex flex-col lg:flex-row bg-primary-foreground justify-center">
@@ -223,9 +224,24 @@ const ChatMode = () => {
                   ))}
                 </TabsList>
               </Tabs>
-              <div>
-                Here will be chats for the selected construct...
-              </div>
+              <div className="flex flex-col gap-2 overflow-y-auto max-h-[calc(100vh-300px)] no-scrollbar">
+                  {conversations.map((conversation, index) =>
+                    conversation.chat_type === "group" ? (
+                      <ChatListItem
+                        key={conversation.id}
+                        data={conversation as ReceivedChats}
+                        typingStatuses={typingStatuses}
+                        t={t}
+                        onClick={() => {
+                          handleItemClick(conversation.id)
+                          setSelectedConversationType(conversation.chat_type)
+                        }}
+                        isSelected={conversation.id === selectedConversation}
+                        index={index}
+                      />
+                    ) : null,
+                  )}
+                </div>
             </TabsContent>
           </div>
         </Tabs>
