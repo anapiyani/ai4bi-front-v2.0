@@ -88,7 +88,7 @@ const AuctionChatMenu = (
 				<p className='text-xs'>{auction_date}</p>
 			</div>
 			<div>
-				<Tabs   value={openedTab}
+				<Tabs value={openedTab}
 					onValueChange={(value) => {
 						setOpenedTab(value as "participants" | "image" | "file");
 						if (value === 'image' || value === 'file') {
