@@ -155,14 +155,11 @@ const ChatContent = ({
         setSelectedMessages(messages.map((m) => m.id));
         break;
       case "unselect_all":
-        console.log("unselect_all");
         setSelectedMessages([]);
         break;
       case "select":
         if (messageId) {
-          console.log("select", messageId);
           setSelectedMessages((prev) => [...prev, messageId]);
-          console.log("selectedMessages", selectedMessages);
         }
         break;
       case "unselect":
