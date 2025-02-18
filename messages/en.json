@@ -166,6 +166,11 @@
 		"choose_city_to_show_constructs": "Choose city to show constructs",
 		"city": "City",
 		"constructs_type": "Constructs type"
+	},
+	"dropzone": {
+		"upload_files": "Upload files",
+		"drop_files_here": "Drop files here",
+		"max_file_size": "Max file size"
 	}
 }
 

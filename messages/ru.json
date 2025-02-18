@@ -167,6 +167,11 @@
 		"choose_city_to_show_constructs": "Выберите город для отображения конструктивов",
 		"constructs_type": "Тип конструктива",
 		"city": "Город"
+	},
+	"dropzone": {
+		"upload_files": "Загрузить файлы",
+		"drop_files_here": "Перетащите файлы сюда",
+		"max_file_size": "Максимальный размер файла"
 	}
 }
 

@@ -166,6 +166,11 @@
 		"choose_city_to_show_constructs": "Конструктивтерді көрсету үшін қала таңдаңыз",
 		"constructs_type": "Конструктив түрі",
 		"city": "Қала"
+	},
+	"dropzone": {
+		"upload_files": "Файлдарды жүктеу",
+		"drop_files_here": "Файлдарды осы жерге тастаңыз",
+		"max_file_size": "Файлдың максималды өлшемі"
 	}
 }
 
