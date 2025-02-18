@@ -229,6 +229,22 @@ const Icons = {
 			</svg>
 		)
 	},
+	Notification_Bell: () => {
+		return (
+			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M8.64258 18.3676C9.27134 19.9207 10.0709 21 11.9997 21C13.9284 21 14.728 19.9207 15.3568 18.3676" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M18.831 10.2561C18.831 6.55462 16.3704 3 12.0179 3C7.6654 3 5.20478 6.55462 5.20478 10.2561C5.20478 11.7576 4.21699 12.9104 3.3872 14.1148C-0.34292 20.0861 24.1939 19.8178 20.6486 14.1149C19.8188 12.9104 18.831 11.7576 18.831 10.2561Z" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+			</svg>
+		)
+	},
+	Notification: () => {
+		return (
+			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M8.64258 18.3676C9.27134 19.9207 10.0709 21 11.9997 21C13.9284 21 14.728 19.9207 15.3568 18.3676" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M18.831 10.2561C18.831 6.55462 16.3704 3 12.0179 3C7.6654 3 5.20478 6.55462 5.20478 10.2561C5.20478 11.7576 4.21699 12.9104 3.3872 14.1148C-0.34292 20.0861 24.1939 19.8178 20.6486 14.1149C19.8188 12.9104 18.831 11.7576 18.831 10.2561Z" stroke="white" stroke-width="1.5" stroke-linecap="round" strokeLinejoin="round"/>
+			</svg>
+		)
+	},
 	UnPin: () => {
 		return (
 			<svg width="17" height="18" viewBox="0 0 17 18" fill="none" xmlns="http://www.w3.org/2000/svg">

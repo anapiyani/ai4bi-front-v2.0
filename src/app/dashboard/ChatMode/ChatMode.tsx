@@ -303,8 +303,7 @@ const ChatMode = () => {
           </div>
         </Tabs>
       </aside>
-
-      <div className="w-full lg:w-2/3 mt-6 lg:mt-6 mx-4 lg:mr-6 rounded-lg bg-secondary min-h-[calc(100vh-8rem)] py-3 lg:py-3 flex justify-center">
+      <div className="w-full lg:w-2/3 mt-6 lg:mt-6 mx-4 rounded-lg bg-secondary min-h-[calc(100vh-8rem)] py-3 lg:py-3 flex justify-center">
         <ChatContent
           chatId={chatId || ""}
           selectedConversation={selectedConversation}
