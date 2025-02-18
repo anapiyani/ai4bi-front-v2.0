@@ -48,7 +48,7 @@ const AuctionChatMenu = (
 	}
 
 	return (
-		<div className="flex flex-col gap-4">
+		<div className="flex flex-col gap-4 w-full">
 			<div className='flex'>
 				<p className='text-sm font-medium'>{name}</p>
 			</div>
@@ -76,7 +76,7 @@ const AuctionChatMenu = (
 				<p className='text-xs text-muted-foreground'>{t("lot-information")}</p>
 				<a href='#' className='text-xs text-primary'>{t("go to the table")}</a>
 			</div>
-			<div>
+			<div className='flex'>
 				<NotificationBell />
 			</div>
 			<div className='flex flex-col gap-0.5'>

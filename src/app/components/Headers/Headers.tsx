@@ -5,6 +5,7 @@ import { activity_status } from '../../types/types'
 import Icons from '../Icons'
 import HeaderButtons from './CommonButtons'
 import LocaleSwitcher from './LocaleSwitcher'
+import Notifications from './Notifications'
 
 type HeaderProps = {
 	type: activity_status,
@@ -55,6 +56,7 @@ const Header = ({type, t, handlers, isMicrophoneOn}: HeaderProps) => {
 							</h2>
 						</div>
 						<div className='flex items-center gap-4'>
+							<LocaleSwitcher />
 							<AudioButton onClick={handlers.audioButtonClick} />
 							<ExitButton 
 								text={t("leave-technical-council")}
@@ -75,6 +77,7 @@ const Header = ({type, t, handlers, isMicrophoneOn}: HeaderProps) => {
 							</h2>
 						</div>
 						<div className='flex items-center gap-2'>
+							<Notifications />
 							<LocaleSwitcher />
 							<Button className='flex items-center gap-2' variant='secondary' onClick={() => handlers.exitButtonClick(type)}>
 								{t("exit-chat-mode")}
