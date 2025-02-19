@@ -36,7 +36,7 @@ const ChatContent = ({
   openMenu,
   handleForwardMessage,
   conversations,
-  handleCreateOrOpenChat
+  handleCreateOrOpenChat,
 }: ChatContentProps) => {
   const t = useTranslations("dashboard");
   const [openRescheduleModal, setOpenRescheduleModal] = useState<boolean>(false);

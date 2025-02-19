@@ -171,6 +171,10 @@
 		"upload_files": "Файлдарды жүктеу",
 		"drop_files_here": "Файлдарды осы жерге тастаңыз",
 		"max_file_size": "Файлдың максималды өлшемі"
+	},
+	"technical_council": {
+		"demonstration": "Демонстрация",
+		"protocol_table": "Таблица протоколов"
 	}
 }
 

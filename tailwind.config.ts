@@ -83,6 +83,7 @@ const config = {
         },
         neutrals: {
           DEFAULT: "#555E68",
+          primary: "#FAFAFA",
           secondary: "#F5F5F5",
           muted: "#737373",
           border: "#D4D4D4"

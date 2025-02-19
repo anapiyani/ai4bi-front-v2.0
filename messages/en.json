@@ -171,6 +171,10 @@
 		"upload_files": "Upload files",
 		"drop_files_here": "Drop files here",
 		"max_file_size": "Max file size"
+	},
+	"technical_council": {
+		"demonstration": "Demonstration",
+		"protocol_table": "Protocol table"
 	}
 }
 
