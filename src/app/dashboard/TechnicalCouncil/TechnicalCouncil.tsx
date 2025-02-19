@@ -62,7 +62,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
   return (
     <div className='w-full flex flex-col lg:flex-row bg-neutral-secondary justify-center px-4'>
      <div className='w-full flex gap-4 mt-4'>
-      <div className='lg:basis-[70%] md:basis-[60%] basis-full h-[calc(100vh-8rem)] bg-neutrals-primary rounded-lg p-2'>
+      <div className={`${openSideMenu ? "lg:basis-[95%] md:basis-[95%]" : "lg:basis-[70%] md:basis-[60%]"} basis-full h-[calc(100vh-8rem)] bg-neutrals-primary rounded-lg p-2`}>
       <Tabs defaultValue="demonstration">
         <div className='flex m-1 p-1 w-full bg-neutrals-secondary rounded-lg'>
             <TabsList className='w-full border-none flex justify-start'>
@@ -84,9 +84,11 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
         </div>
         </Tabs>
       </div>
-      <div className='lg:basis-[30%] md:basis-[40%] basis-full h-[calc(100vh-8rem)] flex flex-col rounded-lg gap-1'>
-        <h2 className='text-brand-orange text-base font-bold'>{t("Aray")} - {t("bot")}</h2>
-        <BotVisualizer stream={null} type='default' small={openSideMenu} />
+      <div className={`${openSideMenu ? "lg:basis-[5%] md:basis-[5%]" : "lg:basis-[30%] md:basis-[40%]"} h-[calc(100vh-8rem)] flex flex-col rounded-lg gap-1`}>
+        <h2 className='text-brand-orange text-base font-bold'>{t("Aray")} - {openSideMenu ? null : t("bot")}</h2>
+        <div>
+          <BotVisualizer stream={null} type='default' small={openSideMenu} />
+        </div>
         <div className='w-full h-full mt-2 bg-neutrals-secondary rounded-lg'>
           <ChatContent
             chatId={chatId || ""}
@@ -113,7 +115,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
             openMenu={openMenu}
             typingStatuses={typingStatuses}
             conversations={conversations}
-        />
+          />
         </div>
       </div> 
      </div>

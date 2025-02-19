@@ -186,25 +186,33 @@ const ChatContent = ({
     <div className="flex flex-col w-full h-full relative">
     {
       isTechnicalCouncil && setOpenSideMenu ? (
-        !openSideMenu ? (<div className='flex mt-3 px-3'>
+        <div className='flex mt-3 px-3 justify-center'>
           <div>
-            <Button onClick={() => setOpenSideMenu(true)} variant="outline" className='p-2 bg-white' >
-              <Icons.SideMenu />
+            <Button onClick={() => setOpenSideMenu(!openSideMenu)} variant="outline" className='p-2 bg-white' >
+              {
+                openSideMenu ? (
+                  <Icons.SideMenu_Open />
+                ) : (
+                  <Icons.SideMenu />
+                )
+              }
             </Button>
           </div>
-          <div className='w-full flex justify-center mr-10'>
-            <Tabs defaultValue="chat">
-              <TabsList className='bg-white'>
-                <TabsTrigger className='text-brand-gray text-sm' value="chat">{t("chat")}</TabsTrigger>
-                <TabsTrigger className='text-brand-gray text-sm' value="participants">{t("participants")}</TabsTrigger>
-              </TabsList>
-            </Tabs>
-          </div>
-        </div>) : (
-          <div>
-            small
-          </div>
-        )
+          {
+            openSideMenu ? (
+              null
+            ) : (
+              <div className='w-full flex justify-center mr-10'>
+                <Tabs defaultValue="chat">
+                  <TabsList className='bg-white'>
+                    <TabsTrigger className='text-brand-gray text-sm' value="chat">{t("chat")}</TabsTrigger>
+                    <TabsTrigger className='text-brand-gray text-sm' value="participants">{t("participants")}</TabsTrigger>
+                  </TabsList>
+                </Tabs>
+              </div>
+            )
+          }
+        </div>
       ) : (
         <div>
           <ChatHeader  
@@ -227,7 +235,11 @@ const ChatContent = ({
         </div>
       )
     }
-    <div className={`flex-grow overflow-y-auto bg-neutrals-secondary ${isTechnicalCouncil ? "rounded-lg" : ""}`}>
+    {
+      openSideMenu ? (
+        null
+      ) : (
+        <div className={`flex-grow overflow-y-auto bg-neutrals-secondary ${isTechnicalCouncil ? "rounded-lg" : ""}`}>
       <div className={`${isTechnicalCouncil ? "h-[calc(86vh-200px)]" : "h-[calc(100vh-240px)]"} overflow-y-auto`} ref={messagesRef}>
         <div className="flex flex-col gap-2 px-4 py-2">
           <div className="flex flex-col gap-1 ">
@@ -316,7 +328,9 @@ const ChatContent = ({
           setOpenDropZoneModal={setOpenDropZoneModal}
         />
       </div>
-    </div>
+      </div>
+      )
+    }
 
     {openRescheduleModal && (
       <ChangeDates
