@@ -732,6 +732,7 @@ export const useChatWebSocket = () => {
       }
       return updated;
     });
+    getChatMessages();
   }, [selectedConversation, sendMessage]);
 
   // ---------------------------------------------------------------------------

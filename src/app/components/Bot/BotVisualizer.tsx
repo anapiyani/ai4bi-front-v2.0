@@ -158,8 +158,8 @@ const BotVisualizer = ({ type = "default", stream, small = false, userSpeaking =
 							(userSpeaking
 								? "w-full h-[40px] bg-white relative" 
 								: small
-								? "w-[76px] h-[76px] bg-gradient-to-r from-[#0284C7] to-[#77BAAA]" 
-								: "w-full h-20 bg-gradient-to-r from-[#0284C7] to-[#77BAAA]"       
+								? "w-[76px] h-[76px] bg-gradient-to-r from-[#F96D31] to-[#FFBA6A]" 
+								: "w-full h-20 bg-gradient-to-r from-[#F96D31] to-[#FFBA6A]"       
 							)
 						}
 					>
@@ -194,7 +194,7 @@ const BotVisualizer = ({ type = "default", stream, small = false, userSpeaking =
 				}, [])
 
 				return (
-					<div className={"flex justify-center items-center bg-gradient-to-r from-[#0284C7] to-[#77BAAA] overflow-hidden relative p-px rounded-lg " + (small ? "w-[76px] h-[76px]" : "w-full h-20")}>
+					<div className={"flex justify-center items-center bg-gradient-to-r from-[#F96D31] to-[#FFBA6A] overflow-hidden relative p-px rounded-lg " + (small ? "w-[76px] h-[76px]" : "w-full h-20")}>
 						<div ref={lottieRef} className={small ? "w-[76px] h-[76px]" : "w-full h-40"}></div>
 						{userSpeaking && (
 							<span className="text-xs text-muted-foreground absolute bottom-3 right-2">
@@ -226,7 +226,7 @@ const BotVisualizer = ({ type = "default", stream, small = false, userSpeaking =
 				})
 
 				return (
-					<div className={"flex justify-center items-center bg-gradient-to-r from-[#0284C7] to-[#77BAAA] overflow-hidden p-px rounded-lg " + (small ? "w-[76px] h-[76px]" : "w-full h-20")}>
+					<div className={"flex justify-center items-center bg-gradient-to-r from-[#F96D31] to-[#FFBA6A] overflow-hidden p-px rounded-lg " + (small ? "w-[76px] h-[76px]" : "w-full h-20")}>
 						<div ref={lottieRef} className={small ? "w-[76px] h-[76px]" : "w-full h-[306px]"}></div>
 					</div>
 				)
@@ -260,7 +260,7 @@ const BotVisualizer = ({ type = "default", stream, small = false, userSpeaking =
 		default:
 			const BotDefault = ({ small }: { small?: boolean }) => {
 				return (
-					<div className={"flex justify-center items-center bg-gradient-to-r from-[#0284C7] to-[#77BAAA] overflow-hidden p-px rounded-lg " + (small ? "w-[76px] h-[76px]" : "w-full h-20")}>
+					<div className={"flex justify-center items-center bg-gradient-to-r from-[#F96D31] to-[#FFBA6A] overflow-hidden p-px rounded-lg " + (small ? "w-[76px] h-[76px]" : "w-full h-20")}>
 						<div className='w-full border-y-[1px] border-white'></div>
 					</div>
 				)

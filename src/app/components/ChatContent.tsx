@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from '@/components/ui/button'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import ChatHeader from "@/src/app/components/Chat/ChatHeader"
 import dayjs from "dayjs"
 import { useTranslations } from "next-intl"
@@ -14,6 +16,7 @@ import MessageInput from "./Chat/MessageInput"
 import PinnedMessages from './Chat/PinnedMessages'
 import SelectChat from './Chat/SelectChat'
 import ChangeDates from "./Form/ChangeDates"
+import Icons from './Icons'
 
 const ChatContent = ({
   chatId,
@@ -35,8 +38,11 @@ const ChatContent = ({
   typingStatuses,
   openMenu,
   handleForwardMessage,
+  isTechnicalCouncil,
+  openSideMenu,
   conversations,
   handleCreateOrOpenChat,
+  setOpenSideMenu,
 }: ChatContentProps) => {
   const t = useTranslations("dashboard");
   const [openRescheduleModal, setOpenRescheduleModal] = useState<boolean>(false);
@@ -178,147 +184,173 @@ const ChatContent = ({
 
   return (
     <div className="flex flex-col w-full h-full relative">
-      <ChatHeader  
-        title={title} 
-        typingStatuses={typingStatuses}
-        t={t} 
-        onClickAboutAuction={() => {
-          setOpenMenu(true);
-        }}
-        openMenu={openMenu} 
-      />
-      <div className="absolute top-[65px] left-0 right-0 z-50">
-        <PinnedMessages 
-          goToMessage={goToMessage} 
-          pinnedMessages={pinnedMessages} 
-          t={t}
-          handleUnpinMessage={(messageId: string) => handlePinUnpin(messageId, true)} 
+    {
+      isTechnicalCouncil && setOpenSideMenu ? (
+        !openSideMenu ? (<div className='flex mt-3 px-3'>
+          <div>
+            <Button onClick={() => setOpenSideMenu(true)} variant="outline" className='p-2 bg-white' >
+              <Icons.SideMenu />
+            </Button>
+          </div>
+          <div className='w-full flex justify-center mr-10'>
+            <Tabs defaultValue="chat">
+              <TabsList className='bg-white'>
+                <TabsTrigger className='text-brand-gray text-sm' value="chat">{t("chat")}</TabsTrigger>
+                <TabsTrigger className='text-brand-gray text-sm' value="participants">{t("participants")}</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+        </div>) : (
+          <div>
+            small
+          </div>
+        )
+      ) : (
+        <div>
+          <ChatHeader  
+          title={title || ""} 
+          typingStatuses={typingStatuses}
+          t={t} 
+          onClickAboutAuction={() => {
+            setOpenMenu(true);
+          }}
+          openMenu={openMenu} 
         />
-      </div>
-      <div className="flex-grow overflow-y-auto bg-neutrals-secondary">
-        <div className="h-[calc(100vh-240px)] overflow-y-auto" ref={messagesRef}>
-          <div className="flex flex-col gap-2 px-4 py-2">
-            <div className="flex flex-col gap-1 ">
-              {messages
-                .filter((m) => m.chat_id === selectedConversation)
-                .sort(
-                  (a, b) =>
-                    new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
-                )
-                .map((message, index, array) => {
-                  const previousMessage = array[index - 1];
-                  const showSender =
-                    !previousMessage || previousMessage.authorId !== message.authorId;
+        <div className="absolute top-[65px] left-0 right-0 z-50">
+          <PinnedMessages 
+            goToMessage={goToMessage} 
+            pinnedMessages={pinnedMessages} 
+            t={t}
+            handleUnpinMessage={(messageId: string) => handlePinUnpin(messageId, true)} 
+          />
+        </div>
+        </div>
+      )
+    }
+    <div className={`flex-grow overflow-y-auto bg-neutrals-secondary ${isTechnicalCouncil ? "rounded-lg" : ""}`}>
+      <div className={`${isTechnicalCouncil ? "h-[calc(86vh-200px)]" : "h-[calc(100vh-240px)]"} overflow-y-auto`} ref={messagesRef}>
+        <div className="flex flex-col gap-2 px-4 py-2">
+          <div className="flex flex-col gap-1 ">
+            {messages
+              .filter((m) => m.chat_id === selectedConversation)
+              .sort(
+                (a, b) =>
+                  new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+              )
+              .map((message, index, array) => {
+                const previousMessage = array[index - 1];
+                const showSender =
+                  !previousMessage || previousMessage.authorId !== message.authorId;
 
-                  const replyToSnippet = message.reply_to
-                    ? messages.find((m) => m.id === message.reply_to)
-                    : null;
+                const replyToSnippet = message.reply_to
+                  ? messages.find((m) => m.id === message.reply_to)
+                  : null;
 
-                  return (
-                    <Message
-                      key={message.id}
-                      counter={message.counter}
-                      sender_id={message.authorId || null}
-                      goToMessage={goToMessage} 
-                      createPrivateChat={handleCreateOrOpenChat}
-                      message={message.content}
-                      handleSelectMessages={(action: SelectActions) => handleSelectMessages(action, message.id)}
-                      selectedMessages={selectedMessages}
-                      sender={
-                        (message.authorId &&
-                          message.authorId === getCookie("user_id")) ||
-                        message.sender_first_name === "user"
-                          ? "user"
-                          : `${message.sender_first_name} ${message.sender_last_name}`
-                      }
-                      t={t}
-                      messageId={message.id}
-                      timestamp={dayjs(message.timestamp).format("HH:mm")}
-                      showSender={showSender}
-                      handleOpenDeleteMessage={handleOpenDeleteMessage}
-                      handleReplyClick={() => handleReplyClick(message)}
-                      handleEditClick={() => handleEditClick(message)}
-                      forwarded_from={message.forwarded_from}
-                      forwarded_from_first_name={message.forwarded_from_first_name}
-                      forwarded_from_last_name={message.forwarded_from_last_name}
-                      isEdited={message.is_edited || false}
-                      reply_message_id={message.reply_to || null}
-                      handlePin={() => handlePinUnpin(message.id, message.is_pinned || false)}
-                      isPinned={message.is_pinned || false}
-                      handleUnpin={() => handlePinUnpin(message.id, message.is_pinned || false)}
-                      type={message.type}
-                      media={Array.isArray(message.media) ? message.media : message.media ? [message.media] : null}
-                      handleForward={() => handleForwardModal(message.id)}
-                      replyToMessage={
-                        replyToSnippet
-                          ? {
-                              sender: replyToSnippet.sender_first_name,
-                              content: replyToSnippet.content,
-                              has_attachments: replyToSnippet.has_attachements || false,
-                              media: Array.isArray(replyToSnippet.media) ? replyToSnippet.media : replyToSnippet.media ? [replyToSnippet.media] : null,
-                            }
-                          : null
-                      }
-                    />
-                  );
-                })}
-            </div>
+                return (
+                  <Message
+                    key={message.id}
+                    counter={message.counter}
+                    sender_id={message.authorId || null}
+                    goToMessage={goToMessage} 
+                    createPrivateChat={handleCreateOrOpenChat}
+                    message={message.content}
+                    handleSelectMessages={(action: SelectActions) => handleSelectMessages(action, message.id)}
+                    selectedMessages={selectedMessages}
+                    sender={
+                      (message.authorId &&
+                        message.authorId === getCookie("user_id")) ||
+                      message.sender_first_name === "user"
+                        ? "user"
+                        : `${message.sender_first_name} ${message.sender_last_name}`
+                    }
+                    t={t}
+                    messageId={message.id}
+                    timestamp={dayjs(message.timestamp).format("HH:mm")}
+                    showSender={showSender}
+                    handleOpenDeleteMessage={handleOpenDeleteMessage}
+                    handleReplyClick={() => handleReplyClick(message)}
+                    handleEditClick={() => handleEditClick(message)}
+                    forwarded_from={message.forwarded_from}
+                    forwarded_from_first_name={message.forwarded_from_first_name}
+                    forwarded_from_last_name={message.forwarded_from_last_name}
+                    isEdited={message.is_edited || false}
+                    reply_message_id={message.reply_to || null}
+                    handlePin={() => handlePinUnpin(message.id, message.is_pinned || false)}
+                    isPinned={message.is_pinned || false}
+                    handleUnpin={() => handlePinUnpin(message.id, message.is_pinned || false)}
+                    type={message.type}
+                    media={Array.isArray(message.media) ? message.media : message.media ? [message.media] : null}
+                    handleForward={() => handleForwardModal(message.id)}
+                    replyToMessage={
+                      replyToSnippet
+                        ? {
+                            sender: replyToSnippet.sender_first_name,
+                            content: replyToSnippet.content,
+                            has_attachments: replyToSnippet.has_attachements || false,
+                            media: Array.isArray(replyToSnippet.media) ? replyToSnippet.media : replyToSnippet.media ? [replyToSnippet.media] : null,
+                          }
+                        : null
+                    }
+                  />
+                );
+              })}
           </div>
         </div>
-        <div className="px-5 w-full mt-auto">
-          <MessageInput
-            t={t}
-            handleTypingChat={handleTypingChat}
-            value={newMessage}
-            setNewMessage={setNewMessage}
-            isConnected={isConnected}
-            sendChatMessage={sendChatMessage}
-            replyTo={replyTo}
-            participants={participants}
-            chatId={chatId}
-            setReplyTo={setReplyTo}
-            editMessage={editMessage}
-            setEditMessage={setEditMessage}
-            handleEdit={handleEdit}
-            openDropZoneModal={openDropZoneModal}
-            setOpenDropZoneModal={setOpenDropZoneModal}
-          />
-        </div>
       </div>
-
-      {openRescheduleModal && (
-        <ChangeDates
-          open={openRescheduleModal}
-          onClose={() => setOpenRescheduleModal(false)}
-          chat_id={chatId}
+      <div className="px-5 w-full mt-auto">
+        <MessageInput
+          t={t}
+          handleTypingChat={handleTypingChat}
+          value={newMessage}
+          setNewMessage={setNewMessage}
+          isConnected={isConnected}
+          sendChatMessage={sendChatMessage}
+          replyTo={replyTo}
+          participants={participants}
+          chatId={chatId}
+          setReplyTo={setReplyTo}
+          editMessage={editMessage}
+          setEditMessage={setEditMessage}
+          handleEdit={handleEdit}
+          openDropZoneModal={openDropZoneModal}
+          setOpenDropZoneModal={setOpenDropZoneModal}
         />
-      )}
-      {
-        openDropZoneModal && (
-          <DropZoneModal
-            open={openDropZoneModal}
-            setOpen={setOpenDropZoneModal}
-            handleSendMedia={handleSendMedia}
-            t={t}
-            value={newMessage}
-            setNewMessage={setNewMessage}
-            chatId={chatId}
-          />
-        )
-      }
-      {
-        openForwardMessage && (
-          <ForwardMessage
-            open={openForwardMessage}
-            t={t}
-            conversations={conversations}
-            onClose={() => setOpenForwardMessage(false)}
-            handleForward={handleForward}
-            forwardMessageIds={forwardMessageIds || []}
-          />
-        )
-      }
+      </div>
     </div>
+
+    {openRescheduleModal && (
+      <ChangeDates
+        open={openRescheduleModal}
+        onClose={() => setOpenRescheduleModal(false)}
+        chat_id={chatId}
+      />
+    )}
+    {
+      openDropZoneModal && (
+        <DropZoneModal
+          open={openDropZoneModal}
+          setOpen={setOpenDropZoneModal}
+          handleSendMedia={handleSendMedia}
+          t={t}
+          value={newMessage}
+          setNewMessage={setNewMessage}
+          chatId={chatId}
+        />
+      )
+    }
+    {
+      openForwardMessage && (
+        <ForwardMessage
+          open={openForwardMessage}
+          t={t}
+          conversations={conversations}
+          onClose={() => setOpenForwardMessage(false)}
+          handleForward={handleForward}
+          forwardMessageIds={forwardMessageIds || []}
+        />
+      )
+    }
+  </div>
   );
 };
 

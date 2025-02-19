@@ -167,16 +167,18 @@
 		"choose_city_to_show_constructs": "Выберите город для отображения конструктивов",
 		"constructs_type": "Тип конструктива",
 		"city": "Город",
-		"upload_files": "Загрузить файлы"
+		"upload_files": "Загрузить файлы",
+		"demonstration": "Демонстрация",
+		"protocol_table": "Таблица протоколов",
+		"Aray": "Арай",
+		"bot": "бот",
+		"demonstration_of_technical_council": "Демонстрация технического совета",
+		"start_demonstration": "Начать демонстрацию"
 	},
 	"dropzone": {
 		"upload_files": "Загрузить файлы",
 		"drop_files_here": "Перетащите файлы сюда",
 		"max_file_size": "Максимальный размер файла"
-	},
-	"technical_council": {
-		"demonstration": "Демонстрация",
-		"protocol_table": "Таблица протоколов"
 	}
 }
 
