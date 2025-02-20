@@ -165,7 +165,13 @@
 		"no_constructs_chosen": "No constructs chosen",
 		"choose_city_to_show_constructs": "Choose city to show constructs",
 		"city": "City",
-		"constructs_type": "Constructs type"
+		"constructs_type": "Constructs type",
+		"demonstration": "Demonstration",
+		"protocol_table": "Protocol table",
+		"Aray": "Aray",
+		"bot": "bot",
+		"demonstration_of_technical_council": "Demonstration of technical council",
+		"start_demonstration": "Start demonstration"
 	},
 	"dropzone": {
 		"upload_files": "Upload files",

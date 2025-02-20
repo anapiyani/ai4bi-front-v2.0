@@ -7,12 +7,12 @@ import { useLocale, useTranslations } from "next-intl"
 import { useRouter, useSearchParams } from "next/navigation"
 import { memo, useEffect, useMemo, useState } from "react"
 import toast from 'react-hot-toast'
-import { getCookie } from '../../api/service/cookie'
 import ChatMenu from "../../components/Chat/ChatMenu/ChatMenu"
 import DeleteMessage from "../../components/Chat/DeleteMessage"
 import ConstructModal from '../../components/Chat/Forms/ConstructModal'
 import { useCreatePrivateChat } from '../../components/Chat/hooks/useCreatePrivateChat'
 import ChatContent from "../../components/ChatContent"
+import { useChatActions } from '../../components/CommonWsActions'
 import Icons from '../../components/Icons'
 import { useChatWebSocket } from "../../hooks/useChatWebSocket"
 import { AutoCompleteResponse, ReceivedChats } from '../../types/types'
@@ -26,11 +26,8 @@ const ChatMode = () => {
   const searchParams = useSearchParams()
   const router = useRouter()
   const chatId = searchParams.get("id")
-  const [openMenu, setOpenMenu] = useState<boolean>(false)
   const [selectedConversationType, setSelectedConversationType] = useState<"auction_chat" | "private" | "group">()
   const [constructModalOpen, setConstructModalOpen] = useState<boolean>(false)
-  const [messageIds, setMessageIds] = useState<string[] | null>(null)
-  const [isDeleteMessageOpen, setIsDeleteMessageOpen] = useState<boolean>(false)
   const [activeTab, setActiveTab] = useState("your-auctions");
   const [privateChatResult, setPrivateChatResult] = useState<AutoCompleteResponse[] | null>(null)
   const {mutate: createPrivateChatMutation, isPending: isCreatingPrivateChat} = useCreatePrivateChat();
@@ -56,19 +53,17 @@ const ChatMode = () => {
     handleReadMessage,
     addParticipantsToAuctionChat
   } = useChatWebSocket()
+  const {
+    openMenu,
+    setOpenMenu,
+    isDeleteMessageOpen,
+    setIsDeleteMessageOpen,
+    messageIds,
+    handleCreateOrOpenChat,
+    handleOpenDeleteMessage,
+    handleOpenMenu,
+  } = useChatActions();
 
-  const handleCreateOrOpenChat = (toUser: string) => {
-    const user_id = getCookie("user_id");
-    if (!user_id) return;
-    createPrivateChatMutation({user_id: user_id, toUser: toUser}, {
-      onSuccess: (data) => {
-        window.location.href = `/dashboard?active_tab=chat&id=${data.chat_id}`;
-      },
-      onError: (error) => {
-        toast.error(error.message)
-      }
-    });
-  }
   
   const auctionChats = useMemo(() => 
     conversations.filter(c => c.chat_type === "auction_chat"),
@@ -89,16 +84,6 @@ const ChatMode = () => {
     router.push(`/dashboard?active_tab=chat&id=${id}`)
     setOpenMenu(false)
   }
-
-  const handleOpenDeleteMessage = (messageId: string | string[]) => {
-    setIsDeleteMessageOpen(true)
-    if (Array.isArray(messageId)) {
-      setMessageIds(messageId)
-    } else {
-      setMessageIds([messageId])
-    }
-  }
-
   const handleDeleteMessage = () => {
     setIsDeleteMessageOpen(false)
     if (messageIds) {
@@ -113,9 +98,6 @@ const ChatMode = () => {
     setIsDeleteMessageOpen(false)
   }
 
-  const handleOpenMenu = () => {
-    setOpenMenu(true)
-  }
 
   useEffect(() => {
     if (chatId) {
@@ -303,12 +285,14 @@ const ChatMode = () => {
           </div>
         </Tabs>
       </aside>
-      <div className="w-full lg:w-2/3 mt-6 lg:mt-6 mx-4 rounded-lg bg-secondary min-h-[calc(100vh-8rem)] py-3 lg:py-3 flex justify-center">
+
+      <div className="w-full lg:w-2/3 mt-6 lg:mt-6 mx-4 lg:mr-6 rounded-lg bg-secondary min-h-[calc(100vh-8rem)] py-3 lg:py-3 flex justify-center">
         <ChatContent
           chatId={chatId || ""}
           selectedConversation={selectedConversation}
           messages={messagesByChat[selectedConversation || ""] || []}
           title={conversations.find((c) => c.id === selectedConversation)?.name || t("chat")}
+          isTechnicalCouncil={false}
           isConnected={isConnected}
           setNewMessage={setNewMessage}
           newMessage={newMessage}

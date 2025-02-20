@@ -138,11 +138,13 @@ export type EditMessage = {
 export type ChatContentProps = {
 	chatId: string | null;
   selectedConversation: string | null;
-  title: string;
+  title?: string;
 	participants: ChatParticipants[];
   messages: ChatMessage[];
   isConnected: boolean;
+	isTechnicalCouncil: boolean;
   newMessage: string;
+	openSideMenu?: boolean;
 	handleCreateOrOpenChat: (toUser: string) => void;
   setNewMessage: (message: string) => void;
   sendChatMessage: (reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean, type?: "audio") => void;
@@ -158,6 +160,7 @@ export type ChatContentProps = {
   handleTyping: (status: "typing" | "recording" | "stopped", chat_id: string) => void;
 	typingStatuses: TypingStatus[];
 	conversations: Conversation[];
+	setOpenSideMenu?: (open: boolean) => void;
 }
 
 export type UploadMediaResponse = {
