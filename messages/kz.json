@@ -165,7 +165,18 @@
 		"no_constructs_chosen": "Конструктив таңдалмады",
 		"choose_city_to_show_constructs": "Конструктивтерді көрсету үшін қала таңдаңыз",
 		"constructs_type": "Конструктив түрі",
-		"city": "Қала"
+		"city": "Қала",
+		"demonstration": "Демонстрация",
+		"protocol_table": "Таблица протоколов",
+		"Aray": "Арай",
+		"bot": "бот",
+		"demonstration_of_technical_council": "Тех. кеңестің демонстрациясы",
+		"start_demonstration": "Демонстрация бастау"
+	},
+	"dropzone": {
+		"upload_files": "Файлдарды жүктеу",
+		"drop_files_here": "Файлдарды осы жерге тастаңыз",
+		"max_file_size": "Файлдың максималды өлшемі"
 	}
 }
 

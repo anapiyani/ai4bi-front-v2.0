@@ -59,7 +59,8 @@ const config = {
           foreground: "#F8FAFC",
         },
         brand:  {
-          gray: "#4F4F4F"
+          gray: "#4F4F4F",
+          orange: "#FF8855"
         },
         muted: {
           DEFAULT: "#E2E8F0",
@@ -83,6 +84,7 @@ const config = {
         },
         neutrals: {
           DEFAULT: "#555E68",
+          primary: "#FAFAFA",
           secondary: "#F5F5F5",
           muted: "#737373",
           border: "#D4D4D4"

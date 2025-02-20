@@ -56,7 +56,6 @@ const Header = ({type, t, handlers, isMicrophoneOn}: HeaderProps) => {
 							</h2>
 						</div>
 						<div className='flex items-center gap-4'>
-							<LocaleSwitcher />
 							<AudioButton onClick={handlers.audioButtonClick} />
 							<ExitButton 
 								text={t("leave-technical-council")}

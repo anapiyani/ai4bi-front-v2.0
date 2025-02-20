@@ -4,12 +4,12 @@ import React from 'react'
 import { useDropzone } from 'react-dropzone'
 
 // Type Definitions
+import { useTranslations } from 'next-intl'
 import {
   type DropzoneProps as _DropzoneProps,
   type DropzoneState as _DropzoneState,
 } from 'react-dropzone'
 import Icons from '../../Icons'
-
 export interface DropzoneState extends _DropzoneState {}
 
 export interface DropzoneProps extends Omit<_DropzoneProps, 'children'> {
@@ -36,6 +36,7 @@ const DropzoneComponent = ({
   setErrorMessage,
   ...props
 }: DropzoneProps) => {
+  const t = useTranslations("dropzone")
   const dropzone = useDropzone({
     ...props,
     onDrop: (acceptedFiles, fileRejections, event) => {
@@ -69,22 +70,21 @@ const DropzoneComponent = ({
         {children ? (
           children(dropzone)
         ) : dropzone.isDragAccept ? (
-          <div className='text-sm font-medium'>Drop your files here!</div>
+          <div className='text-sm font-medium'>{t("drop_files_here")}</div>
         ) : (
           <div className='flex items-center flex-col gap-1.5'>
             <div className='flex items-center flex-row gap-0.5 text-sm font-medium'>
-              <Icons.Upload className='mr-2 h-4 w-4' /> Upload files
+              <Icons.Upload className='mr-2 h-4 w-4' /> {t("upload_files")}
             </div>
             {props.maxSize && (
               <div className='text-xs text-gray-400 font-medium'>
-                Max. file size: {(props.maxSize / (1024 * 1024)).toFixed(2)} MB
+                {t("max_file_size")}: {(props.maxSize / (1024 * 1024)).toFixed(2)} MB
               </div>
             )}
           </div>
         )}
       </div>
 
-      {/* Error Message */}
       {showErrorMessage && errorMessage && (
         <span className='text-xs text-red-600 mt-3'>{errorMessage}</span>
       )}

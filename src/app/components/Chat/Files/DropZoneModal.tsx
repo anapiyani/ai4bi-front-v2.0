@@ -71,7 +71,7 @@ const DropZoneModal = ({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="w-full max-w-2xl bg-primary-foreground">
         <DialogHeader>
-          <DialogTitle>Upload Files</DialogTitle>
+          <DialogTitle>{t("upload_files")}</DialogTitle>
         </DialogHeader>
         <DialogDescription>
           <Dropzone

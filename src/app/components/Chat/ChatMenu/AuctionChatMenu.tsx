@@ -23,7 +23,7 @@ type AuctionChatMenuProps = {
 	technical_council_date: string;
 	participants: ChatParticipants[];
 	t: any;
-	addParticipantsToAuctionChat: (user_ids: string[]) => void;
+	addParticipantsToAuctionChat: (user_ids: string[], is_auction_participant?: boolean) => void;
 	chatId: string;
 }
 
@@ -42,7 +42,7 @@ const AuctionChatMenu = (
 	const renderedMedia = useRenderMediaContent(chatMedia?.media, t, false, true);
 	
 	const handleAddParticipants = () => {
-		addParticipantsToAuctionChat(selectedParticipants.map((participant) => participant.uuid));
+		addParticipantsToAuctionChat(selectedParticipants.map((participant) => participant.uuid), true);
 		setOpenAddParticipant(false);
 		setSelectedParticipants([]);
 	}
