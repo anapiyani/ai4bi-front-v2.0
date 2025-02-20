@@ -4,7 +4,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useTranslations } from 'next-intl'
 import dynamic from 'next/dynamic'
 import { useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { getCookie } from '../../api/service/cookie'
 import DeleteMessage from '../../components/Chat/DeleteMessage'
 import ChatContent from '../../components/ChatContent'
 import { useChatActions } from '../../components/CommonWsActions'
@@ -23,12 +24,10 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
     conversations,
     setSelectedConversation,
     messagesByChat,
-    setMessagesByChat,
     selectedConversation,
     setNewMessage,
     newMessage,
     sendChatMessage,
-    deleteMessage,
     createPrivateChat,
     sendEditMessage,
     handlePinMessage,
@@ -37,7 +36,6 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
     handleTyping,
     typingStatuses,
     handleReadMessage,
-    addParticipantsToAuctionChat
   } = useChatWebSocket()
   const {
     openMenu,
@@ -52,7 +50,144 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
   const searchParams = useSearchParams();
   const chatId = searchParams.get('id');
   const [openSideMenu, setOpenSideMenu] = useState<boolean>(false);
+
+  const [localStream, setLocalStream] = useState<MediaStream | null>(null);
+  const [remoteAudios, setRemoteAudios] = useState<HTMLAudioElement[]>([]);
+  const room = "e2e589a2-eca5-46ea-bd1e-a4b5822bc62f";
+  const wsRef = useRef<WebSocket | null>(null);
+  const peerRef = useRef<RTCPeerConnection | null>(null);
+
+  useEffect(() => {
+    let isUnmounting = false;
+
+    const start = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+        if (isUnmounting) return; 
+        setLocalStream(stream);
+
+        const ws = new WebSocket(`wss://rtc.ai4bi.kz/websocket?room=${encodeURIComponent(room || "default")}`);
+        ws.onopen = () => {
+          console.log('WebSocket for RTC connection established');
+          ws.send(JSON.stringify({
+            event: 'auth',
+            data: `Bearer ${getCookie("access_token")}`
+          }));
+        }
+        const pingInterval = setInterval(() => {
+          if (ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({ event: 'ping' }));
+          }
+        }, 30000);
   
+        const peerConnection = new RTCPeerConnection({
+          iceTransportPolicy: 'relay',
+          iceServers: [
+            { urls: "stun:rtc.ai4bi.kz:3478" },
+            {
+              urls: "turn:rtc.ai4bi.kz:5349?transport=udp",
+              username: "test",
+              credential: "test123"
+            },
+            {
+              urls: "turn:rtc.ai4bi.kz:5349?transport=tcp",
+              username: "test",
+              credential: "test123"
+            }
+          ]
+        });
+  
+        stream.getAudioTracks().forEach(track => peerConnection.addTrack(track, stream))
+  
+        isMicrophoneOn ? localStream?.getAudioTracks().forEach(track => track.enabled = true) : localStream?.getAudioTracks().forEach(track => track.enabled = false);
+  
+        peerConnection.ontrack = (event) => {
+          if (event.track.kind !== "audio") return;
+  
+          const audio = document.createElement("audio");
+          audio.srcObject = event.streams[0];
+          audio.autoplay = true;
+          audio.controls = true;
+
+          setRemoteAudios(prev => [...prev, audio]);
+          
+          event.streams[0].onremovetrack = () => {
+            setRemoteAudios(prev => prev.filter(a => a !== audio));
+          }
+        }
+  
+        // send ICE candidates to the server
+        peerConnection.onicecandidate = (event) => {
+          if (event.candidate) {
+            ws.send(JSON.stringify({
+              event: 'candidate',
+              data: JSON.stringify(event.candidate)
+            }));
+          }
+        }
+  
+        // Handle incoming signaling messages from the server
+        ws.onmessage = async (message) => {
+          const msg = JSON.parse(message.data)
+          if (!msg) return;
+  
+          switch (msg.event) {
+            case 'offer':
+              // Server sent an offer, set as remote, then create/send answer
+              await peerConnection.setRemoteDescription(JSON.parse(msg.data));
+              const answer = await peerConnection.createAnswer();
+              await peerConnection.setLocalDescription(answer);
+              ws.send(JSON.stringify({
+                event: 'answer',
+                data: JSON.stringify(answer)
+              }));
+              break;
+  
+            case 'candidate':
+              await peerConnection.addIceCandidate(JSON.parse(msg.data));
+              break;
+          }
+        };
+  
+        ws.onclose = () => {
+          console.log('WebSocket closed');
+          clearInterval(pingInterval);
+        };
+  
+        ws.onerror = error => {
+          console.error('WebSocket error:', error);
+        };
+
+      } catch (err) {
+        console.log("Error starting RTC connection", err);
+      }
+    }
+
+    start();
+
+    return () => {
+      isUnmounting = true;
+      if (wsRef.current) {
+        wsRef.current.close();
+        wsRef.current = null;
+      }
+      if (peerRef.current) {
+        peerRef.current.close();
+        peerRef.current = null;
+      }
+      if (localStream) {
+        localStream.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, [])
+
+  useEffect(() => {
+    if (!localStream) return;
+    localStream.getAudioTracks().forEach(track => {
+      track.enabled = isMicrophoneOn;
+    });
+  }, [isMicrophoneOn, localStream]);
+
   useEffect(() => {
     if (chatId) {
       setSelectedConversation(chatId);
@@ -120,6 +255,11 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
       </div> 
      </div>
      <DeleteMessage isOpen={isDeleteMessageOpen} onClose={handleCloseDeleteMessage} onDelete={handleDeleteMessage} />
+     {remoteAudios.map((audio, index) => (
+      <div key={index} className='audio-container'>
+        <audio src={audio.src} autoPlay />
+      </div>
+     ))}
     </div>
   );
 };

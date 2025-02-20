@@ -597,13 +597,14 @@ export const useChatWebSocket = () => {
   // ---------------------------------------------------------------------------
   // Add participants to auction chat (JSON-RPC request)
   // ---------------------------------------------------------------------------
-  const addParticipantsToAuctionChat = (user_ids: string[]) => {
+  const addParticipantsToAuctionChat = (user_ids: string[], is_auction_participant?: boolean) => {
     if (!selectedConversation) return;
     sendMessage(createRpcRequest("batchAddParticipants", {
       participants: user_ids.map((id: string) => ({
         user_id: id,
         chat_id: selectedConversation,
-        role: "user"
+        role: "user",
+        is_auction_participant: is_auction_participant
       }))
     }));
     getChatMessages();

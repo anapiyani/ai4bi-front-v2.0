@@ -12,7 +12,7 @@ interface ChatMenuProps {
   setOpenMenu: (open: boolean) => void;
   name: string;
   participants: ChatParticipants[];
-  addParticipantsToAuctionChat: (user_ids: string[]) => void;
+  addParticipantsToAuctionChat: (user_ids: string[], is_auction_participant?: boolean) => void;
   chatId: string;
 }
 
