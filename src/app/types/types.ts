@@ -161,6 +161,13 @@ export type ChatContentProps = {
 	typingStatuses: TypingStatus[];
 	conversations: Conversation[];
 	setOpenSideMenu?: (open: boolean) => void;
+	popUpsByChat: PopUpsByChat;
+}
+
+export type PopUpsByChat = {
+	[chatId: string]: {
+		[popupId: string]: any
+	}
 }
 
 export type UploadMediaResponse = {

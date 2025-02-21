@@ -36,6 +36,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
     handleTyping,
     typingStatuses,
     handleReadMessage,
+    popUpsByChat,
   } = useChatWebSocket()
   const {
     openMenu,
@@ -250,6 +251,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
             openMenu={openMenu}
             typingStatuses={typingStatuses}
             conversations={conversations}
+            popUpsByChat={popUpsByChat}
           />
         </div>
       </div> 
