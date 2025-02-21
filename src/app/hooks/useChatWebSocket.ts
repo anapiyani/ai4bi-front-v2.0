@@ -153,6 +153,8 @@ export const useChatWebSocket = () => {
       return;
     } else if (message.type === "notifications") {
       handleShowNotification(message);
+    } else if (message.type === "popup") {
+      console.log("[handleWebSocketMessage] popup:", message);
     }
     if (message.type === "message_received") {
       console.log("[handleWebSocketMessage] message_received ack:", message);
@@ -633,6 +635,14 @@ export const useChatWebSocket = () => {
     sendMessage(request);
   };
 
+  const getPopUps = () => {
+    if (!selectedConversation) return;
+    const request = createRpcRequest("get_popups", {
+      chat_id: selectedConversation,
+    });
+    sendMessage(request);
+  }
+
   // ---------------------------------------------------------------------------
   // handleReadMessage
   // ---------------------------------------------------------------------------
@@ -759,16 +769,38 @@ export const useChatWebSocket = () => {
   }
 
   // ---------------------------------------------------------------------------
+  // handleSubscribeToPopUp
+  // ---------------------------------------------------------------------------
+  const handleSubscribeToPopUp = () => {
+    sendMessage({
+      type: "subscribe",
+      channel: "popup",
+    });
+  }
+
+  // ---------------------------------------------------------------------------
+  // unSubscribeToPopUp
+  // ---------------------------------------------------------------------------
+  const unSubscribeToPopUp = () => {
+    sendMessage({
+      type: "unsubscribe",
+      channel: "popup",
+    });
+  }
+
+  // ---------------------------------------------------------------------------
   // Subscribe/unsubscribe to specific chat rooms when selectedConversation changes
   // ---------------------------------------------------------------------------
   useEffect(() => {
     // If previously selected a conversation, unsubscribe from it
     if (prevConversationRef.current) {
       unsubscribeToChatRoom(prevConversationRef.current);
+      unSubscribeToPopUp();
     }
     // Subscribe to the newly selected conversation
     if (selectedConversation && isConnected) {
       subscribeToChatRoom(selectedConversation);
+      handleSubscribeToPopUp();
     }
     prevConversationRef.current = selectedConversation;
   }, [selectedConversation, isConnected]);
@@ -825,6 +857,13 @@ export const useChatWebSocket = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedConversation, isConnected]);
+
+  useEffect(() => {
+    if (selectedConversation) {
+      getPopUps();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedConversation]);
 
   // ---------------------------------------------------------------------------
   // Optional: Scroll to bottom when new messages arrive or conversation changes
