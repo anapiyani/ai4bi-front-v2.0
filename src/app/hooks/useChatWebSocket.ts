@@ -8,6 +8,11 @@ import { toast as HotToast } from 'react-hot-toast'
 import { getCookie } from '../api/service/cookie'
 import { ChatMessage, Conversation, ForwardData, LastMessage, Media, MessagesRecord, ReceivedChats, TypingStatus } from '../types/types'
 
+export type PopUpsRecord = {
+  [chatId: string]: {
+    [popupId: string]: any
+  }
+}
 
 export const useChatWebSocket = () => {
   const t = useTranslations("dashboard")
@@ -17,6 +22,7 @@ export const useChatWebSocket = () => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
   const [messagesByChat, setMessagesByChat] = useState<MessagesRecord>({});
+  const [popUpsByChat, setPopUpsByChat] = useState<PopUpsRecord>({});
   const [typingStatuses, setTypingStatuses] = useState<TypingStatus[]>([]);
   const typingTimeoutsRef = useRef<{ [chatId: string]: NodeJS.Timeout }>({});
   const [newMessage, setNewMessage] = useState("");
@@ -36,6 +42,8 @@ export const useChatWebSocket = () => {
   }, [currentUser]);
 
   const sentMessageIdsRef = useRef<Set<string>>(new Set());
+
+  // Man fuck this shit
 
   // ---------------------------------------------------------------------------
   // handleWebSocketMessage функция которая обрабатывает все сообщения от сервера
@@ -57,18 +65,15 @@ export const useChatWebSocket = () => {
     if (message.jsonrpc === "2.0" && message.result) {
       if (message.result.chat_id) {
         handleChatCreated(message.result);
+      } else if (message.result.event === "popups") {
+        handleReceivedChatPopup(message.result);
       } else if (message.result.message_id) {
         handleMessageReceived(message.result);
       } else if (Array.isArray(message.result)) {
         handleChatsReceived(message.result);
       } else if (message.result.count && message.result.messages) {
         handleMessagesReceived(message.result.messages);
-      }
-      return;
-    }
-
-    if (message.type === "auth" || message.type === "subscribe") {
-      getChats();
+      } 
       return;
     }
 
@@ -153,9 +158,7 @@ export const useChatWebSocket = () => {
       return;
     } else if (message.type === "notifications") {
       handleShowNotification(message);
-    } else if (message.type === "popup") {
-      console.log("[handleWebSocketMessage] popup:", message);
-    }
+    } 
     if (message.type === "message_received") {
       console.log("[handleWebSocketMessage] message_received ack:", message);
       return;
@@ -357,6 +360,29 @@ export const useChatWebSocket = () => {
     if (isSentMessage) {
       sentMessageIdsRef.current.delete(msg.id);
     }
+  }, []);
+
+  // ---------------------------------------------------------------------------
+  // handleReceivedChatPopup
+  // ---------------------------------------------------------------------------
+  const handleReceivedChatPopup = useCallback((message: any) => {
+    const { body, buttons, chat_id, created_at, expiration_time, header, id, popup_type, user_id } = message.result[0];
+    setPopUpsByChat((prev) => ({
+      ...prev,
+      [chat_id]: {
+        data: {
+          body,
+          buttons,
+          chat_id,
+          created_at,
+          expiration_time,
+          header,
+          id,
+          popup_type,
+          user_id,
+        }
+      }
+    }));
   }, []);
 
   // ---------------------------------------------------------------------------
@@ -916,5 +942,6 @@ export const useChatWebSocket = () => {
     addParticipantsToAuctionChat,
     handleReadMessage,
     typingStatuses,
+    popUpsByChat,
   };
 };

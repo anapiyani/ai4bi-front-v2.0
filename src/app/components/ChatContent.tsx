@@ -9,6 +9,7 @@ import { memo, useEffect, useRef, useState } from "react"
 import { getCookie } from "../api/service/cookie"
 import { useGoToMessage } from '../hooks/useGoToMessage'
 import { ChatContentProps, ChatMessage, SelectActions } from "../types/types"
+import TimeToStartAucTech from './Alerts/Organizers/TimeToStartAucTech'
 import DropZoneModal from './Chat/Files/DropZoneModal'
 import ForwardMessage from './Chat/ForwardMessage'
 import Message from "./Chat/Message"
@@ -43,6 +44,7 @@ const ChatContent = ({
   conversations,
   handleCreateOrOpenChat,
   setOpenSideMenu,
+  popUpsByChat,
 }: ChatContentProps) => {
   const t = useTranslations("dashboard");
   const [openRescheduleModal, setOpenRescheduleModal] = useState<boolean>(false);
@@ -52,6 +54,7 @@ const ChatContent = ({
   const [openDropZoneModal, setOpenDropZoneModal] = useState<boolean>(false);
   const [openForwardMessage, setOpenForwardMessage] = useState<boolean>(false);
   const [forwardMessageIds, setForwardMessageIds] = useState<string[] | null>(null);
+  const currentChatPopup = popUpsByChat?.[chatId || ""]?.data ?? null;
   const goToMessage = useGoToMessage();
   const [lastSeenCounter, setLastSeenCounter] = useState(0);
   const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
@@ -232,6 +235,20 @@ const ChatContent = ({
             handleUnpinMessage={(messageId: string) => handlePinUnpin(messageId, true)} 
           />
         </div>
+        {
+          currentChatPopup && currentChatPopup.popup_type === "tech_council_start" && (
+            <div className="absolute top-[65px] left-0 right-0 z-50">
+              <TimeToStartAucTech 
+                body={currentChatPopup.body}
+                buttons={currentChatPopup.buttons}
+                chat_id={currentChatPopup.chat_id}
+                created_at={currentChatPopup.created_at}
+                expiration_time={currentChatPopup.expiration_time}
+                header={currentChatPopup.header}
+              />
+            </div>
+          )
+        }
         </div>
       )
     }
