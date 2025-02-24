@@ -171,7 +171,8 @@
 		"Aray": "Арай",
 		"bot": "бот",
 		"demonstration_of_technical_council": "Тех. кеңестің демонстрациясы",
-		"start_demonstration": "Демонстрация бастау"
+		"start_demonstration": "Демонстрация бастау",
+		"please-select-date-and-time": "Күн мен уақытты таңдаңыз"
 	},
 	"dropzone": {
 		"upload_files": "Файлдарды жүктеу",

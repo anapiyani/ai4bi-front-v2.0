@@ -162,6 +162,7 @@ export type ChatContentProps = {
 	conversations: Conversation[];
 	setOpenSideMenu?: (open: boolean) => void;
 	popUpsByChat: PopUpsByChat;
+	handlePopUpButtonAction: (button: PopUpButtonAction) => void;
 }
 
 export type PopUpsByChat = {
@@ -288,4 +289,11 @@ export type InterestsResponse = {
 	interest_id: string;
 	name: string;
 	city: string;
+}
+
+export type PopUpButtonAction = {
+	popup_id: string;
+	user_id: string;
+	button_id: string;
+	tech_council_reschedule_date?: string;
 }

@@ -16,7 +16,6 @@ import Message from "./Chat/Message"
 import MessageInput from "./Chat/MessageInput"
 import PinnedMessages from './Chat/PinnedMessages'
 import SelectChat from './Chat/SelectChat'
-import ChangeDates from "./Form/ChangeDates"
 import Icons from './Icons'
 
 const ChatContent = ({
@@ -45,9 +44,9 @@ const ChatContent = ({
   handleCreateOrOpenChat,
   setOpenSideMenu,
   popUpsByChat,
+  handlePopUpButtonAction
 }: ChatContentProps) => {
   const t = useTranslations("dashboard");
-  const [openRescheduleModal, setOpenRescheduleModal] = useState<boolean>(false);
   const [editMessage, setEditMessage] = useState<ChatMessage | null>(null);
   const [replyTo, setReplyTo] = useState<ChatMessage | null>(null);
   const pinnedMessages = messages.filter((m) => m.is_pinned);
@@ -245,6 +244,8 @@ const ChatContent = ({
                 created_at={currentChatPopup.created_at}
                 expiration_time={currentChatPopup.expiration_time}
                 header={currentChatPopup.header}
+                user_id={currentChatPopup.user_id}
+                handlePopUpButtonAction={handlePopUpButtonAction}
               />
             </div>
           )
@@ -348,14 +349,6 @@ const ChatContent = ({
       </div>
       )
     }
-
-    {openRescheduleModal && (
-      <ChangeDates
-        open={openRescheduleModal}
-        onClose={() => setOpenRescheduleModal(false)}
-        chat_id={chatId}
-      />
-    )}
     {
       openDropZoneModal && (
         <DropZoneModal

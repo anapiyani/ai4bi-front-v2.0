@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast as HotToast } from 'react-hot-toast'
 import { getCookie } from '../api/service/cookie'
-import { ChatMessage, Conversation, ForwardData, LastMessage, Media, MessagesRecord, ReceivedChats, TypingStatus } from '../types/types'
+import { ChatMessage, Conversation, ForwardData, LastMessage, Media, MessagesRecord, PopUpButtonAction, ReceivedChats, TypingStatus } from '../types/types'
 
 export type PopUpsRecord = {
   [chatId: string]: {
@@ -366,7 +366,8 @@ export const useChatWebSocket = () => {
   // handleReceivedChatPopup
   // ---------------------------------------------------------------------------
   const handleReceivedChatPopup = useCallback((message: any) => {
-    const { body, buttons, chat_id, created_at, expiration_time, header, id, popup_type, user_id } = message.result[0];
+    const { body, buttons, chat_id, created_at, expiration_time, header, id, popup_type, user_id } = message.result[0] || {};
+    console.log(message.result)
     setPopUpsByChat((prev) => ({
       ...prev,
       [chat_id]: {
@@ -383,6 +384,14 @@ export const useChatWebSocket = () => {
         }
       }
     }));
+  }, []);
+
+  // ---------------------------------------------------------------------------
+  // PopUpButtonAction
+  // ---------------------------------------------------------------------------
+  const handlePopUpButtonAction = useCallback((button: PopUpButtonAction) => {
+    const { popup_id, user_id, button_id, tech_council_reschedule_date }: PopUpButtonAction = button;
+    console.log(button)
   }, []);
 
   // ---------------------------------------------------------------------------
@@ -943,5 +952,6 @@ export const useChatWebSocket = () => {
     handleReadMessage,
     typingStatuses,
     popUpsByChat,
+    handlePopUpButtonAction,
   };
 };

@@ -37,6 +37,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
     typingStatuses,
     handleReadMessage,
     popUpsByChat,
+    handlePopUpButtonAction,
   } = useChatWebSocket()
   const {
     openMenu,
@@ -246,6 +247,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
             handleReadMessage={handleReadMessage}
             sendEditMessage={sendEditMessage}
             setOpenSideMenu={setOpenSideMenu}
+            handlePopUpButtonAction={handlePopUpButtonAction}
             setOpenMenu={handleOpenMenu}
             handleForwardMessage={handleForwardMessage}
             openMenu={openMenu}
