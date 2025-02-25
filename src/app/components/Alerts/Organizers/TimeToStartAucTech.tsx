@@ -21,6 +21,7 @@ interface TimeToStartAucTechProps {
   expiration_time: string
   header: string
   user_id: string
+	popup_id: string
   handlePopUpButtonAction: (button: PopUpButtonAction) => void
 }
 
@@ -30,6 +31,7 @@ const TimeToStartAucTech = ({
 	user_id,
   chat_id,
   created_at,
+	popup_id,
   expiration_time,
   header,
   handlePopUpButtonAction
@@ -72,7 +74,7 @@ const TimeToStartAucTech = ({
 												setRescheduleAction(button.action)
 											} else if (button.action === "STARTED_TECH_COUNCIL") {
 												handlePopUpButtonAction({
-													popup_id: chat_id,
+													popup_id: popup_id,
 													user_id: user_id,
 													button_id: button.id,
 												})
@@ -103,7 +105,7 @@ const TimeToStartAucTech = ({
 						chat_id={chat_id}
 						rescheduleData={(date, time) => {
 							handlePopUpButtonAction({
-								popup_id: chat_id,
+								popup_id: popup_id,
 								user_id: user_id,
 								button_id: buttons.find((button) => button.action === rescheduleAction)?.id || '',
 								tech_council_reschedule_date: date,

@@ -239,6 +239,7 @@ const ChatContent = ({
             <div className="absolute top-[65px] left-0 right-0 z-50">
               <TimeToStartAucTech 
                 body={currentChatPopup.body}
+                popup_id={currentChatPopup.id}
                 buttons={currentChatPopup.buttons}
                 chat_id={currentChatPopup.chat_id}
                 created_at={currentChatPopup.created_at}

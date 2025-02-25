@@ -367,7 +367,6 @@ export const useChatWebSocket = () => {
   // ---------------------------------------------------------------------------
   const handleReceivedChatPopup = useCallback((message: any) => {
     const { body, buttons, chat_id, created_at, expiration_time, header, id, popup_type, user_id } = message.result[0] || {};
-    console.log(message.result)
     setPopUpsByChat((prev) => ({
       ...prev,
       [chat_id]: {
@@ -391,7 +390,20 @@ export const useChatWebSocket = () => {
   // ---------------------------------------------------------------------------
   const handlePopUpButtonAction = useCallback((button: PopUpButtonAction) => {
     const { popup_id, user_id, button_id, tech_council_reschedule_date }: PopUpButtonAction = button;
-    console.log(button)
+    if (tech_council_reschedule_date) {
+      sendMessage(createRpcRequest("respond_to_popup", {
+        popup_id: popup_id,
+        user_id: user_id,
+        button_id: button_id,
+        tech_council_reschedule_date: tech_council_reschedule_date
+      }));
+    } else {
+      sendMessage(createRpcRequest("respond_to_popup", {
+        popup_id: popup_id,
+        user_id: user_id,
+        button_id: button_id
+      }));
+    }
   }, []);
 
   // ---------------------------------------------------------------------------
