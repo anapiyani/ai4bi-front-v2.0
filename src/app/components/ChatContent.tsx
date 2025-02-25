@@ -241,6 +241,7 @@ const ChatContent = ({
                 body={currentChatPopup.body}
                 popup_id={currentChatPopup.id}
                 buttons={currentChatPopup.buttons}
+                popup_type={currentChatPopup.popup_type}
                 chat_id={currentChatPopup.chat_id}
                 created_at={currentChatPopup.created_at}
                 expiration_time={currentChatPopup.expiration_time}

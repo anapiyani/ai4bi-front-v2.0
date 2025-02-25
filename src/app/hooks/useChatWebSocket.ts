@@ -67,6 +67,8 @@ export const useChatWebSocket = () => {
         handleChatCreated(message.result);
       } else if (message.result.event === "popups") {
         handleReceivedChatPopup(message.result);
+      } else if (message.result.popup_id) {
+        handlePopUpResponse(message);
       } else if (message.result.message_id) {
         handleMessageReceived(message.result);
       } else if (Array.isArray(message.result)) {
@@ -404,6 +406,22 @@ export const useChatWebSocket = () => {
         button_id: button_id
       }));
     }
+  }, []);
+
+  // ---------------------------------------------------------------------------
+  // handlePopUpResponse
+  // ---------------------------------------------------------------------------
+  const handlePopUpResponse = useCallback((message: any) => {
+    const { popup_id } = message.result;
+    setPopUpsByChat((prev) => {
+      const updated = { ...prev };
+      for (const chatId of Object.keys(updated)) {
+        if (updated[chatId].data?.id === popup_id) {
+          delete updated[chatId];
+        }
+      }
+      return updated;
+    });
   }, []);
 
   // ---------------------------------------------------------------------------
