@@ -1,3 +1,4 @@
+import { getCookie } from '@/src/app/api/service/cookie'
 import { ReceivedChats, TypingStatus } from '@/src/app/types/types'
 import dayjs from 'dayjs'
 import { motion } from "framer-motion"
@@ -14,6 +15,7 @@ type ChatListItemProps = {
 
 const ChatListItem = ({ data, onClick, isSelected, index, t, typingStatuses }: ChatListItemProps) => {
   const { name, lastMessage, chat_type } = data;
+  const user_id = getCookie("user_id");
   const renderLastMessage = () => {
     if (typeof lastMessage === 'object') {
       return (
@@ -32,7 +34,7 @@ const ChatListItem = ({ data, onClick, isSelected, index, t, typingStatuses }: C
                 lastMessage && (
                   <>
                     {lastMessage.sender_first_name && (
-                      <span className="font-medium">{lastMessage.sender_first_name}: </span>
+                      <span className="font-medium">{lastMessage.sender_id === user_id ? t("you") : lastMessage.sender_first_name}: </span>
                     )}
                     {lastMessage?.content
                     ? lastMessage.content.length > 70

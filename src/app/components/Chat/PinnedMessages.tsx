@@ -40,7 +40,20 @@ const PinnedMessages = ({ pinnedMessages, t, goToMessage, handleUnpinMessage }: 
     >
       <div className="flex justify-between items-center">
         <div onClick={handleMessageClick} className="text-sm flex cursor-pointer flex-col gap-1">
-          <div className="absolute top-1/4 left-3 w-[3px] h-1/2 bg-primary rounded-full"></div>
+        <div className="relative flex justify-center items-center">
+          {pinnedMessages.map((_, index) => (
+            <div
+              key={index}
+              className={`absolute left-0 w-[3px] mt-2 rounded-full ${
+                index === currentIndex ? "bg-primary" : "bg-gray-300"
+              } h-3`}
+              style={{
+                top: `${index * 18}px`,
+                opacity: Math.max(0.3, 1 - Math.abs(index - currentIndex) * 0.3),
+              }}
+            />
+          ))}
+        </div>
           <div className="flex flex-col ml-2">
             <div className="flex flex-row items-center">
               <h3 className="text-sm font-medium text-primary">
