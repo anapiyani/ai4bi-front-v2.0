@@ -236,7 +236,7 @@ const ChatContent = ({
         </div>
         {
           currentChatPopup && currentChatPopup.popup_type === "tech_council_start" && (
-            <div className="absolute top-[65px] left-0 right-0 z-50">
+            <div className="absolute top-[120px] left-0 right-0 z-50 flex justify-self-center">
               <TimeToStartAucTech 
                 body={currentChatPopup.body}
                 popup_id={currentChatPopup.id}
@@ -260,9 +260,9 @@ const ChatContent = ({
         null
       ) : (
         <div className={`flex-grow overflow-y-auto bg-neutrals-secondary ${isTechnicalCouncil ? "rounded-lg" : ""}`}>
-      <div className={`${isTechnicalCouncil ? "h-[calc(86vh-200px)]" : "h-[calc(100vh-240px)]"} overflow-y-auto`} ref={messagesRef}>
-        <div className="flex flex-col gap-2 px-4 py-2">
-          <div className="flex flex-col gap-1 ">
+      <div className={`${isTechnicalCouncil ? "h-[calc(86vh-200px)]" : "h-[calc(100vh-240px)]"} overflow-y-auto flex items-end`} ref={messagesRef}>
+        <div className="flex flex-col gap-2 px-4 py-2 w-full">
+          <div className="flex flex-col gap-1">
             {messages
               .filter((m) => m.chat_id === selectedConversation)
               .sort(

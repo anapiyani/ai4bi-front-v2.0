@@ -5,6 +5,7 @@ import dayjs from 'dayjs'
 import { useTranslations } from 'next-intl'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast as HotToast } from 'react-hot-toast'
+import { v4 as uuidv4 } from 'uuid'
 import { getCookie } from '../api/service/cookie'
 import { ChatMessage, Conversation, ForwardData, LastMessage, Media, MessagesRecord, PopUpButtonAction, ReceivedChats, TypingStatus } from '../types/types'
 
@@ -255,7 +256,7 @@ export const useChatWebSocket = () => {
       jsonrpc: "2.0",
       method,
       params,
-      id: Date.now().toString(),
+      id: uuidv4(),
     };
   }
 
@@ -739,7 +740,7 @@ export const useChatWebSocket = () => {
   const sendChatMessage = useCallback((reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean, type?: "audio") => {
     if (!selectedConversation) return;
     const replyId = reply?.id ?? null;
-    const rpcId = Date.now().toString();
+    const rpcId = (Date.now() + Math.random() * 1000000).toString();
     const content = newMessage.trim();
     let pendingMedia: Media[] | null = null;
     if (type === "audio") {

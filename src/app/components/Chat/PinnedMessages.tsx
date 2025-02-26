@@ -61,7 +61,7 @@ const PinnedMessages = ({ pinnedMessages, t, goToMessage, handleUnpinMessage }: 
               </h3>
             </div>
             <p className="text-xs text-gray-500">
-              {pinnedMessages[currentIndex].content}
+              {pinnedMessages[currentIndex].content || "No message"}
             </p>
           </div>
         </div>
