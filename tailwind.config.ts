@@ -60,7 +60,8 @@ const config = {
         },
         brand:  {
           gray: "#4F4F4F",
-          orange: "#FF8855"
+          orange: "#FF8855",
+          darkOrange: "#E67544",
         },
         muted: {
           DEFAULT: "#E2E8F0",

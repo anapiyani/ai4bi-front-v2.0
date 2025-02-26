@@ -37,6 +37,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
     typingStatuses,
     handleReadMessage,
     popUpsByChat,
+    conferenceRoomsByChat,
     handlePopUpButtonAction,
   } = useChatWebSocket()
   const {
@@ -50,12 +51,13 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
   } = useChatActions();
   const t = useTranslations('dashboard');
   const searchParams = useSearchParams();
-  const chatId = searchParams.get('id');
+  const room_id = searchParams.get('id');
+  const chatId = selectedConversation;
   const [openSideMenu, setOpenSideMenu] = useState<boolean>(false);
 
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [remoteAudios, setRemoteAudios] = useState<HTMLAudioElement[]>([]);
-  const room = "e2e589a2-eca5-46ea-bd1e-a4b5822bc62f";
+  const room = room_id || "default";
   const wsRef = useRef<WebSocket | null>(null);
   const peerRef = useRef<RTCPeerConnection | null>(null);
 
@@ -254,6 +256,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
             typingStatuses={typingStatuses}
             conversations={conversations}
             popUpsByChat={popUpsByChat}
+            conferenceRoomsByChat={conferenceRoomsByChat}
           />
         </div>
       </div> 

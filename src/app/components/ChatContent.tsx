@@ -14,6 +14,7 @@ import DropZoneModal from './Chat/Files/DropZoneModal'
 import ForwardMessage from './Chat/ForwardMessage'
 import Message from "./Chat/Message"
 import MessageInput from "./Chat/MessageInput"
+import OnProgress from './Chat/OnProgress'
 import PinnedMessages from './Chat/PinnedMessages'
 import SelectChat from './Chat/SelectChat'
 import Icons from './Icons'
@@ -44,7 +45,9 @@ const ChatContent = ({
   handleCreateOrOpenChat,
   setOpenSideMenu,
   popUpsByChat,
-  handlePopUpButtonAction
+  handlePopUpButtonAction,
+  conferenceRoomsByChat,
+  startedUserId
 }: ChatContentProps) => {
   const t = useTranslations("dashboard");
   const [editMessage, setEditMessage] = useState<ChatMessage | null>(null);
@@ -54,6 +57,7 @@ const ChatContent = ({
   const [openForwardMessage, setOpenForwardMessage] = useState<boolean>(false);
   const [forwardMessageIds, setForwardMessageIds] = useState<string[] | null>(null);
   const currentChatPopup = popUpsByChat?.[chatId || ""]?.data ?? null;
+  const conferenceRoom = conferenceRoomsByChat?.[chatId || ""] ?? null;
   const goToMessage = useGoToMessage();
   const [lastSeenCounter, setLastSeenCounter] = useState(0);
   const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
@@ -62,6 +66,24 @@ const ChatContent = ({
     if (!messagesRef.current) return;
     messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
   }, [messages, selectedConversation]);
+
+
+  const handleJoinToCall = () => {
+    if (!conferenceRoom) return;
+    if (conferenceRoom.is_active) {
+      const baseUrl = window.location.origin;
+      const url = `${baseUrl}/dashboard?active_tab=technical-council&id=${conferenceRoom.url}`;
+      window.location.href = url;
+    }
+  }
+  useEffect(() => {
+    if (!conferenceRoom || !startedUserId) return;
+    if (conferenceRoom.is_active && startedUserId === getCookie("user_id")) {
+      const baseUrl = window.location.origin;
+      const url = `${baseUrl}/dashboard?active_tab=technical-council&id=${conferenceRoom.url}`;
+      window.location.href = url;
+    }
+  }, [conferenceRoom, chatId, startedUserId]);
 
   useEffect(() => {
     if (!messagesRef.current) return;
@@ -218,14 +240,14 @@ const ChatContent = ({
       ) : (
         <div>
           <ChatHeader  
-          title={title || ""} 
-          typingStatuses={typingStatuses}
-          t={t} 
-          onClickAboutAuction={() => {
-            setOpenMenu(true);
-          }}
-          openMenu={openMenu} 
-        />
+            title={title || ""} 
+            typingStatuses={typingStatuses}
+            t={t} 
+            onClickAboutAuction={() => {
+              setOpenMenu(true);
+            }}
+            openMenu={openMenu} 
+          />
         <div className="absolute top-[65px] left-0 right-0 z-50">
           <PinnedMessages 
             goToMessage={goToMessage} 
@@ -234,8 +256,17 @@ const ChatContent = ({
             handleUnpinMessage={(messageId: string) => handlePinUnpin(messageId, true)} 
           />
         </div>
+        <div>
+          {
+            conferenceRoom && conferenceRoom.is_active && (
+              <div className="absolute top-[65px] left-0 right-0 z-50">
+                <OnProgress conference_type={conferenceRoom.conference_type} handleJoinToCall={handleJoinToCall} />
+              </div>
+            )
+          }
+        </div>
         {
-          currentChatPopup && currentChatPopup.popup_type === "tech_council_start" && (
+          currentChatPopup && currentChatPopup.popup_type && (
             <div className="absolute top-[120px] left-0 right-0 z-50 flex justify-self-center">
               <TimeToStartAucTech 
                 body={currentChatPopup.body}
@@ -260,8 +291,8 @@ const ChatContent = ({
         null
       ) : (
         <div className={`flex-grow overflow-y-auto bg-neutrals-secondary ${isTechnicalCouncil ? "rounded-lg" : ""}`}>
-      <div className={`${isTechnicalCouncil ? "h-[calc(86vh-200px)]" : "h-[calc(100vh-240px)]"} overflow-y-auto flex items-end`} ref={messagesRef}>
-        <div className="flex flex-col gap-2 px-4 py-2 w-full">
+      <div className={`${isTechnicalCouncil ? "h-[calc(86vh-200px)]" : "h-[calc(100vh-240px)]"} overflow-y-auto flex flex-col`} ref={messagesRef}>
+        <div className="flex flex-col gap-2 px-4 py-2 w-full mt-auto">
           <div className="flex flex-col gap-1">
             {messages
               .filter((m) => m.chat_id === selectedConversation)

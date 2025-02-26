@@ -13,7 +13,7 @@ interface TimeToStartAucTechProps {
     id: string
     label: string
     button_style: 'primary' | 'secondary' | string,
-    action: "RESCHEDULED_TECH_COUNCIL" | "STARTED_TECH_COUNCIL",
+    action: "RESCHEDULED_TECH_COUNCIL" | "STARTED_TECH_COUNCIL" | "ACCEPTED_PARTICIPATION_TECH_COUNCIL" | "REJECTED_PARTICIPATION_TECH_COUNCIL",
     order_index: number,
   }[]
   chat_id: string
@@ -22,8 +22,8 @@ interface TimeToStartAucTechProps {
   header: string
   user_id: string
 	popup_id: string
-	popup_type: string
-  handlePopUpButtonAction: (button: PopUpButtonAction) => void
+	popup_type: "participation_question_tech_council" | "tech_council_start",
+  handlePopUpButtonAction: (button: PopUpButtonAction, user_id?: string) => void
 }
 
 const TimeToStartAucTech = ({
@@ -69,7 +69,7 @@ const TimeToStartAucTech = ({
 						>
 							<div className="space-y-4">
 								<div className="flex flex-col gap-2">
-									<h2 className="text-lg font-semibold">{popup_type === "tech_council_start" ? t("its-time-to-start-the-technical-council") : t("its-time-to-start-the-auction")}</h2>
+									<h2 className="text-lg font-semibold">{popup_type === "tech_council_start" ? t("its-time-to-start-the-technical-council") : popup_type === "participation_question_tech_council" ? t("would-you-like-to-participate-in-the-technical-council") : t("its-time-to-start-the-auction")}</h2>
 									<p className="text-sm text-gray-500">
 										{dayjs(created_at).format('DD.MM.YYYY')}
 									</p>
@@ -89,11 +89,31 @@ const TimeToStartAucTech = ({
 														popup_id: popup_id,
 														user_id: user_id,
 														button_id: button.id,
+													}, user_id)
+												} else if (button.action === "ACCEPTED_PARTICIPATION_TECH_COUNCIL") {
+													handlePopUpButtonAction({
+														popup_id: popup_id,
+														user_id: user_id,
+														button_id: button.id,
+													})
+												} else if (button.action === "REJECTED_PARTICIPATION_TECH_COUNCIL") {
+													handlePopUpButtonAction({
+														popup_id: popup_id,
+														user_id: user_id,
+														button_id: button.id,
 													})
 												}
 											}}
 										>
-											{button.action === "RESCHEDULED_TECH_COUNCIL" ? t("reschedule") : t("start")}
+											{button.action === "RESCHEDULED_TECH_COUNCIL" 
+												? t("reschedule") 
+												: button.action === "ACCEPTED_PARTICIPATION_TECH_COUNCIL" 
+													? t("accept") 
+													: button.action === "REJECTED_PARTICIPATION_TECH_COUNCIL" 
+														? t("reject") 
+														: button.action === "STARTED_TECH_COUNCIL" 
+															? t("start")
+															: t("start")}
 										</Button>
 									))}
 								</div>
@@ -139,7 +159,7 @@ const TimeToStartAucTech = ({
 							<div className="flex justify-between items-center">
 								<div className="flex gap-2 items-center">
 									<Icons.DangerNigger />
-									<p className="text-xs text-secondary-foreground">{popup_type === "tech_council_start" ? t("its-time-to-start-the-technical-council") : t("its-time-to-start-the-auction")}</p>
+									<p className="text-xs text-secondary-foreground">{popup_type === "tech_council_start" ? t("technical-council") : popup_type === "participation_question_tech_council" ? t("technical-council") : t("its-time-to-start-the-auction")}</p>
 								</div>
 								<Button
 									onClick={() => setIsExpanded(false)}

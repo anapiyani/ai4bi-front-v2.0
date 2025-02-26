@@ -15,6 +15,19 @@ export type PopUpsRecord = {
   }
 }
 
+export type ConferenceRoom = {
+  chat_id: string;
+  conference_id: string;
+  conference_type: string;
+  created_at: string;
+  is_active: boolean;
+  url: string;
+}
+
+export type ConferenceRoomsRecord = {
+  [chatId: string]: ConferenceRoom;
+}
+
 export const useChatWebSocket = () => {
   const t = useTranslations("dashboard")
   const { sendMessage, isConnected, lastMessage } = useWS();
@@ -24,6 +37,8 @@ export const useChatWebSocket = () => {
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
   const [messagesByChat, setMessagesByChat] = useState<MessagesRecord>({});
   const [popUpsByChat, setPopUpsByChat] = useState<PopUpsRecord>({});
+  const [conferenceRoomsByChat, setConferenceRoomsByChat] = useState<ConferenceRoomsRecord>({});
+  const [startedUserId, setStartedUserId] = useState<string | null>(null);
   const [typingStatuses, setTypingStatuses] = useState<TypingStatus[]>([]);
   const typingTimeoutsRef = useRef<{ [chatId: string]: NodeJS.Timeout }>({});
   const [newMessage, setNewMessage] = useState("");
@@ -66,8 +81,6 @@ export const useChatWebSocket = () => {
     if (message.jsonrpc === "2.0" && message.result) {
       if (message.result.chat_id) {
         handleChatCreated(message.result);
-      } else if (message.result.event === "popups") {
-        handleReceivedChatPopup(message.result);
       } else if (message.result.popup_id) {
         handlePopUpResponse(message);
       } else if (message.result.message_id) {
@@ -79,14 +92,29 @@ export const useChatWebSocket = () => {
       } 
       return;
     }
-
-    if (message.type === "message") {
+    console.log("[handleWebSocketMessage] message:", message);
+    if (message.channel?.startsWith("popup")) {
+      handleReceivedChatPopup(message.data);
+    } else if (message.type === "message") {
       switch (message.event) {
         case "new_chat":
           handleChatCreated({
             chat_id: message.data.id,
             name: message.data.user?.name || `Chat with ${message.data.id}`,
           });
+          break;
+        case "conference_room":
+          setConferenceRoomsByChat((prev) => ({
+            ...prev,
+            [message.data.chat_id]: {
+              chat_id: message.data.chat_id,
+              conference_id: message.data.conference_id,
+              conference_type: message.data.conference_type,
+              created_at: message.data.created_at,
+              is_active: message.data.is_active,
+              url: message.data.url,
+            }
+          }));
           break;
         case "edit_message":
           const editedMsg = message.data.message;
@@ -161,7 +189,7 @@ export const useChatWebSocket = () => {
       return;
     } else if (message.type === "notifications") {
       handleShowNotification(message);
-    } 
+    }
     if (message.type === "message_received") {
       console.log("[handleWebSocketMessage] message_received ack:", message);
       return;
@@ -369,7 +397,7 @@ export const useChatWebSocket = () => {
   // handleReceivedChatPopup
   // ---------------------------------------------------------------------------
   const handleReceivedChatPopup = useCallback((message: any) => {
-    const { body, buttons, chat_id, created_at, expiration_time, header, id, popup_type, user_id } = message.result[0] || {};
+    const { body, buttons, chat_id, created_at, expiration_time, header, id, popup_type, user_id } = message || {};
     setPopUpsByChat((prev) => ({
       ...prev,
       [chat_id]: {
@@ -391,8 +419,9 @@ export const useChatWebSocket = () => {
   // ---------------------------------------------------------------------------
   // PopUpButtonAction
   // ---------------------------------------------------------------------------
-  const handlePopUpButtonAction = useCallback((button: PopUpButtonAction) => {
+  const handlePopUpButtonAction = useCallback((button: PopUpButtonAction, clicked_user_id?: string) => {
     const { popup_id, user_id, button_id, tech_council_reschedule_date }: PopUpButtonAction = button;
+    setStartedUserId(clicked_user_id || null);
     if (tech_council_reschedule_date) {
       sendMessage(createRpcRequest("respond_to_popup", {
         popup_id: popup_id,
@@ -983,6 +1012,8 @@ export const useChatWebSocket = () => {
     handleReadMessage,
     typingStatuses,
     popUpsByChat,
+    conferenceRoomsByChat,
     handlePopUpButtonAction,
+    startedUserId
   };
 };

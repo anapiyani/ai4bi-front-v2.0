@@ -2,7 +2,7 @@
 	"dashboard": {
 		"title": "Басты бет",
 		"accept": "Қабылдау",
-		"decline": "Қабылданбайды",
+		"reject": "Қабылдамау",
 		"understood": "Түсінікті",
 		"change": "Өзгерту",
 		"confirm": "Растау",
@@ -172,7 +172,10 @@
 		"bot": "бот",
 		"demonstration_of_technical_council": "Тех. кеңестің демонстрациясы",
 		"start_demonstration": "Демонстрация бастау",
-		"please-select-date-and-time": "Күн мен уақытты таңдаңыз"
+		"please-select-date-and-time": "Күн мен уақытты таңдаңыз",
+		"would-you-like-to-participate-in-the-technical-council": "Сіз осы тендердің техникалық кеңесіне қатысуға келісіміңізді бересіз бе?",
+		"technical_council_on_progress": "Тех. кеңес жүргізіліп жатыр",
+		"join_to_call": "Қоңырауға қосылу"
 	},
 	"dropzone": {
 		"upload_files": "Файлдарды жүктеу",
