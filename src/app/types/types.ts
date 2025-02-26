@@ -1,3 +1,4 @@
+import { ConferenceRoomsRecord } from '../hooks/useChatWebSocket'
 
 export type activity_status = "chat" | "technical-council" | "auction-results" | "auction";
 
@@ -161,6 +162,16 @@ export type ChatContentProps = {
 	typingStatuses: TypingStatus[];
 	conversations: Conversation[];
 	setOpenSideMenu?: (open: boolean) => void;
+	popUpsByChat: PopUpsByChat;
+	handlePopUpButtonAction: (button: PopUpButtonAction, user_id?: string) => void;
+	conferenceRoomsByChat?: ConferenceRoomsRecord;
+	startedUserId?: string | null;
+}
+
+export type PopUpsByChat = {
+	[chatId: string]: {
+		[popupId: string]: any
+	}
 }
 
 export type UploadMediaResponse = {
@@ -281,4 +292,11 @@ export type InterestsResponse = {
 	interest_id: string;
 	name: string;
 	city: string;
+}
+
+export type PopUpButtonAction = {
+	popup_id: string;
+	user_id: string;
+	button_id: string;
+	tech_council_reschedule_date?: string;
 }

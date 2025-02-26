@@ -47,7 +47,7 @@ export default function LocaleSwitcherSelect({
         <Select.Portal>
           <Select.Content
             align="end"
-            className="min-w-[8rem] overflow-hidden rounded-sm bg-white shadow-md cursor-pointer py-4 px-4 w-52"
+            className="min-w-[8rem] overflow-hidden rounded-sm bg-white shadow-md cursor-pointer py-4 px-4 w-52 z-50"
             position="popper"
           >
             <div>

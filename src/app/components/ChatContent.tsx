@@ -9,13 +9,14 @@ import { memo, useEffect, useRef, useState } from "react"
 import { getCookie } from "../api/service/cookie"
 import { useGoToMessage } from '../hooks/useGoToMessage'
 import { ChatContentProps, ChatMessage, SelectActions } from "../types/types"
+import TimeToStartAucTech from './Alerts/Organizers/TimeToStartAucTech'
 import DropZoneModal from './Chat/Files/DropZoneModal'
 import ForwardMessage from './Chat/ForwardMessage'
 import Message from "./Chat/Message"
 import MessageInput from "./Chat/MessageInput"
+import OnProgress from './Chat/OnProgress'
 import PinnedMessages from './Chat/PinnedMessages'
 import SelectChat from './Chat/SelectChat'
-import ChangeDates from "./Form/ChangeDates"
 import Icons from './Icons'
 
 const ChatContent = ({
@@ -43,15 +44,20 @@ const ChatContent = ({
   conversations,
   handleCreateOrOpenChat,
   setOpenSideMenu,
+  popUpsByChat,
+  handlePopUpButtonAction,
+  conferenceRoomsByChat,
+  startedUserId
 }: ChatContentProps) => {
   const t = useTranslations("dashboard");
-  const [openRescheduleModal, setOpenRescheduleModal] = useState<boolean>(false);
   const [editMessage, setEditMessage] = useState<ChatMessage | null>(null);
   const [replyTo, setReplyTo] = useState<ChatMessage | null>(null);
   const pinnedMessages = messages.filter((m) => m.is_pinned);
   const [openDropZoneModal, setOpenDropZoneModal] = useState<boolean>(false);
   const [openForwardMessage, setOpenForwardMessage] = useState<boolean>(false);
   const [forwardMessageIds, setForwardMessageIds] = useState<string[] | null>(null);
+  const currentChatPopup = popUpsByChat?.[chatId || ""]?.data ?? null;
+  const conferenceRoom = conferenceRoomsByChat?.[chatId || ""] ?? null;
   const goToMessage = useGoToMessage();
   const [lastSeenCounter, setLastSeenCounter] = useState(0);
   const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
@@ -60,6 +66,24 @@ const ChatContent = ({
     if (!messagesRef.current) return;
     messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
   }, [messages, selectedConversation]);
+
+
+  const handleJoinToCall = () => {
+    if (!conferenceRoom) return;
+    if (conferenceRoom.is_active) {
+      const baseUrl = window.location.origin;
+      const url = `${baseUrl}/dashboard?active_tab=technical-council&id=${conferenceRoom.url}`;
+      window.location.href = url;
+    }
+  }
+  useEffect(() => {
+    if (!conferenceRoom || !startedUserId) return;
+    if (conferenceRoom.is_active && startedUserId === getCookie("user_id")) {
+      const baseUrl = window.location.origin;
+      const url = `${baseUrl}/dashboard?active_tab=technical-council&id=${conferenceRoom.url}`;
+      window.location.href = url;
+    }
+  }, [conferenceRoom, chatId, startedUserId]);
 
   useEffect(() => {
     if (!messagesRef.current) return;
@@ -216,14 +240,14 @@ const ChatContent = ({
       ) : (
         <div>
           <ChatHeader  
-          title={title || ""} 
-          typingStatuses={typingStatuses}
-          t={t} 
-          onClickAboutAuction={() => {
-            setOpenMenu(true);
-          }}
-          openMenu={openMenu} 
-        />
+            title={title || ""} 
+            typingStatuses={typingStatuses}
+            t={t} 
+            onClickAboutAuction={() => {
+              setOpenMenu(true);
+            }}
+            openMenu={openMenu} 
+          />
         <div className="absolute top-[65px] left-0 right-0 z-50">
           <PinnedMessages 
             goToMessage={goToMessage} 
@@ -232,6 +256,33 @@ const ChatContent = ({
             handleUnpinMessage={(messageId: string) => handlePinUnpin(messageId, true)} 
           />
         </div>
+        <div>
+          {
+            conferenceRoom && conferenceRoom.is_active && (
+              <div className="absolute top-[65px] left-0 right-0 z-50">
+                <OnProgress conference_type={conferenceRoom.conference_type} handleJoinToCall={handleJoinToCall} />
+              </div>
+            )
+          }
+        </div>
+        {
+          currentChatPopup && currentChatPopup.popup_type && (
+            <div className="absolute top-[120px] left-0 right-0 z-50 flex justify-self-center">
+              <TimeToStartAucTech 
+                body={currentChatPopup.body}
+                popup_id={currentChatPopup.id}
+                buttons={currentChatPopup.buttons}
+                popup_type={currentChatPopup.popup_type}
+                chat_id={currentChatPopup.chat_id}
+                created_at={currentChatPopup.created_at}
+                expiration_time={currentChatPopup.expiration_time}
+                header={currentChatPopup.header}
+                user_id={currentChatPopup.user_id}
+                handlePopUpButtonAction={handlePopUpButtonAction}
+              />
+            </div>
+          )
+        }
         </div>
       )
     }
@@ -240,9 +291,9 @@ const ChatContent = ({
         null
       ) : (
         <div className={`flex-grow overflow-y-auto bg-neutrals-secondary ${isTechnicalCouncil ? "rounded-lg" : ""}`}>
-      <div className={`${isTechnicalCouncil ? "h-[calc(86vh-200px)]" : "h-[calc(100vh-240px)]"} overflow-y-auto`} ref={messagesRef}>
-        <div className="flex flex-col gap-2 px-4 py-2">
-          <div className="flex flex-col gap-1 ">
+      <div className={`${isTechnicalCouncil ? "h-[calc(86vh-200px)]" : "h-[calc(100vh-240px)]"} overflow-y-auto flex flex-col`} ref={messagesRef}>
+        <div className="flex flex-col gap-2 px-4 py-2 w-full mt-auto">
+          <div className="flex flex-col gap-1">
             {messages
               .filter((m) => m.chat_id === selectedConversation)
               .sort(
@@ -331,14 +382,6 @@ const ChatContent = ({
       </div>
       )
     }
-
-    {openRescheduleModal && (
-      <ChangeDates
-        open={openRescheduleModal}
-        onClose={() => setOpenRescheduleModal(false)}
-        chat_id={chatId}
-      />
-    )}
     {
       openDropZoneModal && (
         <DropZoneModal

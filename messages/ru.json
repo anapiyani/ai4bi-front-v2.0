@@ -2,7 +2,7 @@
 	"dashboard": {
 		"title": "Главная",
 		"accept": "Принять",
-		"decline": "Отказаться",
+		"reject": "Отказаться",
 		"understood": "Понятно",
 		"change": "Изменить",
 		"confirm": "Подтвердить",
@@ -173,7 +173,11 @@
 		"Aray": "Арай",
 		"bot": "бот",
 		"demonstration_of_technical_council": "Демонстрация технического совета",
-		"start_demonstration": "Начать демонстрацию"
+		"start_demonstration": "Начать демонстрацию",
+		"please-select-date-and-time": "Пожалуйста, выберите дату и время",
+		"would-you-like-to-participate-in-the-technical-council": "Хотите принять участие в техническом совете данного тендера?",
+		"technical_council_on_progress": "Технический совет в процессе",
+		"join_to_call": "Присоединиться к звонку"
 	},
 	"dropzone": {
 		"upload_files": "Загрузить файлы",

@@ -2,7 +2,7 @@
 	"dashboard": {
 		"title": "Home",
 		"accept": "Accept",
-		"decline": "Decline",
+		"reject": "Decline",
 		"understood": "Understood",
 		"change": "Change",
 		"confirm": "Confirm",
@@ -171,7 +171,11 @@
 		"Aray": "Aray",
 		"bot": "bot",
 		"demonstration_of_technical_council": "Demonstration of technical council",
-		"start_demonstration": "Start demonstration"
+		"start_demonstration": "Start demonstration",
+		"please-select-date-and-time": "Please select date and time",
+		"would-you-like-to-participate-in-the-technical-council": "Would you like to participate in the technical council?",
+		"technical_council_on_progress": "Technical council in progress",
+		"join_to_call": "Join to call"
 	},
 	"dropzone": {
 		"upload_files": "Upload files",

@@ -1,8 +1,8 @@
-import { Checkbox } from '@/components/ui/Checkbox'
 import { DatePicker } from '@/components/ui/datepicker'
 import { Label } from '@/components/ui/label'
 import { TimeInput } from '@/components/ui/time-input'
 import { Locale } from 'date-fns'
+import { useState } from 'react'
 
 interface DateTimeInputProps {
   dateLabel: string
@@ -26,26 +26,20 @@ export function DateTimeInput({
   timeValue,
   onDateChange,
   onTimeChange,
-  newDate = false,
-  keepCurrentAuctionDate = false,
-  keepCurrentAuctionLabel,
-  onKeepCurrentAuctionDateChange
 }: DateTimeInputProps) {
+  const [open, setOpen] = useState(false)
+    
   return (
     <>
       <div className='w-full flex flex-col items-start justify-center gap-2 mb-3'>
-        {newDate && (
-          <div className='flex items-center justify-start gap-2 mb-3'>
-            <Checkbox id={`new-date-${dateLabel}`} checked={keepCurrentAuctionDate} onCheckedChange={onKeepCurrentAuctionDateChange} />
-            <Label htmlFor={`new-date-${dateLabel}`} className='text-sm text-secondary-foreground'>{keepCurrentAuctionLabel}</Label>
-          </div>
-        )}
         <Label htmlFor={`date-${dateLabel}`} className='text-sm text-secondary-foreground'>
           {dateLabel}
         </Label>
         <DatePicker
           value={dateValue}
           locale={locale}
+          open={open}
+          setOpen={setOpen}
           onChange={(date: Date) => onDateChange(date)}
         />
       </div>

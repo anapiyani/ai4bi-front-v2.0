@@ -1,90 +1,75 @@
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { motion } from 'framer-motion'
 import { useTranslations } from 'next-intl'
-import { useState } from 'react'
+import { toast } from 'react-hot-toast'
 import { useChangeDateForm } from '../../hooks/useChangeDateState'
 import { DateTimeInput } from './components/FormDateTime'
-
 
 const ChangeDates = ({
   open,
   onClose,
   chat_id,
+  rescheduleAction,
+  rescheduleData,
 }: {
   open: boolean;
   onClose: () => void;
   chat_id: string;
+  rescheduleAction: "RESCHEDULED_TECH_COUNCIL" | null;
+  rescheduleData: (date: string, time: string) => void;
 }) => {
 	const t = useTranslations('dashboard');
 	const { state, updateState } = useChangeDateForm();
-	const [keepCurrentAuctionDate, setKeepCurrentAuctionDate] = useState<boolean>(false);
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
-		if (state.step === 2) {
-			console.log('submit', state);
-		} else {
-			updateState({ step: 2 })
-		}
+    const date = state.date?.toISOString()
+    const time = state.time
+    if (date && time) {
+      rescheduleAction ? rescheduleData(date, time) : onClose()
+    } else {
+      toast.error(t("please-select-date-and-time"))
+    }
 	}
 
-	const handleBack = () => {
-		updateState({ step: 1 })
-	}
+	if (!open) return null;
 
 	return (
-		<Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className='bg-primary-foreground w-full max-w-md mx-auto p-6 sm:p-8 flex flex-col items-center justify-center'>
-        <DialogHeader className='flex flex-col items-center justify-center gap-2'>
-          <DialogTitle className='text-secondary-foreground text-2xl font-bold'>
-            {state.step === 1 ? t("change-technical-council-dates") : t("change-auction-dates")}
-          </DialogTitle>
-          <p className='text-sm text-muted-foreground'>{t("step")} {state.step} {t("of")} 2</p>
-        </DialogHeader>
+		<motion.div 
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 50 }}
+      transition={{ duration: 0.5 }}
+      className="items-center justify-center z-50">  
+      <div className='bg-primary-foreground w-full max-w-md mx-auto p-6 sm:p-7 flex flex-col items-center justify-center rounded-lg'>
+        <div className='flex flex-col items-center justify-center gap-2'>
+          <h2 className='text-brand-gray text-2xl font-bold mb-4'>
+            {rescheduleAction === "RESCHEDULED_TECH_COUNCIL" ? t("change-technical-council-dates") : t("change-auction-dates")}
+          </h2>
+        </div>
         <form onSubmit={handleSubmit} className='w-full'>
-          {state.step === 1 ? (
-            <DateTimeInput
-              dateLabel={t("new-date-technical-council")}
-              timeLabel={t("new-time-technical-council")}
-              locale={state.locale}
-              dateValue={state.technicalCouncilDate}
-              timeValue={state.technicalCouncilTime}
-              onDateChange={(date) => updateState({ technicalCouncilDate: date })}
-              onTimeChange={(time) => updateState({ technicalCouncilTime: time })}
-            />
-          ) : (
-            <DateTimeInput
-              dateLabel={keepCurrentAuctionDate ? t("date-of-auction") : t("new-date-auction")}
-              timeLabel={keepCurrentAuctionDate ? t("time-of-auction") : t("new-time-auction")}
-							keepCurrentAuctionLabel={t("keep-current-auction-date")}
-              locale={state.locale}
-							newDate={true}
-							keepCurrentAuctionDate={keepCurrentAuctionDate}
-							onKeepCurrentAuctionDateChange={(checked) => setKeepCurrentAuctionDate(checked)}
-              dateValue={keepCurrentAuctionDate ? state.auctionDate : undefined}
-              timeValue={keepCurrentAuctionDate ? state.auctionTime : ''}
-              onDateChange={(date) => updateState({ auctionDate: date })}
-              onTimeChange={(time) => updateState({ auctionTime: time })}
-            />
-          )}
-          <div className='w-full flex items-center justify-between mt-6'>
-            {state.step === 2 && (
-              <Button type="button" variant='outline' onClick={handleBack}>
-                {t("back")}
+          <DateTimeInput
+            dateLabel={rescheduleAction ? t("new-date-technical-council") : t("date-of-auction")}
+            timeLabel={rescheduleAction ? t("new-time-technical-council") : t("time-of-auction")}
+            locale={state.locale}
+						newDate={true}
+            dateValue={state.date}
+            timeValue={state.time}
+            onDateChange={(date) => updateState({ date })}
+            onTimeChange={(time) => updateState({ time })}
+          />
+          <div className='w-full flex items-center justify-end gap-2 mt-6'>
+              <Button type="button" variant='outline' onClick={onClose}>
+                {t("cancel")}
               </Button>
-            )}
-            <Button
-              type="submit"
-              className={state.step === 1 ? 'ml-auto' : ''}
-            >
-              {state.step === 1 ? t("next") : t("plan")}
-            </Button>
+              <Button type="submit">
+                {t("confirm")}
+              </Button>
           </div>
         </form>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </motion.div>
 	)
-
 }
 
 export default ChangeDates
