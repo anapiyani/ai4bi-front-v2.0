@@ -51,13 +51,13 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
   } = useChatActions();
   const t = useTranslations('dashboard');
   const searchParams = useSearchParams();
-  const room_id = searchParams.get('id');
-  const chatId = selectedConversation;
+  const chat_id = searchParams.get('chat_id');
+  const conference_id = searchParams.get('conference_id');
   const [openSideMenu, setOpenSideMenu] = useState<boolean>(false);
 
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [remoteAudios, setRemoteAudios] = useState<HTMLAudioElement[]>([]);
-  const room = room_id || "default";
+  const room = conference_id || "default";
   const wsRef = useRef<WebSocket | null>(null);
   const peerRef = useRef<RTCPeerConnection | null>(null);
 
@@ -193,10 +193,10 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
   }, [isMicrophoneOn, localStream]);
 
   useEffect(() => {
-    if (chatId) {
-      setSelectedConversation(chatId);
+    if (chat_id) {
+      setSelectedConversation(chat_id);
     }
-  }, [chatId, setSelectedConversation]);
+  }, [chat_id, setSelectedConversation]);
 
   return (
     <div className='w-full flex flex-col lg:flex-row bg-neutral-secondary justify-center px-4'>
@@ -230,7 +230,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
         </div>
         <div className='w-full h-full mt-2 bg-neutrals-secondary rounded-lg'>
           <ChatContent
-            chatId={chatId || ""}
+            chatId={chat_id || ""}
             openSideMenu={openSideMenu}
             selectedConversation={selectedConversation}
             messages={messagesByChat[selectedConversation || ""] || []}

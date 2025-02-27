@@ -72,16 +72,14 @@ const ChatContent = ({
     if (!conferenceRoom) return;
     if (conferenceRoom.is_active) {
       const baseUrl = window.location.origin;
-      const url = `${baseUrl}/dashboard?active_tab=technical-council&id=${conferenceRoom.url}`;
+      const url = `${baseUrl}/dashboard?active_tab=technical-council&chat_id=${chatId}&conference_id=${conferenceRoom.conference_id}`;
       window.location.href = url;
     }
   }
   useEffect(() => {
     if (!conferenceRoom || !startedUserId) return;
-    if (conferenceRoom.is_active && startedUserId === getCookie("user_id")) {
-      const baseUrl = window.location.origin;
-      const url = `${baseUrl}/dashboard?active_tab=technical-council&id=${conferenceRoom.url}`;
-      window.location.href = url;
+    if (startedUserId === getCookie("user_id")) {
+      handleJoinToCall();
     }
   }, [conferenceRoom, chatId, startedUserId]);
 
