@@ -5,13 +5,27 @@ import dayjs from 'dayjs'
 import { useTranslations } from 'next-intl'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast as HotToast } from 'react-hot-toast'
+import { v4 as uuidv4 } from 'uuid'
 import { getCookie } from '../api/service/cookie'
-import { ChatMessage, Conversation, ForwardData, LastMessage, Media, MessagesRecord, ReceivedChats, TypingStatus } from '../types/types'
+import { ChatMessage, Conversation, ForwardData, LastMessage, Media, MessagesRecord, PopUpButtonAction, ReceivedChats, TypingStatus } from '../types/types'
 
 export type PopUpsRecord = {
   [chatId: string]: {
     [popupId: string]: any
   }
+}
+
+export type ConferenceRoom = {
+  chat_id: string;
+  conference_id: string;
+  conference_type: string;
+  created_at: string;
+  is_active: boolean;
+  url: string;
+}
+
+export type ConferenceRoomsRecord = {
+  [chatId: string]: ConferenceRoom;
 }
 
 export const useChatWebSocket = () => {
@@ -23,6 +37,8 @@ export const useChatWebSocket = () => {
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
   const [messagesByChat, setMessagesByChat] = useState<MessagesRecord>({});
   const [popUpsByChat, setPopUpsByChat] = useState<PopUpsRecord>({});
+  const [conferenceRoomsByChat, setConferenceRoomsByChat] = useState<ConferenceRoomsRecord>({});
+  const [startedUserId, setStartedUserId] = useState<string | null>(null);
   const [typingStatuses, setTypingStatuses] = useState<TypingStatus[]>([]);
   const typingTimeoutsRef = useRef<{ [chatId: string]: NodeJS.Timeout }>({});
   const [newMessage, setNewMessage] = useState("");
@@ -65,8 +81,8 @@ export const useChatWebSocket = () => {
     if (message.jsonrpc === "2.0" && message.result) {
       if (message.result.chat_id) {
         handleChatCreated(message.result);
-      } else if (message.result.event === "popups") {
-        handleReceivedChatPopup(message.result);
+      } else if (message.result.popup_id) {
+        handlePopUpResponse(message);
       } else if (message.result.message_id) {
         handleMessageReceived(message.result);
       } else if (Array.isArray(message.result)) {
@@ -76,14 +92,29 @@ export const useChatWebSocket = () => {
       } 
       return;
     }
-
-    if (message.type === "message") {
+    console.log("[handleWebSocketMessage] message:", message);
+    if (message.channel?.startsWith("popup")) {
+      handleReceivedChatPopup(message.data);
+    } else if (message.type === "message") {
       switch (message.event) {
         case "new_chat":
           handleChatCreated({
             chat_id: message.data.id,
             name: message.data.user?.name || `Chat with ${message.data.id}`,
           });
+          break;
+        case "conference_room":
+          setConferenceRoomsByChat((prev) => ({
+            ...prev,
+            [message.data.chat_id]: {
+              chat_id: message.data.chat_id,
+              conference_id: message.data.conference_id,
+              conference_type: message.data.conference_type,
+              created_at: message.data.created_at,
+              is_active: message.data.is_active,
+              url: message.data.url,
+            }
+          }));
           break;
         case "edit_message":
           const editedMsg = message.data.message;
@@ -158,7 +189,7 @@ export const useChatWebSocket = () => {
       return;
     } else if (message.type === "notifications") {
       handleShowNotification(message);
-    } 
+    }
     if (message.type === "message_received") {
       console.log("[handleWebSocketMessage] message_received ack:", message);
       return;
@@ -253,7 +284,7 @@ export const useChatWebSocket = () => {
       jsonrpc: "2.0",
       method,
       params,
-      id: Date.now().toString(),
+      id: uuidv4(),
     };
   }
 
@@ -366,7 +397,7 @@ export const useChatWebSocket = () => {
   // handleReceivedChatPopup
   // ---------------------------------------------------------------------------
   const handleReceivedChatPopup = useCallback((message: any) => {
-    const { body, buttons, chat_id, created_at, expiration_time, header, id, popup_type, user_id } = message.result[0];
+    const { body, buttons, chat_id, created_at, expiration_time, header, id, popup_type, user_id } = message || {};
     setPopUpsByChat((prev) => ({
       ...prev,
       [chat_id]: {
@@ -383,6 +414,44 @@ export const useChatWebSocket = () => {
         }
       }
     }));
+  }, []);
+
+  // ---------------------------------------------------------------------------
+  // PopUpButtonAction
+  // ---------------------------------------------------------------------------
+  const handlePopUpButtonAction = useCallback((button: PopUpButtonAction, clicked_user_id?: string) => {
+    const { popup_id, user_id, button_id, tech_council_reschedule_date }: PopUpButtonAction = button;
+    setStartedUserId(clicked_user_id || null);
+    if (tech_council_reschedule_date) {
+      sendMessage(createRpcRequest("respond_to_popup", {
+        popup_id: popup_id,
+        user_id: user_id,
+        button_id: button_id,
+        tech_council_reschedule_date: tech_council_reschedule_date
+      }));
+    } else {
+      sendMessage(createRpcRequest("respond_to_popup", {
+        popup_id: popup_id,
+        user_id: user_id,
+        button_id: button_id
+      }));
+    }
+  }, []);
+
+  // ---------------------------------------------------------------------------
+  // handlePopUpResponse
+  // ---------------------------------------------------------------------------
+  const handlePopUpResponse = useCallback((message: any) => {
+    const { popup_id } = message.result;
+    setPopUpsByChat((prev) => {
+      const updated = { ...prev };
+      for (const chatId of Object.keys(updated)) {
+        if (updated[chatId].data?.id === popup_id) {
+          delete updated[chatId];
+        }
+      }
+      return updated;
+    });
   }, []);
 
   // ---------------------------------------------------------------------------
@@ -700,7 +769,7 @@ export const useChatWebSocket = () => {
   const sendChatMessage = useCallback((reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean, type?: "audio") => {
     if (!selectedConversation) return;
     const replyId = reply?.id ?? null;
-    const rpcId = Date.now().toString();
+    const rpcId = (Date.now() + Math.random() * 1000000).toString();
     const content = newMessage.trim();
     let pendingMedia: Media[] | null = null;
     if (type === "audio") {
@@ -943,5 +1012,8 @@ export const useChatWebSocket = () => {
     handleReadMessage,
     typingStatuses,
     popUpsByChat,
+    conferenceRoomsByChat,
+    handlePopUpButtonAction,
+    startedUserId
   };
 };

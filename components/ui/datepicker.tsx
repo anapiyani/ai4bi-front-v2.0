@@ -22,11 +22,11 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { DayPicker } from "react-day-picker"
 
-export function DatePicker({ locale = enUS, onChange, value }: { locale?: Locale, onChange: (date: Date) => void, value: Date | undefined }) {
+export function DatePicker({ locale = enUS, onChange, value, open, setOpen }: { locale?: Locale, onChange: (date: Date) => void, value: Date | undefined, open: boolean, setOpen: (open: boolean) => void }) {
   const t = useTranslations("dashboard")
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           variant={"outline"}
@@ -44,12 +44,13 @@ export function DatePicker({ locale = enUS, onChange, value }: { locale?: Locale
           </svg>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0">
+      <PopoverContent className="w-auto p-0 pointer-events-auto">
         <Calendar
           mode="single"
           selected={value}
           onSelect={(date) => {
-            onChange(date as Date);
+            onChange(date as Date)
+            setOpen(false)
           }}
           initialFocus
           locale={locale}

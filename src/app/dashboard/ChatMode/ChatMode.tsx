@@ -52,7 +52,10 @@ const ChatMode = () => {
     typingStatuses,
     handleReadMessage,
     addParticipantsToAuctionChat,
-    popUpsByChat
+    popUpsByChat,
+    handlePopUpButtonAction,
+    conferenceRoomsByChat,
+    startedUserId
   } = useChatWebSocket()
   const {
     openMenu,
@@ -312,6 +315,9 @@ const ChatMode = () => {
           typingStatuses={typingStatuses}
           conversations={conversations}
           popUpsByChat={popUpsByChat}
+          handlePopUpButtonAction={handlePopUpButtonAction}
+          conferenceRoomsByChat={conferenceRoomsByChat}
+          startedUserId={startedUserId}
         />
       </div>
       {openMenu && selectedConversation && (
