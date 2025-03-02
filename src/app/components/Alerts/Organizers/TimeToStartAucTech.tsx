@@ -89,18 +89,21 @@ const TimeToStartAucTech = ({
 														popup_id: popup_id,
 														user_id: user_id,
 														button_id: button.id,
+														chatId: chat_id,
 													}, user_id)
 												} else if (button.action === "ACCEPTED_PARTICIPATION_TECH_COUNCIL") {
 													handlePopUpButtonAction({
 														popup_id: popup_id,
 														user_id: user_id,
 														button_id: button.id,
+														chatId: chat_id,
 													})
 												} else if (button.action === "REJECTED_PARTICIPATION_TECH_COUNCIL") {
 													handlePopUpButtonAction({
 														popup_id: popup_id,
 														user_id: user_id,
 														button_id: button.id,
+														chatId: chat_id,
 													})
 												}
 											}}
@@ -141,6 +144,7 @@ const TimeToStartAucTech = ({
 									user_id: user_id,
 									button_id: buttons.find((button) => button.action === rescheduleAction)?.id || '',
 									tech_council_reschedule_date: date,
+									chatId: chat_id,
 								})
 							}}
 							rescheduleAction={rescheduleAction}

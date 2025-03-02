@@ -420,22 +420,19 @@ export const useChatWebSocket = () => {
   // PopUpButtonAction
   // ---------------------------------------------------------------------------
   const handlePopUpButtonAction = useCallback((button: PopUpButtonAction, clicked_user_id?: string) => {
-    const { popup_id, user_id, button_id, tech_council_reschedule_date }: PopUpButtonAction = button;
+    const { popup_id, chatId, user_id, button_id, tech_council_reschedule_date }: PopUpButtonAction = button;
     setStartedUserId(clicked_user_id || null);
-    if (tech_council_reschedule_date) {
-      sendMessage(createRpcRequest("respond_to_popup", {
-        popup_id: popup_id,
-        user_id: user_id,
-        button_id: button_id,
-        tech_council_reschedule_date: tech_council_reschedule_date
-      }));
-    } else {
-      sendMessage(createRpcRequest("respond_to_popup", {
-        popup_id: popup_id,
-        user_id: user_id,
-        button_id: button_id
-      }));
-    }
+    setPopUpsByChat(prev => {
+      const updated = { ...prev };
+      delete updated[chatId];
+      return updated;
+    });
+    sendMessage(createRpcRequest("respond_to_popup", {
+      popup_id: popup_id,
+      user_id: user_id,
+      button_id: button_id,
+      tech_council_reschedule_date: tech_council_reschedule_date || null
+    }));
   }, []);
 
   // ---------------------------------------------------------------------------
@@ -887,16 +884,26 @@ export const useChatWebSocket = () => {
   // Subscribe/unsubscribe to specific chat rooms when selectedConversation changes
   // ---------------------------------------------------------------------------
   useEffect(() => {
-    // If previously selected a conversation, unsubscribe from it
-    if (prevConversationRef.current) {
-      unsubscribeToChatRoom(prevConversationRef.current);
+    const previousChat = prevConversationRef.current;
+    
+    // Cleanup previous chat
+    if (previousChat) {
+      unsubscribeToChatRoom(previousChat);
       unSubscribeToPopUp();
+      // Clear popups for previous chat
+      setPopUpsByChat(prev => {
+        const updated = { ...prev };
+        delete updated[previousChat];
+        return updated;
+      });
     }
-    // Subscribe to the newly selected conversation
+  
+    // Initialize new chat
     if (selectedConversation && isConnected) {
       subscribeToChatRoom(selectedConversation);
       handleSubscribeToPopUp();
     }
+    
     prevConversationRef.current = selectedConversation;
   }, [selectedConversation, isConnected]);
 
