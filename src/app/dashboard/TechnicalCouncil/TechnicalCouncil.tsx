@@ -60,10 +60,21 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
   const room = conference_id || "default";
   const wsRef = useRef<WebSocket | null>(null);
   const peerRef = useRef<RTCPeerConnection | null>(null);
+  const connectedUsers = useRef<Map<string, any>>(new Map());
 
   useEffect(() => {
     let isUnmounting = false;
 
+    const updateAudioElements = () => {
+      connectedUsers.current.forEach((user) => {
+        const audio = document.createElement("audio");
+        audio.srcObject = user.stream;
+        audio.autoplay = true;
+        audio.controls = true;
+        setRemoteAudios(prev => [...prev, audio]);
+      });
+    }
+    
     const start = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
@@ -136,8 +147,20 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
           if (!msg) return;
   
           switch (msg.event) {
+            case "user_connected":  
+              console.log("User connected", msg.user.user_id);
+              break;
+            
+            case "users_updated":
+              console.log("Users updated", msg.users);
+              connectedUsers.current.clear();
+              msg.users.forEach((user: any) => {
+                connectedUsers.current.set(user.user_id, user);
+              });
+              updateAudioElements();
+              break;
+
             case 'offer':
-              // Server sent an offer, set as remote, then create/send answer
               await peerConnection.setRemoteDescription(JSON.parse(msg.data));
               const answer = await peerConnection.createAnswer();
               await peerConnection.setLocalDescription(answer);
@@ -149,7 +172,16 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
   
             case 'candidate':
               await peerConnection.addIceCandidate(JSON.parse(msg.data));
+              console.log("Candidate added", msg);
               break;
+            
+            case 'python_response':
+              console.log(`Audio Server response from user ${msg}:`, msg.text);
+              break;
+                
+            case 'python_binary_response':
+                console.log(`Audio Server binary response from user ${msg}`);
+                break;
           }
         };
   
