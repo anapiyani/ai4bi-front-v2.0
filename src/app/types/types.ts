@@ -296,6 +296,7 @@ export type InterestsResponse = {
 
 export type PopUpButtonAction = {
 	popup_id: string;
+	chatId: string;
 	user_id: string;
 	button_id: string;
 	tech_council_reschedule_date?: string;
