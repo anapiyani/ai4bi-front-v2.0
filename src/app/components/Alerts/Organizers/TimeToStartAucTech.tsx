@@ -55,7 +55,6 @@ const TimeToStartAucTech = ({
 						expanded: { width: "500px", height: "auto", borderRadius: "0.5rem" },
 						collapsed: { width: "300px", height: "48px", borderRadius: "5rem" },
 					}}
-					transition={{ duration: 0.4, ease: "easeInOut" }}
 					className="bg-white overflow-hidden"
 				>
 				{!openRescheduleModal && !isExpanded ? (
