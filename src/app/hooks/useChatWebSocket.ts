@@ -562,6 +562,7 @@ export const useChatWebSocket = () => {
 
   const getChats = () => {
     if (!currentUser) return;
+    console.log('[getChats()] sending RPC request');
     const request = createRpcRequest("getChats", {});
     sendMessage(request);
   };
@@ -787,6 +788,22 @@ export const useChatWebSocket = () => {
   // Effects 
   // ---------------------------------------------------------------------------
   useEffect(() => {
+    const userId = getCookie("user_id");
+    if (userId) {
+      setCurrentUser(userId);
+      currentUserRef.current = userId; 
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log('[useEffect -> getChats()] currentUser:', currentUser, ' isConnected:', isConnected);
+    if (currentUser && isConnected) {
+      console.log('[useEffect -> getChats()] calling getChats()...');
+      getChats();
+    }
+  }, [currentUser, isConnected]);
+
+  useEffect(() => {
     const previousChat = prevConversationRef.current;
     
     if (previousChat) {
@@ -808,22 +825,15 @@ export const useChatWebSocket = () => {
   }, [selectedConversation, isConnected]);
 
   useEffect(() => {
-    handleSubscribeToNotfications();
+    if (isConnected) {
+      sendMessage({ type: "subscribe", channel: "chat_updates" });
+      sendMessage({ type: "subscribe", channel: "chat_room" });
+    }
   }, [isConnected]);
 
   useEffect(() => {
-    const userId = getCookie("user_id");
-    if (userId) {
-      setCurrentUser(userId);
-      currentUserRef.current = userId; // Initialize ref
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isConnected) {
-      sendMessage({ type: "subscribe", channel: "chat_updates" });
-    }
-  }, [isConnected, sendMessage]);
+    handleSubscribeToNotfications();
+  }, [isConnected]);
 
   useEffect(() => {
     if (!lastMessage) return;
@@ -831,25 +841,16 @@ export const useChatWebSocket = () => {
   }, [lastMessage]);
 
   useEffect(() => {
-    if (currentUser) {
-      getChats();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentUser]);
-
-  useEffect(() => {
     if (selectedConversation && isConnected) {
       getChatMessages();
       handleGetChatInfo();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedConversation, isConnected]);
 
   useEffect(() => {
     if (selectedConversation) {
       getPopUps();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedConversation]);
 
   useEffect(() => {
