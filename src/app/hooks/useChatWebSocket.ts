@@ -213,6 +213,7 @@ export const useChatWebSocket = () => {
   };
 
   const handleChatsReceived = (chats: ReceivedChats[]) => {
+    console.log('[handleChatsReceived()] received chats:', chats);
     const transformed = chats.map((chat) => ({
       id: chat.chat_id,
       name: chat.name || `Chat ${chat.chat_id}`,
@@ -669,10 +670,10 @@ export const useChatWebSocket = () => {
     if (message.jsonrpc === "2.0" && message.result) {
       if (message.result.chat_id) {
         handleChatCreated(message.result);
-      } else if (message.result.message_id) {
-        handleMessageReceived(message.result);
       } else if (Array.isArray(message.result)) {
         handleChatsReceived(message.result);
+      } else if (message.result.message_id) {
+        handleMessageReceived(message.result);
       } else if (message.result.count && message.result.messages) {
         handleMessagesReceived(message.result.messages);
       } 
