@@ -10,7 +10,6 @@ import toast from 'react-hot-toast'
 import ChatMenu from "../../components/Chat/ChatMenu/ChatMenu"
 import DeleteMessage from "../../components/Chat/DeleteMessage"
 import ConstructModal from '../../components/Chat/Forms/ConstructModal'
-import { useCreatePrivateChat } from '../../components/Chat/hooks/useCreatePrivateChat'
 import ChatContent from "../../components/ChatContent"
 import { useChatActions } from '../../components/CommonWsActions'
 import Icons from '../../components/Icons'
@@ -30,7 +29,6 @@ const ChatMode = () => {
   const [constructModalOpen, setConstructModalOpen] = useState<boolean>(false)
   const [activeTab, setActiveTab] = useState("your-auctions");
   const [privateChatResult, setPrivateChatResult] = useState<AutoCompleteResponse[] | null>(null)
-  const {mutate: createPrivateChatMutation, isPending: isCreatingPrivateChat} = useCreatePrivateChat();
 
   const {
     isConnected,
@@ -68,20 +66,20 @@ const ChatMode = () => {
     handleOpenMenu,
   } = useChatActions();
   
-  const auctionChats = useMemo(() => 
-    conversations.filter(c => c.chat_type === "auction_chat"),
+  const auctionChats = useMemo(
+    () => conversations.filter(c => c.chat_type === "auction_chat"),
     [conversations]
   )
-
-  const privateChats = useMemo(() =>
-    conversations.filter(c => c.chat_type === "private"), 
+  
+  const privateChats = useMemo(
+    () => conversations.filter(c => c.chat_type === "private"),
     [conversations]
   )
-
-  const constructChats = useMemo(() =>
-    conversations.filter(c => c.chat_type === "group"),
+  
+  const constructChats = useMemo(
+    () => conversations.filter(c => c.chat_type === "group"),
     [conversations]
-  )
+  )  
 
   const handleItemClick = (id: string) => {
     router.push(`/dashboard?active_tab=chat&id=${id}`)
