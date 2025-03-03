@@ -59,7 +59,10 @@ export const useChatWebSocket = () => {
   const prevConversationRef = useRef<string | null>(null);
   const currentUserRef = useRef<string | null>(currentUser);
 
-  
+  useEffect(() => {
+    getChats();
+  }, []);
+
   useEffect(() => {
     notificationAudioRef.current.load();
     notification2AudioRef.current.load();
@@ -562,8 +565,10 @@ export const useChatWebSocket = () => {
   };
 
   const getChats = () => {
-    if (!currentUser) return;
-    console.log('[getChats()] sending RPC request');
+    if (!currentUser || !isConnected) {
+      console.error("Cannot fetch chats: User not set or WebSocket disconnected");
+      return;
+    }
     const request = createRpcRequest("getChats", {});
     sendMessage(request);
   };
@@ -667,11 +672,14 @@ export const useChatWebSocket = () => {
       return;
     }
 
+    console.log('[handleWebSocketMessage] received message:', message);
+    
     if (message.jsonrpc === "2.0" && message.result) {
-      if (message.result.chat_id) {
+      if (message.result && Array.isArray(message.result)) {
+        console.log('[handleWebSocketMessage] received chats:', message.result);
+        handleChatsReceived(message.result);     
+      } else if (message.result.chat_id) {
         handleChatCreated(message.result);
-      } else if (Array.isArray(message.result)) {
-        handleChatsReceived(message.result);
       } else if (message.result.message_id) {
         handleMessageReceived(message.result);
       } else if (message.result.count && message.result.messages) {
@@ -792,15 +800,13 @@ export const useChatWebSocket = () => {
     const userId = getCookie("user_id");
     if (userId) {
       setCurrentUser(userId);
-      currentUserRef.current = userId; 
+      currentUserRef.current = userId;
     }
   }, []);
 
   useEffect(() => {
-    console.log('[useEffect -> getChats()] currentUser:', currentUser, ' isConnected:', isConnected);
     if (currentUser && isConnected) {
-      console.log('[useEffect -> getChats()] calling getChats()...');
-      getChats();
+      getChats(); 
     }
   }, [currentUser, isConnected]);
 

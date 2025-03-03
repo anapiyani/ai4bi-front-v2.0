@@ -26,7 +26,7 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
 export function useWS() {
   const context = useContext(WebSocketContext)
   if (!context) {
-    throw new Error("useWS hsould be used inside of: <WebSocketProvider />")
+    throw new Error("useWS should be used inside of: <WebSocketProvider />")
   }
   return context
 }
