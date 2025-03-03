@@ -2,7 +2,6 @@
 import { Button } from '@/components/ui/button'
 import { PopUpButtonAction } from '@/src/app/types/types'
 import dayjs from 'dayjs'
-import { AnimatePresence, motion } from 'framer-motion'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import ChangeDates from '../../Form/ChangeDates'
@@ -45,27 +44,9 @@ const TimeToStartAucTech = ({
 	
   return (
     <div className="flex items-center justify-center w-full mt-3">
-      <AnimatePresence mode="wait">
-       <motion.div
-					layout
-					key="container"
-					initial={false}
-					animate={!isExpanded ? "expanded" : "collapsed"}
-					variants={{
-						expanded: { width: "500px", height: "auto", borderRadius: "0.5rem" },
-						collapsed: { width: "300px", height: "48px", borderRadius: "5rem" },
-					}}
-					className="bg-white overflow-hidden"
-				>
+      <div className={`bg-white overflow-hidden ${!isExpanded ? "w-[500px] rounded-lg" : "w-[300px] rounded-full"}`}>
 				{!openRescheduleModal && !isExpanded ? (
-						<motion.div
-							key="collapsed"
-							className="w-[500px] bg-white rounded-lg p-6"
-							initial={{ opacity: 0, y: 50 }}
-							animate={{ opacity: 1, y: 0 }}
-							exit={{ opacity: 0, y: 50 }}
-							transition={{ duration: 0.5 }}
-						>
+						<div className="w-[500px] bg-white rounded-lg p-6">
 							<div className="space-y-4">
 								<div className="flex flex-col gap-2">
 									<h2 className="text-lg font-semibold">{popup_type === "tech_council_start" ? t("its-time-to-start-the-technical-council") : popup_type === "participation_question_tech_council" ? t("would-you-like-to-participate-in-the-technical-council") : t("its-time-to-start-the-auction")}</h2>
@@ -131,7 +112,7 @@ const TimeToStartAucTech = ({
 									</Button>
 								</div>
 							</div>
-						</motion.div>
+						</div>
 					) : (
 						<ChangeDates
 							open={openRescheduleModal}
@@ -151,14 +132,7 @@ const TimeToStartAucTech = ({
 					)}
 
 					{isExpanded && (
-						<motion.div
-							key="expanded"
-							className="w-full bg-white rounded-full py-3 px-4"
-							initial={{ opacity: 0, y: 50 }}
-							animate={{ opacity: 1, y: 0 }}
-							exit={{ opacity: 0, y: 50 }}
-							transition={{ duration: 0.5 }}
-						>
+						<div className="w-full bg-white rounded-full py-3 px-4">
 							<div className="flex justify-between items-center">
 								<div className="flex gap-2 items-center">
 									<Icons.DangerNigger />
@@ -173,10 +147,9 @@ const TimeToStartAucTech = ({
 									<Icons.ArrowDown />
 								</Button>
 							</div>
-						</motion.div>
+						</div>
 					)}
-				</motion.div>
-			 </AnimatePresence>
+				</div>
     </div>
   )
 }
