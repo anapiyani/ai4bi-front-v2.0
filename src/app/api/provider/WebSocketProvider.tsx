@@ -11,7 +11,7 @@ interface WebSocketContextValue {
 
 const WebSocketContext = createContext<WebSocketContextValue | undefined>(undefined)
 
-const WS_URL = process.env.NEXT_PUBLIC_WS_URL || "ws://staging.ai4bi.kz/ws/";
+const WS_URL = process.env.NEXT_PUBLIC_WS_URL || "wss://staging.ai4bi.kz/ws/";
 
 export function WebSocketProvider({ children }: { children: ReactNode }) {
   const { isConnected, lastMessage, sendMessage } = useWebSocket(WS_URL)
