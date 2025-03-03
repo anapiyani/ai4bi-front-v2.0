@@ -213,6 +213,7 @@ export const useChatWebSocket = () => {
   };
 
   const handleChatsReceived = (chats: ReceivedChats[]) => {
+    console.log('[handleChatsReceived()] received chats:', chats);
     const transformed = chats.map((chat) => ({
       id: chat.chat_id,
       name: chat.name || `Chat ${chat.chat_id}`,
@@ -562,6 +563,7 @@ export const useChatWebSocket = () => {
 
   const getChats = () => {
     if (!currentUser) return;
+    console.log('[getChats()] sending RPC request');
     const request = createRpcRequest("getChats", {});
     sendMessage(request);
   };
@@ -668,10 +670,10 @@ export const useChatWebSocket = () => {
     if (message.jsonrpc === "2.0" && message.result) {
       if (message.result.chat_id) {
         handleChatCreated(message.result);
-      } else if (message.result.message_id) {
-        handleMessageReceived(message.result);
       } else if (Array.isArray(message.result)) {
         handleChatsReceived(message.result);
+      } else if (message.result.message_id) {
+        handleMessageReceived(message.result);
       } else if (message.result.count && message.result.messages) {
         handleMessagesReceived(message.result.messages);
       } 
@@ -787,6 +789,22 @@ export const useChatWebSocket = () => {
   // Effects 
   // ---------------------------------------------------------------------------
   useEffect(() => {
+    const userId = getCookie("user_id");
+    if (userId) {
+      setCurrentUser(userId);
+      currentUserRef.current = userId; 
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log('[useEffect -> getChats()] currentUser:', currentUser, ' isConnected:', isConnected);
+    if (currentUser && isConnected) {
+      console.log('[useEffect -> getChats()] calling getChats()...');
+      getChats();
+    }
+  }, [currentUser, isConnected]);
+
+  useEffect(() => {
     const previousChat = prevConversationRef.current;
     
     if (previousChat) {
@@ -808,22 +826,15 @@ export const useChatWebSocket = () => {
   }, [selectedConversation, isConnected]);
 
   useEffect(() => {
-    handleSubscribeToNotfications();
+    if (isConnected) {
+      sendMessage({ type: "subscribe", channel: "chat_updates" });
+      sendMessage({ type: "subscribe", channel: "chat_room" });
+    }
   }, [isConnected]);
 
   useEffect(() => {
-    const userId = getCookie("user_id");
-    if (userId) {
-      setCurrentUser(userId);
-      currentUserRef.current = userId; // Initialize ref
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isConnected) {
-      sendMessage({ type: "subscribe", channel: "chat_updates" });
-    }
-  }, [isConnected, sendMessage]);
+    handleSubscribeToNotfications();
+  }, [isConnected]);
 
   useEffect(() => {
     if (!lastMessage) return;
@@ -831,25 +842,16 @@ export const useChatWebSocket = () => {
   }, [lastMessage]);
 
   useEffect(() => {
-    if (currentUser) {
-      getChats();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentUser]);
-
-  useEffect(() => {
     if (selectedConversation && isConnected) {
       getChatMessages();
       handleGetChatInfo();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedConversation, isConnected]);
 
   useEffect(() => {
     if (selectedConversation) {
       getPopUps();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedConversation]);
 
   useEffect(() => {
