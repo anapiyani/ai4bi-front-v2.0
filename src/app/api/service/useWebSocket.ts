@@ -1,8 +1,7 @@
-// useWebSocket.ts
 "use client";
 
-import { useCallback, useEffect, useState, useRef } from "react"
-import { getCookie } from './cookie'
+import { useCallback, useEffect, useState, useRef } from "react";
+import { getCookie } from "./cookie";
 
 export interface WebSocketMessage {
   [key: string]: any;
@@ -12,6 +11,8 @@ interface UseWebSocketReturn {
   isConnected: boolean;
   lastMessage: WebSocketMessage | null;
   sendMessage: (msg: WebSocketMessage) => void;
+  addListener: (listener: (msg: WebSocketMessage) => void) => void;
+  removeListener: (listener: (msg: WebSocketMessage) => void) => void;
 }
 
 export function useWebSocket(url: string): UseWebSocketReturn {
@@ -20,19 +21,33 @@ export function useWebSocket(url: string): UseWebSocketReturn {
   const [lastMessage, setLastMessage] = useState<WebSocketMessage | null>(null);
   const messageQueueRef = useRef<WebSocketMessage[]>([]);
   const processingRef = useRef(false);
+  const listenersRef = useRef<Array<(msg: WebSocketMessage) => void>>([]);
+
+  const addListener = useCallback((listener: (msg: WebSocketMessage) => void) => {
+    listenersRef.current.push(listener);
+  }, []);
+
+  const removeListener = useCallback((listener: (msg: WebSocketMessage) => void) => {
+    listenersRef.current = listenersRef.current.filter(l => l !== listener);
+  }, []);
 
   const processMessageQueue = useCallback(() => {
     if (processingRef.current || messageQueueRef.current.length === 0) return;
-    if (messageQueueRef.current.length > 1) {
-      console.log("!!!!!!!!!! Note, handling multiple messages one at a time:", messageQueueRef.current.length);
+    if (messageQueueRef.current.length >= 1) {
+      console.log("Queue length:", messageQueueRef.current.length);
     }
     processingRef.current = true;
     const message = messageQueueRef.current.shift();
     if (message) {
+      if (listenersRef.current.length > 0) {
+        console.log("begin --------------------");
+        listenersRef.current.forEach(listener => listener(message));
+        console.log("------------------------ end");
+      }
+      // Fallback value, do not trust
       setLastMessage(message);
-    }
 
-    // Process next one in next tick
+    }
     setTimeout(() => {
       processingRef.current = false;
       processMessageQueue();
@@ -40,7 +55,7 @@ export function useWebSocket(url: string): UseWebSocketReturn {
   }, []);
 
   useEffect(() => {
-    const token = getCookie('access_token')
+    const token = getCookie("access_token");
     if (!token) {
       console.warn("[useWebSocket] No access token found; continuing without auth token...");
     }
@@ -72,7 +87,6 @@ export function useWebSocket(url: string): UseWebSocketReturn {
     ws.onclose = () => {
       console.log("[useWebSocket] WebSocket disconnected");
       setIsConnected(false);
-      // Clear message queue on disconnect
       messageQueueRef.current = [];
       processingRef.current = false;
     };
@@ -81,7 +95,6 @@ export function useWebSocket(url: string): UseWebSocketReturn {
     return () => {
       console.log("[useWebSocket] Closing WebSocket");
       ws.close();
-      // Clear message queue on cleanup
       messageQueueRef.current = [];
       processingRef.current = false;
     };
@@ -99,5 +112,6 @@ export function useWebSocket(url: string): UseWebSocketReturn {
     [socket, isConnected]
   );
 
-  return { isConnected, lastMessage, sendMessage };
+  return { isConnected, lastMessage, sendMessage, addListener, removeListener };
 }
+
