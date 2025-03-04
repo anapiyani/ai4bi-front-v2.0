@@ -1,7 +1,7 @@
 // useWebSocket.ts
 "use client";
 
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useState, useRef } from "react"
 import { getCookie } from './cookie'
 
 export interface WebSocketMessage {
@@ -18,6 +18,26 @@ export function useWebSocket(url: string): UseWebSocketReturn {
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [lastMessage, setLastMessage] = useState<WebSocketMessage | null>(null);
+  const messageQueueRef = useRef<WebSocketMessage[]>([]);
+  const processingRef = useRef(false);
+
+  const processMessageQueue = useCallback(() => {
+    if (processingRef.current || messageQueueRef.current.length === 0) return;
+    if (messageQueueRef.current.length > 1) {
+      console.log("!!!!!!!!!! Note, handling multiple messages one at a time:", messageQueueRef.current.length);
+    }
+    processingRef.current = true;
+    const message = messageQueueRef.current.shift();
+    if (message) {
+      setLastMessage(message);
+    }
+
+    // Process next one in next tick
+    setTimeout(() => {
+      processingRef.current = false;
+      processMessageQueue();
+    }, 0);
+  }, []);
 
   useEffect(() => {
     const token = getCookie('access_token')
@@ -42,8 +62,9 @@ export function useWebSocket(url: string): UseWebSocketReturn {
       try {
         const parsed = JSON.parse(event.data);
         console.log("[useWebSocket] Raw WebSocket message:", parsed);
-        setLastMessage(parsed);
-      } catch (err) { 
+        messageQueueRef.current.push(parsed);
+        processMessageQueue();
+      } catch (err) {
         console.error("[useWebSocket] Error parsing WebSocket message:", err);
       }
     };
@@ -51,14 +72,20 @@ export function useWebSocket(url: string): UseWebSocketReturn {
     ws.onclose = () => {
       console.log("[useWebSocket] WebSocket disconnected");
       setIsConnected(false);
+      // Clear message queue on disconnect
+      messageQueueRef.current = [];
+      processingRef.current = false;
     };
 
     setSocket(ws);
     return () => {
       console.log("[useWebSocket] Closing WebSocket");
       ws.close();
+      // Clear message queue on cleanup
+      messageQueueRef.current = [];
+      processingRef.current = false;
     };
-  }, [url]);
+  }, [url, processMessageQueue]);
 
   const sendMessage = useCallback(
     (msg: WebSocketMessage) => {
