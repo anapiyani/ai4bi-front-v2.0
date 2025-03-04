@@ -76,6 +76,7 @@ const ChatContent = ({
       window.location.href = url;
     }
   }
+  
   useEffect(() => {
     if (!conferenceRoom || !startedUserId) return;
     if (startedUserId === getCookie("user_id")) {
