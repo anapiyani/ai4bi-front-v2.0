@@ -175,7 +175,17 @@
 		"please-select-date-and-time": "Күн мен уақытты таңдаңыз",
 		"would-you-like-to-participate-in-the-technical-council": "Сіз осы тендердің техникалық кеңесіне қатысуға келісіміңізді бересіз бе?",
 		"technical_council_on_progress": "Тех. кеңес жүргізіліп жатыр",
-		"join_to_call": "Қоңырауға қосылу"
+		"join_to_call": "Қоңырауға қосылу",
+		"protocol": "Протокол",
+		"make_changes": "Өзгерту",
+		"project": "Жоба",
+		"constructive": "Конструктив",
+		"date": "Күн",
+		"place": "Қала",
+		"materials_and_technical_solutions": "Материалдар мен техникалық шешімдер",
+		"name": "Атауы",
+		"technical_characteristics": "Тех. сипаттамалары",
+		"made_by": "Өндіруші"
 	},
 	"dropzone": {
 		"upload_files": "Файлдарды жүктеу",

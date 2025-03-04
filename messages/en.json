@@ -175,7 +175,17 @@
 		"please-select-date-and-time": "Please select date and time",
 		"would-you-like-to-participate-in-the-technical-council": "Would you like to participate in the technical council?",
 		"technical_council_on_progress": "Technical council in progress",
-		"join_to_call": "Join to call"
+		"join_to_call": "Join to call",
+		"protocol": "Protocol",
+		"make_changes": "Make changes",
+		"project": "Project",
+		"constructive": "Constructive",
+		"date": "Date",
+		"place": "Place",
+		"materials_and_technical_solutions": "Materials and technical solutions",
+		"name": "Name",
+		"technical_characteristics": "Technical characteristics",
+		"made_by": "Made by"
 	},
 	"dropzone": {
 		"upload_files": "Upload files",

@@ -9,6 +9,7 @@ import { getCookie } from '../../api/service/cookie'
 import DeleteMessage from '../../components/Chat/DeleteMessage'
 import ChatContent from '../../components/ChatContent'
 import { useChatActions } from '../../components/CommonWsActions'
+import ProtocolTable from '../../components/Form/ProtocolTable'
 import { useChatWebSocket } from "../../hooks/useChatWebSocket"
 import ScreenShareContent from './components/ScreenShareContent'
 const BotVisualizer = dynamic(() => import('../../components/Bot/BotVisualizer'), { ssr: false })
@@ -259,9 +260,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
               </div>
             </TabsContent>
             <TabsContent value="protocol_table">
-              <div className='w-full h-full'>
-                <p>Protocol Table</p>
-              </div>
+              <ProtocolTable />
           </TabsContent>
         </div>
         </Tabs>
