@@ -30,9 +30,145 @@ export type ConferenceRoomsRecord = {
 
 export const useChatWebSocket = () => {
   // ------------------------
+  // Incoming Message Listener
+  // ------------------------
+
+  const handleWebSocketMessage = async (rawMsg: any) => {
+    let message: any;
+    try {
+      message = typeof rawMsg === "string" ? JSON.parse(rawMsg) : rawMsg;
+    } catch (err) {
+      console.error("[handleWebSocketMessage] Could not parse raw string:", err, rawMsg);
+      toast({
+        title: t("error.connection_error"),
+        description: t("error.please_refresh"),
+        variant: "destructive"
+      })
+      return;
+    }
+
+    if (message.jsonrpc === "2.0" && message.result) {
+      if (message.result.chat_id) {
+        handleChatCreated(message.result);
+      } else if (Array.isArray(message.result)) {
+        handleChatsReceived(message.result);
+      } else if (message.result.message_id) {
+        handleMessageReceived(message.result);
+      } else if (message.result.count && message.result.messages) {
+        handleMessagesReceived(message.result.messages);
+      }
+      return;
+    }
+
+    if (message.type === "popups" && message.event === "popups") {
+      handleReceivedChatPopup(message.data);
+    } else if (message.type === "message") {
+      switch (message.event) {
+        case "new_chat":
+          handleChatCreated({
+            chat_id: message.data.id,
+            name: message.data.user?.name || `Chat with ${message.data.id}`,
+          });
+          break;
+        case "conference_room":
+          setConferenceRoomsByChat((prev) => ({
+            ...prev,
+            [message.data.chat_id]: {
+              chat_id: message.data.chat_id,
+              conference_id: message.data.conference_id,
+              conference_type: message.data.conference_type,
+              created_at: message.data.created_at,
+              is_active: message.data.is_active,
+              url: message.data.url,
+            }
+          }));
+          break;
+        case "edit_message":
+          const editedMsg = message.data.message;
+          const formattedEditedMessage = {
+            message_id: editedMsg.message_id,
+            content: editedMsg.content,
+            is_edited: true
+          }
+          handleReceivedEditedMessage(formattedEditedMessage);
+          break;
+        case "typing_status":
+          handleTypingStatus(message.data);
+          break;
+        case "pin_message":
+          handleReceivedPinStatusChange(message.data, true);
+          break;
+        case "unpin_message":
+          handleReceivedPinStatusChange(message.data, false);
+          break;
+        case "delete_message":
+          handleReceivedDeleteMessage(message.data);
+          break;
+        case "read_message":
+          getChats()
+          break;
+        case "new_message":
+          const msgData = message.data.message;
+          const chatId = message.chat_id || message.data.chat_id;
+          if (message.channel?.startsWith("chat_room")) {
+            const formattedMessage = {
+              message_id: msgData.message_id,
+              chat_id: chatId,
+              sender_first_name: msgData.sender_first_name,
+              sender_last_name: msgData.sender_last_name,
+              content: msgData.content,
+              type: msgData.type,
+              counter: msgData.counter,
+              timestamp: msgData.timestamp || dayjs().toISOString(),
+              authorId: msgData.sender_id,
+              forwarded_from: msgData.forwarded_from,
+              forwarded_from_first_name: msgData.forwarded_from_first_name,
+              forwarded_from_last_name: msgData.forwarded_from_last_name,
+              reply_message_id: msgData.reply_message_id,
+              media: msgData.media,
+              is_pinned: msgData.is_pinned,
+            };
+            handleMessageReceived(formattedMessage);
+          }
+          else if (message.channel?.startsWith("chat_updates")) {
+            getChats();
+            setConversations((prev) =>
+              prev.map((c) => (c.id === chatId ? { ...c, lastMessage: { ...msgData, is_edited: msgData.is_edited || false } } : c))
+            );
+            const isNotFromCurrentUser = String(message.data.message.sender_id) !== String(currentUserRef.current);
+            const isInDifferentChat = message.data.message.chat_id !== selectedConversation;
+
+            if (isNotFromCurrentUser && isInDifferentChat) {
+              notification2AudioRef.current.play().catch((error) => {
+                console.error("Failed to play notification2.mp3:", error);
+              });
+            }
+
+            if (message.data.message.message_id) {
+              sentMessageIdsRef.current.delete(message.data.message.message_id);
+            }
+          }
+          break;
+        case "new_participant":
+          handleNewParticipant(message);
+          break;
+      }
+      return;
+    } else if (message.type === "notifications") {
+      handleShowNotification(message);
+    }
+    if (message.type === "message_received") {
+      console.log("[handleWebSocketMessage] message_received ack:", message);
+      return;
+    }
+    console.log("[handleWebSocketMessage] Unhandled message:", message);
+  };
+
+  // ------------------------
   // WebSocket Basic
   // ------------------------
-  const { sendMessage, isConnected, lastMessage } = useWS();
+
+  const { sendMessage, isConnected, lastMessage } = useWS(handleWebSocketMessage);
   const currentUserId = getCookie("user_id") || null;
   const [currentUser, setCurrentUser] = useState<string | null>(currentUserId);
   const t = useTranslations("dashboard")
@@ -59,7 +195,7 @@ export const useChatWebSocket = () => {
   const prevConversationRef = useRef<string | null>(null);
   const currentUserRef = useRef<string | null>(currentUser);
 
-  
+
   useEffect(() => {
     notificationAudioRef.current.load();
     notification2AudioRef.current.load();
@@ -120,7 +256,7 @@ export const useChatWebSocket = () => {
       reply_to: replyId,
       counter: msg.counter,
     };
-    
+
     setMessagesByChat((prev) => {
       const existingMessages = prev[chatId] || [];
       const filtered = existingMessages.filter((m) => !(m.pending && m.content === msg.content));
@@ -131,29 +267,29 @@ export const useChatWebSocket = () => {
       prev.map((c) =>
         c.id === newMsg.chat_id
           ? {
-              ...c,
-              lastMessage: {
-                chat_id: newMsg.chat_id,
-                content: newMsg.content,
-                counter: null,
-                deleted_at: null,
-                delivered_at: null,
-                edited_at: null,
-                is_deleted: false,
-                is_edited: false,
-                media_ids: null,
-                media: newMsg.media ?? null,
-                has_attachements: newMsg.has_attachements ?? null,
-                message_id: null,
-                is_pinned: newMsg.is_pinned ?? null,
-                reply_message_id: newMsg.id,
-                send_at: null,
-                sender_first_name: null,
-                sender_id: null,
-                sender_last_name: null,
-                type: null,
-              } as LastMessage,
-            }
+            ...c,
+            lastMessage: {
+              chat_id: newMsg.chat_id,
+              content: newMsg.content,
+              counter: null,
+              deleted_at: null,
+              delivered_at: null,
+              edited_at: null,
+              is_deleted: false,
+              is_edited: false,
+              media_ids: null,
+              media: newMsg.media ?? null,
+              has_attachements: newMsg.has_attachements ?? null,
+              message_id: null,
+              is_pinned: newMsg.is_pinned ?? null,
+              reply_message_id: newMsg.id,
+              send_at: null,
+              sender_first_name: null,
+              sender_id: null,
+              sender_last_name: null,
+              type: null,
+            } as LastMessage,
+          }
           : c
       )
     );
@@ -229,7 +365,7 @@ export const useChatWebSocket = () => {
   const handleMessagesReceived = useCallback((msgs: any[]) => {
     if (!selectedConversation) return;
     const transformedMessages: ChatMessage[] = msgs
-      .sort((a, b) => new Date(a.send_at).getTime() - new Date(b.send_at).getTime()) 
+      .sort((a, b) => new Date(a.send_at).getTime() - new Date(b.send_at).getTime())
       .map((message: any) => ({
         id: message.message_id,
         sender_first_name: message.sender_first_name,
@@ -330,7 +466,7 @@ export const useChatWebSocket = () => {
   const handleNewParticipant = useCallback((message: any) => {
     const { chat_id, data } = message;
     const { user_id } = data;
-    
+
     const isCurrentUser = user_id === getCookie("user_id");
     if (isCurrentUser) {
       getChats();
@@ -342,12 +478,12 @@ export const useChatWebSocket = () => {
     }
   }, []);
 
-  const handlePinMessage = useCallback(({chat_id, message_id}: {chat_id: string, message_id: string}) => {
+  const handlePinMessage = useCallback(({ chat_id, message_id }: { chat_id: string, message_id: string }) => {
     setMessagesByChat((prev) => {
-        const updated = { ...prev };
-        for (const cId of Object.keys(updated)) {
-          updated[cId] = updated[cId].map((m) =>
-            m.id === message_id ? { ...m, is_pinned: true } : m
+      const updated = { ...prev };
+      for (const cId of Object.keys(updated)) {
+        updated[cId] = updated[cId].map((m) =>
+          m.id === message_id ? { ...m, is_pinned: true } : m
         );
       }
       return updated;
@@ -359,7 +495,7 @@ export const useChatWebSocket = () => {
     }));
   }, []);
 
-  const handleUnpinMessage = useCallback(({chat_id, message_id}: {chat_id: string, message_id: string}) => {
+  const handleUnpinMessage = useCallback(({ chat_id, message_id }: { chat_id: string, message_id: string }) => {
     setMessagesByChat((prev) => {
       const updated = { ...prev };
       for (const cId of Object.keys(updated)) {
@@ -369,7 +505,7 @@ export const useChatWebSocket = () => {
       }
       return updated;
     });
-    
+
     sendMessage(createRpcRequest("unpinMessage", {
       chat_id,
       message_id
@@ -409,7 +545,7 @@ export const useChatWebSocket = () => {
 
   const handleTypingStatus = (data: TypingStatus) => {
     const currentUser = getCookie("user_id");
-  
+
     if (data.user_id === currentUser) {
       return;
     }
@@ -498,7 +634,7 @@ export const useChatWebSocket = () => {
       reply_to: replyId,
       timestamp: dayjs().toISOString()
     }));
-    
+
     setNewMessage("");
     notificationAudioRef.current.play().catch((error) => {
       console.error("Failed to play notification.mp3:", error);
@@ -545,7 +681,7 @@ export const useChatWebSocket = () => {
   const createAuctionChat = (auctionName: string, auctionId: number) => {
     const request = createRpcRequest("createAuctionChat", {
       name: auctionName,
-      type: "auction_chat", 
+      type: "auction_chat",
       auction_id: auctionId,
       participants: []
     });
@@ -651,148 +787,13 @@ export const useChatWebSocket = () => {
   }
 
   // ---------------------------------------------------------------------------
-  // Incoming WS
-  // ---------------------------------------------------------------------------
-  const handleWebSocketMessage = (rawMsg: any) => {
-    let message: any;
-    try {
-      message = typeof rawMsg === "string" ? JSON.parse(rawMsg) : rawMsg;
-    } catch (err) {
-      console.error("[handleWebSocketMessage] Could not parse raw string:", err, rawMsg);
-      toast({
-        title: t("error.connection_error"),
-        description: t("error.please_refresh"),
-        variant: "destructive"
-      })
-      return;
-    }
-
-    if (message.jsonrpc === "2.0" && message.result) {
-      if (message.result.chat_id) {
-        handleChatCreated(message.result);
-      } else if (Array.isArray(message.result)) {
-        handleChatsReceived(message.result);
-      } else if (message.result.message_id) {
-        handleMessageReceived(message.result);
-      } else if (message.result.count && message.result.messages) {
-        handleMessagesReceived(message.result.messages);
-      } 
-      return;
-    }
-
-    if (message.type === "popups" && message.event === "popups") {
-      handleReceivedChatPopup(message.data);
-    } else if (message.type === "message") {
-      switch (message.event) {
-        case "new_chat":
-          handleChatCreated({
-            chat_id: message.data.id,
-            name: message.data.user?.name || `Chat with ${message.data.id}`,
-          });
-          break;
-        case "conference_room":
-          setConferenceRoomsByChat((prev) => ({
-            ...prev,
-            [message.data.chat_id]: {
-              chat_id: message.data.chat_id,
-              conference_id: message.data.conference_id,
-              conference_type: message.data.conference_type,
-              created_at: message.data.created_at,
-              is_active: message.data.is_active,
-              url: message.data.url,
-            }
-          }));
-          break;
-        case "edit_message":
-          const editedMsg = message.data.message;
-          const formattedEditedMessage = {
-            message_id: editedMsg.message_id,
-            content: editedMsg.content,
-            is_edited: true
-          }
-          handleReceivedEditedMessage(formattedEditedMessage);
-          break;
-        case "typing_status":
-          handleTypingStatus(message.data);
-          break;
-        case "pin_message":
-          handleReceivedPinStatusChange(message.data, true);
-          break;
-        case "unpin_message":
-          handleReceivedPinStatusChange(message.data, false);
-          break;
-        case "delete_message":
-          handleReceivedDeleteMessage(message.data);
-          break;
-        case "read_message":
-          getChats()
-          break;
-        case "new_message":
-          const msgData = message.data.message;
-          const chatId = message.chat_id || message.data.chat_id;
-          if (message.channel?.startsWith("chat_room")) {
-            const formattedMessage = {
-              message_id: msgData.message_id,
-              chat_id: chatId,
-              sender_first_name: msgData.sender_first_name,
-              sender_last_name: msgData.sender_last_name,
-              content: msgData.content,
-              type: msgData.type,
-              counter: msgData.counter,
-              timestamp: msgData.timestamp || dayjs().toISOString(),
-              authorId: msgData.sender_id,
-              forwarded_from: msgData.forwarded_from,
-              forwarded_from_first_name: msgData.forwarded_from_first_name,
-              forwarded_from_last_name: msgData.forwarded_from_last_name,
-              reply_message_id: msgData.reply_message_id,
-              media: msgData.media,
-              is_pinned: msgData.is_pinned,
-            };
-            handleMessageReceived(formattedMessage);
-          } 
-          else if (message.channel?.startsWith("chat_updates")) {
-            getChats();
-            setConversations((prev) =>
-              prev.map((c) => (c.id === chatId ? { ...c, lastMessage: { ...msgData, is_edited: msgData.is_edited || false } } : c))
-            );
-            const isNotFromCurrentUser = String(message.data.message.sender_id) !== String(currentUserRef.current);
-            const isInDifferentChat = message.data.message.chat_id !== selectedConversation;
-        
-            if (isNotFromCurrentUser && isInDifferentChat) {
-              notification2AudioRef.current.play().catch((error) => {
-                console.error("Failed to play notification2.mp3:", error);
-              });
-            }
-        
-            if (message.data.message.message_id) {
-              sentMessageIdsRef.current.delete(message.data.message.message_id);
-            }
-          }
-          break;
-        case "new_participant":
-          handleNewParticipant(message);
-          break;
-      }
-      return;
-    } else if (message.type === "notifications") {
-      handleShowNotification(message);
-    }
-    if (message.type === "message_received") {
-      console.log("[handleWebSocketMessage] message_received ack:", message);
-      return;
-    }
-    console.log("[handleWebSocketMessage] Unhandled message:", message);
-  };
-
-
-  // ---------------------------------------------------------------------------
   // Effects 
   // ---------------------------------------------------------------------------
   useEffect(() => {
     const userId = getCookie("user_id");
     if (userId) {
       setCurrentUser(userId);
-      currentUserRef.current = userId; 
+      currentUserRef.current = userId;
     }
   }, []);
 
@@ -806,7 +807,7 @@ export const useChatWebSocket = () => {
 
   useEffect(() => {
     const previousChat = prevConversationRef.current;
-    
+
     if (previousChat) {
       unsubscribeToChatRoom(previousChat);
       unSubscribeToPopUp();
@@ -821,7 +822,7 @@ export const useChatWebSocket = () => {
       subscribeToChatRoom(selectedConversation);
       handleSubscribeToPopUp();
     }
-    
+
     prevConversationRef.current = selectedConversation;
   }, [selectedConversation, isConnected]);
 
@@ -836,10 +837,6 @@ export const useChatWebSocket = () => {
     handleSubscribeToNotfications();
   }, [isConnected]);
 
-  useEffect(() => {
-    if (!lastMessage) return;
-    handleWebSocketMessage(lastMessage);
-  }, [lastMessage]);
 
   useEffect(() => {
     if (selectedConversation && isConnected) {
