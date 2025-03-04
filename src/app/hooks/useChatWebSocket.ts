@@ -105,7 +105,7 @@ export const useChatWebSocket = () => {
           handleReceivedDeleteMessage(message.data);
           break;
         case "read_message":
-          getChats()
+          console.log("read_message")
           break;
         case "new_message":
           const msgData = message.data.message;
@@ -131,7 +131,6 @@ export const useChatWebSocket = () => {
             handleMessageReceived(formattedMessage);
           }
           else if (message.channel?.startsWith("chat_updates")) {
-            getChats();
             setConversations((prev) =>
               prev.map((c) => (c.id === chatId ? { ...c, lastMessage: { ...msgData, is_edited: msgData.is_edited || false } } : c))
             );
@@ -591,6 +590,7 @@ export const useChatWebSocket = () => {
     const replyId = reply?.id ?? null;
     const rpcId = (Date.now() + Math.random() * 1000000).toString();
     const content = newMessage.trim();
+    console.log("{[sendChatMessage]got and going to sending dis:}", content);
     let pendingMedia: Media[] | null = null;
     if (type === "audio") {
       pendingMedia = [{
@@ -623,7 +623,7 @@ export const useChatWebSocket = () => {
     });
 
     sentMessageIdsRef.current.add(rpcId);
-
+    console.log('[sendChatMessage()] sending message:', pendingMsg);
     sendMessage(createRpcRequest("sendMessage", {
       chat_id: selectedConversation,
       content,

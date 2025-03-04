@@ -59,7 +59,6 @@ const ChatContent = ({
   const currentChatPopup = popUpsByChat?.[chatId || ""]?.data ?? null;
   const conferenceRoom = conferenceRoomsByChat?.[chatId || ""] ?? null;
   const goToMessage = useGoToMessage();
-  const [lastSeenCounter, setLastSeenCounter] = useState(0);
   const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
   const messagesRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
