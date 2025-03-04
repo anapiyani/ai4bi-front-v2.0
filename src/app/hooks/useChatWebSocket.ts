@@ -160,7 +160,7 @@ export const useChatWebSocket = () => {
       console.log("[handleWebSocketMessage] message_received ack:", message);
       return;
     }
-    console.log("[handleWebSocketMessage] Unhandled message:", message);
+    // console.log("[handleWebSocketMessage] Unhandled message:", message);
   };
 
   // ------------------------
@@ -348,7 +348,6 @@ export const useChatWebSocket = () => {
   };
 
   const handleChatsReceived = (chats: ReceivedChats[]) => {
-    console.log('[handleChatsReceived()] received chats:', chats);
     const transformed = chats.map((chat) => ({
       id: chat.chat_id,
       name: chat.name || `Chat ${chat.chat_id}`,
@@ -590,7 +589,6 @@ export const useChatWebSocket = () => {
     const replyId = reply?.id ?? null;
     const rpcId = (Date.now() + Math.random() * 1000000).toString();
     const content = newMessage.trim();
-    console.log("{[sendChatMessage]got and going to sending dis:}", content);
     let pendingMedia: Media[] | null = null;
     if (type === "audio") {
       pendingMedia = [{
@@ -623,7 +621,6 @@ export const useChatWebSocket = () => {
     });
 
     sentMessageIdsRef.current.add(rpcId);
-    console.log('[sendChatMessage()] sending message:', pendingMsg);
     sendMessage(createRpcRequest("sendMessage", {
       chat_id: selectedConversation,
       content,
@@ -699,7 +696,6 @@ export const useChatWebSocket = () => {
 
   const getChats = () => {
     if (!currentUser) return;
-    console.log('[getChats()] sending RPC request');
     const request = createRpcRequest("getChats", {});
     sendMessage(request);
   };
@@ -798,9 +794,16 @@ export const useChatWebSocket = () => {
   }, []);
 
   useEffect(() => {
-    console.log('[useEffect -> getChats()] currentUser:', currentUser, ' isConnected:', isConnected);
+    const hasAuth = getCookie("access_token") && getCookie("user_id");
+    if (hasAuth && isConnected) {
+      sendMessage({ type: "subscribe", channel: "chat_updates" });
+      sendMessage({ type: "subscribe", channel: "chat_room" });
+    }
+  }, [isConnected]);
+
+  useEffect(() => {
     if (currentUser && isConnected) {
-      console.log('[useEffect -> getChats()] calling getChats()...');
+      console.log('Calling getChats(), currentUser:', currentUser, 'isConnected:', isConnected);
       getChats();
     }
   }, [currentUser, isConnected]);
@@ -827,16 +830,8 @@ export const useChatWebSocket = () => {
   }, [selectedConversation, isConnected]);
 
   useEffect(() => {
-    if (isConnected) {
-      sendMessage({ type: "subscribe", channel: "chat_updates" });
-      sendMessage({ type: "subscribe", channel: "chat_room" });
-    }
-  }, [isConnected]);
-
-  useEffect(() => {
     handleSubscribeToNotfications();
   }, [isConnected]);
-
 
   useEffect(() => {
     if (selectedConversation && isConnected) {
