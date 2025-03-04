@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState, useRef } from "react";
-import { getCookie } from "./cookie";
+import { useCallback, useEffect, useRef, useState } from "react"
+import { getCookie } from "./cookie"
 
 export interface WebSocketMessage {
   [key: string]: any;

@@ -61,6 +61,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
   const wsRef = useRef<WebSocket | null>(null);
   const peerRef = useRef<RTCPeerConnection | null>(null);
   const connectedUsers = useRef<Map<string, any>>(new Map());
+  const [transcription, setTranscription] = useState<{text: string, user_id: string, name: string, username: string}[]>([]);
 
   useEffect(() => {
     let isUnmounting = false;
@@ -176,7 +177,12 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
               break;
             
             case 'python_response':
-              console.log(`Audio Server response from user ${msg}:`, msg.text);
+              console.log(`Audio Server response from user ${msg}:`, msg.text, msg.user_id);
+              Array.from(connectedUsers.current.values()).map((user) => {
+                if (user.user_id === msg.user_id) {
+                  setTranscription((prev) => [...prev, {text: msg.text, user_id: user.user_id, name: user.name, username: user.username}]);
+                }
+              });
               break;
                 
             case 'python_binary_response':
@@ -245,6 +251,11 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
             <TabsContent value="demonstration">
               <div className='w-full h-full'>
                 <ScreenShareContent />
+                <div className='w-full h-[300px] rounded-lg p-2 flex flex-col gap-2'>
+                  {transcription.map((text, index) => (
+                    <p key={index} className='text-sm text-wrap text-muted-foreground'>{text.name}: {text.text}</p>
+                  ))}
+                </div>
               </div>
             </TabsContent>
             <TabsContent value="protocol_table">

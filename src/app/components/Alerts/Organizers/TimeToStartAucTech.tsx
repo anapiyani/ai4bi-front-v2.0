@@ -65,7 +65,7 @@ const TimeToStartAucTech = ({
 													setOpenRescheduleModal(true)
 													setRescheduleAction(button.action)
 												} else if (button.action === "STARTED_TECH_COUNCIL") {
-													handlePopUpButtonAction({
+													handlePopUpButtonAction({ // TODO: rewrite
 														popup_id: popup_id,
 														user_id: user_id,
 														button_id: button.id,
@@ -88,7 +88,7 @@ const TimeToStartAucTech = ({
 												}
 											}}
 										>
-											{button.action === "RESCHEDULED_TECH_COUNCIL" 
+											{button.action === "RESCHEDULED_TECH_COUNCIL" //! rewrite
 												? t("reschedule") 
 												: button.action === "ACCEPTED_PARTICIPATION_TECH_COUNCIL" 
 													? t("accept") 
