@@ -87,6 +87,7 @@ export function useWebSocket(url: string): UseWebSocketReturn {
     ws.onclose = () => {
       console.log("[useWebSocket] WebSocket disconnected");
       setIsConnected(false);
+      // Clear message queue on disconnect
       messageQueueRef.current = [];
       processingRef.current = false;
     };
