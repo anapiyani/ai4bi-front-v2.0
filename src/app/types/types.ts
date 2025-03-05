@@ -301,3 +301,31 @@ export type PopUpButtonAction = {
 	button_id: string;
 	tech_council_reschedule_date?: string;
 }
+
+export type Protocol = {
+	auction_chat_id: string;
+	constructive: string;
+	id: string;
+	is_tech_council: boolean;
+	location: string;
+	materials_decisions: {
+		name: string;
+		technical_characteristics: string;
+		manufacturer: string;
+	}[];
+	meeting_date: string;
+	meeting_time: string;
+	notes: string[];
+	project_name: string;
+	project_team: {
+		position: string;
+		full_name: string;
+		signature: boolean;
+	}[];
+	suppliers: {
+		company_name: string;
+		representative: string;
+		phone_number: string;
+		email: string[];
+	}[];
+}

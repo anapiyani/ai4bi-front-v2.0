@@ -7,7 +7,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast as HotToast } from 'react-hot-toast'
 import { v4 as uuidv4 } from 'uuid'
 import { getCookie } from '../api/service/cookie'
-import { ChatMessage, Conversation, ForwardData, LastMessage, Media, MessagesRecord, PopUpButtonAction, ReceivedChats, TypingStatus } from '../types/types'
+import { ChatMessage, Conversation, ForwardData, LastMessage, Media, MessagesRecord, PopUpButtonAction, Protocol, ReceivedChats, TypingStatus } from '../types/types'
 
 export type PopUpsRecord = {
   [chatId: string]: {
@@ -26,6 +26,10 @@ export type ConferenceRoom = {
 
 export type ConferenceRoomsRecord = {
   [chatId: string]: ConferenceRoom;
+}
+
+export type ProtocolsByAuction = {
+  [chatId: string]: Protocol;
 }
 
 export const useChatWebSocket = () => {
@@ -182,6 +186,7 @@ export const useChatWebSocket = () => {
   const [conferenceRoomsByChat, setConferenceRoomsByChat] = useState<ConferenceRoomsRecord>({});
   const [typingStatuses, setTypingStatuses] = useState<TypingStatus[]>([]);
   const [newMessage, setNewMessage] = useState("");
+  const [protocolsByAuction, setProtocolsByAuction] = useState<ProtocolsByAuction>({});
 
 
   // Refs
@@ -718,6 +723,16 @@ export const useChatWebSocket = () => {
     sendMessage(request);
   }
 
+  const handleGetProtocolUpdates = () => {
+    if (!selectedConversation) return;
+    console.log("handleGetProtocolUpdates sending request to get protocol updates");
+    const request = createRpcRequest("get_technical_meeting_protocol", {
+      chat_id: selectedConversation,
+      tech_council_protocol: true
+    })
+    sendMessage(request);
+  }
+
   const handleReadMessage = (counter: number) => {
     if (!selectedConversation) return;
     const request = createRpcRequest("readMessage", {
@@ -782,6 +797,13 @@ export const useChatWebSocket = () => {
     });
   }
 
+  const handleSubscribeToProtocols = () => {
+    sendMessage({
+      type: "subscribe",
+      channel: "protocol_updates",
+    });
+  }
+
   // ---------------------------------------------------------------------------
   // Effects 
   // ---------------------------------------------------------------------------
@@ -837,12 +859,14 @@ export const useChatWebSocket = () => {
     if (selectedConversation && isConnected) {
       getChatMessages();
       handleGetChatInfo();
+      handleSubscribeToProtocols();
     }
   }, [selectedConversation, isConnected]);
 
   useEffect(() => {
     if (selectedConversation) {
       getPopUps();
+      handleGetProtocolUpdates();
     }
   }, [selectedConversation]);
 

@@ -37,16 +37,11 @@ export function useWebSocket(url: string): UseWebSocketReturn {
 
   const processMessageQueue = useCallback(() => {
     if (processingRef.current || messageQueueRef.current.length === 0) return;
-    if (messageQueueRef.current.length >= 1) {
-      console.log("Queue length:", messageQueueRef.current.length);
-    }
     processingRef.current = true;
     const message = messageQueueRef.current.shift();
     if (message) {
       if (listenersRef.current.length > 0) {
-        console.log("begin --------------------");
         listenersRef.current.forEach(listener => listener(message));
-        console.log("------------------------ end");
       }
       setLastMessage(message);
 
@@ -99,7 +94,6 @@ export function useWebSocket(url: string): UseWebSocketReturn {
     ws.onmessage = (event) => {
       try {
         const parsed = JSON.parse(event.data);
-        console.log("[useWebSocket] Raw WebSocket message:", parsed);
         messageQueueRef.current.push(parsed);
         processMessageQueue();
       } catch (err) {
@@ -130,7 +124,6 @@ export function useWebSocket(url: string): UseWebSocketReturn {
         console.warn("[useWebSocket] Cannot send message, socket not connected");
         return;
       }
-      console.log("[useWebSocket] Sending message:", msg);
       socket.send(JSON.stringify(msg));
     },
     [socket, isConnected]

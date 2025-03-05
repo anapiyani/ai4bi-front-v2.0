@@ -287,8 +287,8 @@ const ChatContent = ({
       openSideMenu ? (
         null
       ) : (
-        <div className={`flex-grow overflow-y-auto bg-neutrals-secondary ${isTechnicalCouncil ? "rounded-lg" : ""}`}>
-      <div className={`${isTechnicalCouncil ? "h-[calc(90vh-200px)]" : "h-[calc(100vh-240px)]"} overflow-y-auto flex flex-col`} ref={messagesRef}>
+        <div className={`flex-grow bg-neutrals-secondary ${isTechnicalCouncil ? "rounded-lg" : ""}`}>
+      <div className={`${isTechnicalCouncil ? "h-[calc(90vh-270px)]" : "h-[calc(100vh-240px)]"} overflow-y-auto flex flex-col`} ref={messagesRef}>
         <div className="flex flex-col gap-2 px-4 py-2 w-full mt-auto">
           <div className="flex flex-col gap-1">
             {messages
