@@ -195,7 +195,9 @@
 		"company": "Компания",
 		"contacts": "Контакты",
 		"mail": "Почта",
-		"technical_council_protocol": "Тех. кеңес протоколы"
+		"technical_council_protocol": "Тех. кеңес протоколы",
+		"error-creating-chat": "Чатты ашуда қате орнады",
+		"error-uploading-media": "Медиа файлын жүктеуде қате, қайтадан қайталаңыз"
 	},
 	"dropzone": {
 		"upload_files": "Файлдарды жүктеу",

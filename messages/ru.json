@@ -197,7 +197,9 @@
 		"company": "Компания",
 		"contacts": "Контакты",
 		"mail": "Почта",
-		"technical_council_protocol": "Протокол технического совета"
+		"technical_council_protocol": "Протокол технического совета",
+		"error-creating-chat": "Ошибка при создании чата",
+		"error-uploading-media": "Ошибка при загрузке медиа"
 	},
 	"dropzone": {
 		"upload_files": "Загрузить файлы",

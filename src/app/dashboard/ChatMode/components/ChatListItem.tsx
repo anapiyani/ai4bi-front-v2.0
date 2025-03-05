@@ -83,7 +83,9 @@ const ChatListItem = ({ data, onClick, isSelected, index, t, typingStatuses }: C
         {/* <BnectBadge /> */}
         <div className="flex flex-col gap-1 w-full">
           <div className='flex items-center gap-2'>
-             <p className={`font-semibold break-words pr-2 ${isSelected ? "text-primary" : "text-sec-txt"}`}>{name}</p>
+             <p className={`font-semibold break-words pr-2 ${isSelected ? "text-primary" : "text-sec-txt"}`}>
+               {name}
+             </p> 
             {
               data.unread_count > 0 && (
                 <div className='text-xs bg-slate-200 rounded-full px-2 py-1'>

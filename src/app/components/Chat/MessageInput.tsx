@@ -49,6 +49,7 @@ const MessageInput = ({
   const [suggestions, setSuggestions] = useState<ChatParticipants[]>([]);
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
   const [highlightedIndex, setHighlightedIndex] = useState<number>(0);
+  const [showMicButton, setShowMicButton] = useState<boolean>(true);
   let inputRef = useRef<HTMLInputElement>(null);
   const commandRef = useRef<HTMLDivElement>(null);
   const {
@@ -86,6 +87,14 @@ const MessageInput = ({
       sendChatMessage(replyTo, null);
       setNewMessage("");
       setReplyTo(null);
+      
+      // Hide mic button temporarily to prevent accidental clicks
+      setShowMicButton(false);
+      
+      // Show mic button again after a delay
+      setTimeout(() => {
+        setShowMicButton(true);
+      }, 500); // 500ms delay, adjust as needed
     }
   };
 
@@ -181,6 +190,14 @@ const MessageInput = ({
           sendChatMessage(replyTo); 
           setNewMessage("");
           setReplyTo(null);
+          
+          // Hide mic button temporarily to prevent accidental clicks
+          setShowMicButton(false);
+          
+          // Show mic button again after a delay
+          setTimeout(() => {
+            setShowMicButton(true);
+          }, 500); // 500ms delay, adjust as needed
         }
       } else if (e.key === "Escape") {
         setReplyTo(null);
@@ -365,7 +382,7 @@ const MessageInput = ({
             >
               <Icons.Send size={24} />
             </motion.button>
-          ) : (
+          ) : showMicButton ? (
             <motion.button
               key="mic-icon"
               className="bg-primary rounded-full p-2"
@@ -378,6 +395,8 @@ const MessageInput = ({
             >
               <Icons.ChatMicrophone size={24} />
             </motion.button>
+          ) : (
+            <div className="w-10 h-10"></div>
           )}
         </AnimatePresence>
       </form>
