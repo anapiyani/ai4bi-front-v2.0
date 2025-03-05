@@ -154,6 +154,31 @@ const Icons = {
 			</svg>
 		)
 	},
+	Message_plus: () => {
+		return (
+			<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M7.91602 8.75H12.0827" stroke="#4F4F4F" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M10 6.66602L10 10.8327" stroke="#4F4F4F" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M2.8864 14.0237C1.66602 13.0474 1.66602 12.3094 1.66602 9.16667C1.66602 6.02397 1.66602 4.45262 2.8864 3.47631C4.10679 2.5 6.07098 2.5 9.99935 2.5C13.9277 2.5 15.8919 2.5 17.1123 3.47631C18.3327 4.45262 18.3327 6.02397 18.3327 9.16667C18.3327 12.3094 18.3327 13.0474 17.1123 14.0237C15.8919 15 13.9277 15 9.99935 15C7.90811 15 6.83246 16.448 4.99935 17.5V14.8236C4.08773 14.6879 3.41682 14.448 2.8864 14.0237Z" stroke="#4F4F4F" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+			</svg>
+		)
+	},
+	User_check: () => {
+		return (
+			<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M16.25 17.0833C15.8539 9.30556 4.14615 9.30556 3.75 17.0833" stroke="#4F4F4F" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M8.54883 15.8265L9.41047 16.8113C9.48948 16.9016 9.63196 16.8949 9.70221 16.7976L11.4519 14.375" stroke="#4F4F4F" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<ellipse cx="10" cy="6.66602" rx="2.5" ry="2.5" stroke="#4F4F4F" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+			</svg>
+		)
+	},
+	Users_group: () => {
+		return (
+			<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M14.1667 16.25C14.1667 14.8693 12.3012 13.75 10 13.75C7.69881 13.75 5.83333 14.8693 5.83333 16.25M17.5 13.7503C17.5 12.7252 16.4716 11.8441 15 11.4583M2.5 13.7503C2.5 12.7252 3.52841 11.8441 5 11.4583M15 8.11342C15.5115 7.65565 15.8333 6.99042 15.8333 6.25C15.8333 4.86929 14.714 3.75 13.3333 3.75C12.693 3.75 12.109 3.99071 11.6667 4.38658M5 8.11342C4.48854 7.65565 4.16667 6.99042 4.16667 6.25C4.16667 4.86929 5.28595 3.75 6.66667 3.75C7.30696 3.75 7.89104 3.99071 8.33333 4.38658M10 11.25C8.61929 11.25 7.5 10.1307 7.5 8.75C7.5 7.36929 8.61929 6.25 10 6.25C11.3807 6.25 12.5 7.36929 12.5 8.75C12.5 10.1307 11.3807 11.25 10 11.25Z" stroke="#4F4F4F" strokeWidth="1.5" strokeLinecap="round" 	strokeLinejoin="round"/>
+			</svg>
+		)
+	},
 	Reply: () => {
 		return (
 			<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">

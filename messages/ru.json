@@ -187,7 +187,17 @@
 		"materials_and_technical_solutions": "Перечень материалов и технических решений",
 		"name": "Наименование",
 		"technical_characteristics": "Технические характеристики",
-		"made_by": "Производитель"
+		"made_by": "Производитель",
+		"notes": "Примечания",
+		"technical_experts": "Технические эксперты",
+		"position": "Должность",
+		"full_name_short": "ФИО",
+		"signature": "Подпись",
+		"suppliers": "Поставщики",
+		"company": "Компания",
+		"contacts": "Контакты",
+		"mail": "Почта",
+		"technical_council_protocol": "Протокол технического совета"
 	},
 	"dropzone": {
 		"upload_files": "Загрузить файлы",

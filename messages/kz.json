@@ -185,7 +185,17 @@
 		"materials_and_technical_solutions": "Материалдар мен техникалық шешімдер",
 		"name": "Атауы",
 		"technical_characteristics": "Тех. сипаттамалары",
-		"made_by": "Өндіруші"
+		"made_by": "Өндіруші",
+		"notes": "Ескертулер",
+		"technical_experts": "Тех. эксперттер",
+		"position": "Лауазымы",
+		"full_name_short": "Аты-жөні",
+		"signature": "Қолы",
+		"suppliers": "Поставщики",
+		"company": "Компания",
+		"contacts": "Контакты",
+		"mail": "Почта",
+		"technical_council_protocol": "Тех. кеңес протоколы"
 	},
 	"dropzone": {
 		"upload_files": "Файлдарды жүктеу",

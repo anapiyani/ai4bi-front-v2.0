@@ -185,7 +185,17 @@
 		"materials_and_technical_solutions": "Materials and technical solutions",
 		"name": "Name",
 		"technical_characteristics": "Technical characteristics",
-		"made_by": "Made by"
+		"made_by": "Made by",
+		"notes": "Notes",
+		"technical_experts": "Technical experts",
+		"position": "Position",
+		"full_name_short": "Full name",
+		"signature": "Signature",
+		"suppliers": "Suppliers",
+		"company": "Company",
+		"contacts": "Contacts",
+		"mail": "Mail",
+		"technical_council_protocol": "Technical council protocol"
 	},
 	"dropzone": {
 		"upload_files": "Upload files",
