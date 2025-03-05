@@ -195,7 +195,9 @@
 		"company": "Company",
 		"contacts": "Contacts",
 		"mail": "Mail",
-		"technical_council_protocol": "Technical council protocol"
+		"technical_council_protocol": "Technical council protocol",
+		"error-creating-chat": "Error creating chat",
+		"error-uploading-media": "Error uploading media, please try again"
 	},
 	"dropzone": {
 		"upload_files": "Upload files",

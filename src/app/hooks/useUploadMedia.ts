@@ -2,7 +2,7 @@
 
 import { toast } from "@/components/ui/use-toast"
 import { useMutation, useQuery } from "@tanstack/react-query"
-
+import { useTranslations } from "next-intl"
 import { get, post } from "../api/service/api"
 import { UploadMediaResponse } from "../types/types"
 
@@ -25,6 +25,7 @@ const uploadMultipleMedia = (chat_id: string, files: File[]) => {
 };
 
 export const useUploadMedia = () => {
+  const t = useTranslations("dashboard");
   return useMutation<
     UploadMediaResponse | UploadMediaResponse[],
     Error,
@@ -40,7 +41,7 @@ export const useUploadMedia = () => {
     onError: (error) => {
       toast({
         title: "Error",
-        description: error.message,
+        description: t("error-uploading-media"),
         variant: "destructive",
       });
     },

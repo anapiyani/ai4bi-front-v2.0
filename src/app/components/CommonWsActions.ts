@@ -26,7 +26,7 @@ export const useChatActions = () => {
           window.location.href = `/dashboard?active_tab=chat&id=${data.chat_id}`;
         },
         onError: (error: any) => {
-          toast.error(error.message);
+          toast.error(t("error-creating-chat"));
         },
       }
     );
