@@ -264,7 +264,7 @@ const ChatContent = ({
         </div>
         {
           currentChatPopup && currentChatPopup.popup_type && (
-            <div className="absolute top-[120px] left-0 right-0 z-50 flex justify-self-center">
+            <div className={`absolute top-[${pinnedMessages.length > 0 && conferenceRoom && conferenceRoom.is_active ? "120px" : "65px"}] left-0 right-0 z-50 flex justify-self-center`}>
               <TimeToStartAucTech 
                 body={currentChatPopup.body}
                 popup_id={currentChatPopup.id}
