@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from "react"
 import { getCookie } from "./cookie"
 
@@ -22,6 +23,9 @@ export function useWebSocket(url: string): UseWebSocketReturn {
   const messageQueueRef = useRef<WebSocketMessage[]>([]);
   const processingRef = useRef(false);
   const listenersRef = useRef<Array<(msg: WebSocketMessage) => void>>([]);
+  const router = useRouter();
+  const [token, setToken] = useState<string | null>(null);
+  const [tokenChecked, setTokenChecked] = useState(false);
 
   const addListener = useCallback((listener: (msg: WebSocketMessage) => void) => {
     listenersRef.current.push(listener);
@@ -44,7 +48,6 @@ export function useWebSocket(url: string): UseWebSocketReturn {
         listenersRef.current.forEach(listener => listener(message));
         console.log("------------------------ end");
       }
-      // Fallback value, do not trust
       setLastMessage(message);
 
     }
@@ -55,9 +58,25 @@ export function useWebSocket(url: string): UseWebSocketReturn {
   }, []);
 
   useEffect(() => {
-    const token = getCookie("access_token");
+    const checkToken = () => {
+      const accessToken = getCookie("access_token");
+      if (accessToken) {
+        setToken(accessToken);
+        setTokenChecked(true);
+      } else {
+        setTimeout(checkToken, 500);
+      }
+    };
+    
+    checkToken();
+  }, []);
+
+  useEffect(() => {
+    if (!tokenChecked) return;
+    
     if (!token) {
-      console.warn("[useWebSocket] No access token found; continuing without auth token...");
+      router.replace("/login");
+      return;
     }
 
     console.log("[useWebSocket] Creating WebSocket connection to:", url);
@@ -65,11 +84,15 @@ export function useWebSocket(url: string): UseWebSocketReturn {
 
     ws.onopen = () => {
       console.log("[useWebSocket] WebSocket connected");
-      setIsConnected(true);
-      if (token) {
-        const authMsg = { type: "auth", token };
-        console.log("[useWebSocket] Sending auth message:", authMsg);
-        ws.send(JSON.stringify(authMsg));
+      try {
+        setIsConnected(true);
+        if (token) {
+          const authMsg = { type: "auth", token };
+          console.log("[useWebSocket] Sending auth message:", authMsg);
+          ws.send(JSON.stringify(authMsg));
+        }
+      } catch (err) {
+        console.error("[useWebSocket] Error sending auth message:", err);
       }
     };
 
@@ -99,7 +122,7 @@ export function useWebSocket(url: string): UseWebSocketReturn {
       messageQueueRef.current = [];
       processingRef.current = false;
     };
-  }, [url, processMessageQueue]);
+  }, [url, processMessageQueue, token, tokenChecked, router]);
 
   const sendMessage = useCallback(
     (msg: WebSocketMessage) => {
@@ -115,4 +138,3 @@ export function useWebSocket(url: string): UseWebSocketReturn {
 
   return { isConnected, lastMessage, sendMessage, addListener, removeListener };
 }
-

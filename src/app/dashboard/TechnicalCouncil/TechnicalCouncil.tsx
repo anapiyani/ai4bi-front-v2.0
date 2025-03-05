@@ -9,6 +9,7 @@ import { getCookie } from '../../api/service/cookie'
 import DeleteMessage from '../../components/Chat/DeleteMessage'
 import ChatContent from '../../components/ChatContent'
 import { useChatActions } from '../../components/CommonWsActions'
+import ProtocolTable from '../../components/Form/ProtocolTable'
 import { useChatWebSocket } from "../../hooks/useChatWebSocket"
 import ScreenShareContent from './components/ScreenShareContent'
 const BotVisualizer = dynamic(() => import('../../components/Bot/BotVisualizer'), { ssr: false })
@@ -259,14 +260,12 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
               </div>
             </TabsContent>
             <TabsContent value="protocol_table">
-              <div className='w-full h-full'>
-                <p>Protocol Table</p>
-              </div>
+              <ProtocolTable />
           </TabsContent>
         </div>
         </Tabs>
       </div>
-      <div className={`${openSideMenu ? "lg:basis-[5%] md:basis-[5%]" : "lg:basis-[30%] md:basis-[40%]"} h-[calc(100vh-8rem)] flex flex-col rounded-lg gap-1`}>
+      <div className={`${openSideMenu ? "lg:basis-[5%] md:basis-[5%]" : "lg:basis-[30%] md:basis-[40%]"} h-[calc(100vh-15.5rem)] flex flex-col rounded-lg gap-1`}>
         <h2 className='text-brand-orange text-base font-bold'>{t("Aray")} - {openSideMenu ? null : t("bot")}</h2>
         <div>
           <BotVisualizer stream={null} type='default' small={openSideMenu} />
