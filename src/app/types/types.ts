@@ -320,7 +320,7 @@ export type Protocol = {
 	project_team: {
 		position: string;
 		full_name: string;
-		signature: boolean;
+		signature: string;
 	}[];
 	suppliers: {
 		company_name: string;

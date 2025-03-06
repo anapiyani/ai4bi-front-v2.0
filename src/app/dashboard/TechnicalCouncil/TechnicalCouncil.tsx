@@ -39,6 +39,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
     handleReadMessage,
     popUpsByChat,
     conferenceRoomsByChat,
+    protocols,
     handlePopUpButtonAction,
   } = useChatWebSocket()
   const {
@@ -252,7 +253,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
             <TabsContent value="demonstration">
               <div className='w-full h-full'>
                 <ScreenShareContent />
-                <div className='w-full h-[300px] rounded-lg p-2 flex flex-col gap-2'>
+                <div className='w-full h-[300px] overflow-y-auto rounded-lg p-2 flex flex-col gap-2'>
                   {transcription.map((text, index) => (
                     <p key={index} className='text-sm text-wrap text-muted-foreground'>{text.name}: {text.text}</p>
                   ))}
@@ -260,7 +261,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
               </div>
             </TabsContent>
             <TabsContent value="protocol_table">
-              <ProtocolTable />
+              <ProtocolTable protocols={protocols} />
           </TabsContent>
         </div>
         </Tabs>

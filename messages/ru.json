@@ -199,7 +199,11 @@
 		"mail": "Почта",
 		"technical_council_protocol": "Протокол технического совета",
 		"error-creating-chat": "Ошибка при создании чата",
-		"error-uploading-media": "Ошибка при загрузке медиа"
+		"error-uploading-media": "Ошибка при загрузке медиа",
+		"save_and_share": "Сохранить и поделиться",
+		"add_material/solution": "Добавить материал/решение",
+		"add_note": "Добавить примечание",
+		"add_supplier": "Добавить поставщика"
 	},
 	"dropzone": {
 		"upload_files": "Загрузить файлы",

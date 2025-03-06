@@ -197,7 +197,11 @@
 		"mail": "Почта",
 		"technical_council_protocol": "Тех. кеңес протоколы",
 		"error-creating-chat": "Чатты ашуда қате орнады",
-		"error-uploading-media": "Медиа файлын жүктеуде қате, қайтадан қайталаңыз"
+		"error-uploading-media": "Медиа файлын жүктеуде қате, қайтадан қайталаңыз",
+		"save_and_share": "Сақтау және бөлісу",
+		"add_material/solution": "Материал/шешім қосу",
+		"add_note": "Ескерту қосу",
+		"add_supplier": "Поставщик қосу"
 	},
 	"dropzone": {
 		"upload_files": "Файлдарды жүктеу",
