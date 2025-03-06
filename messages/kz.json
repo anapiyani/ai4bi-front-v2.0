@@ -201,7 +201,9 @@
 		"save_and_share": "Сақтау және бөлісу",
 		"add_material/solution": "Материал/шешім қосу",
 		"add_note": "Ескерту қосу",
-		"add_supplier": "Поставщик қосу"
+		"add_supplier": "Поставщик қосу",
+		"interest_added_successfully": "Конструктив қосылды",
+		"interest_added_error": "Конструктив қосылуда қате"
 	},
 	"dropzone": {
 		"upload_files": "Файлдарды жүктеу",

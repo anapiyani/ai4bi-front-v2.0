@@ -201,7 +201,9 @@
 		"save_and_share": "Save and share",
 		"add_material/solution": "Add material/solution",
 		"add_note": "Add note",
-		"add_supplier": "Add supplier"
+		"add_supplier": "Add supplier",
+		"interest_added_successfully": "Construct added successfully",
+		"interest_added_error": "Error adding construct"
 	},
 	"dropzone": {
 		"upload_files": "Upload files",
