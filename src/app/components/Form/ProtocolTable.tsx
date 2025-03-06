@@ -1,11 +1,20 @@
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { useTranslations } from 'next-intl'
+import dayjs from 'dayjs'
+import 'dayjs/locale/en'
+import 'dayjs/locale/ru'
+import { useLocale, useTranslations } from 'next-intl'
+import { useState } from 'react'
+import { Protocol } from '../../types/types'
 import Icons from '../Icons'
 
-
-const ProtocolTable = () => {
+const ProtocolTable = ({ protocols }: { protocols: Protocol | null }) => {
 	const t = useTranslations("dashboard");
+	const locale = useLocale();
+  dayjs.locale(locale);
+	const [isEditing, setIsEditing] = useState<boolean>(false);
+
+	console.log(protocols)
 
   return (
 		<div className='h-[calc(100vh-200px)] overflow-y-auto'>
@@ -39,11 +48,11 @@ const ProtocolTable = () => {
 					</TableHeader>
 					<TableBody>
 						<TableRow className="border-b border-gray-300 last:border-0">
-							<TableCell className="px-4 py-2">1</TableCell>
-							<TableCell className="px-4 py-2">Value</TableCell>
-							<TableCell className="px-4 py-2">Value</TableCell>
-							<TableCell className="px-4 py-2">Value</TableCell>
-							<TableCell className="px-4 py-2">Value</TableCell>
+							<TableCell className="px-4 py-2">{protocols?.project_name}</TableCell>
+							<TableCell className="px-4 py-2">{protocols?.constructive}</TableCell>
+							<TableCell className="px-4 py-2">{dayjs(protocols?.meeting_date).format("DD MMMM YYYY")}</TableCell>
+							<TableCell className="px-4 py-2">{dayjs(`1970-01-01 ${protocols?.meeting_time}`).format('HH:mm')}</TableCell>
+							<TableCell className="px-4 py-2">{protocols?.location}</TableCell>
 						</TableRow>
 					</TableBody>
 				</Table>
@@ -72,11 +81,15 @@ const ProtocolTable = () => {
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						<TableRow className="border-b border-gray-300 last:border-0">
-							<TableCell className="px-4 py-2">Value</TableCell>
-							<TableCell className="px-4 py-2">Value</TableCell>
-							<TableCell className="px-4 py-2">Value</TableCell>
-						</TableRow>
+						{
+							protocols?.materials_decisions.map((decision) => (
+								<TableRow className="border-b border-gray-300 last:border-0">
+									<TableCell className="px-4 py-2">{decision.name}</TableCell>
+									<TableCell className="px-4 py-2">{decision.technical_characteristics}</TableCell>
+									<TableCell className="px-4 py-2">{decision.manufacturer}</TableCell>
+								</TableRow>
+							))
+						}
 					</TableBody>
 				</Table>
     	</div>
@@ -95,9 +108,13 @@ const ProtocolTable = () => {
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						<TableRow className="border-b border-gray-300 last:border-0">
-							<TableCell className="px-4 py-2">Value</TableCell>
-						</TableRow>
+						{
+							protocols?.notes.map((note) => (
+								<TableRow className="border-b border-gray-300 last:border-0">
+									<TableCell className="px-4 py-2">{note}</TableCell>
+								</TableRow>
+							))
+						}
 					</TableBody>
 				</Table>
     	</div>
@@ -125,11 +142,15 @@ const ProtocolTable = () => {
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						<TableRow className="border-b border-gray-300 last:border-0">
-							<TableCell className="px-4 py-2">Value</TableCell>
-							<TableCell className="px-4 py-2">Value</TableCell>
-							<TableCell className="px-4 py-2">Value</TableCell>
-						</TableRow>
+						{
+							protocols?.project_team.map((expert) => (
+								<TableRow className="border-b border-gray-300 last:border-0">
+									<TableCell className="px-4 py-2">{expert.position}</TableCell>
+									<TableCell className="px-4 py-2">{expert.full_name}</TableCell>
+									<TableCell className="px-4 py-2">{expert.signature}</TableCell>
+								</TableRow>
+							))
+						}
 					</TableBody>
 				</Table>
     	</div>
@@ -160,12 +181,16 @@ const ProtocolTable = () => {
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						<TableRow className="border-b border-gray-300 last:border-0">
-							<TableCell className="px-4 py-2">Value</TableCell>
-							<TableCell className="px-4 py-2">Value</TableCell>
-							<TableCell className="px-4 py-2">Value</TableCell>
-							<TableCell className="px-4 py-2">Value</TableCell>
-						</TableRow>
+						{
+							protocols?.suppliers.map((supplier) => (
+								<TableRow className="border-b border-gray-300 last:border-0">
+									<TableCell className="px-4 py-2">{supplier.company_name}</TableCell>
+									<TableCell className="px-4 py-2">{supplier.representative}</TableCell>
+									<TableCell className="px-4 py-2">{supplier.phone_number}</TableCell>
+									<TableCell className="px-4 py-2">{supplier.email}</TableCell>
+								</TableRow>
+							))
+						}
 					</TableBody>
 				</Table>
     	</div>

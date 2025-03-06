@@ -39,6 +39,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
     handleReadMessage,
     popUpsByChat,
     conferenceRoomsByChat,
+    protocols,
     handlePopUpButtonAction,
   } = useChatWebSocket()
   const {
@@ -260,7 +261,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
               </div>
             </TabsContent>
             <TabsContent value="protocol_table">
-              <ProtocolTable />
+              <ProtocolTable protocols={protocols} />
           </TabsContent>
         </div>
         </Tabs>

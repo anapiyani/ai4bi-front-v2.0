@@ -28,10 +28,6 @@ export type ConferenceRoomsRecord = {
   [chatId: string]: ConferenceRoom;
 }
 
-export type ProtocolsByAuction = {
-  [chatId: string]: Protocol;
-}
-
 export const useChatWebSocket = () => {
   // ------------------------
   // Incoming Message Listener
@@ -60,6 +56,8 @@ export const useChatWebSocket = () => {
         handleMessageReceived(message.result);
       } else if (message.result.count && message.result.messages) {
         handleMessagesReceived(message.result.messages);
+      } else if (message.result.events === "protocol") {
+        handleProtocolReceived(message.result.result);
       }
       return;
     }
@@ -186,7 +184,7 @@ export const useChatWebSocket = () => {
   const [conferenceRoomsByChat, setConferenceRoomsByChat] = useState<ConferenceRoomsRecord>({});
   const [typingStatuses, setTypingStatuses] = useState<TypingStatus[]>([]);
   const [newMessage, setNewMessage] = useState("");
-  const [protocolsByAuction, setProtocolsByAuction] = useState<ProtocolsByAuction>({});
+  const [protocols, setProtocols] = useState<Protocol | null>(null); 
 
 
   // Refs
@@ -312,6 +310,10 @@ export const useChatWebSocket = () => {
       sentMessageIdsRef.current.delete(msg.id);
     }
   }, []);
+
+  const handleProtocolReceived = (protocol: Protocol) => {
+    setProtocols(protocol);
+  }
 
   const handleChatCreated = (data: any) => {
     const newChat: Conversation = {
@@ -914,6 +916,7 @@ export const useChatWebSocket = () => {
     popUpsByChat,
     conferenceRoomsByChat,
     handlePopUpButtonAction,
-    startedUserId
+    startedUserId,
+    protocols
   };
 };
