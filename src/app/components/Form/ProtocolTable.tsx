@@ -83,7 +83,7 @@ const ProtocolTable = ({ protocols }: { protocols: Protocol | null }) => {
 					<TableBody>
 						{
 							protocols?.materials_decisions.map((decision) => (
-								<TableRow className="border-b border-gray-300 last:border-0">
+								<TableRow key={decision.name} className="border-b border-gray-300 last:border-0">
 									<TableCell className="px-4 py-2">{decision.name}</TableCell>
 									<TableCell className="px-4 py-2">{decision.technical_characteristics}</TableCell>
 									<TableCell className="px-4 py-2">{decision.manufacturer}</TableCell>
@@ -110,7 +110,7 @@ const ProtocolTable = ({ protocols }: { protocols: Protocol | null }) => {
 					<TableBody>
 						{
 							protocols?.notes.map((note) => (
-								<TableRow className="border-b border-gray-300 last:border-0">
+								<TableRow key={note} className="border-b border-gray-300 last:border-0">
 									<TableCell className="px-4 py-2">{note}</TableCell>
 								</TableRow>
 							))
@@ -144,7 +144,7 @@ const ProtocolTable = ({ protocols }: { protocols: Protocol | null }) => {
 					<TableBody>
 						{
 							protocols?.project_team.map((expert) => (
-								<TableRow className="border-b border-gray-300 last:border-0">
+								<TableRow key={expert.signature} className="border-b border-gray-300 last:border-0">
 									<TableCell className="px-4 py-2">{expert.position}</TableCell>
 									<TableCell className="px-4 py-2">{expert.full_name}</TableCell>
 									<TableCell className="px-4 py-2">{expert.signature}</TableCell>
@@ -183,7 +183,7 @@ const ProtocolTable = ({ protocols }: { protocols: Protocol | null }) => {
 					<TableBody>
 						{
 							protocols?.suppliers.map((supplier) => (
-								<TableRow className="border-b border-gray-300 last:border-0">
+								<TableRow key={supplier.company_name} className="border-b border-gray-300 last:border-0">
 									<TableCell className="px-4 py-2">{supplier.company_name}</TableCell>
 									<TableCell className="px-4 py-2">{supplier.representative}</TableCell>
 									<TableCell className="px-4 py-2">{supplier.phone_number}</TableCell>
