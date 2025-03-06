@@ -197,7 +197,11 @@
 		"mail": "Mail",
 		"technical_council_protocol": "Technical council protocol",
 		"error-creating-chat": "Error creating chat",
-		"error-uploading-media": "Error uploading media, please try again"
+		"error-uploading-media": "Error uploading media, please try again",
+		"save_and_share": "Save and share",
+		"add_material/solution": "Add material/solution",
+		"add_note": "Add note",
+		"add_supplier": "Add supplier"
 	},
 	"dropzone": {
 		"upload_files": "Upload files",
