@@ -76,7 +76,7 @@ const Header = ({type, t, handlers, isMicrophoneOn}: HeaderProps) => {
 							</h2>
 						</div>
 						<div className='flex items-center gap-2'>
-							<Notifications />
+							<Notifications t={t} />
 							<LocaleSwitcher />
 							<Button className='flex items-center gap-2' variant='secondary' onClick={() => handlers.exitButtonClick(type)}>
 								{t("exit-chat-mode")}

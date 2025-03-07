@@ -2,13 +2,15 @@
 
 import { Button } from '@/components/ui/button'
 import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from '@/components/ui/command'
-import { Input } from "@/components/ui/input"
+import { Input } from '@/components/ui/input'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useRef, useState } from "react"
 import { useAudioRecorder } from '../../hooks/useAudioRecorder'
 import { ChatMessage, ChatParticipants } from "../../types/types"
 import BotVisualizer from '../Bot/BotVisualizer'
 import Icons from '../Icons'
+
+
 type MessageInputProps = {
   t: any;
   sendChatMessage: (reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean, type?: "audio") => void;
@@ -293,7 +295,8 @@ const MessageInput = ({
               }
             </div>
           ) : (
-            <Input
+            <div className='w-full'>
+              <Input
               ChooseFiles={() => {
                 ChooseFiles();
               }}
@@ -305,6 +308,7 @@ const MessageInput = ({
               className="w-full focus:ring-0 focus:border-none border-none focus:outline-none"
               icon={<Icons.Choose_files />}
             />
+            </div>
           )
         }
         {
