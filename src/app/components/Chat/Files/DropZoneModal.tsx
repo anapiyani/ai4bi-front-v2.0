@@ -24,13 +24,14 @@ const DropZoneModal = ({
 }: {
   open: boolean
   setOpen: (open: boolean) => void
-  handleSendMedia: (uuids: string[]) => void
+  handleSendMedia: (uuids: string[], message: string) => void
   t: any
   value: string,
   chatId: string,
   setNewMessage: (value: string) => void
 }) => {
   const [filesUploaded, setFilesUploaded] = useState<File[]>([])
+  const [message, setMessage] = useState<string>('')
 
   const {
     mutate: uploadMedia,
@@ -45,7 +46,7 @@ const DropZoneModal = ({
         const uploadedIds = Array.isArray(dataFromMutation)
           ? dataFromMutation.map((item) => item.uuid)
           : [dataFromMutation.uuid]
-        handleSendMedia(uploadedIds)
+        handleSendMedia(uploadedIds, message)
         setFilesUploaded([])
         setOpen(false)
         setNewMessage('')
@@ -64,7 +65,7 @@ const DropZoneModal = ({
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNewMessage(e.target.value)
+    setMessage(e.target.value)
   }
 
   return (
@@ -126,7 +127,7 @@ const DropZoneModal = ({
 
           <Input
             type="text"
-            value={value}
+            value={message}
             onChange={handleChange}
             placeholder={t('type-your-message-here')}
             className="mt-2"

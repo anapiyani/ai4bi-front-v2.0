@@ -155,8 +155,9 @@ const ChatContent = ({
     }
   }
 
-  const handleSendMedia = (uuids: string[]) => {
-    sendChatMessage(null, uuids);
+  const handleSendMedia = (uuids: string[], message: string) => {
+    sendChatMessage(null, uuids, false, null, message);
+    setNewMessage("");
   }
 
   const handleForwardModal = (message_ids: string | string[]) => {
