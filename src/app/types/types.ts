@@ -106,6 +106,8 @@ export type ChatParticipants = {
 	created_at: string;
 	removed_at: string | null;
 	username: string;
+	first_name: string;
+	last_name: string;
 }
 
 export type ChatMessage = {
@@ -148,7 +150,7 @@ export type ChatContentProps = {
 	openSideMenu?: boolean;
 	handleCreateOrOpenChat: (toUser: string) => void;
   setNewMessage: (message: string) => void;
-  sendChatMessage: (reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean, type?: "audio") => void;
+  sendChatMessage: (reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean, type?: "audio" | "file" | null, message?: string) => void;
   handleOpenDeleteMessage: (messageId: string | string[]) => void;
   createPrivateChat: (userId: string) => void;
   sendEditMessage: (message: ChatMessage) => void;
@@ -166,6 +168,14 @@ export type ChatContentProps = {
 	handlePopUpButtonAction: (button: PopUpButtonAction, user_id?: string) => void;
 	conferenceRoomsByChat?: ConferenceRoomsRecord;
 	startedUserId?: string | null;
+	technicalCouncilUsers?: {
+		user_id: string;
+		first_name: string;
+		last_name: string;
+		username: string;
+		is_connected: boolean;
+		is_speaking: boolean;
+	}[];
 }
 
 export type PopUpsByChat = {

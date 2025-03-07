@@ -2,7 +2,7 @@ import * as Select from "@radix-ui/react-select"
 import clsx from 'clsx'
 import Icons from "../Icons"
 
-const Notifications = () => {
+const Notifications = ({t}: {t: any}) => {
 	return (
 		<div className='relative'>
 			<Select.Root defaultValue={"all"} onValueChange={() => {}}>
@@ -24,7 +24,7 @@ const Notifications = () => {
 					className="min-w-[8rem] overflow-hidden rounded-sm bg-white shadow-md cursor-pointer py-4 px-4 w-52"
 					position="popper"
 					>
-						Notifications
+						{t("notifications")}
 					</Select.Content>
 				</Select.Portal>
 			</Select.Root>

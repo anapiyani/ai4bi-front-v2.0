@@ -203,7 +203,9 @@
 		"save_and_share": "Сохранить и поделиться",
 		"add_material/solution": "Добавить материал/решение",
 		"add_note": "Добавить примечание",
-		"add_supplier": "Добавить поставщика"
+		"add_supplier": "Добавить поставщика",
+		"interest_added_successfully": "Конструктив добавлен успешно",
+		"interest_added_error": "Ошибка при добавлении конструктива"
 	},
 	"dropzone": {
 		"upload_files": "Загрузить файлы",

@@ -172,7 +172,7 @@ const ProtocolTable = ({ protocols: initialProtocols }: ProtocolTableProps) => {
                     onChange={(e) => handleProjectNameChange(e.target.value)}
                   />
                 ) : (
-                  protocols?.project_name
+                  protocols?.project_name || '...'
                 )}
               </TableCell>
               <TableCell className="px-4 py-2">
@@ -190,7 +190,7 @@ const ProtocolTable = ({ protocols: initialProtocols }: ProtocolTableProps) => {
                 {dayjs(protocols?.meeting_date).format("DD MMMM YYYY")}
               </TableCell>
               <TableCell className="px-4 py-2">
-                {dayjs(`1970-01-01 ${protocols?.meeting_time}`).format('HH:mm')}
+                {protocols?.meeting_time ? dayjs(`1970-01-01 ${protocols?.meeting_time}`).format('HH:mm') : null}
               </TableCell>
               <TableCell className="px-4 py-2">
                 {isEditing ? (

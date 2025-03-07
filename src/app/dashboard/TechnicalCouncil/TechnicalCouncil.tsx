@@ -62,6 +62,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
   const room = conference_id || "default";
   const wsRef = useRef<WebSocket | null>(null);
   const peerRef = useRef<RTCPeerConnection | null>(null);
+  const speakingUsers = useRef<Map<string, boolean>>(new Map());
   const connectedUsers = useRef<Map<string, any>>(new Map());
   const [transcription, setTranscription] = useState<{text: string, user_id: string, name: string, username: string}[]>([]);
 
@@ -180,11 +181,28 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
             
             case 'python_response':
               console.log(`Audio Server response from user ${msg}:`, msg.text, msg.user_id);
-              Array.from(connectedUsers.current.values()).map((user) => {
+              Array.from(connectedUsers.current.values()).forEach((user) => {
                 if (user.user_id === msg.user_id) {
-                  setTranscription((prev) => [...prev, {text: msg.text, user_id: user.user_id, name: user.name, username: user.username}]);
+                  let parsedData = null;
+                  try {
+                    parsedData = JSON.parse(msg.text);
+                  } catch (err) {}
+                  if (parsedData && typeof parsedData === 'object') {
+                    const { speaking } = parsedData;
+                    speakingUsers.current.set(user.user_id, speaking === true);
+                  } else {  
+                    setTranscription((prev) => [
+                      ...prev,
+                      {
+                        text: msg.text,
+                        user_id: user.user_id,
+                        name: user.name,
+                        username: user.username
+                      }
+                    ]);
+                  }
                 }
-              });
+              });              
               break;
                 
             case 'python_binary_response':
@@ -223,7 +241,24 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
         localStream.getTracks().forEach((track) => track.stop());
       }
     };
-  }, [])
+  }, []);
+
+  const councilConversation = conversations.find(c => c.id === selectedConversation);
+  const allParticipants = councilConversation?.participants || [];
+
+  const mergedCouncilUsers = allParticipants.map((participant) => {
+    const { user_id, first_name, last_name, username } = participant;
+    const is_connected = connectedUsers.current.has(user_id);
+    const is_speaking = speakingUsers.current.get(user_id) || false;
+    return {
+      user_id,
+      first_name: first_name || "",
+      last_name: last_name || "",
+      username: username || "",
+      is_connected,
+      is_speaking,
+    };
+  });
 
   useEffect(() => {
     if (!localStream) return;
@@ -300,6 +335,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
             conversations={conversations}
             popUpsByChat={popUpsByChat}
             conferenceRoomsByChat={conferenceRoomsByChat}
+            technicalCouncilUsers={mergedCouncilUsers}
           />
         </div>
       </div> 

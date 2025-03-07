@@ -41,18 +41,26 @@ const PinnedMessages = ({ pinnedMessages, t, goToMessage, handleUnpinMessage }: 
       <div className="flex justify-between items-center">
         <div onClick={handleMessageClick} className="text-sm flex cursor-pointer flex-col gap-1">
         <div className="relative flex justify-center items-center">
-          {pinnedMessages.map((_, index) => (
-            <div
-              key={index}
-              className={`absolute left-0 w-[3px] mt-2 rounded-full ${
-                index === currentIndex ? "bg-primary" : "bg-gray-300"
-              } h-3`}
-              style={{
-                top: `${index * 18}px`,
-                opacity: Math.max(0.3, 1 - Math.abs(index - currentIndex) * 0.3),
-              }}
-            />
-          ))}
+          {pinnedMessages.map((_, index) => {
+            // Calculate position based on total number of messages
+            const containerHeight = 30; // Height of the container area
+            const position = pinnedMessages.length === 1 
+              ? containerHeight / 2 - 1
+              : pinnedMessages.length === 2 ? containerHeight / 2 * (index + 0.5) : (containerHeight / (pinnedMessages.length - 1)) * index;
+            
+            return (
+              <div
+                key={index}
+                className={`absolute left-0 w-[3px] rounded-full ${
+                  index === currentIndex ? "bg-primary" : "bg-gray-300"
+                } h-3`}
+                style={{
+                  top: `${position}px`,
+                  opacity: Math.max(0.3, 1 - Math.abs(index - currentIndex) * 0.3),
+                }}
+              />
+            );
+          })}
         </div>
           <div className="flex flex-col ml-2">
             <div className="flex flex-row items-center">
@@ -61,7 +69,7 @@ const PinnedMessages = ({ pinnedMessages, t, goToMessage, handleUnpinMessage }: 
               </h3>
             </div>
             <p className="text-xs text-gray-500">
-              {pinnedMessages[currentIndex].content || "No message"}
+              {pinnedMessages[currentIndex]?.content ? pinnedMessages[currentIndex]?.content : "No message"}
             </p>
           </div>
         </div>

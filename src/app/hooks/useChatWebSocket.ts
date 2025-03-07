@@ -591,11 +591,11 @@ export const useChatWebSocket = () => {
     setSelectedConversation(selectedConversation);
   };
 
-  const sendChatMessage = useCallback((reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean, type?: "audio") => {
+  const sendChatMessage = useCallback((reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean, type?: "audio" | "file" | null, message?: string) => {
     if (!selectedConversation) return;
     const replyId = reply?.id ?? null;
     const rpcId = (Date.now() + Math.random() * 1000000).toString();
-    const content = newMessage.trim();
+    const content = message ? message.trim() : newMessage.trim();
     let pendingMedia: Media[] | null = null;
     if (type === "audio") {
       pendingMedia = [{
