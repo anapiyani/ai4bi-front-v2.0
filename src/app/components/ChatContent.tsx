@@ -7,6 +7,7 @@ import dayjs from "dayjs"
 import { useTranslations } from "next-intl"
 import { memo, useEffect, useRef, useState } from "react"
 import { getCookie } from "../api/service/cookie"
+import RenderUsers from '../dashboard/TechnicalCouncil/components/RenderUsers'
 import { useGoToMessage } from '../hooks/useGoToMessage'
 import { ChatContentProps, ChatMessage, SelectActions } from "../types/types"
 import TimeToStartAucTech from './Alerts/Organizers/TimeToStartAucTech'
@@ -383,23 +384,9 @@ const ChatContent = ({
         </div>
         ) : (
           <div className={`${isTechnicalCouncil ? "h-[calc(90vh-50px)]" : "h-[calc(100vh-240px)]"} overflow-y-auto flex flex-col`} ref={messagesRef}>
-            {technicalCouncilUsers?.map((user) => (
-              <div
-                key={user.user_id}
-                className={user.is_connected ? "text-primary" : "text-muted-foreground"}
-              >
-                <div>
-                  {user.first_name} {user.last_name} 
-                  {user.username ? ` (@${user.username})` : ""}
-                </div>
-
-                {user.is_speaking && (
-                  <div className="text-xs font-semibold">
-                    Speaking now...
-                  </div>
-                )}
-              </div>
-            ))}
+            {technicalCouncilUsers && 
+              <RenderUsers users={technicalCouncilUsers} t={t} />
+            }
           </div>
         )
       )
