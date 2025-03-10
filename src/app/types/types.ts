@@ -179,6 +179,7 @@ export type TechCouncilUser = {
 	role: "project_team" | "user" | "assistant" | "contractor" | "admin";
 	is_connected: boolean;
 	is_speaking: boolean;
+	mic_on: boolean;
 }
 
 export type PopUpsByChat = {

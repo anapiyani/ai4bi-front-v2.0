@@ -21,7 +21,7 @@ const RenderUsers = ({ users, t }: { users: TechCouncilUser[], t: any }) => {
                 <TechnicalCouncilUser
                   key={user.user_id}
                   name={`${user.first_name} ${user.last_name}`}
-                  isMicrophoneOn={false} // we dont know for now!
+                  isMicrophoneOn={user.mic_on} 
                   turnOffTheMicrophone={() => {}}
                   turnOnTheMicrophone={() => {}}
                   isAbsent={!user.is_connected} // we dont know for now!
@@ -43,7 +43,7 @@ const RenderUsers = ({ users, t }: { users: TechCouncilUser[], t: any }) => {
                 <TechnicalCouncilUser
                   key={user.user_id}
                   name={`${user.first_name} ${user.last_name}`}
-                  isMicrophoneOn={false}
+                  isMicrophoneOn={user.mic_on}
                   turnOffTheMicrophone={() => {}}
                   turnOnTheMicrophone={() => {}}
                   isAbsent={!user.is_connected} // we dont know for now!
