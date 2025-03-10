@@ -123,24 +123,24 @@ const ChatMode = () => {
         <Tabs defaultValue="your-auctions" onValueChange={setActiveTab}>
           <div className="flex flex-col">
             <div className='flex justify-between items-center'>
-              <TabsList className="flex flex-row gap-2 border-none justify-start">
+              <TabsList className="flex flex-row gap-2 border-none justify-start items-center overflow-x-auto no-scrollbar">
                 <TabsTrigger
                   value="your-auctions"
-                  className="text-muted-foreground font-semibold text-base data-[state=active]:bg-transparent p-0 data-[state=active]:text-primary"
+                  className="text-xs text-muted-foreground font-semibold lg:text-base md:text-base data-[state=active]:bg-transparent p-0 data-[state=active]:text-primary"
                 >
                   {t("your-auctions")}
                 </TabsTrigger>
                 <p className="text-border font-semibold text-sm">|</p>
                 <TabsTrigger
                   value="private-chats"
-                  className="text-muted-foreground font-semibold text-base data-[state=active]:bg-transparent p-0 data-[state=active]:text-primary"
+                  className="text-xs text-muted-foreground font-semibold lg:text-base md:text-base data-[state=active]:bg-transparent p-0 data-[state=active]:text-primary"
                 >
                   {t("private-chats")}
                 </TabsTrigger>
                 <p className="text-border font-semibold text-sm">|</p>
                 <TabsTrigger
                   value="constructs"
-                  className="text-muted-foreground font-semibold text-base data-[state=active]:bg-transparent p-0 data-[state=active]:text-primary"
+                  className="text-xs text-muted-foreground font-semibold lg:text-base md:text-base data-[state=active]:bg-transparent p-0 data-[state=active]:text-primary"
                 >
                   {t("constructs")}
                 </TabsTrigger>
@@ -161,7 +161,7 @@ const ChatMode = () => {
             <TabsContent value="your-auctions" className='m-0'>
               <SearchBar  />
               <Tabs className="w-full mt-2" defaultValue="all">
-                <TabsList className="grid grid-cols-2 md:grid-cols-4 lg:flex lg:flex-row gap-2 lg:gap-0 mb-4 border-none justify-start">
+                <TabsList className="flex flex-row gap-2 mb-4 border-none overflow-x-auto no-scrollbar items-center justify-start">
                   {CHAT_TABS.map((tab, index) => (
                     <motion.div
                       key={tab.value}
@@ -173,7 +173,7 @@ const ChatMode = () => {
                       <TabsTrigger
                         key={tab.value}
                         value={tab.value}
-                        className={`w-full lg:w-auto  ${locale === "kz" ? "text-[13px]" : "text-sm"} whitespace-nowrap`}
+                        className={`w-full lg:w-auto text-[10px] md:text-sm lg:text-sm ${locale === "kz" ? "text-[13px]" : "text-sm"} whitespace-nowrap`}
                       >
                         {t(tab.translationKey)}
                       </TabsTrigger>
@@ -247,7 +247,7 @@ const ChatMode = () => {
             </TabsContent>
             <TabsContent value="constructs">
               <Tabs className="w-full" defaultValue="all">
-                <TabsList className="grid grid-cols-2 md:grid-cols-4 lg:flex lg:flex-row gap-2 lg:gap-0 border-none justify-start ">
+              <TabsList className="flex flex-row gap-2 mb-4 border-none overflow-x-auto no-scrollbar items-center justify-start">
                   {CONSTRUCT_TABS.map((tab, index) => (
                     <motion.div
                       key={tab.value}
@@ -259,7 +259,7 @@ const ChatMode = () => {
                       <TabsTrigger
                         key={tab.value}
                         value={tab.value}
-                        className={`w-full lg:w-auto  ${locale === "kz" ? "text-[13px]" : "text-sm"} whitespace-nowrap`}
+                        className={`w-full lg:w-auto text-[10px] md:text-sm lg:text-sm ${locale === "kz" ? "text-[13px]" : "text-sm"} whitespace-nowrap`}
                       >
                         {t(tab.translationKey)}
                       </TabsTrigger>
@@ -289,7 +289,7 @@ const ChatMode = () => {
         </Tabs>
       </aside>
 
-      <div className="w-full lg:w-2/3 mt-6 lg:mt-6 mx-4 lg:mr-6 rounded-lg bg-secondary min-h-[calc(100vh-8rem)] py-3 lg:py-3 flex justify-center">
+      <div className="hidden lg:flex w-full lg:w-2/3 mt-6 lg:mt-6 mx-4 lg:mr-6 rounded-lg bg-secondary min-h-[calc(100vh-8rem)] py-3 justify-center">
         <ChatContent
           chatId={chatId || ""}
           selectedConversation={selectedConversation}

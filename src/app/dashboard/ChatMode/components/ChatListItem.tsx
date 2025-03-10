@@ -19,7 +19,7 @@ const ChatListItem = ({ data, onClick, isSelected, index, t, typingStatuses }: C
   const renderLastMessage = () => {
     if (typeof lastMessage === 'object') {
       return (
-        <span className="text-sm text-muted-foreground">
+        <span className="text-[11px] lg:text-sm md:text-sm text-muted-foreground">
           {typingStatuses.some(status => status.chat_id === data.id) ? (
             <span className="ml-2 text-sm">
               {typingStatuses
@@ -34,7 +34,7 @@ const ChatListItem = ({ data, onClick, isSelected, index, t, typingStatuses }: C
                 lastMessage && (
                   <>
                     {lastMessage.sender_first_name && (
-                      <span className="font-medium">{lastMessage.sender_id === user_id ? t("you") : lastMessage.sender_first_name}: </span>
+                      <span className="font-medium text-[11px] lg:text-sm md:text-sm">{lastMessage.sender_id === user_id ? t("you") : lastMessage.sender_first_name}: </span>
                     )}
                     {lastMessage?.content
                     ? lastMessage.content.length > 70
@@ -42,7 +42,7 @@ const ChatListItem = ({ data, onClick, isSelected, index, t, typingStatuses }: C
                       : lastMessage.content
                     : lastMessage?.has_attachements === true ? lastMessage?.media && lastMessage.media.length > 0 ? lastMessage.media.map((media) => t(media.media_type)).join(", ") : t("media") : t('no_messages_yet')}
                   {lastMessage?.send_at && (
-                    <span className="ml-2 text-xs opacity-70">
+                    <span className="ml-2 text-[11px] lg:text-sm md:text-sm opacity-70">
                       {dayjs(lastMessage.send_at).format("HH:mm")}
                     </span>
                     )}
@@ -83,13 +83,13 @@ const ChatListItem = ({ data, onClick, isSelected, index, t, typingStatuses }: C
         {/* <BnectBadge /> */}
         <div className="flex flex-col gap-1 w-full">
           <div className='flex items-center gap-2'>
-             <p className={`font-semibold break-words pr-2 ${isSelected ? "text-primary" : "text-sec-txt"}`}>
+             <p className={`text-sm lg:text-base md:text-base font-semibold break-words pr-2 ${isSelected ? "text-primary" : "text-sec-txt"}`}>
                {name}
              </p> 
             {
               data.unread_count > 0 && (
                 <div className='text-xs bg-slate-200 rounded-full px-2 py-1'>
-                  <p className='text-muted-foreground'>{data.unread_count}</p>
+                  <p className='text-muted-foreground text-[10px] lg:text-sm md:text-sm'>{data.unread_count}</p>
                 </div>
               )
             }

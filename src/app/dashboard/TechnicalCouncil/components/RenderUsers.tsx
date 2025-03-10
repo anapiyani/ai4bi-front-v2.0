@@ -24,7 +24,7 @@ const RenderUsers = ({ users, t }: { users: TechCouncilUser[], t: any }) => {
                   isMicrophoneOn={user.mic_on} 
                   turnOffTheMicrophone={() => {}}
                   turnOnTheMicrophone={() => {}}
-                  isAbsent={!user.is_connected} // we dont know for now!
+                  isAbsent={!user.is_connected}
                   t={t}
                   LocalUser={user.user_id === getCookie("user_id")}
                 />
