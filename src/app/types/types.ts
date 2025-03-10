@@ -102,12 +102,12 @@ export interface ReceivedChats extends Conversation {
 export type ChatParticipants = {
 	chat_participant_id: string;
 	user_id: string;
-	role: string;
+	role: "project_team" | "user" | "assistant" | "contractor" | "admin";
 	created_at: string;
 	removed_at: string | null;
 	username: string;
-	first_name: string;
-	last_name: string;
+	user_first_name: string;
+	user_last_name: string;
 }
 
 export type ChatMessage = {
@@ -168,14 +168,18 @@ export type ChatContentProps = {
 	handlePopUpButtonAction: (button: PopUpButtonAction, user_id?: string) => void;
 	conferenceRoomsByChat?: ConferenceRoomsRecord;
 	startedUserId?: string | null;
-	technicalCouncilUsers?: {
-		user_id: string;
-		first_name: string;
-		last_name: string;
-		username: string;
-		is_connected: boolean;
-		is_speaking: boolean;
-	}[];
+	technicalCouncilUsers?: TechCouncilUser[];
+}
+
+export type TechCouncilUser = {
+	user_id: string;
+	first_name: string;
+	last_name: string;
+	username: string;
+	role: "project_team" | "user" | "assistant" | "contractor" | "admin";
+	is_connected: boolean;
+	is_speaking: boolean;
+	mic_on: boolean;
 }
 
 export type PopUpsByChat = {

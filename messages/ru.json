@@ -205,7 +205,10 @@
 		"add_note": "Добавить примечание",
 		"add_supplier": "Добавить поставщика",
 		"interest_added_successfully": "Конструктив добавлен успешно",
-		"interest_added_error": "Ошибка при добавлении конструктива"
+		"interest_added_error": "Ошибка при добавлении конструктива",
+		"notifications": "Уведомления",
+		"project_command": "Команда проекта",
+		"partners": "Партнеры"
 	},
 	"dropzone": {
 		"upload_files": "Загрузить файлы",

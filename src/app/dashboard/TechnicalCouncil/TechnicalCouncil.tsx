@@ -67,6 +67,27 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
   const [transcription, setTranscription] = useState<{text: string, user_id: string, name: string, username: string}[]>([]);
 
   useEffect(() => {
+    if (!localStream) return;
+    localStream.getAudioTracks().forEach(track => {
+      track.enabled = isMicrophoneOn;
+    });
+  }, [isMicrophoneOn, localStream]);
+
+  useEffect(() => {
+    if (
+      wsRef.current &&
+      wsRef.current.readyState === WebSocket.OPEN
+    ) {
+      wsRef.current.send(
+        JSON.stringify({
+          event: 'mic_status',
+          data: JSON.stringify({ mic_on: isMicrophoneOn })
+        })
+      );
+    }
+  }, [isMicrophoneOn]);
+
+  useEffect(() => {
     let isUnmounting = false;
 
     const updateAudioElements = () => {
@@ -118,8 +139,10 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
   
         stream.getAudioTracks().forEach(track => peerConnection.addTrack(track, stream))
   
-        isMicrophoneOn ? localStream?.getAudioTracks().forEach(track => track.enabled = true) : localStream?.getAudioTracks().forEach(track => track.enabled = false);
-  
+        isMicrophoneOn
+        ? localStream?.getAudioTracks().forEach(track => (track.enabled = true))
+        : localStream?.getAudioTracks().forEach(track => (track.enabled = false));
+
         peerConnection.ontrack = (event) => {
           if (event.track.kind !== "audio") return;
   
@@ -155,16 +178,20 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
               console.log("User connected", msg.user.user_id);
               break;
             
-            case "users_updated":
-              console.log("Users updated", msg.users);
+            case 'users_updated':
+              console.log("Users updated", msg);
               connectedUsers.current.clear();
               msg.users.forEach((user: any) => {
-                connectedUsers.current.set(user.user_id, user);
+                connectedUsers.current.set(user.user_id, {
+                  ...user,
+                  mic_on: user.mic_on,
+                });
               });
               updateAudioElements();
               break;
 
             case 'offer':
+              console.log("Offer received", msg);
               await peerConnection.setRemoteDescription(JSON.parse(msg.data));
               const answer = await peerConnection.createAnswer();
               await peerConnection.setLocalDescription(answer);
@@ -197,6 +224,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
                         text: msg.text,
                         user_id: user.user_id,
                         name: user.name,
+                        mic_on: user.mic_on,
                         username: user.username
                       }
                     ]);
@@ -245,18 +273,20 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
 
   const councilConversation = conversations.find(c => c.id === selectedConversation);
   const allParticipants = councilConversation?.participants || [];
-
   const mergedCouncilUsers = allParticipants.map((participant) => {
-    const { user_id, first_name, last_name, username } = participant;
+    const { user_id, user_first_name, user_last_name, username, role } = participant;
     const is_connected = connectedUsers.current.has(user_id);
     const is_speaking = speakingUsers.current.get(user_id) || false;
+    const mic_on = connectedUsers.current.get(user_id)?.mic_on || false;
     return {
       user_id,
-      first_name: first_name || "",
-      last_name: last_name || "",
+      first_name: user_first_name || "",
+      last_name: user_last_name || "",
       username: username || "",
       is_connected,
       is_speaking,
+      mic_on,
+      role: participant.role,
     };
   });
 

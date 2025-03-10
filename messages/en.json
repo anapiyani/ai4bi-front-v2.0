@@ -203,7 +203,10 @@
 		"add_note": "Add note",
 		"add_supplier": "Add supplier",
 		"interest_added_successfully": "Construct added successfully",
-		"interest_added_error": "Error adding construct"
+		"interest_added_error": "Error adding construct",
+		"notifications": "Notifications",
+		"project_command": "Project command",
+		"partners": "Partners"
 	},
 	"dropzone": {
 		"upload_files": "Upload files",

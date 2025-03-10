@@ -37,7 +37,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (typeof window !== 'undefined' && active_tab === "technical-council") {
-      setIsMicrophoneOn(true)
+      setIsMicrophoneOn(false)
     }
   }, [active_tab])
 

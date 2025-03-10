@@ -21,7 +21,6 @@ export type ConferenceRoom = {
   conference_type: string;
   created_at: string;
   is_active: boolean;
-  url: string;
 }
 
 export type ConferenceRoomsRecord = {
@@ -81,7 +80,6 @@ export const useChatWebSocket = () => {
               conference_type: message.data.conference_type,
               created_at: message.data.created_at,
               is_active: message.data.is_active,
-              url: message.data.url,
             }
           }));
           break;
