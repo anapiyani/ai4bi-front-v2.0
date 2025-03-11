@@ -18,8 +18,8 @@ type HeaderProps = {
 	isMicrophoneOn: boolean
 }
 
-const commonHeaderClasses = 'w-full h-20 flex items-center justify-between m-0 px-20'
-const commonTitleClasses = 'text-lg font-semibold'
+const commonHeaderClasses = 'w-full h-20 flex items-center justify-between m-0 px-2 lg:px-20 md:px-20'
+const commonTitleClasses = 'font-semibold text-sm lg:text-lg md:text-lg'
 
 const Header = ({type, t, handlers, isMicrophoneOn}: HeaderProps) => {
 	const { InfoButton, AudioButton, ExitButton } = HeaderButtons({isMicrophoneOn});
@@ -79,7 +79,7 @@ const Header = ({type, t, handlers, isMicrophoneOn}: HeaderProps) => {
 							<Notifications t={t} />
 							<LocaleSwitcher />
 							<Button className='flex items-center gap-2' variant='secondary' onClick={() => handlers.exitButtonClick(type)}>
-								{t("exit-chat-mode")}
+								<p className='hidden lg:block md:block'>{t("exit-chat-mode")}</p>
 								<Icons.Exit />
 							</Button>
 						</div>

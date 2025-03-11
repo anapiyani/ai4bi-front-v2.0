@@ -25,7 +25,7 @@ export function SearchBar({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: 0.1 }}
-      className='flex mt-3 w-full'
+      className='flex mt-0 lg:mt-3 md:mt-3 w-full'
     > 
       <Input 
         placeholder={t("search")} 
