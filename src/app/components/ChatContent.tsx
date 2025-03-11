@@ -50,6 +50,7 @@ const ChatContent = ({
   conferenceRoomsByChat,
   startedUserId,
   technicalCouncilUsers,
+  onMobileBack
 }: ChatContentProps) => {
   const t = useTranslations("dashboard");
   const [editMessage, setEditMessage] = useState<ChatMessage | null>(null);
@@ -249,6 +250,7 @@ const ChatContent = ({
               setOpenMenu(true);
             }}
             openMenu={openMenu} 
+            onMobileBack={onMobileBack}
           />
         <div className="absolute top-[65px] left-0 right-0 z-50">
           <PinnedMessages 

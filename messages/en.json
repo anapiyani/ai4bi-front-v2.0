@@ -206,7 +206,8 @@
 		"interest_added_error": "Error adding construct",
 		"notifications": "Notifications",
 		"project_command": "Project command",
-		"partners": "Partners"
+		"partners": "Partners",
+		"join": "Join"
 	},
 	"dropzone": {
 		"upload_files": "Upload files",
