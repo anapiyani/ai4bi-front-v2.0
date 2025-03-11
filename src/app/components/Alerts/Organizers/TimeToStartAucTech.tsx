@@ -44,9 +44,9 @@ const TimeToStartAucTech = ({
 	
   return (
     <div className="flex items-center justify-center w-full mt-3">
-      <div className={`bg-white overflow-hidden ${!isExpanded ? "w-[500px] rounded-lg" : "w-[300px] rounded-full"}`}>
+      <div className={`bg-white overflow-hidden ${!isExpanded ? "w-[340px] lg:w-[500px] rounded-lg" : "w-[300px] rounded-full"}`}>
 				{!openRescheduleModal && !isExpanded ? (
-						<div className="w-[500px] bg-white rounded-lg p-6">
+						<div className="w-[340px] lg:w-[500px] bg-white rounded-lg p-6">
 							<div className="space-y-4">
 								<div className="flex flex-col gap-2">
 									<h2 className="text-lg font-semibold">{popup_type === "tech_council_start" ? t("its-time-to-start-the-technical-council") : popup_type === "participation_question_tech_council" ? t("would-you-like-to-participate-in-the-technical-council") : t("its-time-to-start-the-auction")}</h2>

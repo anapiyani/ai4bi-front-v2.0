@@ -21,7 +21,7 @@ const ChatHeader = ({title, onClickAboutAuction, t, openMenu, typingStatuses, on
 			</div>
 			<div className='flex-1 flex gap-2 flex-col overflow-hidden'>
 				<div className='w-fit flex flex-col h-16 justify-center min-w-0'>
-					<h1 onClick={onClickAboutAuction} className='text-secondary-foreground text-sm lg:text-base font-semibold px-3 items-center flex truncate'>{title}</h1>
+					<h1 onClick={onClickAboutAuction} className='text-secondary-foreground text-sm lg:text-base font-semibold px-3 items-center flex truncate w-full'>{title}</h1>
 					<div className={`text-xs font-normal px-3 items-center flex ${typingStatuses.length > 0 ? 'text-muted-foreground' : 'text-primary-foreground'}`}>
 						{typingStatuses.length > 0 ? (
 							<div className='flex items-center gap-1 truncate'>
