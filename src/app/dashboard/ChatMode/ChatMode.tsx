@@ -291,7 +291,7 @@ const ChatMode = () => {
         </Tabs>
       </aside>
 
-      <div className={`${chatId ? 'flex' : 'hidden mx-0 mt-0 lg:flex'} w-full lg:w-2/3 lg:mt-6 lg:mx-4 lg:mr-6 rounded-lg bg-secondary min-h-[calc(100vh-8rem)] lg:py-3 justify-center`}>
+      <div className={`${chatId ? 'flex' : 'hidden mx-0 mt-0 lg:flex'} w-full lg:w-2/3 lg:mt-6 lg:mx-4 lg:mr-4 rounded-lg bg-secondary min-h-[calc(100vh-8rem)] lg:py-3 justify-center`}>
         <ChatContent
           chatId={chatId || ""}
           selectedConversation={selectedConversation}

@@ -48,7 +48,7 @@ const AuctionChatMenu = (
 	}
 
 	return (
-		<div className="flex flex-col gap-4 w-full">
+		<div className="flex flex-col gap-4 w-[90%]">
 			<div className='flex'>
 				<p className='text-sm font-medium'>{name}</p>
 			</div>
