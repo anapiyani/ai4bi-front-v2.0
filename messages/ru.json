@@ -208,7 +208,8 @@
 		"interest_added_error": "Ошибка при добавлении конструктива",
 		"notifications": "Уведомления",
 		"project_command": "Команда проекта",
-		"partners": "Партнеры"
+		"partners": "Партнеры",
+		"join": "Присоединиться"
 	},
 	"dropzone": {
 		"upload_files": "Загрузить файлы",

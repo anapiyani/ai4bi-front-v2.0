@@ -125,6 +125,13 @@ const Icons = {
 			</svg>
 		)
 	},
+	ArrowLeft: () => {
+		return (
+			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M19.5 12H4.5M4.5 12L10.125 6M4.5 12L10.125 18" stroke="#737373" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+			</svg>
+		)
+	},
 	Pin: ({ className, fill }: { className?: string, fill?: string }) => {
 		return (
 			<svg className={className} width="16" height="16" viewBox="0 0 16 16" fill={fill} xmlns="http://www.w3.org/2000/svg">

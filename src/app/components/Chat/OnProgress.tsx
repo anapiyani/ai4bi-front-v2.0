@@ -14,12 +14,13 @@ const OnProgress = ({
 	
   return (
 		<div className='flex justify-between w-full h-16 bg-brand-darkOrange px-4'>
-			<div className='flex items-center '>
-				<h1 className='text-white font-semibold text-base'>{t("technical_council_on_progress")}</h1>
+			<div className='flex items-center'>
+				<h1 className='text-white font-semibold text-xs md:text-base lg:text-base'>{t("technical_council_on_progress")}</h1>
 			</div>
 			<div className='flex items-center'>
 				<Button onClick={handleJoinToCall} className="text-brand-gray" variant="secondary">
-					{t("join_to_call")}
+					<span className="hidden md:inline">{t("join_to_call")}</span>
+					<span className="md:hidden text-[10px] md:text-sm lg:text-sm">{t("join")}</span>
 				</Button>
 			</div>
 		</div>

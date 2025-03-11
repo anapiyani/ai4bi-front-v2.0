@@ -39,7 +39,7 @@ const PinnedMessages = ({ pinnedMessages, t, goToMessage, handleUnpinMessage }: 
       className="bg-white px-4 py-2 z-50" 
     >
       <div className="flex justify-between items-center">
-        <div onClick={handleMessageClick} className="text-sm flex cursor-pointer flex-col gap-1">
+        <div onClick={handleMessageClick} className="text-xs md:text-sm lg:text-sm flex cursor-pointer flex-col gap-1">
         <div className="relative flex justify-center items-center">
           {pinnedMessages.map((_, index) => {
             // Calculate position based on total number of messages
@@ -64,16 +64,16 @@ const PinnedMessages = ({ pinnedMessages, t, goToMessage, handleUnpinMessage }: 
         </div>
           <div className="flex flex-col ml-2">
             <div className="flex flex-row items-center">
-              <h3 className="text-sm font-medium text-primary">
+              <h3 className="text-xs md:text-sm lg:text-sm font-medium text-primary">
                 {t("pinned_message")}
               </h3>
             </div>
-            <p className="text-xs text-gray-500">
+            <p className="text-[7px] md:text-xs lg:text-xs text-gray-500">
               {pinnedMessages[currentIndex]?.content ? pinnedMessages[currentIndex]?.content : "No message"}
             </p>
           </div>
         </div>
-        <div onClick={() => handleUnpinMessage(pinnedMessages[currentIndex].id)} className="text-sm text-gray-500 cursor-pointer">
+        <div onClick={() => handleUnpinMessage(pinnedMessages[currentIndex].id)} className="text-xs md:text-sm lg:text-sm text-gray-500 cursor-pointer">
           <Icons.UnPin />
         </div>
       </div>

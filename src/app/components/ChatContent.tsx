@@ -50,6 +50,7 @@ const ChatContent = ({
   conferenceRoomsByChat,
   startedUserId,
   technicalCouncilUsers,
+  onMobileBack
 }: ChatContentProps) => {
   const t = useTranslations("dashboard");
   const [editMessage, setEditMessage] = useState<ChatMessage | null>(null);
@@ -209,7 +210,7 @@ const ChatContent = ({
   };
 
   return (
-    <div className="flex flex-col w-full h-full relative">
+    <div className="flex flex-col w-full h-screen lg:h-full relative py-3 lg:py-0">
     {
       isTechnicalCouncil && setOpenSideMenu ? (
         <div className='flex mt-3 px-3 justify-center'>
@@ -240,7 +241,7 @@ const ChatContent = ({
           }
         </div>
       ) : (
-        <div>
+        <div className="h-screen lg:h-full">
           <ChatHeader  
             title={title || ""} 
             typingStatuses={typingStatuses}
@@ -249,6 +250,7 @@ const ChatContent = ({
               setOpenMenu(true);
             }}
             openMenu={openMenu} 
+            onMobileBack={onMobileBack}
           />
         <div className="absolute top-[65px] left-0 right-0 z-50">
           <PinnedMessages 
@@ -269,7 +271,7 @@ const ChatContent = ({
         </div>
         {
           currentChatPopup && currentChatPopup.popup_type && (
-            <div className={`absolute top-[${pinnedMessages.length > 0 && conferenceRoom && conferenceRoom.is_active ? "120px" : "65px"}] left-0 right-0 z-50 flex justify-self-center`}>
+            <div className={`absolute top-[${pinnedMessages.length > 0 && conferenceRoom && conferenceRoom.is_active ? "120px" : "70px"}] lg:top-[65px] left-0 right-0 z-50 flex justify-self-center`}>
               <TimeToStartAucTech
                 body={currentChatPopup.body}
                 popup_id={currentChatPopup.id}

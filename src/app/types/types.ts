@@ -169,6 +169,7 @@ export type ChatContentProps = {
 	conferenceRoomsByChat?: ConferenceRoomsRecord;
 	startedUserId?: string | null;
 	technicalCouncilUsers?: TechCouncilUser[];
+	onMobileBack?: () => void;
 }
 
 export type TechCouncilUser = {

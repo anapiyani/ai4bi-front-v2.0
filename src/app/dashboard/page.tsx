@@ -23,6 +23,7 @@ export default function Dashboard() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const authHeader = useAuthHeader()
+  const chatId = searchParams.get("id")
   let active_tab = searchParams.get("active_tab") as activity_status
 
   if (
@@ -116,7 +117,7 @@ export default function Dashboard() {
 
   return (
     <div className="flex w-full h-screen flex-col">
-      <div className='w-full'>
+      <div className={`w-full ${chatId ? "hidden lg:block" : "block"}`}>
         <Header 
           type={active_tab} 
           t={t} 
