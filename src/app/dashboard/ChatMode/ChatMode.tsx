@@ -293,7 +293,7 @@ const ChatMode = () => {
 
       <div className={`${chatId ? 'flex' : 'hidden mx-0 mt-0 lg:flex'} w-full lg:w-2/3 lg:mt-6 lg:mx-4 lg:mr-4 rounded-lg bg-secondary min-h-[calc(100vh-8rem)] lg:py-3 justify-center flex-1
       h-full
-      overflow-hidden items-center`}>
+      overflow-hidden items-center ${openMenu ? "hidden lg:flex" : "flex"}`}>
         <ChatContent
           chatId={chatId || ""}
           selectedConversation={selectedConversation}
@@ -327,7 +327,7 @@ const ChatMode = () => {
       </div>
       {openMenu && selectedConversation && (
         <div
-          className="hidden lg:block lg:w-[270px] flex-shrink-0 overflow-y-auto"> 
+          className="w-full lg:block lg:w-[270px] flex-shrink-0 overflow-y-auto px-4 lg:px-0">  
           <ChatMenu
             type={selectedConversationType}
             setOpenMenu={setOpenMenu}
