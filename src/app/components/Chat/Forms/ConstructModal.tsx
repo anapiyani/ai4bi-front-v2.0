@@ -31,12 +31,13 @@ const ConstructModal = ({
   const locale = useLocale()
   const { data: interests } = useInterests(constructModalOpen);
   const [cities, setCities] = useState<string[]>([]);
-  const [step, setStep] = useState(1); // Mobile step tracker
+  const [step, setStep] = useState(1);
 
   const [nowOpenCity, setNowOpenCity] = useState<string>("");
   const [chosenCities, setChosenCities] = useState<string[]>([]);
   const [chosenConstructs, setChosenConstructs] = useState<InterestsResponse[]>([]);
   const addInterests = useAddInterests();
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     if (interests && interests.length > 0) {
@@ -124,7 +125,7 @@ const ConstructModal = ({
                 : `${t("constructs_in")} ${nowOpenCity}:`
               }
             </h2>
-            <Input placeholder={t("search")} icon={<Icons.SearchInput />} />
+            <Input placeholder={t("search")} icon={<Icons.SearchInput />} onChange={(e) => setSearchTerm(e.target.value)} />
             <div className="flex items-center gap-2 ml-2">
               <Checkbox 
                 onCheckedChange={() => {
@@ -150,7 +151,7 @@ const ConstructModal = ({
               <p className="text-sm">{t("choose_all")}</p>
             </div>
             <div className='flex flex-col gap-2 h-[calc(100vh-25rem)] overflow-y-auto'>
-              {constructsInOpenCity.map((construct) => (
+              {constructsInOpenCity.filter(c => c.name.toLowerCase().includes(searchTerm.toLowerCase())).map((construct) => (
                 <Interests
                   key={construct.interest_id}
                   construct={construct}
