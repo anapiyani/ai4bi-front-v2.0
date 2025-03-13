@@ -51,13 +51,13 @@ const Header = ({type, t, handlers, isMicrophoneOn}: HeaderProps) => {
 					<div className={`${commonHeaderClasses} bg-slate-100`}>
 						<div className='flex items-center gap-2'>
 							<div><Icons.Radio /></div>
-							<h2 className={`${commonTitleClasses} text-secondary-foreground`}>
+							<h2 className={`${commonTitleClasses} text-brand-gray`}>
 								{t("technical-council")}
 							</h2>
 						</div>
 						<div className='flex items-center gap-4'>
 							<AudioButton onClick={handlers.audioButtonClick} />
-							<ExitButton 
+							<ExitButton
 								text={t("leave-technical-council")}
 								variant="destructive" 
 								onClick={() => handlers.exitButtonClick(type)}

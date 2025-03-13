@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { motion } from "framer-motion"
 import { useLocale, useTranslations } from "next-intl"
 import { useRouter, useSearchParams } from "next/navigation"
-import { memo, useEffect, useMemo, useState } from "react"
+import { memo, useCallback, useEffect, useMemo, useState } from "react"
 import toast from 'react-hot-toast'
 import ChatMenu from "../../components/Chat/ChatMenu/ChatMenu"
 import DeleteMessage from "../../components/Chat/DeleteMessage"
@@ -31,6 +31,7 @@ const ChatMode = () => {
   const [activeTab, setActiveTab] = useState("your-auctions");
   const [privateChatResult, setPrivateChatResult] = useState<AutoCompleteResponse[] | null>(null)
   const {mutate: createPrivateChatMutation, isPending: isCreatingPrivateChat} = useCreatePrivateChat();
+  const [isProcessingChatSelection, setIsProcessingChatSelection] = useState(false);
 
   const {
     isConnected,
@@ -83,10 +84,20 @@ const ChatMode = () => {
     [conversations]
   )
 
-  const handleItemClick = (id: string) => {
-    router.push(`/dashboard?active_tab=chat&id=${id}`)
-    setOpenMenu(false)
-  }
+  const handleItemClick = useCallback(async (id: string) => {
+    if (isProcessingChatSelection) return;
+    
+    setIsProcessingChatSelection(true);
+    try {
+      await router.push(`/dashboard?active_tab=chat&id=${id}`);
+      setOpenMenu(false);
+    } finally {
+      setTimeout(() => {
+        setIsProcessingChatSelection(false);
+      }, 500);
+    }
+  }, [router, setOpenMenu, isProcessingChatSelection]);
+
   const handleDeleteMessage = () => {
     setIsDeleteMessageOpen(false)
     if (messageIds) {
@@ -96,7 +107,7 @@ const ChatMode = () => {
       toast.success(t("message-deleted"))
     }
   }
-
+  
   const handleCloseDeleteMessage = () => {
     setIsDeleteMessageOpen(false)
   }

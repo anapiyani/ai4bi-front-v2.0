@@ -9,7 +9,7 @@ const ScreenShareContent = () => {
 
 	return (
 		<div className="w-full h-full">
-			<div className='flex justify-between items-center'>
+			<div className='flex justify-between gap-2 flex-col lg:flex-row md:flex-row'>
 				<div>
 					<h1 className='text-brand-gray text-lg font-semibold'>{t("demonstration_of_technical_council")}</h1>
 				</div>

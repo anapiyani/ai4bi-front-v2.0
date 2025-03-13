@@ -41,7 +41,7 @@ const HeaderButtons = ({isMicrophoneOn}: {isMicrophoneOn: boolean}) => {
 			variant={variant}
 			onClick={onClick}
 		>
-			{text}
+			<p className='hidden lg:block md:block'>{text}</p>
 			<Icons.HeaderClose />
 		</Button>
 	)
