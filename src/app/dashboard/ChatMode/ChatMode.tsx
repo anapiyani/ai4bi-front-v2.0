@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { motion } from "framer-motion"
 import { useLocale, useTranslations } from "next-intl"
 import { useRouter, useSearchParams } from "next/navigation"
-import { memo, useEffect, useMemo, useState } from "react"
+import { memo, useCallback, useEffect, useMemo, useState } from "react"
 import toast from 'react-hot-toast'
 import ChatMenu from "../../components/Chat/ChatMenu/ChatMenu"
 import DeleteMessage from "../../components/Chat/DeleteMessage"
@@ -31,6 +31,7 @@ const ChatMode = () => {
   const [activeTab, setActiveTab] = useState("your-auctions");
   const [privateChatResult, setPrivateChatResult] = useState<AutoCompleteResponse[] | null>(null)
   const {mutate: createPrivateChatMutation, isPending: isCreatingPrivateChat} = useCreatePrivateChat();
+  const [isProcessingChatSelection, setIsProcessingChatSelection] = useState(false);
 
   const {
     isConnected,
@@ -83,10 +84,20 @@ const ChatMode = () => {
     [conversations]
   )
 
-  const handleItemClick = (id: string) => {
-    router.push(`/dashboard?active_tab=chat&id=${id}`)
-    setOpenMenu(false)
-  }
+  const handleItemClick = useCallback(async (id: string) => {
+    if (isProcessingChatSelection) return;
+    
+    setIsProcessingChatSelection(true);
+    try {
+      await router.push(`/dashboard?active_tab=chat&id=${id}`);
+      setOpenMenu(false);
+    } finally {
+      setTimeout(() => {
+        setIsProcessingChatSelection(false);
+      }, 500);
+    }
+  }, [router, setOpenMenu, isProcessingChatSelection]);
+
   const handleDeleteMessage = () => {
     setIsDeleteMessageOpen(false)
     if (messageIds) {
@@ -96,7 +107,7 @@ const ChatMode = () => {
       toast.success(t("message-deleted"))
     }
   }
-
+  
   const handleCloseDeleteMessage = () => {
     setIsDeleteMessageOpen(false)
   }
@@ -122,7 +133,7 @@ const ChatMode = () => {
 
   return (
     <div className="w-full flex flex-col lg:flex-row bg-primary-foreground justify-center">
-      <aside className={`w-full lg:w-1/3 bg-primary-foreground h-full px-3 py-3 lg:px-6 lg:py-6 ${chatId ? "hidden lg:block" : "block"}`}>
+      <aside className={`lg:max-w-[470px] lg:min-w-[300px] flex-shrink-0 w-full bg-primary-foreground h-full px-3 py-3 lg:px-6 lg:py-6 ${chatId ? "hidden lg:block" : "block"}`}>
         <Tabs defaultValue="your-auctions" onValueChange={setActiveTab}>
           <div className="flex flex-col">
             <div className='flex justify-between items-center'>
@@ -176,7 +187,7 @@ const ChatMode = () => {
                       <TabsTrigger
                         key={tab.value}
                         value={tab.value}
-                        className={`w-full lg:w-auto ${locale === "kz" ? "text-[13px]" : "text-xs"} whitespace-nowrap lg:text-sm md:text-sm`}
+                        className={`w-full lg:w-auto ${locale === "kz" ? "text-[13px]" : "text-xs"} whitespace-nowrap lg:text-sm md:text-sm px-[6px]`}
                       >
                         {t(tab.translationKey)}
                       </TabsTrigger>
@@ -291,7 +302,9 @@ const ChatMode = () => {
         </Tabs>
       </aside>
 
-      <div className={`${chatId ? 'flex' : 'hidden mx-0 mt-0 lg:flex'} w-full lg:w-2/3 lg:mt-6 lg:mx-4 lg:mr-4 rounded-lg bg-secondary min-h-[calc(100vh-8rem)] lg:py-3 justify-center`}>
+      <div className={`${chatId ? 'flex' : 'hidden mx-0 mt-0 lg:flex'} w-full lg:w-2/3 lg:mt-6 lg:mx-4 lg:mr-4 rounded-lg bg-secondary min-h-[calc(100vh-8rem)] lg:py-3 justify-center flex-1
+      h-full
+      overflow-hidden items-center ${openMenu ? "hidden lg:flex" : "flex"}`}>
         <ChatContent
           chatId={chatId || ""}
           selectedConversation={selectedConversation}
@@ -325,7 +338,7 @@ const ChatMode = () => {
       </div>
       {openMenu && selectedConversation && (
         <div
-          className="w-2/5">
+          className="w-full lg:block lg:w-[300px] flex-shrink-0 overflow-y-auto px-4 lg:px-0">  
           <ChatMenu
             type={selectedConversationType}
             setOpenMenu={setOpenMenu}

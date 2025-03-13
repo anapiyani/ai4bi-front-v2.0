@@ -23,8 +23,8 @@ const ChatMenu = ({type, setOpenMenu, name, participants, addParticipantsToAucti
   return (
     <div  
       className="w-full h-[calc(100vh-100px)] overflow-y-auto flex">
-      <div className='flex flex-col gap-2 py-6 w-full'>
-        <div className='flex justify-between items-center'>
+      <div className='flex flex-col gap-2 py-6 w-full items-center'>
+        <div className='w-full flex justify-between'>
           <h2 className='text-primary font-semibold text-lg mb-2'>{type === "private" ? name : type === "group" ? name : t("about-auction")}</h2>
           <Button variant="ghost" size="icon" className='p-1' onClick={() => setOpenMenu(false)}>
             <Icons.Close />

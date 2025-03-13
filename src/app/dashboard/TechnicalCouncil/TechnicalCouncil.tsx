@@ -331,7 +331,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({ isMicrophoneOn, tog
         </div>
         </Tabs>
       </div>
-      <div className={`${openSideMenu ? "lg:basis-[5%] md:basis-[5%]" : "lg:basis-[30%] md:basis-[40%]"} h-[calc(100vh-15.5rem)] flex flex-col rounded-lg gap-1`}>
+      <div className={`${openSideMenu ? "lg:basis-[5%] md:basis-[5%]" : "lg:basis-[30%] md:basis-[40%]"} h-[calc(100vh-15.5rem)] flex-col rounded-lg gap-1 hidden lg:flex md:flex`}>
         <h2 className='text-brand-orange text-base font-bold'>{t("Aray")} - {openSideMenu ? null : t("bot")}</h2>
         <div>
           <BotVisualizer stream={null} type='default' small={openSideMenu} />

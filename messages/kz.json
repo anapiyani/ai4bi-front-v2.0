@@ -207,7 +207,9 @@
 		"notifications": "Хабарландырулар",
 		"project_command": "Жоба командасы",
 		"partners": "Партнерлер",
-		"join": "Қосылу"
+		"join": "Қосылу",
+		"choose_city": "Қала таңдаңыз",
+		"continue": "Жалғастыру"
 	},
 	"dropzone": {
 		"upload_files": "Файлдарды жүктеу",
