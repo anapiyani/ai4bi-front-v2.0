@@ -207,7 +207,9 @@
 		"notifications": "Notifications",
 		"project_command": "Project command",
 		"partners": "Partners",
-		"join": "Join"
+		"join": "Join",
+		"choose_city": "Choose city",
+		"continue": "Continue"
 	},
 	"dropzone": {
 		"upload_files": "Upload files",

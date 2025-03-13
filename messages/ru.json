@@ -209,7 +209,9 @@
 		"notifications": "Уведомления",
 		"project_command": "Команда проекта",
 		"partners": "Партнеры",
-		"join": "Присоединиться"
+		"join": "Присоединиться",
+		"choose_city": "Выберите город",
+		"continue": "Продолжить"
 	},
 	"dropzone": {
 		"upload_files": "Загрузить файлы",
