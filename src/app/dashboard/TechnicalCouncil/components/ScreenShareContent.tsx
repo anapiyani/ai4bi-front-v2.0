@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { toast } from '@/components/ui/use-toast'
 import { Check, Info, Layout, Monitor, Settings, X } from "lucide-react"
+import Image from "next/image"; // <-- Import from next/image
 import { useEffect, useRef, useState } from "react"
 
 type ScreenSource = {
@@ -45,7 +46,6 @@ export default function ScreenSharing() {
 
   // Detect browser
   useEffect(() => {
-    // Detect browser
     const userAgent = navigator.userAgent
     let browser = "Unknown"
 
@@ -54,10 +54,10 @@ export default function ScreenSharing() {
       setBrowserSupportsSelection(true)
     } else if (userAgent.indexOf("Firefox") > -1) {
       browser = "Firefox"
-      setBrowserSupportsSelection(true) // Firefox has its own picker
+      setBrowserSupportsSelection(true)
     } else if (userAgent.indexOf("Safari") > -1) {
       browser = "Safari"
-      setBrowserSupportsSelection(false) // Safari might need custom UI
+      setBrowserSupportsSelection(false)
     } else if (userAgent.indexOf("Edge") > -1 || userAgent.indexOf("Edg") > -1) {
       browser = "Edge"
       setBrowserSupportsSelection(true)
@@ -150,7 +150,6 @@ export default function ScreenSharing() {
         // This is a simplified version that still uses getDisplayMedia
         const stream = await navigator.mediaDevices.getDisplayMedia({
           video: {
-            // Apply quality constraints
             width: { ideal: quality.width },
             height: { ideal: quality.height },
             frameRate: { ideal: quality.frameRate },
@@ -174,7 +173,6 @@ export default function ScreenSharing() {
     // Get actual constraints that were applied
     const videoTrack = stream.getVideoTracks()[0]
     const settings = videoTrack.getSettings()
-
     console.log("Applied settings:", settings)
 
     // Set the stream to the video element
@@ -214,7 +212,7 @@ export default function ScreenSharing() {
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button
-								className='lg:flex hidden'
+                className='lg:flex hidden'
                 variant={isSharing ? "destructive" : "default"}
                 onClick={() => (isSharing ? stopSharing() : null)}
               >
@@ -231,7 +229,7 @@ export default function ScreenSharing() {
                   <Alert>
                     <Info className="h-4 w-4" />
                     <AlertDescription>
-                      {browserName} will show you a screen selection dialog after you click "Start Sharing".
+                      {browserName} will show you a screen selection dialog after you click &quot;Start Sharing&quot;.
                     </AlertDescription>
                   </Alert>
 
@@ -284,12 +282,16 @@ export default function ScreenSharing() {
                         {getSourcesByType("screen").map((screen) => (
                           <div
                             key={screen.id}
-                            className={`relative rounded-md overflow-hidden cursor-pointer border-2 ${selectedSource?.id === screen.id ? "border-primary" : "border-transparent"}`}
+                            className={`relative rounded-md overflow-hidden cursor-pointer border-2 ${
+                              selectedSource?.id === screen.id ? "border-primary" : "border-transparent"
+                            }`}
                             onClick={() => setSelectedSource(screen)}
                           >
-                            <img
+                            <Image
                               src={screen.thumbnail || "/placeholder.svg"}
                               alt={screen.name}
+                              width={320}
+                              height={180}
                               className="w-full h-auto"
                             />
                             <div className="absolute bottom-0 left-0 right-0 bg-black/70 p-2 flex items-center">
@@ -306,12 +308,16 @@ export default function ScreenSharing() {
                         {getSourcesByType("window").map((window) => (
                           <div
                             key={window.id}
-                            className={`relative rounded-md overflow-hidden cursor-pointer border-2 ${selectedSource?.id === window.id ? "border-primary" : "border-transparent"}`}
+                            className={`relative rounded-md overflow-hidden cursor-pointer border-2 ${
+                              selectedSource?.id === window.id ? "border-primary" : "border-transparent"
+                            }`}
                             onClick={() => setSelectedSource(window)}
                           >
-                            <img
+                            <Image
                               src={window.thumbnail || "/placeholder.svg"}
                               alt={window.name}
+                              width={320}
+                              height={180}
                               className="w-full h-auto"
                             />
                             <div className="absolute bottom-0 left-0 right-0 bg-black/70 p-2 flex items-center">
@@ -372,7 +378,7 @@ export default function ScreenSharing() {
           ) : (
             <div className="text-center p-6">
               <Monitor className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-              <p className="text-muted-foreground">Click "Share Your Screen" to begin</p>
+              <p className="text-muted-foreground">Click &quot;Share Your Screen&quot; to begin</p>
             </div>
           )}
         </div>
@@ -392,4 +398,3 @@ export default function ScreenSharing() {
     </div>
   )
 }
-
