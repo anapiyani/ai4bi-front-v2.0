@@ -219,7 +219,8 @@
 		"failed_to_start_screen_sharing": "Failed to start screen sharing",
 		"unknown_error_occurred": "Unknown error occurred",
 		"please_select_a_screen_or_application_to_share": "Please select a screen or application to share",
-		"error": "Error"
+		"error": "Error",
+		"downloading-media": "Downloading..."
 	},
 	"dropzone": {
 		"upload_files": "Upload files",

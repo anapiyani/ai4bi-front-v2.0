@@ -199,7 +199,7 @@ export const useChatWebSocket = () => {
   useEffect(() => {
     notificationAudioRef.current.load();
     notification2AudioRef.current.load();
-  }, []);
+  });
 
   useEffect(() => {
     currentUserRef.current = currentUser;

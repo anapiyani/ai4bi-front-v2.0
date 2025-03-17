@@ -36,7 +36,7 @@ const useAutoComplete = () => {
           setResults(res.data);
         }
       });
-    }, 1000);
+    }, 500);
 
     return () => clearTimeout(timer);
   }, [search, refetch]);

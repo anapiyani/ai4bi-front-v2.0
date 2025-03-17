@@ -219,7 +219,8 @@
 		"failed_to_start_screen_sharing": "Экран бөлісуді бастауда қате",
 		"unknown_error_occurred": "Белгісіз қате",
 		"please_select_a_screen_or_application_to_share": "Экран немесе қолданыс программасын таңдаңыз",
-		"error": "Қате"
+		"error": "Қате",
+		"downloading-media": "Жүктеу..."
 	},
 	"dropzone": {
 		"upload_files": "Файлдарды жүктеу",
