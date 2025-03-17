@@ -209,7 +209,17 @@
 		"partners": "Партнерлер",
 		"join": "Қосылу",
 		"choose_city": "Қала таңдаңыз",
-		"continue": "Жалғастыру"
+		"continue": "Жалғастыру",
+		"call_transcription": "Звонок транскрипциясы",
+		"stop_demonstration": "Демонстрация тоқтату",
+		"click_start_demonstration": "\"Демонстрация экрана\" басыңыз",
+		"retry_connection": "Қосылуды қайталау",
+		"screen_capture_not_displaying_properly": "Экран кескіні дұрыс көрсетілмейді",
+		"no_video_track_found_in_the_stream": "Потокта видео жоқ",
+		"failed_to_start_screen_sharing": "Экран бөлісуді бастауда қате",
+		"unknown_error_occurred": "Белгісіз қате",
+		"please_select_a_screen_or_application_to_share": "Экран немесе қолданыс программасын таңдаңыз",
+		"error": "Қате"
 	},
 	"dropzone": {
 		"upload_files": "Файлдарды жүктеу",

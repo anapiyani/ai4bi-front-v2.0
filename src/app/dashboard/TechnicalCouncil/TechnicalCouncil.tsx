@@ -104,7 +104,6 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
   return (
     <div className='w-full flex flex-col lg:flex-row bg-neutral-secondary justify-center px-0 lg:px-4'>
       <div className='w-full flex gap-4 lg:mt-4'>
-        {/* Left side content */}
         <div
           className={`${
             openSideMenu ? 'lg:basis-[95%] md:basis-[95%]' : 'lg:basis-[70%] md:basis-[60%]'
@@ -123,12 +122,10 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
             </div>
 
             <TabsContent value="demonstration">
-              <div className='w-full h-full'>
-                {/* Your screen share content */}
+              <div className='w-full h-[calc(100vh-15.5rem)] overflow-y-auto'>
                 <ScreenShareContent />
-
-                {/* Display transcription from the hook */}
-                <div className='w-full h-[300px] overflow-y-auto rounded-lg p-2 flex flex-col gap-2'>
+                <div className='w-full h-[200px] overflow-y-auto rounded-lg p-2 flex flex-col gap-2'>
+                  <h2 className='text-brand-gray text-lg font-semibold'>{t('call_transcription')}</h2>
                   {transcription.map((textObj, index) => (
                     <p key={index} className='text-sm text-wrap text-muted-foreground'>
                       {textObj.name}: {textObj.text}
@@ -148,7 +145,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
         <div
           className={`${
             openSideMenu ? 'lg:basis-[5%] md:basis-[5%]' : 'lg:basis-[30%] md:basis-[40%]'
-          } h-[calc(100vh-15.5rem)] flex-col rounded-lg gap-1 hidden lg:flex md:flex`}
+          } h-[calc(100vh-15.5rem)] flex-col rounded-lg gap-1 hidden lg:flex md:flex md:mr-2`}
         >
           <h2 className='text-brand-orange text-base font-bold'>
             {t('Aray')} - {openSideMenu ? null : t('bot')}
