@@ -1,5 +1,6 @@
 "use client";
-
+// when leaving close the rtc connection
+// show error on audio not loaded
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import ChatHeader from "@/src/app/components/Chat/ChatHeader"

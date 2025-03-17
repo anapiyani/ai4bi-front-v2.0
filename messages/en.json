@@ -220,7 +220,9 @@
 		"unknown_error_occurred": "Unknown error occurred",
 		"please_select_a_screen_or_application_to_share": "Please select a screen or application to share",
 		"error": "Error",
-		"downloading-media": "Downloading..."
+		"downloading-media": "Downloading...",
+		"rtc_not_connected_please_try_later": "RTC not connected, please try later",
+		"go_back": "Go back"
 	},
 	"dropzone": {
 		"upload_files": "Upload files",
