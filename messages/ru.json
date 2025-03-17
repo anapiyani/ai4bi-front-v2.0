@@ -221,7 +221,8 @@
 		"failed_to_start_screen_sharing": "Не удалось начать совместное использование экрана",
 		"unknown_error_occurred": "Неизвестная ошибка",
 		"please_select_a_screen_or_application_to_share": "Пожалуйста, выберите экран или приложение для совместного использования",
-		"error": "Ошибка"
+		"error": "Ошибка",
+		"downloading-media": "Загрузка..."
 	},
 	"dropzone": {
 		"upload_files": "Загрузить файлы",

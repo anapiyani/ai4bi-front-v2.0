@@ -1,16 +1,28 @@
-import React from "react"
+import React, { useEffect } from "react"
 import Icons from '../components/Icons'
 import { Media } from "../types/types"
 import { ImageMedia } from './RenderMediaItems/Image'
 
 import { Skeleton } from '@/components/ui/skeleton'
+import toast from 'react-hot-toast'
 import AudioMedia from './RenderMediaItems/Audio'
+import { useDownloadMedia } from './useUploadMedia'
 export function useRenderMediaContent(
   media: string[] | string | Media[] | Media | null | undefined,
   t: (key: string) => string,
   isUser: boolean,
   small?: boolean
 ) {
+  const {mutate: downloadMedia, isPending: isDownloading} = useDownloadMedia();
+
+  useEffect(() => {
+    if (isDownloading) {
+      toast.loading(t("downloading-media"));
+    } else {
+      toast.dismiss();
+    }
+  }, [isDownloading]);
+
   const renderSingleMedia = React.useCallback(
     (item: string | Media) => {
       if (typeof item === "string") {
@@ -32,7 +44,7 @@ export function useRenderMediaContent(
           default:
             return (
               <div className="flex justify-between gap-2 items-start mb-2 rounded-lg w-full">
-								<a href={`https://staging.ai4bi.kz/media/download/${media_id}`} rel="noopener noreferrer" className="flex gap-2 h-full w-full">
+								<button onClick={() => downloadMedia({uuid: media_id, name: name})} disabled={isDownloading} rel="noopener noreferrer" className="flex gap-2 h-full w-full">
 									<div className='flex justify-center items-center bg-neutrals-secondary rounded px-3 py-3'>
 										{media_type === "file" && <Icons.PDF className='w-6 h-6 text-neutrals-muted' />}
                     { type === "file" && <Icons.PDF className='w-6 h-6 text-neutrals-muted' />}
@@ -47,7 +59,7 @@ export function useRenderMediaContent(
 												}
 											</p>
 										</div>
-									</a>
+									</button>
               </div>
             )
         }

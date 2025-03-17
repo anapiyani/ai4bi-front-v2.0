@@ -66,3 +66,28 @@ export const useShowInlineAudio = (uuid: string) => {
     gcTime: 1000 * 60 * 5,
   });
 };
+
+
+export const useDownloadMedia = () => {
+  return useMutation({
+    mutationFn: ({uuid, name}: {uuid: string, name: string}) => {
+      return get(`/media/download/${uuid}`, { responseType: "blob" });
+    },
+    onSuccess: (data, {uuid, name}) => {
+      const url = URL.createObjectURL(data as Blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = name;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Error downloading media",
+      });
+    },
+  });
+}
