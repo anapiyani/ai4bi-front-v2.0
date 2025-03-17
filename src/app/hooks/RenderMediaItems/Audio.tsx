@@ -29,42 +29,75 @@ const AudioMedia = ({ mediaId, name, small, t, isUser }: { mediaId: string, name
 	
   useEffect(() => {
     if (!audioUrl || !waveformRef.current) return
-    const waveSurfer = WaveSurfer.create({
-      container: waveformRef.current,
-      waveColor: isUser ? '#ffffff80' : '#00000040',
-      progressColor: isUser ? '#F97316' : '#F97316',
-      height: 30,
-      barWidth: 4,
-      barGap: 3,
-      barRadius: 3,
-      cursorWidth: 0,
-      normalize: true,
-      fillParent: true
-    })
 
-    waveSurferRef.current = waveSurfer
+    let waveSurfer: WaveSurfer | null = null;
+    try {
+      waveSurfer = WaveSurfer.create({
+        container: waveformRef.current,
+        waveColor: isUser ? '#ffffff80' : '#00000040',
+        progressColor: isUser ? '#F97316' : '#F97316',
+        height: 30,
+        barWidth: 4,
+        barGap: 3,
+        barRadius: 3,
+        cursorWidth: 0,
+        normalize: true,
+        fillParent: true
+      })
 
-    waveSurfer.load(audioUrl)
+      waveSurferRef.current = waveSurfer
 
-    waveSurfer.on('ready', () => {
-      setDuration(waveSurfer.getDuration())
-    })
+      waveSurfer.load(audioUrl)
 
-    waveSurfer.on('audioprocess', (time) => {
-      setCurrentTime(time)
-    })
+      waveSurfer.on('ready', () => {
+        try {
+          setDuration(waveSurfer?.getDuration() || 0)
+        } catch (err) {
+          console.error('Error getting audio duration:', err)
+          setDuration(0)
+        }
+      })
 
-    waveSurfer.on('finish', () => {
-      setIsPlaying(false)
-    })
+      waveSurfer.on('error', (err) => {
+        console.error('WaveSurfer error:', err)
+      })
 
-    const waveformEl = waveformRef.current
-    waveformEl.addEventListener('click', togglePlay)
+      waveSurfer.on('audioprocess', (time) => {
+        try {
+          setCurrentTime(time)
+        } catch (err) {
+          console.error('Error updating current time:', err)
+        }
+      })
 
-    return () => {
-      waveSurfer.destroy()
-      waveformEl.removeEventListener('click', togglePlay)
-      if (audioUrl) URL.revokeObjectURL(audioUrl)
+      waveSurfer.on('finish', () => {
+        setIsPlaying(false)
+      })
+
+      const waveformEl = waveformRef.current
+      waveformEl.addEventListener('click', togglePlay)
+
+      return () => {
+        try {
+          if (waveSurfer) {
+            waveSurfer.destroy()
+          }
+          waveformEl.removeEventListener('click', togglePlay)
+          if (audioUrl) {
+            URL.revokeObjectURL(audioUrl)
+          }
+        } catch (err) {
+          console.error('Error cleaning up WaveSurfer:', err)
+        }
+      }
+
+    } catch (err) {
+      console.error('Error initializing WaveSurfer:', err)
+      return () => {
+        if (audioUrl) {
+          URL.revokeObjectURL(audioUrl)
+        }
+      }
     }
   }, [audioUrl, isUser, togglePlay])
 
