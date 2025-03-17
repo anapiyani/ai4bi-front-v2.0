@@ -20,7 +20,7 @@ export const useWebRTC = ({ room, isMicrophoneOn }: UseWebRTCProps) => {
 
   const speakingUsers = useRef<Map<string, boolean>>(new Map())
   const connectedUsers = useRef<Map<string, any>>(new Map())
-
+  const [isRTCNotConnected, setIsRTCNotConnected] = useState(false)
   const wsRef = useRef<WebSocket | null>(null)
   const peerRef = useRef<RTCPeerConnection | null>(null)
 
@@ -53,6 +53,13 @@ export const useWebRTC = ({ room, isMicrophoneOn }: UseWebRTCProps) => {
     })
   }
 
+  const closeRTCConnection = () => {
+    if (wsRef.current) {
+      wsRef.current.close()
+      wsRef.current = null
+    }
+  }
+
   useEffect(() => {
     let isUnmounting = false
 
@@ -65,7 +72,6 @@ export const useWebRTC = ({ room, isMicrophoneOn }: UseWebRTCProps) => {
             video: false
           });
         } catch (err) {
-          console.error('Failed to get user media:', err);
           stream = new MediaStream();
         }
 
@@ -222,13 +228,16 @@ export const useWebRTC = ({ room, isMicrophoneOn }: UseWebRTCProps) => {
         ws.onclose = () => {
           console.log('WebSocket closed')
           clearInterval(pingInterval)
+          setIsRTCNotConnected(true)
         }
 
         ws.onerror = (error) => {
           console.error('WebSocket error:', error)
+          setIsRTCNotConnected(true)
         }
       } catch (err) {
         console.log('Error starting RTC connection', err)
+        setIsRTCNotConnected(true)
       }
     }
 
@@ -263,6 +272,8 @@ export const useWebRTC = ({ room, isMicrophoneOn }: UseWebRTCProps) => {
     remoteAudios,
     transcription,
     speakingUsers,
-    connectedUsers
+    connectedUsers,
+    isRTCNotConnected,
+    closeRTCConnection
   }
 }

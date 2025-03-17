@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useTranslations } from 'next-intl'
 import dynamic from 'next/dynamic'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Toaster } from "react-hot-toast"
 import { get } from '../api/service/api'
 import { deleteCookie, getCookie, setCookie } from '../api/service/cookie'
@@ -25,6 +25,7 @@ export default function Dashboard() {
   const authHeader = useAuthHeader()
   const chatId = searchParams.get("id")
   let active_tab = searchParams.get("active_tab") as activity_status
+  const closeRTCConnection = useRef<(() => void) | null>(null)
 
   if (
     !active_tab ||
@@ -72,7 +73,13 @@ export default function Dashboard() {
   const getActive = (active_tab: activity_status) => {
     const components = {
       chat: () => <ChatMode />, 
-      "technical-council": () => <TechnicalCouncil isMicrophoneOn={isMicrophoneOn} toggleMicrophone={toggleMicrophone} />,
+      "technical-council": () => <TechnicalCouncil
+      isMicrophoneOn={isMicrophoneOn}
+      toggleMicrophone={toggleMicrophone}
+      closingTechnicalCouncil={(closeFunc) => {
+        closeRTCConnection.current = closeFunc
+      }}
+    />,
       "auction-results": () => <AuctionResults />,
       auction: () => <Auction />  
     } as const
@@ -99,6 +106,10 @@ export default function Dashboard() {
         router.push('/dashboard?active_tab=chat')
         break
       case "technical-council":
+        if (closeRTCConnection.current) {
+          closeRTCConnection.current()
+        }
+        setIsMicrophoneOn(false)
         router.push('/dashboard?active_tab=chat')
         break
       case "chat":

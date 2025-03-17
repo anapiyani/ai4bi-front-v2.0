@@ -12,19 +12,24 @@ import ProtocolTable from '../../components/Form/ProtocolTable'
 import { useChatWebSocket } from '../../hooks/useChatWebSocket'
 import ScreenShareContent from './components/ScreenShareContent'
 
+import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { useRouter } from 'next/navigation'
 import { useWebRTC } from '../../hooks/useWebRTC'
-
 const BotVisualizer = dynamic(() => import('../../components/Bot/BotVisualizer'), { ssr: false })
 
 interface TechnicalCouncilProps {
   isMicrophoneOn: boolean
-  toggleMicrophone: () => void
+  toggleMicrophone: () => void,
+  closingTechnicalCouncil: (closeFunc: () => void) => void
 }
 
 const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
   isMicrophoneOn,
-  toggleMicrophone
+  toggleMicrophone,
+  closingTechnicalCouncil
 }) => {
+  const router = useRouter()
   const t = useTranslations('dashboard')
   const searchParams = useSearchParams()
   const chat_id = searchParams.get('chat_id')
@@ -70,8 +75,18 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
     remoteAudios,
     transcription,
     speakingUsers,
-    connectedUsers
+    connectedUsers,
+    isRTCNotConnected,
+    closeRTCConnection,
   } = useWebRTC({ room, isMicrophoneOn })
+
+  useEffect(() => {
+    closingTechnicalCouncil(() => closeRTCConnection)
+
+    if (chat_id) {
+      setSelectedConversation(chat_id)
+    }
+  }, [chat_id, setSelectedConversation, closingTechnicalCouncil, closeRTCConnection])
 
   useEffect(() => {
     if (chat_id) {
@@ -201,6 +216,22 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
           <audio src={audio.src} autoPlay />
         </div>
       ))}
+      {isRTCNotConnected ? (
+        <Dialog open={isRTCNotConnected}>
+          <DialogContent className='w-full flex justify-center items-center flex-col gap-2 bg-white'>
+            <DialogHeader>
+              <DialogTitle className='text-brand-orange text-base font-bold'>
+                {t('rtc_not_connected_please_try_later')}
+              </DialogTitle>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => router.push('/')}>
+                {t('go_back')}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      ) : null}
     </div>
   )
 }

@@ -222,7 +222,9 @@
 		"unknown_error_occurred": "Неизвестная ошибка",
 		"please_select_a_screen_or_application_to_share": "Пожалуйста, выберите экран или приложение для совместного использования",
 		"error": "Ошибка",
-		"downloading-media": "Загрузка..."
+		"downloading-media": "Загрузка...",
+		"rtc_not_connected_please_try_later": "RTC не подключен, попробуйте позже",
+		"go_back": "Вернуться назад"
 	},
 	"dropzone": {
 		"upload_files": "Загрузить файлы",
