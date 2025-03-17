@@ -211,7 +211,17 @@
 		"partners": "Партнеры",
 		"join": "Присоединиться",
 		"choose_city": "Выберите город",
-		"continue": "Продолжить"
+		"continue": "Продолжить",
+		"call_transcription": "Транскрипция звонка",
+		"stop_demonstration": "Остановить демонстрацию",
+		"click_start_demonstration": "Нажмите \"Демонстрация экрана\" для начала",
+		"retry_connection": "Повторить соединение",
+		"screen_capture_not_displaying_properly": "Скриншот не отображается корректно",
+		"no_video_track_found_in_the_stream": "В потоке не найден видео",
+		"failed_to_start_screen_sharing": "Не удалось начать совместное использование экрана",
+		"unknown_error_occurred": "Неизвестная ошибка",
+		"please_select_a_screen_or_application_to_share": "Пожалуйста, выберите экран или приложение для совместного использования",
+		"error": "Ошибка"
 	},
 	"dropzone": {
 		"upload_files": "Загрузить файлы",

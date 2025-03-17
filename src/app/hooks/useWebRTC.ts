@@ -58,10 +58,16 @@ export const useWebRTC = ({ room, isMicrophoneOn }: UseWebRTCProps) => {
 
     const start = async () => {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
-          video: false
-        })
+        let stream;
+        try {
+          stream = await navigator.mediaDevices?.getUserMedia({
+            audio: true,
+            video: false
+          });
+        } catch (err) {
+          console.error('Failed to get user media:', err);
+          stream = new MediaStream();
+        }
 
         if (isUnmounting) return
         setLocalStream(stream)
@@ -106,7 +112,7 @@ export const useWebRTC = ({ room, isMicrophoneOn }: UseWebRTCProps) => {
         peerRef.current = peerConnection
 
         stream
-          .getAudioTracks()
+          ?.getAudioTracks()
           .forEach((track) => peerConnection.addTrack(track, stream))
 
         isMicrophoneOn

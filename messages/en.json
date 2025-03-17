@@ -209,7 +209,17 @@
 		"partners": "Partners",
 		"join": "Join",
 		"choose_city": "Choose city",
-		"continue": "Continue"
+		"continue": "Continue",
+		"call_transcription": "Call transcription",
+		"stop_demonstration": "Stop demonstration",
+		"click_start_demonstration": "Click \"Demonstration screen\" to start",
+		"retry_connection": "Retry connection",
+		"screen_capture_not_displaying_properly": "Screen capture not displaying properly",
+		"no_video_track_found_in_the_stream": "No video track found in the stream",
+		"failed_to_start_screen_sharing": "Failed to start screen sharing",
+		"unknown_error_occurred": "Unknown error occurred",
+		"please_select_a_screen_or_application_to_share": "Please select a screen or application to share",
+		"error": "Error"
 	},
 	"dropzone": {
 		"upload_files": "Upload files",
