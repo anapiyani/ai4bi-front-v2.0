@@ -127,7 +127,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="flex w-full h-screen flex-col">
+    <div className="flex w-full h-full flex-col">
       <div className={`w-full ${chatId ? "hidden lg:block" : "block"}`}>
         <Header 
           type={active_tab} 
