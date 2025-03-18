@@ -15,6 +15,7 @@ import ScreenShareContent from './components/ScreenShareContent'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { useRouter } from 'next/navigation'
+import Icons from '../../components/Icons'
 import { useWebRTC } from '../../hooks/useWebRTC'
 const BotVisualizer = dynamic(() => import('../../components/Bot/BotVisualizer'), { ssr: false })
 
@@ -134,6 +135,17 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
                   {t('protocol_table')}
                 </TabsTrigger>
               </TabsList>
+              {
+                openSideMenu ? (
+                  <div className='flex justify-end items-center md:hidden lg:hidden px-2' onClick={() => setOpenSideMenu(false)}>
+                    <Icons.SideMenu />
+                  </div>
+                ) : (
+                  <div className='flex justify-end items-center md:hidden lg:hidden px-2' onClick={() => setOpenSideMenu(true)}>
+                    <Icons.SideMenu_Open />
+                  </div>
+                )
+              }
             </div>
 
             <TabsContent value="demonstration">

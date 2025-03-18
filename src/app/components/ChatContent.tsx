@@ -240,7 +240,7 @@ const ChatContent = ({
           }
         </div>
       ) : (
-        <div className="h-screen lg:h-full">
+        <div className="lg:h-full">
           <ChatHeader  
             title={title || ""} 
             typingStatuses={typingStatuses}
@@ -295,7 +295,7 @@ const ChatContent = ({
       ) : (
         techCouncilMenuValue === "chat" ? (
           <div className={`flex-grow bg-neutrals-secondary ${isTechnicalCouncil ? "rounded-lg" : ""}`}>
-            <div className={`${isTechnicalCouncil ? "h-[calc(90vh-270px)]" : "h-[calc(100vh-240px)]"} overflow-y-auto flex flex-col`} ref={messagesRef}>
+            <div className={`${isTechnicalCouncil ? "h-[calc(90vh-270px)]" : "h-[calc(100vh-130px)] lg:h-[calc(100vh-240px)]"} overflow-y-auto flex flex-col`} ref={messagesRef}>
               <div className="flex flex-col gap-2 px-4 py-2 w-full mt-auto">
                 <div className="flex flex-col gap-1">
                   {messages
