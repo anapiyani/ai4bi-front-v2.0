@@ -11,7 +11,7 @@ import { deleteCookie, getCookie, setCookie } from '../api/service/cookie'
 import { PopUpFactory } from '../components/ExitPopUps/ExitPopUps'
 import Header from '../components/Headers/Headers'
 import { useAuthHeader } from '../hooks/useAuthHeader'
-import { activity_status, MyData } from '../types/types'
+import { activity_status, MyData, TechCouncilUser } from '../types/types'
 
 const Auction = dynamic(() => import('./Auction/Auction'), { ssr: false })
 const AuctionResults = dynamic(() => import('./AuctionResults/AuctionResults'), { ssr: false })
@@ -26,6 +26,7 @@ export default function Dashboard() {
   const chatId = searchParams.get("id")
   let active_tab = searchParams.get("active_tab") as activity_status
   const closeRTCConnection = useRef<(() => void) | null>(null)
+  const [techCouncilUser, setTechCouncilUser] = useState<TechCouncilUser | null>(null)
 
   if (
     !active_tab ||
@@ -73,12 +74,16 @@ export default function Dashboard() {
   const getActive = (active_tab: activity_status) => {
     const components = {
       chat: () => <ChatMode />, 
-      "technical-council": () => <TechnicalCouncil
-      isMicrophoneOn={isMicrophoneOn}
-      toggleMicrophone={toggleMicrophone}
-      closingTechnicalCouncil={(closeFunc) => {
-        closeRTCConnection.current = closeFunc
-      }}
+      "technical-council": () => 
+        <TechnicalCouncil
+          isMicrophoneOn={isMicrophoneOn}
+          toggleMicrophone={toggleMicrophone}
+          closingTechnicalCouncil={(closeFunc) => {
+            closeRTCConnection.current = closeFunc
+          }}
+          onUserUpdate={(user) => {
+            setTechCouncilUser(user)
+          }}
     />,
       "auction-results": () => <AuctionResults />,
       auction: () => <Auction />  
@@ -137,9 +142,10 @@ export default function Dashboard() {
               console.log('Info button clicked')
             },
             audioButtonClick: toggleMicrophone,  
-            exitButtonClick: handleExitType
+            exitButtonClick: handleExitType,
           }} 
-          isMicrophoneOn={isMicrophoneOn} 
+          isMicrophoneOn={isMicrophoneOn}
+          techCouncilUser={techCouncilUser}
         />
       </div>
       <div className='w-full'>

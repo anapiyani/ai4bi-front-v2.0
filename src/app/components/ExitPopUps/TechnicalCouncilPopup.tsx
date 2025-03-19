@@ -1,13 +1,65 @@
+import { Button } from '@/components/ui/button'
 import { useTranslations } from 'next-intl'
-import { PopUpHandlers } from '../../types/types'
-import { PopUp } from './ExitPopUps'
+import { useState } from 'react'
+import { PopUpHandlers, TechCouncilUser } from '../../types/types'
+import Icons from '../Icons'
 
+type TechnicalCouncilLeaveButtonProps = {
+	handlers: PopUpHandlers,
+	techCouncilUser: TechCouncilUser | null
+}
 	
-const TechnicalCouncilPopup = (handlers: PopUpHandlers) => {
+const TechnicalCouncilLeaveButton = ({handlers, techCouncilUser}: TechnicalCouncilLeaveButtonProps) => {
 	const t = useTranslations("dashboard");
+	const [isOpen, setIsOpen] = useState(false)
+	const userRole = techCouncilUser?.role
+
+  const handleToggleDialog = () => {
+    setIsOpen(!isOpen)
+  }
+	
 	return (
-		<PopUp open={true} title={t("leave-technical-council")} description={t("leave-technical-council-description")} t={t} handlers={handlers} />
+		<div className="relative">
+      <Button 
+			className='flex items-center gap-2' 
+				variant="destructive"
+				onClick={handleToggleDialog}
+		>
+			<p className='hidden lg:block md:block'>{t("leave-technical-council")}</p>
+			<Icons.HeaderClose />
+		</Button>	
+
+      {isOpen && (
+        <div className="absolute top-full right-0 mt-2 w-[450px] bg-white rounded-lg shadow-lg overflow-hidden z-50">
+          <div className="px-6 pt-6 pb-3">
+            <h2 className="text-xl font-medium">{userRole === "project_team" || userRole === "admin" ? t("leave-the-call") : t("<quit></quit>-the-call")}</h2>
+            <p className="text-sm text-slate-500 mt-2">{userRole === "project_team" || userRole === "admin" ? t("you-can-quit-the-call") : t("you-can-return-to-the-call")}</p>
+          </div>
+					<div className='flex justify-end mx-4'>
+						<div className='flex my-2 gap-2 w-1/2'>
+							<Button
+								variant="outline"
+								onClick={() => {
+									setIsOpen(false)
+								}}
+								className="flex-1 rounded-md py-6 text-sm font-medium text-slate-800 hover:bg-slate-50"
+							>
+								{t("not_exit")}
+							</Button>
+							<Button
+								onClick={() => {
+									setIsOpen(false)
+								}}
+								className="flex-1 rounded-md py-6 text-sm font-medium bg-red-600 hover:bg-red-700 text-white"
+							>
+							{t("exit")}
+							</Button>
+						</div>
+					</div>
+        </div>
+      )}
+    </div>
 	)
 }
 
-export default TechnicalCouncilPopup;
+export default TechnicalCouncilLeaveButton;

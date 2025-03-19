@@ -1,7 +1,8 @@
 "use client"
 import { Button } from '@/components/ui/button'
 import { useTranslations } from 'next-intl'
-import { activity_status } from '../../types/types'
+import { activity_status, TechCouncilUser } from '../../types/types'
+import TechnicalCouncilLeaveButton from '../ExitPopUps/TechnicalCouncilPopup'
 import Icons from '../Icons'
 import HeaderButtons from './CommonButtons'
 import LocaleSwitcher from './LocaleSwitcher'
@@ -13,15 +14,16 @@ type HeaderProps = {
 	handlers: {
 		infoButtonClick: () => void,
 		audioButtonClick: () => void,
-		exitButtonClick: (type: activity_status) => void
+		exitButtonClick: (type: activity_status) => void,
 	}
+	techCouncilUser: TechCouncilUser | null
 	isMicrophoneOn: boolean
 }
 
 const commonHeaderClasses = 'w-full h-20 flex items-center justify-between m-0 px-2 lg:px-20 md:px-20'
 const commonTitleClasses = 'font-semibold text-sm lg:text-lg md:text-lg'
 
-const Header = ({type, t, handlers, isMicrophoneOn}: HeaderProps) => {
+const Header = ({type, t, handlers, isMicrophoneOn, techCouncilUser}: HeaderProps) => {
 	const { InfoButton, AudioButton, ExitButton } = HeaderButtons({isMicrophoneOn});
 	const HeaderContent = () => {
 		switch(type) {
@@ -57,10 +59,12 @@ const Header = ({type, t, handlers, isMicrophoneOn}: HeaderProps) => {
 						</div>
 						<div className='flex items-center gap-4'>
 							<AudioButton onClick={handlers.audioButtonClick} />
-							<ExitButton
-								text={t("leave-technical-council")}
-								variant="destructive" 
-								onClick={() => handlers.exitButtonClick(type)}
+							<TechnicalCouncilLeaveButton
+								handlers={{
+									stayButtonClick: () => {},
+									exitButtonClick: () => handlers.exitButtonClick(type),
+								}}
+								techCouncilUser={techCouncilUser}
 							/>
 						</div>
 					</div>

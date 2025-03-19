@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useTranslations } from "next-intl"
 import dynamic from "next/dynamic"
 import { useSearchParams } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import DeleteMessage from "../../components/Chat/DeleteMessage"
 import ChatContent from "../../components/ChatContent"
 import { useChatActions } from "../../components/CommonWsActions"
@@ -17,20 +17,24 @@ import ScreenShareContent from "./components/ScreenShareContent"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { useRouter } from "next/navigation"
+import { getCookie } from '../../api/service/cookie'
 import Icons from "../../components/Icons"
 import { useWebRTC } from "../../hooks/useWebRTC"
+import { TechCouncilUser } from '../../types/types'
 const BotVisualizer = dynamic(() => import("../../components/Bot/BotVisualizer"), { ssr: false })
 
 interface TechnicalCouncilProps {
   isMicrophoneOn: boolean
   toggleMicrophone: () => void
-  closingTechnicalCouncil: (closeFunc: () => void) => void
+  closingTechnicalCouncil: (closeFunc: () => void) => void,
+  onUserUpdate?: (user: TechCouncilUser) => void
 }
 
 const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
   isMicrophoneOn,
   toggleMicrophone,
   closingTechnicalCouncil,
+  onUserUpdate,
 }) => {
   const router = useRouter()
   const t = useTranslations("dashboard")
@@ -72,6 +76,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
     handleDeleteMessage,
     handleCloseDeleteMessage,
   } = useChatActions()
+  const userId = getCookie("user_id")
 
   const room = conference_id || "default"
   const {
@@ -117,6 +122,21 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
       role: participant.role,
     }
   })
+
+  const prevUserRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    if (onUserUpdate && userId) {
+      const user = mergedCouncilUsers.find((user) => user.user_id === userId)
+      if (user) {
+        const userRoleString = JSON.stringify(user.role)
+        if (prevUserRef.current !== userRoleString) {
+          prevUserRef.current = userRoleString
+          onUserUpdate(user)
+        }
+      }
+    }
+  }, [mergedCouncilUsers, onUserUpdate, userId])
 
   return (
     <div className="w-full flex flex-col lg:flex-row bg-neutral-secondary justify-center px-0 lg:px-4">

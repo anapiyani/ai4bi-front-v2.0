@@ -222,7 +222,13 @@
 		"error": "Қате",
 		"downloading-media": "Жүктеу...",
 		"rtc_not_connected_please_try_later": "RTC байланысы жоқ, кейінірек қайталаңыз",
-		"go_back": "Қайта қайтару"
+		"go_back": "Қайта қайтару",
+		"not_exit": "Шығуға келмеймін",
+		"project_info": "Жоба ақпараты",
+		"quit-the-call": "Звоноктан шығу",
+		"leave-the-call": "Звоноктан шығу",
+		"you-can-return-to-the-call": "Сіз звонокқа қайта ораласыз, ол жалғасып жатқан кезде.",
+		"you-can-quit-the-call": "Сіз звонокқа қайта ораласыз, ол жалғасып жатқан кезде."
 	},
 	"dropzone": {
 		"upload_files": "Файлдарды жүктеу",
