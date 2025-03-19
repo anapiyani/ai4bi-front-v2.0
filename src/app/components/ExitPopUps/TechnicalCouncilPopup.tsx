@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/Checkbox'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { PopUpHandlers, TechCouncilUser } from '../../types/types'
@@ -35,7 +36,15 @@ const TechnicalCouncilLeaveButton = ({handlers, techCouncilUser}: TechnicalCounc
             <h2 className="text-xl font-medium">{userRole === "project_team" || userRole === "admin" ? t("leave-the-call") : t("<quit></quit>-the-call")}</h2>
             <p className="text-sm text-slate-500 mt-2">{userRole === "project_team" || userRole === "admin" ? t("you-can-quit-the-call") : t("you-can-return-to-the-call")}</p>
           </div>
-					<div className='flex justify-end mx-4'>
+					{
+						userRole === "project_team" || userRole === "admin" ? (
+							<div className='flex justify-start items-center px-6 gap-2 mb-2'>
+								<Checkbox />
+								<p className='text-sm'>{t("finish-the-call")}</p>
+							</div>
+						) : null
+					}
+					<div className={`flex justify-between ${userRole === "project_team" || userRole === "admin" ? "mx-4" : "mx-0"}`}>
 						<div className='flex my-2 gap-2 w-1/2'>
 							<Button
 								variant="outline"
@@ -44,7 +53,9 @@ const TechnicalCouncilLeaveButton = ({handlers, techCouncilUser}: TechnicalCounc
 								}}
 								className="flex-1 rounded-md py-6 text-sm font-medium text-slate-800 hover:bg-slate-50"
 							>
-								{t("not_exit")}
+								{
+									userRole === "project_team" || userRole === "admin" ? t("leave-the-call") : t("not_exit")
+								}
 							</Button>
 							<Button
 								onClick={() => {
@@ -52,7 +63,9 @@ const TechnicalCouncilLeaveButton = ({handlers, techCouncilUser}: TechnicalCounc
 								}}
 								className="flex-1 rounded-md py-6 text-sm font-medium bg-red-600 hover:bg-red-700 text-white"
 							>
-							{t("exit")}
+							{
+								userRole === "project_team" || userRole === "admin" ? t("quit-the-call") : t("exit")
+							}
 							</Button>
 						</div>
 					</div>
