@@ -209,7 +209,7 @@ const ChatContent = ({
   };
 
   return (
-    <div className="flex flex-col w-full h-screen lg:h-full relative py-3 lg:py-0">
+    <div className="flex flex-col w-full h-full relative py-3 lg:py-0">
     {
       isTechnicalCouncil && setOpenSideMenu ? (
         <div className='flex mt-3 px-3 justify-center'>
@@ -240,7 +240,7 @@ const ChatContent = ({
           }
         </div>
       ) : (
-        <div className="h-screen lg:h-full">
+        <div className="lg:h-full">
           <ChatHeader  
             title={title || ""} 
             typingStatuses={typingStatuses}
@@ -294,8 +294,9 @@ const ChatContent = ({
         null
       ) : (
         techCouncilMenuValue === "chat" ? (
-          <div className={`flex-grow bg-neutrals-secondary ${isTechnicalCouncil ? "rounded-lg" : ""}`}>
-            <div className={`${isTechnicalCouncil ? "h-[calc(90vh-270px)]" : "h-[calc(100vh-240px)]"} overflow-y-auto flex flex-col`} ref={messagesRef}>
+          <div className={`flex-grow ${isTechnicalCouncil ? "rounded-lg" : " bg-neutrals-secondary"}`}>
+            <div className={`${isTechnicalCouncil ? "h-[calc(90vh-270px)]" : "h-[calc(100dvh-130px)] md:h-[calc(100dvh-180px)] lg:h-[calc(100dvh-240px)]"} overflow-y-auto flex flex-col pb-2`}
+            ref={messagesRef}>
               <div className="flex flex-col gap-2 px-4 py-2 w-full mt-auto">
                 <div className="flex flex-col gap-1">
                   {messages

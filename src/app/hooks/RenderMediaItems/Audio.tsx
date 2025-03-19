@@ -25,7 +25,7 @@ const AudioMedia = ({ mediaId, name, small, t, isUser }: { mediaId: string, name
     waveSurferRef.current.playPause()
     setIsPlaying(prev => !prev)
   }, [])
-
+  
 	
   useEffect(() => {
     if (!audioUrl || !waveformRef.current) return

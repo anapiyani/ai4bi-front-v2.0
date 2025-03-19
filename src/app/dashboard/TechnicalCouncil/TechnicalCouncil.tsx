@@ -15,6 +15,7 @@ import ScreenShareContent from './components/ScreenShareContent'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { useRouter } from 'next/navigation'
+import Icons from '../../components/Icons'
 import { useWebRTC } from '../../hooks/useWebRTC'
 const BotVisualizer = dynamic(() => import('../../components/Bot/BotVisualizer'), { ssr: false })
 
@@ -134,13 +135,24 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
                   {t('protocol_table')}
                 </TabsTrigger>
               </TabsList>
+              {
+                openSideMenu ? (
+                  <div className='flex justify-end items-center md:hidden lg:hidden px-2' onClick={() => setOpenSideMenu(false)}>
+                    <Icons.SideMenu_Open />
+                  </div>
+                ) : (
+                  <div className='flex justify-end items-center md:hidden lg:hidden px-2' onClick={() => setOpenSideMenu(true)}>
+                    <Icons.SideMenu />
+                  </div>
+                )
+              }
             </div>
 
             <TabsContent value="demonstration">
               <div className='w-full h-[calc(100vh-15.5rem)] overflow-y-auto'>
                 <ScreenShareContent />
-                <div className='w-full h-[200px] overflow-y-auto rounded-lg p-2 flex flex-col gap-2'>
-                  <h2 className='text-brand-gray text-lg font-semibold'>{t('call_transcription')}</h2>
+                <div className='w-full h-[300px] overflow-y-auto rounded-lg p-2 flex flex-col gap-2'>
+                  <h2 className='text-brand-gray text-lg font-semibold'>{t('call_transcription')}:</h2>
                   {transcription.map((textObj, index) => (
                     <p key={index} className='text-sm text-wrap text-muted-foreground'>
                       {textObj.name}: {textObj.text}
@@ -155,8 +167,6 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
             </TabsContent>
           </Tabs>
         </div>
-
-        {/* Right side content */}
         <div
           className={`${
             openSideMenu ? 'lg:basis-[5%] md:basis-[5%]' : 'lg:basis-[30%] md:basis-[40%]'
