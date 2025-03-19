@@ -21,7 +21,7 @@ const ProtocolTable = ({ protocols: initialProtocols }: ProtocolTableProps) => {
 
   const [protocols, setProtocols] = useState<Protocol | null>(initialProtocols)
   const [isEditing, setIsEditing] = useState<boolean>(false)
-
+  
   useEffect(() => {
     setProtocols(initialProtocols)
   }, [initialProtocols])

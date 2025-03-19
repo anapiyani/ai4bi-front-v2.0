@@ -170,6 +170,7 @@ export type ChatContentProps = {
 	startedUserId?: string | null;
 	technicalCouncilUsers?: TechCouncilUser[];
 	onMobileBack?: () => void;
+	openMobileChat?: boolean;
 }
 
 export type TechCouncilUser = {
