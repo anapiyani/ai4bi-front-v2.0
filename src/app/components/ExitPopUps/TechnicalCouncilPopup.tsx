@@ -13,11 +13,20 @@ type TechnicalCouncilLeaveButtonProps = {
 const TechnicalCouncilLeaveButton = ({handlers, techCouncilUser}: TechnicalCouncilLeaveButtonProps) => {
 	const t = useTranslations("dashboard");
 	const [isOpen, setIsOpen] = useState(false)
+	const [isFinish, setIsFinish] = useState<boolean>(false)
 	const userRole = techCouncilUser?.role
 
   const handleToggleDialog = () => {
     setIsOpen(!isOpen)
   }
+
+	const handleExit = () => {
+		if (isFinish) {
+			handlers.exitButtonClick(true);
+		} else {
+			handlers.exitButtonClick(false);
+		}
+	}
 	
 	return (
 		<div className="relative">
@@ -39,7 +48,7 @@ const TechnicalCouncilLeaveButton = ({handlers, techCouncilUser}: TechnicalCounc
 					{
 						userRole === "project_team" || userRole === "admin" ? (
 							<div className='flex justify-start items-center px-6 gap-2 mb-2'>
-								<Checkbox />
+								<Checkbox checked={isFinish} onCheckedChange={(checked) => setIsFinish(checked as boolean)} />
 								<p className='text-sm'>{t("finish-the-call")}</p>
 							</div>
 						) : null
@@ -54,17 +63,18 @@ const TechnicalCouncilLeaveButton = ({handlers, techCouncilUser}: TechnicalCounc
 								className="flex-1 rounded-md py-6 text-sm font-medium text-slate-800 hover:bg-slate-50"
 							>
 								{
-									userRole === "project_team" || userRole === "admin" ? t("leave-the-call") : t("not_exit")
+									userRole === "project_team" || userRole === "admin" ? t("stay") : t("not_exit")
 								}
 							</Button>
 							<Button
 								onClick={() => {
 									setIsOpen(false)
+									handleExit()
 								}}
 								className="flex-1 rounded-md py-6 text-sm font-medium bg-red-600 hover:bg-red-700 text-white"
 							>
 							{
-								userRole === "project_team" || userRole === "admin" ? t("quit-the-call") : t("exit")
+								userRole === "project_team" || userRole === "admin" ? t("leave-the-call") : t("quit-the-call")
 							}
 							</Button>
 						</div>

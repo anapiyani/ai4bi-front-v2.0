@@ -44,9 +44,19 @@ export default function Dashboard() {
     }
   }, [active_tab])
 
-  const handleExitType = (type: activity_status) => {
+  const handleExitType = (type: activity_status, isFinish?: boolean) => {
     if (type === "auction-results") {
       console.log("exiting auction results")
+    } else if (type === "technical-council") {
+      if (isFinish) {
+        // should pass auctionId to finishAuction with users
+      } else {
+        if (closeRTCConnection.current) {
+          closeRTCConnection.current()
+        }
+        setIsMicrophoneOn(false)
+        router.push('/dashboard?active_tab=chat')
+      }
     } else {
       setExitType(type)
     }

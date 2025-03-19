@@ -7,7 +7,6 @@ import { useTranslations } from 'next-intl'
 import { PopUpHandlers } from '../../types/types'
 import AuctionPopup from './AuctionPopup'
 import ChatModePopup from './ChatModePopup'
-import TechnicalCouncilPopup from './TechnicalCouncilPopup'
 
 type PopUpProps = {
   open: boolean,
@@ -44,7 +43,7 @@ const PopUp = ({open, title, description, t, handlers}: PopUpProps) => {
         </DialogDescription>
         <DialogFooter className="mt-4">
           <Button variant='outline' onClick={handlers.stayButtonClick}>{t("stay")}</Button>
-          <Button className='bg-destructive text-destructive-foreground hover:bg-destructive/90' onClick={handlers.exitButtonClick}>{t("exit")}</Button>
+          <Button className='bg-destructive text-destructive-foreground hover:bg-destructive/90' onClick={() => handlers.exitButtonClick(false)}>{t("exit")}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -55,8 +54,6 @@ const PopUpFactory = ({type, handlers}: PopUpFactoryProps) => {
   switch (type) {
     case "auction":
       return <AuctionPopup {...handlers} />
-    case "technical-council":
-      return <TechnicalCouncilPopup {...handlers} />
     case "chat":  
       return <ChatModePopup {...handlers} />
     default:

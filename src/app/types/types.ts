@@ -20,7 +20,7 @@ export type ChatListItemData = {
 
 export type PopUpHandlers = {
 	stayButtonClick: () => void,
-	exitButtonClick: () => void
+	exitButtonClick: (isFinish?: boolean) => void
 }
 
 export type ChatIdStatuses = {

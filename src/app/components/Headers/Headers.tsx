@@ -14,7 +14,7 @@ type HeaderProps = {
 	handlers: {
 		infoButtonClick: () => void,
 		audioButtonClick: () => void,
-		exitButtonClick: (type: activity_status) => void,
+		exitButtonClick: (type: activity_status, isFinish?: boolean) => void,
 	}
 	techCouncilUser: TechCouncilUser | null
 	isMicrophoneOn: boolean
@@ -62,7 +62,9 @@ const Header = ({type, t, handlers, isMicrophoneOn, techCouncilUser}: HeaderProp
 							<TechnicalCouncilLeaveButton
 								handlers={{
 									stayButtonClick: () => {},
-									exitButtonClick: () => handlers.exitButtonClick(type),
+									exitButtonClick: (isFinish?: boolean) => {
+										handlers.exitButtonClick(type, isFinish)
+									},
 								}}
 								techCouncilUser={techCouncilUser}
 							/>
