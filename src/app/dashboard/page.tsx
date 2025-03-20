@@ -11,6 +11,7 @@ import { deleteCookie, getCookie, setCookie } from '../api/service/cookie'
 import { PopUpFactory } from '../components/ExitPopUps/ExitPopUps'
 import Header from '../components/Headers/Headers'
 import { useAuthHeader } from '../hooks/useAuthHeader'
+import { finishAuction } from '../hooks/useFinishAuction'
 import { activity_status, MyData, TechCouncilUser } from '../types/types'
 
 const Auction = dynamic(() => import('./Auction/Auction'), { ssr: false })
@@ -27,6 +28,7 @@ export default function Dashboard() {
   let active_tab = searchParams.get("active_tab") as activity_status
   const closeRTCConnection = useRef<(() => void) | null>(null)
   const [techCouncilUser, setTechCouncilUser] = useState<TechCouncilUser | null>(null)
+  const [conferenceId, setConferenceId] = useState<string | null>(null)
 
   if (
     !active_tab ||
@@ -49,7 +51,16 @@ export default function Dashboard() {
       console.log("exiting auction results")
     } else if (type === "technical-council") {
       if (isFinish) {
-        // should pass auctionId to finishAuction with users
+        if (conferenceId) {
+          finishAuction(conferenceId)
+        }
+        if (closeRTCConnection.current) {
+          closeRTCConnection.current()
+        }
+        setConferenceId(null)
+        setTechCouncilUser(null)
+        setIsMicrophoneOn(false)
+        router.push('/dashboard?active_tab=chat')
       } else {
         if (closeRTCConnection.current) {
           closeRTCConnection.current()
@@ -91,8 +102,9 @@ export default function Dashboard() {
           closingTechnicalCouncil={(closeFunc) => {
             closeRTCConnection.current = closeFunc
           }}
-          onUserUpdate={(user) => {
+          onUserUpdate={(user, conferenceId) => {
             setTechCouncilUser(user)
+            setConferenceId(conferenceId)
           }}
     />,
       "auction-results": () => <AuctionResults />,

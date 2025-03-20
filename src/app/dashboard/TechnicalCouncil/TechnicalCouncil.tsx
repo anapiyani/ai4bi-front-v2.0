@@ -27,7 +27,7 @@ interface TechnicalCouncilProps {
   isMicrophoneOn: boolean
   toggleMicrophone: () => void
   closingTechnicalCouncil: (closeFunc: () => void) => void,
-  onUserUpdate?: (user: TechCouncilUser) => void
+  onUserUpdate?: (user: TechCouncilUser, conferenceId: string | null) => void
 }
 
 const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
@@ -132,7 +132,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
         const userRoleString = JSON.stringify(user.role)
         if (prevUserRef.current !== userRoleString) {
           prevUserRef.current = userRoleString
-          onUserUpdate(user)
+          onUserUpdate(user, conference_id || null)
         }
       }
     }
