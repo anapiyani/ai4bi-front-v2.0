@@ -739,12 +739,12 @@ export const useChatWebSocket = () => {
     }));
   }
 
-  const sendEditMessage = (message: ChatMessage) => {
+  const sendEditMessage = (message: ChatMessage, newContent: string) => {
     if (!selectedConversation) return;
     sendMessage(createRpcRequest("editMessage", {
       message_id: message.id,
       chat_id: selectedConversation,
-      content: message.content
+      content: newContent
     }));
   };
 

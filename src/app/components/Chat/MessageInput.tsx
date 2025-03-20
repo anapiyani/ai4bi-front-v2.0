@@ -10,10 +10,15 @@ import { ChatMessage, ChatParticipants } from "../../types/types"
 import BotVisualizer from '../Bot/BotVisualizer'
 import Icons from '../Icons'
 
-
 type MessageInputProps = {
   t: any;
-  sendChatMessage: (message: string, reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean, type?: "audio") => void;
+  sendChatMessage: (
+    message: string,
+    reply?: ChatMessage | null,
+    media?: string[] | null,
+    is_voice_message?: boolean,
+    type?: "audio"
+  ) => void;
   isConnected: boolean;
   value: string;
   setNewMessage: (value: string) => void;
@@ -21,7 +26,8 @@ type MessageInputProps = {
   setReplyTo: (message: ChatMessage | null) => void;
   editMessage: ChatMessage | null;
   setEditMessage: (message: ChatMessage | null) => void;
-  handleEdit: (e: React.FormEvent<HTMLFormElement>) => void;
+  // Note: updated handleEdit signature to accept the new edited text
+  handleEdit: (e: React.FormEvent<HTMLFormElement>, newContent: string) => void;
   openDropZoneModal: boolean;
   setOpenDropZoneModal: (open: boolean) => void;
   handleTypingChat: (status: "typing" | "recording" | "stopped") => void;
@@ -47,14 +53,21 @@ const MessageInput = ({
   chatId
 }: MessageInputProps) => {
   const [message, setMessage] = useState<string>("");
+  
+  // Local state for the text that will go into the Input if editing:
+  const [editText, setEditText] = useState<string>("");
+
   const timeoutId = useRef<NodeJS.Timeout | null>(null);
   const intervalId = useRef<NodeJS.Timeout | null>(null);
+
   const [suggestions, setSuggestions] = useState<ChatParticipants[]>([]);
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
   const [highlightedIndex, setHighlightedIndex] = useState<number>(0);
   const [showMicButton, setShowMicButton] = useState<boolean>(true);
-  let inputRef = useRef<HTMLInputElement>(null);
+  
+  const inputRef = useRef<HTMLInputElement>(null);
   const commandRef = useRef<HTMLDivElement>(null);
+
   const {
     isRecording,
     isPaused,
@@ -64,24 +77,36 @@ const MessageInput = ({
     recordingDuration,
     mediaStream,
     handleStopRecording
-  } = useAudioRecorder({ handleTypingChat,
+  } = useAudioRecorder({
+    handleTypingChat,
     onSendAudio: (id, type) => {
       sendChatMessage(message, replyTo, [id], true, type);
     },
     chatId: chatId,
     outputFormat: "mp3"
-   });
+  });
 
+  /**
+   * Decide whether we show the "Send" icon or "Mic" icon.
+   */
   const isSendMode = editMessage
-    ? (!isConnected || !editMessage.content.trim()) === false
+    ? (!isConnected || !editText.trim()) === false
     : (!isConnected || !message.trim()) === false
 
   useEffect(() => {
-    setTimeout(() => {
-      if (inputRef.current) {
-        inputRef.current.focus();
-      }
-    }, 200);
+    if (editMessage) {
+      setEditText(editMessage.content);
+    } else {
+      setEditText("");
+    }
+  }, [editMessage]);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 200);
+    }
   }, [replyTo, editMessage]);
 
   const handleSend = (e: React.FormEvent) => {
@@ -90,80 +115,87 @@ const MessageInput = ({
       sendChatMessage(message, replyTo, null);
       setMessage("");
       setReplyTo(null);
-      
-      // Hide mic button temporarily to prevent accidental clicks
+
       setShowMicButton(false);
-      
-      // Show mic button again after a delay
       setTimeout(() => {
         setShowMicButton(true);
-      }, 500); // 500ms delay, adjust as needed
+      }, 500);
     }
+  };
+
+  const handleNewMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const text = e.target.value;
+    setMessage(text);
+    handleMentions(text);
+    trackUserTyping();
   };
 
   const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (editMessage) {
-      setEditMessage({ ...editMessage, content: e.target.value });
+    const text = e.target.value;
+    setEditText(text);
+    handleMentions(text);
+    trackUserTyping();
+  };
+
+  const handleMentions = (text: string) => {
+    const regex = /(?:^|\s)@([^\s]*)/g;
+    const matches = Array.from(text.matchAll(regex));
+    if (matches.length > 0) {
+      const lastMatch = matches[matches.length - 1];
+      const username = lastMatch[1];
+      const filteredParticipants = username
+        ? participants.filter(p =>
+            p.username.toLowerCase().includes(username.toLowerCase())
+          )
+        : participants;
+
+      setSuggestions(filteredParticipants);
+      setShowSuggestions(true);
+      setHighlightedIndex(0);
     } else {
-      const text = e.target.value;
-      setMessage(text);
-      const regex = /(?:^|\s)@([^\s]*)/g;
-      const matches = Array.from(text.matchAll(regex));
-      
-      if (matches.length > 0) {
-        const lastMatch = matches[matches.length - 1];
-        const username = lastMatch[1];
-        const filteredParticipants = username 
-          ? participants.filter(p => 
-              p.username.toLowerCase().includes(username.toLowerCase())
-            )
-          : participants;
-        
-        setSuggestions(filteredParticipants);
-        setShowSuggestions(true);
-        setHighlightedIndex(0);
-      } else {
-        setShowSuggestions(false);
-      }
-      if (timeoutId.current) {
-        clearTimeout(timeoutId.current);
-      }
-      if (!intervalId.current) {
-        handleTypingChat("typing");
-        intervalId.current = setInterval(() => {
-          handleTypingChat("typing");
-        }, 3000);
-      }
-      timeoutId.current = setTimeout(() => { 
-        if (intervalId.current) {
-          clearInterval(intervalId.current);
-          intervalId.current = null;
-          handleTypingChat("stopped");
-        }
-      }, 3000);
+      setShowSuggestions(false);
     }
   };
 
-  const ChooseFiles = () => {
-    setOpenDropZoneModal(true);
-  }
+  const trackUserTyping = () => {
+    if (timeoutId.current) {
+      clearTimeout(timeoutId.current);
+    }
+    if (!intervalId.current) {
+      handleTypingChat("typing");
+      intervalId.current = setInterval(() => {
+        handleTypingChat("typing");
+      }, 3000);
+    }
+    timeoutId.current = setTimeout(() => {
+      if (intervalId.current) {
+        clearInterval(intervalId.current);
+        intervalId.current = null;
+        handleTypingChat("stopped");
+      }
+    }, 3000);
+  };
 
   const handleSelectParticipant = (participant: ChatParticipants) => {
-    const currentValue = editMessage ? editMessage.content : message
-    const mentionIndex = currentValue.lastIndexOf('@')
-    const newValue = 
-      currentValue.slice(0, mentionIndex) + 
-      `@${participant.username} ` +
-      currentValue.slice(mentionIndex + participant.username.length + 1)
-    
+    // If editing, update editText; otherwise update message
     if (editMessage) {
-      setEditMessage({ ...editMessage, content: newValue })
+      const mentionIndex = editText.lastIndexOf('@');
+      const newValue =
+        editText.slice(0, mentionIndex) +
+        `@${participant.username} ` +
+        editText.slice(mentionIndex + participant.username.length + 1);
+      setEditText(newValue);
     } else {
-      setMessage(newValue)
+      const mentionIndex = message.lastIndexOf('@');
+      const newValue =
+        message.slice(0, mentionIndex) +
+        `@${participant.username} ` +
+        message.slice(mentionIndex + participant.username.length + 1);
+      setMessage(newValue);
     }
-    setShowSuggestions(false)
-    inputRef.current?.focus()
-  }
+    setShowSuggestions(false);
+    inputRef.current?.focus();
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (showSuggestions && suggestions.length > 0) {
@@ -174,7 +206,7 @@ const MessageInput = ({
           break;
         case "ArrowUp":
           e.preventDefault();
-          setHighlightedIndex(prev => 
+          setHighlightedIndex(prev =>
             prev === 0 ? suggestions.length - 1 : prev - 1
           );
           break;
@@ -189,18 +221,21 @@ const MessageInput = ({
     } else {
       if (e.key === "Enter" && e.shiftKey) {
         e.preventDefault();
-        if (message.trim() && isConnected) {
-          sendChatMessage(message, replyTo); 
-          setMessage("");
-          setReplyTo(null);
-          
-          // Hide mic button temporarily to prevent accidental clicks
-          setShowMicButton(false);
-          
-          // Show mic button again after a delay
-          setTimeout(() => {
-            setShowMicButton(true);
-          }, 500); // 500ms delay, adjust as needed
+        if (editMessage) {
+          if (editText.trim() && isConnected) {
+            handleEdit(e as unknown as React.FormEvent<HTMLFormElement>, editText);
+          }
+        } else {
+          if (message.trim() && isConnected) {
+            sendChatMessage(message, replyTo);
+            setMessage("");
+            setReplyTo(null);
+
+            setShowMicButton(false);
+            setTimeout(() => {
+              setShowMicButton(true);
+            }, 500);
+          }
         }
       } else if (e.key === "Escape") {
         setReplyTo(null);
@@ -208,7 +243,6 @@ const MessageInput = ({
       }
     }
   };
-
 
   useEffect(() => {
     return () => {
@@ -219,22 +253,49 @@ const MessageInput = ({
 
   useEffect(() => {
     if (commandRef.current && showSuggestions) {
-      commandRef.current.scrollTo({ top: highlightedIndex * 24, behavior: "smooth" });
+      // Attempt to scroll to the highlighted suggestion
+      commandRef.current.scrollTo({
+        top: highlightedIndex * 24,
+        behavior: "smooth"
+      });
     }
   }, [highlightedIndex, showSuggestions]);
 
+  const ChooseFiles = () => {
+    setOpenDropZoneModal(true);
+  };
+
+  /**
+   * Handle the main form onSubmit – if editing, finalize the edit;
+   * if not editing, send a new message.
+   */
+  const onSubmitForm = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (editMessage) {
+      // finalize edit with new text
+      handleEdit(e, editText);
+    } else {
+      // send brand-new message
+      handleSend(e);
+    }
+  };
+
   return (
-    <div className="relative w-full"> 
+    <div className="relative w-full">
       {replyTo && (
-        <div className="absolute bottom-10 left-0 w-full bg-white p-2 text-sm text-gray-700 flex items-start justify-between rounded-t-lg z-10  border-primary">
+        <div className="absolute bottom-10 left-0 w-full bg-white p-2 text-sm text-gray-700 flex items-start justify-between rounded-t-lg z-10 border-primary">
           <div className="flex flex-col px-3 gap-1 py-1">
             <div className="flex items-center gap-2">
               <Icons.Reply_small_blue />
-              <p className='text-sm font-bold text-primary'>{t("reply-to")} {replyTo.sender_first_name} {replyTo.sender_last_name}</p>
+              <p className='text-sm font-bold text-primary'>
+                {t("reply-to")} {replyTo.sender_first_name} {replyTo.sender_last_name}
+              </p>
             </div>
             <div>
               <span className="text-sm">
-                {replyTo.content.length > 100 ? `${replyTo.content.slice(0, 100)}…` : replyTo.content}
+                {replyTo.content.length > 100
+                  ? `${replyTo.content.slice(0, 100)}…`
+                  : replyTo.content}
               </span>
             </div>
           </div>
@@ -246,105 +307,119 @@ const MessageInput = ({
           </button>
         </div>
       )}
+
       {editMessage && (
-          <div className="absolute bottom-10 left-0 w-full bg-white p-2 text-sm text-gray-700 flex items-start justify-between rounded-t-lg z-10  border-primary">
-            <div className="flex flex-col px-3 gap-1 py-1">
-              <div className="flex items-center gap-2">
-                <Icons.Edit_small_blue />
-                <p className='text-sm font-bold text-primary'>{t("edit-message")}</p>
-              </div>
-              <div>
-                <span className="text-sm">
-                  {editMessage.content.length > 100 ? `${editMessage.content.slice(0, 100)}…` : editMessage.content}
-                </span>
-              </div>
+        <div className="absolute bottom-10 left-0 w-full bg-white p-2 text-sm text-gray-700 flex items-start justify-between rounded-t-lg z-10 border-primary">
+          <div className="flex flex-col px-3 gap-1 py-1">
+            <div className="flex items-center gap-2">
+              <Icons.Edit_small_blue />
+              <p className='text-sm font-bold text-primary'>
+                {t("edit-message")}
+              </p>
             </div>
-            <button
-              onClick={() => setEditMessage(null)}
-              className="text-xs h-full"
-            >
-              <Icons.Close />
-            </button>
+            <div>
+              {/* IMPORTANT: This shows the original message, not the live edit */}
+              <span className="text-sm">
+                {editMessage.content.length > 100
+                  ? `${editMessage.content.slice(0, 100)}…`
+                  : editMessage.content}
+              </span>
+            </div>
+          </div>
+          <button
+            onClick={() => setEditMessage(null)}
+            className="text-xs h-full"
+          >
+            <Icons.Close />
+          </button>
         </div>
       )}
-       <form
-        onSubmit={(e) => {
-          if (editMessage) {
-            handleEdit(e);
-          } else {
-            handleSend(e);
-          }
-        }}
-        className={`flex items-center gap-2 w-full pt-${
-          replyTo ? "10" : "0"
-        }`}
+
+      <form
+        onSubmit={onSubmitForm}
+        className={`flex items-center gap-2 w-full pt-${replyTo ? "10" : "0"}`}
       >
-        {
-          isRecording ? (
-            <div className="flex items-center gap-2 w-full">
-              <Button onClick={() => {
+        {isRecording ? (
+          <div className="flex items-center gap-2 w-full">
+            <Button
+              onClick={() => {
                 handleStopRecording();
-              }} className="bg-white rounded-full border-none" variant="outline" size="icon">
-                <Icons.Chat_Trash size={24} />
-              </Button>
-              {
-                isPaused ? (
-                  <BotVisualizer stream={mediaStream} type="user-paused" userSpeaking={true} recordingDuration={recordingDuration} />
-                ) : (
-                  <BotVisualizer stream={mediaStream} type="speaking" userSpeaking={true} recordingDuration={recordingDuration} />
-                )
-              }
-            </div>
-          ) : (
-            <div className='w-full'>
-              <Input
+              }}
+              className="bg-white rounded-full border-none"
+              variant="outline"
+              size="icon"
+            >
+              <Icons.Chat_Trash size={24} />
+            </Button>
+            {isPaused ? (
+              <BotVisualizer
+                stream={mediaStream}
+                type="user-paused"
+                userSpeaking={true}
+                recordingDuration={recordingDuration}
+              />
+            ) : (
+              <BotVisualizer
+                stream={mediaStream}
+                type="speaking"
+                userSpeaking={true}
+                recordingDuration={recordingDuration}
+              />
+            )}
+          </div>
+        ) : (
+          <div className='w-full'>
+            <Input
               ChooseFiles={() => {
                 ChooseFiles();
               }}
               ref={inputRef}
               placeholder={t("type-your-message-here")}
-              onChange={handleEditChange}
+              // If editing, use editText; else use message
+              value={editMessage ? editText : message}
+              onChange={editMessage ? handleEditChange : handleNewMessageChange}
               onKeyDown={handleKeyDown}
-              value={editMessage ? editMessage.content : message}
               className="w-full focus:ring-0 focus:border-none border-none focus:outline-none"
               icon={<Icons.Choose_files />}
             />
-            </div>
-          )
-        }
-        {
-          showSuggestions && suggestions.length > 0 && (
-            <Command ref={commandRef} className="absolute bottom-[40px] left-0 w-full max-w-[300px] rounded-lg border shadow-lg h-fit overflow-y-auto">
-              <CommandList>
-                <CommandGroup>
-                  {suggestions.map((user, index) => (
-                    <CommandItem
-                      key={user.user_id}
-                      value={user.username}
-                      onSelect={() => handleSelectParticipant(user)}
-                      onMouseDown={(e) => {
-                        e.preventDefault();
-                        handleSelectParticipant(user);
-                      }}
-                      onKeyDown={handleKeyDown}
-                      className={`
-                        cursor-pointer gap-3 
-                        ${highlightedIndex === index ? "bg-accent text-accent-foreground" : ""}
-                      `}
-                    >
-                      <div className="flex flex-col">
-                        <span className="text-muted-foreground text-sm">
-                          @{user.username}
-                        </span>
-                      </div>
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-                <CommandEmpty>{t("no-users-found")}</CommandEmpty>
-              </CommandList>
-            </Command>
-          )
-        }
+          </div>
+        )}
+
+        {showSuggestions && suggestions.length > 0 && (
+          <Command
+            ref={commandRef}
+            className="absolute bottom-[40px] left-0 w-full max-w-[300px] rounded-lg border shadow-lg h-fit overflow-y-auto"
+          >
+            <CommandList>
+              <CommandGroup>
+                {suggestions.map((user, index) => (
+                  <CommandItem
+                    key={user.user_id}
+                    value={user.username}
+                    onSelect={() => handleSelectParticipant(user)}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      handleSelectParticipant(user);
+                    }}
+                    onKeyDown={handleKeyDown}
+                    className={`
+                      cursor-pointer gap-3 
+                      ${highlightedIndex === index ? "bg-accent text-accent-foreground" : ""}
+                    `}
+                  >
+                    <div className="flex flex-col">
+                      <span className="text-muted-foreground text-sm">
+                        @{user.username}
+                      </span>
+                    </div>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+              <CommandEmpty>{t("no-users-found")}</CommandEmpty>
+            </CommandList>
+          </Command>
+        )}
+
         <AnimatePresence mode="wait">
           {isRecording ? (
             <motion.div

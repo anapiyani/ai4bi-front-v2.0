@@ -139,10 +139,10 @@ const ChatContent = ({
     setEditMessage(message);
   };
 
-  const handleEdit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleEdit = (e: React.FormEvent<HTMLFormElement>, newContent: string) => {
     e.preventDefault();
     if (editMessage) {
-      sendEditMessage(editMessage);
+      sendEditMessage(editMessage, newContent);
       setEditMessage(null);
     }
   };
