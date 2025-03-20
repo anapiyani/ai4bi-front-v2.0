@@ -21,6 +21,7 @@ import { getCookie } from '../../api/service/cookie'
 import Icons from "../../components/Icons"
 import { useWebRTC } from "../../hooks/useWebRTC"
 import { TechCouncilUser } from '../../types/types'
+import Transcriptions from './components/Transcriptions'
 const BotVisualizer = dynamic(() => import("../../components/Bot/BotVisualizer"), { ssr: false })
 
 interface TechnicalCouncilProps {
@@ -43,6 +44,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
   const conference_id = searchParams.get("conference_id")
   const [openSideMenu, setOpenSideMenu] = useState<boolean>(false)
   const [openMobileChat, setOpenMobileChat] = useState<boolean>(false)
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const {
     isConnected,
@@ -137,6 +139,12 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
       }
     }
   }, [mergedCouncilUsers, onUserUpdate, userId])
+                    
+  useEffect(() => {
+    if (!messagesEndRef.current?.scrollTop) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [transcription]);
 
   return (
     <div className="w-full flex flex-col lg:flex-row bg-neutral-secondary justify-center px-0 lg:px-4">
@@ -181,16 +189,22 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
 
             <TabsContent value="demonstration">
               <div
-                className={`w-full h-[calc(100vh-15.5rem)] overflow-y-auto ${openMobileChat ? "hidden md:block lg:block" : ""}`}
+                className={`w-full h-[calc(100vh-10.5rem)] overflow-y-auto ${openMobileChat ? "hidden md:block lg:block" : ""}`}
               >
                 <ScreenShareContent />
-                <div className="w-full h-[300px] overflow-y-auto rounded-lg p-2 flex flex-col gap-2">
+                <div className="w-full h-[280px] overflow-y-auto rounded-lg p-2 flex flex-col gap-2">
                   <h2 className="text-brand-gray text-lg font-semibold">{t("call_transcription")}:</h2>
-                  {transcription.map((textObj, index) => (
-                    <p key={index} className="text-sm text-wrap text-muted-foreground">
-                      {textObj.name}: {textObj.text}
-                    </p>
-                  ))}
+                  {transcription.map((textObj, index) => {
+                    return (
+                      <div className='mt-1' key={index} ref={messagesEndRef}>
+                        <Transcriptions
+                          time={textObj.time}
+                          user={textObj.name}
+                          text={textObj.text}
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </TabsContent>

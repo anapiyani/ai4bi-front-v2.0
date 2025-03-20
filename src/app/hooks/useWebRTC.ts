@@ -11,6 +11,7 @@ export const useWebRTC = ({ room, isMicrophoneOn }: UseWebRTCProps) => {
   const [localStream, setLocalStream] = useState<MediaStream | null>(null)
   const [remoteAudios, setRemoteAudios] = useState<HTMLAudioElement[]>([])
   const [transcription, setTranscription] = useState<{
+    time: string
     text: string
     user_id: string
     name: string
@@ -211,7 +212,8 @@ export const useWebRTC = ({ room, isMicrophoneOn }: UseWebRTCProps) => {
                         user_id: user.user_id,
                         name: user.name,
                         mic_on: user.mic_on,
-                        username: user.username
+                        username: user.username,
+                        time: new Date().toLocaleTimeString()
                       }
                     ])
                   }
