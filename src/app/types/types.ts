@@ -150,10 +150,10 @@ export type ChatContentProps = {
 	openSideMenu?: boolean;
 	handleCreateOrOpenChat: (toUser: string) => void;
   setNewMessage: (message: string) => void;
-  sendChatMessage: (reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean, type?: "audio" | "file" | null, message?: string) => void;
+  sendChatMessage: (message: string, reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean, type?: "audio" | "file" | null) => void;
   handleOpenDeleteMessage: (messageId: string | string[]) => void;
   createPrivateChat: (userId: string) => void;
-  sendEditMessage: (message: ChatMessage) => void;
+  sendEditMessage: (message: ChatMessage, newContent: string) => void;
   setOpenMenu: (open: boolean) => void;
 	handleReadMessage: (counter: number) => void;
   openMenu: boolean;

@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Toaster } from "react-hot-toast"
 import { get } from '../api/service/api'
 import { deleteCookie, getCookie, setCookie } from '../api/service/cookie'
+import BlockNavigation from '../components/BlockNavigation/BlockNavigation'
 import { PopUpFactory } from '../components/ExitPopUps/ExitPopUps'
 import Header from '../components/Headers/Headers'
 import { useAuthHeader } from '../hooks/useAuthHeader'
@@ -155,6 +156,7 @@ export default function Dashboard() {
 
   return (
     <div className="flex w-full h-full flex-col">
+      <BlockNavigation />
       <div className={`w-full ${chatId ? "hidden lg:block" : "block"}`}>
         <Header 
           type={active_tab} 

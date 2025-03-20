@@ -1,21 +1,21 @@
 "use client"
 
-import { Button } from '@/components/ui/button'
+import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { motion } from "framer-motion"
 import { useLocale, useTranslations } from "next-intl"
 import { useRouter, useSearchParams } from "next/navigation"
 import { memo, useCallback, useEffect, useMemo, useState } from "react"
-import toast from 'react-hot-toast'
+import toast from "react-hot-toast"
 import ChatMenu from "../../components/Chat/ChatMenu/ChatMenu"
 import DeleteMessage from "../../components/Chat/DeleteMessage"
-import ConstructModal from '../../components/Chat/Forms/ConstructModal'
-import { useCreatePrivateChat } from '../../components/Chat/hooks/useCreatePrivateChat'
+import ConstructModal from "../../components/Chat/Forms/ConstructModal"
+import { useCreatePrivateChat } from "../../components/Chat/hooks/useCreatePrivateChat"
 import ChatContent from "../../components/ChatContent"
-import { useChatActions } from '../../components/CommonWsActions'
-import Icons from '../../components/Icons'
+import { useChatActions } from "../../components/CommonWsActions"
+import Icons from "../../components/Icons"
 import { useChatWebSocket } from "../../hooks/useChatWebSocket"
-import { AutoCompleteResponse, ReceivedChats } from '../../types/types'
+import type { AutoCompleteResponse, ReceivedChats } from "../../types/types"
 import ChatListItem from "./components/ChatListItem"
 import { SearchBar } from "./components/SearchBar"
 import { CHAT_TABS, CONSTRUCT_TABS } from "./config/ChatTabs"
@@ -28,10 +28,10 @@ const ChatMode = () => {
   const chatId = searchParams.get("id")
   const [selectedConversationType, setSelectedConversationType] = useState<"auction_chat" | "private" | "group">()
   const [constructModalOpen, setConstructModalOpen] = useState<boolean>(false)
-  const [activeTab, setActiveTab] = useState("your-auctions");
+  const [activeTab, setActiveTab] = useState("your-auctions")
   const [privateChatResult, setPrivateChatResult] = useState<AutoCompleteResponse[] | null>(null)
-  const {mutate: createPrivateChatMutation, isPending: isCreatingPrivateChat} = useCreatePrivateChat();
-  const [isProcessingChatSelection, setIsProcessingChatSelection] = useState(false);
+  const { mutate: createPrivateChatMutation, isPending: isCreatingPrivateChat } = useCreatePrivateChat()
+  const [isProcessingChatSelection, setIsProcessingChatSelection] = useState(false)
 
   const {
     isConnected,
@@ -56,7 +56,7 @@ const ChatMode = () => {
     popUpsByChat,
     handlePopUpButtonAction,
     conferenceRoomsByChat,
-    startedUserId
+    startedUserId,
   } = useChatWebSocket()
   const {
     openMenu,
@@ -67,36 +67,30 @@ const ChatMode = () => {
     handleCreateOrOpenChat,
     handleOpenDeleteMessage,
     handleOpenMenu,
-  } = useChatActions();
-  
-  const auctionChats = useMemo(() => 
-    conversations.filter(c => c.chat_type === "auction_chat"),
-    [conversations]
-  )
+  } = useChatActions()
 
-  const privateChats = useMemo(() =>
-    conversations.filter(c => c.chat_type === "private"), 
-    [conversations]
-  )
+  const auctionChats = useMemo(() => conversations.filter((c) => c.chat_type === "auction_chat"), [conversations])
 
-  const constructChats = useMemo(() =>
-    conversations.filter(c => c.chat_type === "group"),
-    [conversations]
-  )
+  const privateChats = useMemo(() => conversations.filter((c) => c.chat_type === "private"), [conversations])
 
-  const handleItemClick = useCallback(async (id: string) => {
-    if (isProcessingChatSelection) return;
-    
-    setIsProcessingChatSelection(true);
-    try {
-      await router.push(`/dashboard?active_tab=chat&id=${id}`);
-      setOpenMenu(false);
-    } finally {
-      setTimeout(() => {
-        setIsProcessingChatSelection(false);
-      }, 500);
-    }
-  }, [router, setOpenMenu, isProcessingChatSelection]);
+  const constructChats = useMemo(() => conversations.filter((c) => c.chat_type === "group"), [conversations])
+
+  const handleItemClick = useCallback(
+    async (id: string) => {
+      if (isProcessingChatSelection) return
+
+      setIsProcessingChatSelection(true)
+      try {
+        await router.push(`/dashboard?active_tab=chat&id=${id}`)
+        setOpenMenu(false)
+      } finally {
+        setTimeout(() => {
+          setIsProcessingChatSelection(false)
+        }, 500)
+      }
+    },
+    [router, setOpenMenu, isProcessingChatSelection],
+  )
 
   const handleDeleteMessage = () => {
     setIsDeleteMessageOpen(false)
@@ -107,7 +101,7 @@ const ChatMode = () => {
       toast.success(t("message-deleted"))
     }
   }
-  
+
   const handleCloseDeleteMessage = () => {
     setIsDeleteMessageOpen(false)
   }
@@ -131,12 +125,29 @@ const ChatMode = () => {
     }
   }, [selectedConversation, conversations])
 
+  useEffect(() => {
+    if (selectedConversation) {
+      const selectedConvo = conversations.find((c) => c.id === selectedConversation)
+      if (selectedConvo) {
+        if (selectedConvo.chat_type === "auction_chat") {
+          setActiveTab("your-auctions")
+        } else if (selectedConvo.chat_type === "private") {
+          setActiveTab("private-chats")
+        } else if (selectedConvo.chat_type === "group") {
+          setActiveTab("constructs")
+        }
+      }
+    }
+  }, [selectedConversation, conversations])
+
   return (
     <div className="w-full flex flex-col lg:flex-row bg-primary-foreground justify-center">
-      <aside className={`lg:max-w-[470px] lg:min-w-[300px] flex-shrink-0 w-full bg-primary-foreground h-full px-3 py-3 lg:px-6 lg:py-6 ${chatId ? "hidden lg:block" : "block"}`}>
-        <Tabs defaultValue="your-auctions" onValueChange={setActiveTab}>
+      <aside
+        className={`lg:max-w-[470px] lg:min-w-[300px] flex-shrink-0 w-full bg-primary-foreground h-full px-3 py-3 lg:px-6 lg:py-6 ${chatId ? "hidden lg:block" : "block"}`}
+      >
+        <Tabs value={activeTab} defaultValue="your-auctions" onValueChange={setActiveTab}>
           <div className="flex flex-col">
-            <div className='flex justify-between items-center'>
+            <div className="flex justify-between items-center">
               <TabsList className="flex flex-row gap-2 border-none justify-start items-center overflow-x-auto no-scrollbar">
                 <TabsTrigger
                   value="your-auctions"
@@ -166,14 +177,19 @@ const ChatMode = () => {
                   transition={{ duration: 0.3, delay: 0.1 }}
                   className="w-full h-full flex justify-center items-center"
                 >
-                  <Button onClick={() => setConstructModalOpen(true)} className="w-full h-full p-1 border-none bg-neutrals-secondary" variant="outline" size="icon">
+                  <Button
+                    onClick={() => setConstructModalOpen(true)}
+                    className="w-full h-full p-1 border-none bg-neutrals-secondary"
+                    variant="outline"
+                    size="icon"
+                  >
                     <Icons.Plus fill="#4F4F4F" />
                   </Button>
                 </motion.div>
               </TabsContent>
             </div>
-            <TabsContent value="your-auctions" className='m-0'>
-              <SearchBar  />
+            <TabsContent value="your-auctions" className="m-0">
+              <SearchBar />
               <Tabs className="w-full mt-2" defaultValue="all">
                 <TabsList className="flex flex-row gap-2 mb-4 border-none overflow-x-auto no-scrollbar items-center justify-start">
                   {CHAT_TABS.map((tab, index) => (
@@ -212,55 +228,54 @@ const ChatMode = () => {
                 </div>
               </Tabs>
             </TabsContent>
-            <TabsContent value="private-chats" className='m-0'>
+            <TabsContent value="private-chats" className="m-0">
               <SearchBar setPrivateChatResult={setPrivateChatResult} />
               <div className="flex flex-col gap-2 overflow-y-auto max-h-[calc(100vh-300px)] no-scrollbar mt-3">
-              {privateChatResult !== null ? (
-                      <div className="flex flex-col gap-2">
-                        {privateChatResult.map((result) => {
-                          const chatItemData = {
-                            id: result.uuid, 
-                            name: `${result.first_name} ${result.last_name}`,
-                            lastMessage: null, 
-                            unread_count: 0,
-                            chat_type: "private",
-                          };
+                {privateChatResult !== null ? (
+                  <div className="flex flex-col gap-2">
+                    {privateChatResult.map((result) => {
+                      const chatItemData = {
+                        id: result.uuid,
+                        name: `${result.first_name} ${result.last_name}`,
+                        lastMessage: null,
+                        unread_count: 0,
+                        chat_type: "private",
+                      }
 
-                          return (
-                            <ChatListItem
-                              key={result.uuid}
-                              data={chatItemData as ReceivedChats}
-                              typingStatuses={typingStatuses}
-                              t={t}
-                              onClick={() => handleCreateOrOpenChat(result.uuid)}
-                              isSelected={false}
-                              index={0}
-                            />
-                          );
-                        })}
-                      </div>
-                    ) : (
-                    privateChats.map((conversation, index) => (
-                      <ChatListItem
-                        key={conversation.id}
-                        data={conversation as ReceivedChats}
-                        typingStatuses={typingStatuses}
-                        t={t}
-                        onClick={() => {
-                          handleItemClick(conversation.id)
-                          setSelectedConversationType(conversation.chat_type)
-                        }}
-                        isSelected={conversation.id === selectedConversation}
-                        index={index}
-                      />
-                    ))
-                  )
-                }
+                      return (
+                        <ChatListItem
+                          key={result.uuid}
+                          data={chatItemData as ReceivedChats}
+                          typingStatuses={typingStatuses}
+                          t={t}
+                          onClick={() => handleCreateOrOpenChat(result.uuid)}
+                          isSelected={false}
+                          index={0}
+                        />
+                      )
+                    })}
+                  </div>
+                ) : (
+                  privateChats.map((conversation, index) => (
+                    <ChatListItem
+                      key={conversation.id}
+                      data={conversation as ReceivedChats}
+                      typingStatuses={typingStatuses}
+                      t={t}
+                      onClick={() => {
+                        handleItemClick(conversation.id)
+                        setSelectedConversationType(conversation.chat_type)
+                      }}
+                      isSelected={conversation.id === selectedConversation}
+                      index={index}
+                    />
+                  ))
+                )}
               </div>
             </TabsContent>
             <TabsContent value="constructs">
               <Tabs className="w-full" defaultValue="all">
-              <TabsList className="flex flex-row gap-2 mb-4 border-none overflow-x-auto no-scrollbar items-center justify-start">
+                <TabsList className="flex flex-row gap-2 mb-4 border-none overflow-x-auto no-scrollbar items-center justify-start">
                   {CONSTRUCT_TABS.map((tab, index) => (
                     <motion.div
                       key={tab.value}
@@ -302,9 +317,11 @@ const ChatMode = () => {
         </Tabs>
       </aside>
 
-      <div className={`${chatId ? 'flex' : 'hidden mx-0 mt-0 lg:flex'} w-full lg:w-2/3 lg:mt-6 lg:mx-4 lg:mr-4 rounded-lg bg-secondary min-h-[calc(100dvh-8rem)] lg:py-3 justify-center flex-1
-      h-full
-      overflow-hidden items-center ${openMenu ? "hidden lg:flex" : "flex"}`}>
+      <div
+        className={`${chatId ? "flex" : "hidden mx-0 mt-0 lg:flex"} w-full lg:w-2/3 lg:mt-6 lg:mx-4 lg:mr-4 rounded-lg bg-secondary min-h-[calc(100dvh-8rem)] lg:py-3 justify-center flex-1
+    h-full
+    overflow-hidden items-center ${openMenu ? "hidden lg:flex" : "flex"}`}
+      >
         <ChatContent
           chatId={chatId || ""}
           selectedConversation={selectedConversation}
@@ -337,8 +354,7 @@ const ChatMode = () => {
         />
       </div>
       {openMenu && selectedConversation && (
-        <div
-          className="w-full lg:block lg:w-[300px] flex-shrink-0 overflow-y-auto px-4 lg:px-0">  
+        <div className="w-full lg:block lg:w-[300px] flex-shrink-0 overflow-y-auto px-4 lg:px-0">
           <ChatMenu
             type={selectedConversationType}
             setOpenMenu={setOpenMenu}
@@ -349,18 +365,13 @@ const ChatMode = () => {
           />
         </div>
       )}
-      {
-        constructModalOpen && (
-          <ConstructModal
-            constructModalOpen={constructModalOpen}
-            setConstructModalOpen={setConstructModalOpen}
-            t={t}
-          />
-        )
-      }
+      {constructModalOpen && (
+        <ConstructModal constructModalOpen={constructModalOpen} setConstructModalOpen={setConstructModalOpen} t={t} />
+      )}
       <DeleteMessage isOpen={isDeleteMessageOpen} onClose={handleCloseDeleteMessage} onDelete={handleDeleteMessage} />
     </div>
   )
 }
 
-export default memo(ChatMode);
+export default memo(ChatMode)
+

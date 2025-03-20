@@ -348,8 +348,6 @@ export const useChatWebSocket = () => {
       }
       return prev;
     });
-
-    setSelectedConversation(data.chat_id);
   };
 
   const handleChatsReceived = (chats: ReceivedChats[]) => {
@@ -467,18 +465,8 @@ export const useChatWebSocket = () => {
   }, []);
 
   const handleNewParticipant = useCallback((message: any) => {
-    const { chat_id, data } = message;
-    const { user_id } = data;
-
-    const isCurrentUser = user_id === getCookie("user_id");
-    if (isCurrentUser) {
-      getChats();
-      getChatMessages();
-      setSelectedConversation(chat_id);
-    } else {
-      getChats();
-      getChatMessages();
-    }
+    getChats();
+    getChatMessages();
   }, []);
 
   const handlePinMessage = useCallback(({ chat_id, message_id }: { chat_id: string, message_id: string }) => {
@@ -589,11 +577,11 @@ export const useChatWebSocket = () => {
     setSelectedConversation(selectedConversation);
   };
 
-  const sendChatMessage = useCallback((reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean, type?: "audio" | "file" | null, message?: string) => {
+  const sendChatMessage = useCallback((message: string, reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean, type?: "audio" | "file" | null) => {
     if (!selectedConversation) return;
     const replyId = reply?.id ?? null;
     const rpcId = (Date.now() + Math.random() * 1000000).toString();
-    const content = message ? message.trim() : newMessage.trim();
+    const content = message.trim();
     let pendingMedia: Media[] | null = null;
     if (type === "audio") {
       pendingMedia = [{
@@ -751,12 +739,12 @@ export const useChatWebSocket = () => {
     }));
   }
 
-  const sendEditMessage = (message: ChatMessage) => {
+  const sendEditMessage = (message: ChatMessage, newContent: string) => {
     if (!selectedConversation) return;
     sendMessage(createRpcRequest("editMessage", {
       message_id: message.id,
       chat_id: selectedConversation,
-      content: message.content
+      content: newContent
     }));
   };
 

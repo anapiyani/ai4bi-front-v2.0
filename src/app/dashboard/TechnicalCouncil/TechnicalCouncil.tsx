@@ -208,7 +208,6 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
                 </div>
               </div>
             </TabsContent>
-
             <TabsContent className={`${openMobileChat ? "hidden md:block lg:block" : ""}`} value="protocol_table">
               <ProtocolTable protocols={protocols} />
             </TabsContent>
