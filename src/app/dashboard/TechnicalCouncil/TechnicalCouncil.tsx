@@ -21,6 +21,7 @@ import { getCookie } from '../../api/service/cookie'
 import Icons from "../../components/Icons"
 import { useWebRTC } from "../../hooks/useWebRTC"
 import { TechCouncilUser } from '../../types/types'
+import Transcriptions from './components/Transcriptions'
 const BotVisualizer = dynamic(() => import("../../components/Bot/BotVisualizer"), { ssr: false })
 
 interface TechnicalCouncilProps {
@@ -187,9 +188,14 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
                 <div className="w-full h-[300px] overflow-y-auto rounded-lg p-2 flex flex-col gap-2">
                   <h2 className="text-brand-gray text-lg font-semibold">{t("call_transcription")}:</h2>
                   {transcription.map((textObj, index) => (
-                    <p key={index} className="text-sm text-wrap text-muted-foreground">
-                      {textObj.name}: {textObj.text}
-                    </p>
+                    <div className='mt-1'>
+                      <Transcriptions
+                        key={index}
+                        time={textObj.time}
+                        user={textObj.name}
+                        text={textObj.text}
+                      />
+                    </div>
                   ))}
                 </div>
               </div>
