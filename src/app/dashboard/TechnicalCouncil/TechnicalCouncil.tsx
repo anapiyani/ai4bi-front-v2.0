@@ -196,9 +196,8 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
                   <h2 className="text-brand-gray text-lg font-semibold">{t("call_transcription")}:</h2>
                   {transcription.map((textObj, index) => {
                     return (
-                      <div className='mt-1' ref={messagesEndRef}>
+                      <div className='mt-1' key={index} ref={messagesEndRef}>
                         <Transcriptions
-                          key={index}
                           time={textObj.time}
                           user={textObj.name}
                           text={textObj.text}
