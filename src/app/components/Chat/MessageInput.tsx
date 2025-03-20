@@ -13,7 +13,7 @@ import Icons from '../Icons'
 
 type MessageInputProps = {
   t: any;
-  sendChatMessage: (reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean, type?: "audio") => void;
+  sendChatMessage: (message: string, reply?: ChatMessage | null, media?: string[] | null, is_voice_message?: boolean, type?: "audio") => void;
   isConnected: boolean;
   value: string;
   setNewMessage: (value: string) => void;
@@ -46,6 +46,7 @@ const MessageInput = ({
   setOpenDropZoneModal,
   chatId
 }: MessageInputProps) => {
+  const [message, setMessage] = useState<string>("");
   const timeoutId = useRef<NodeJS.Timeout | null>(null);
   const intervalId = useRef<NodeJS.Timeout | null>(null);
   const [suggestions, setSuggestions] = useState<ChatParticipants[]>([]);
@@ -65,7 +66,7 @@ const MessageInput = ({
     handleStopRecording
   } = useAudioRecorder({ handleTypingChat,
     onSendAudio: (id, type) => {
-      sendChatMessage(replyTo, [id], true, type);
+      sendChatMessage(message, replyTo, [id], true, type);
     },
     chatId: chatId,
     outputFormat: "mp3"
@@ -73,7 +74,7 @@ const MessageInput = ({
 
   const isSendMode = editMessage
     ? (!isConnected || !editMessage.content.trim()) === false
-    : (!isConnected || !value.trim()) === false
+    : (!isConnected || !message.trim()) === false
 
   useEffect(() => {
     setTimeout(() => {
@@ -85,9 +86,9 @@ const MessageInput = ({
 
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
-    if (value.trim()) {
-      sendChatMessage(replyTo, null);
-      setNewMessage("");
+    if (message.trim()) {
+      sendChatMessage(message, replyTo, null);
+      setMessage("");
       setReplyTo(null);
       
       // Hide mic button temporarily to prevent accidental clicks
@@ -105,7 +106,7 @@ const MessageInput = ({
       setEditMessage({ ...editMessage, content: e.target.value });
     } else {
       const text = e.target.value;
-      setNewMessage(text);
+      setMessage(text);
       const regex = /(?:^|\s)@([^\s]*)/g;
       const matches = Array.from(text.matchAll(regex));
       
@@ -148,7 +149,7 @@ const MessageInput = ({
   }
 
   const handleSelectParticipant = (participant: ChatParticipants) => {
-    const currentValue = editMessage ? editMessage.content : value
+    const currentValue = editMessage ? editMessage.content : message
     const mentionIndex = currentValue.lastIndexOf('@')
     const newValue = 
       currentValue.slice(0, mentionIndex) + 
@@ -158,7 +159,7 @@ const MessageInput = ({
     if (editMessage) {
       setEditMessage({ ...editMessage, content: newValue })
     } else {
-      setNewMessage(newValue)
+      setMessage(newValue)
     }
     setShowSuggestions(false)
     inputRef.current?.focus()
@@ -188,9 +189,9 @@ const MessageInput = ({
     } else {
       if (e.key === "Enter" && e.shiftKey) {
         e.preventDefault();
-        if (value.trim() && isConnected) {
-          sendChatMessage(replyTo); 
-          setNewMessage("");
+        if (message.trim() && isConnected) {
+          sendChatMessage(message, replyTo); 
+          setMessage("");
           setReplyTo(null);
           
           // Hide mic button temporarily to prevent accidental clicks
@@ -304,7 +305,7 @@ const MessageInput = ({
               placeholder={t("type-your-message-here")}
               onChange={handleEditChange}
               onKeyDown={handleKeyDown}
-              value={editMessage ? editMessage.content : value}
+              value={editMessage ? editMessage.content : message}
               className="w-full focus:ring-0 focus:border-none border-none focus:outline-none"
               icon={<Icons.Choose_files />}
             />

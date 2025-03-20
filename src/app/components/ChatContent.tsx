@@ -160,7 +160,7 @@ const ChatContent = ({
   }
 
   const handleSendMedia = (uuids: string[], message: string) => {
-    sendChatMessage(null, uuids, false, null, message);
+    sendChatMessage(message, null, uuids, false, null);
     setNewMessage("");
   }
 
