@@ -82,13 +82,14 @@ const ChatMode = () => {
       setIsProcessingChatSelection(true)
       try {
         await router.push(`/dashboard?active_tab=chat&id=${id}`)
+        setOpenMenu(false)
       } finally {
         setTimeout(() => {
           setIsProcessingChatSelection(false)
         }, 500)
       }
     },
-    [router, isProcessingChatSelection],
+    [router, setOpenMenu, isProcessingChatSelection],
   )
 
   const handleDeleteMessage = () => {
@@ -112,6 +113,7 @@ const ChatMode = () => {
   useEffect(() => {
     if (chatId) {
       setSelectedConversation(chatId)
+      setOpenMenu(false)
     }
   }, [chatId, setSelectedConversation])
 
@@ -119,6 +121,22 @@ const ChatMode = () => {
     if (selectedConversation) {
       const selectedConvo = conversations.find((c) => c.id === selectedConversation)
       setSelectedConversationType(selectedConvo?.chat_type)
+      setOpenMenu(false)
+    }
+  }, [selectedConversation, conversations])
+
+  useEffect(() => {
+    if (selectedConversation) {
+      const selectedConvo = conversations.find((c) => c.id === selectedConversation)
+      if (selectedConvo) {
+        if (selectedConvo.chat_type === "auction_chat") {
+          setActiveTab("your-auctions")
+        } else if (selectedConvo.chat_type === "private") {
+          setActiveTab("private-chats")
+        } else if (selectedConvo.chat_type === "group") {
+          setActiveTab("constructs")
+        }
+      }
     }
   }, [selectedConversation, conversations])
 
@@ -127,7 +145,7 @@ const ChatMode = () => {
       <aside
         className={`lg:max-w-[470px] lg:min-w-[300px] flex-shrink-0 w-full bg-primary-foreground h-full px-3 py-3 lg:px-6 lg:py-6 ${chatId ? "hidden lg:block" : "block"}`}
       >
-        <Tabs defaultValue="your-auctions" onValueChange={setActiveTab}>
+        <Tabs value={activeTab} defaultValue="your-auctions" onValueChange={setActiveTab}>
           <div className="flex flex-col">
             <div className="flex justify-between items-center">
               <TabsList className="flex flex-row gap-2 border-none justify-start items-center overflow-x-auto no-scrollbar">
@@ -301,8 +319,8 @@ const ChatMode = () => {
 
       <div
         className={`${chatId ? "flex" : "hidden mx-0 mt-0 lg:flex"} w-full lg:w-2/3 lg:mt-6 lg:mx-4 lg:mr-4 rounded-lg bg-secondary min-h-[calc(100dvh-8rem)] lg:py-3 justify-center flex-1
-      h-full
-      overflow-hidden items-center ${openMenu ? "hidden lg:flex" : "flex"}`}
+    h-full
+    overflow-hidden items-center ${openMenu ? "hidden lg:flex" : "flex"}`}
       >
         <ChatContent
           chatId={chatId || ""}
