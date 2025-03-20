@@ -20,7 +20,7 @@ export type ChatListItemData = {
 
 export type PopUpHandlers = {
 	stayButtonClick: () => void,
-	exitButtonClick: () => void
+	exitButtonClick: (isFinish?: boolean) => void
 }
 
 export type ChatIdStatuses = {
@@ -170,6 +170,7 @@ export type ChatContentProps = {
 	startedUserId?: string | null;
 	technicalCouncilUsers?: TechCouncilUser[];
 	onMobileBack?: () => void;
+	openMobileChat?: boolean;
 }
 
 export type TechCouncilUser = {

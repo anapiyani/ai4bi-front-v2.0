@@ -222,7 +222,14 @@
 		"error": "Error",
 		"downloading-media": "Downloading...",
 		"rtc_not_connected_please_try_later": "RTC not connected, please try later",
-		"go_back": "Go back"
+		"go_back": "Go back",
+		"not_exit": "Not exit",
+		"project_info": "Project info",
+		"quit-the-call": "Quit the call",
+		"leave-the-call": "Leave the call",
+		"you-can-return-to-the-call": "You can return to the call, while it is in progress.",
+		"you-can-quit-the-call": "You can quit the call, or leave the call without finishing it. Returning to chat mode, you will be able to return while it is in progress.",
+		"finish-the-call": "Finish the call"
 	},
 	"dropzone": {
 		"upload_files": "Upload files",

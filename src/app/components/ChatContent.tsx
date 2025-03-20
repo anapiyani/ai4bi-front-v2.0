@@ -10,6 +10,7 @@ import RenderUsers from '../dashboard/TechnicalCouncil/components/RenderUsers'
 import { useGoToMessage } from '../hooks/useGoToMessage'
 import { ChatContentProps, ChatMessage, SelectActions } from "../types/types"
 import TimeToStartAucTech from './Alerts/Organizers/TimeToStartAucTech'
+import BotVisualizer from './Bot/BotVisualizer'
 import DropZoneModal from './Chat/Files/DropZoneModal'
 import ForwardMessage from './Chat/ForwardMessage'
 import Message from "./Chat/Message"
@@ -49,7 +50,8 @@ const ChatContent = ({
   conferenceRoomsByChat,
   startedUserId,
   technicalCouncilUsers,
-  onMobileBack
+  onMobileBack,
+  openMobileChat
 }: ChatContentProps) => {
   const t = useTranslations("dashboard");
   const [editMessage, setEditMessage] = useState<ChatMessage | null>(null);
@@ -209,26 +211,37 @@ const ChatContent = ({
   };
 
   return (
-    <div className="flex flex-col w-full h-full relative py-3 lg:py-0">
+    <div className="flex flex-col w-full h-full relative py-0 md:py-3 lg:py-0">
     {
       isTechnicalCouncil && setOpenSideMenu ? (
         <div className='flex mt-3 px-3 justify-center'>
           <div>
-            <Button onClick={() => setOpenSideMenu(!openSideMenu)} variant="outline" className='p-2 bg-white' >
-              {
-                openSideMenu ? (
-                  <Icons.SideMenu_Open />
-                ) : (
-                  <Icons.SideMenu />
-                )
-              }
-            </Button>
+            {
+              !openMobileChat && (
+                <Button onClick={() => setOpenSideMenu(!openSideMenu)} variant="outline" className='p-2 bg-white' >
+                  {
+                    openSideMenu ? (
+                      <Icons.SideMenu_Open />
+                    ) : (
+                      <Icons.SideMenu />
+                    )
+                  }
+                </Button>
+              )
+            }
           </div>
           {
             openSideMenu ? (
               null
             ) : (
-              <div className='w-full flex justify-center mr-10'>
+              <div className='w-full flex justify-center mr-0 lg:mr-10 gap-2'>
+                {
+                  openMobileChat && (
+                    <div className='w-full'>
+                      <BotVisualizer longAF={true} stream={null} type="default" small={openSideMenu} />
+                    </div>
+                  )
+                }
                 <Tabs defaultValue="chat" value={techCouncilMenuValue} onValueChange={(value) => setTechCouncilMenuValue(value as "chat" | "participants")}>
                   <TabsList className='bg-white'>
                     <TabsTrigger className='text-brand-gray text-sm' value="chat">{t("chat")}</TabsTrigger>

@@ -8,9 +8,10 @@ interface AudioVisualizerProps {
   small?: boolean
   userSpeaking?: boolean
   recordingDuration?: number
+	longAF?: boolean
 }
 
-const BotVisualizer = ({ type = "default", stream, small = false, userSpeaking = false, recordingDuration = 0 }: AudioVisualizerProps) => {
+const BotVisualizer = ({ type = "default", stream, small = false, userSpeaking = false, recordingDuration = 0, longAF }: AudioVisualizerProps) => {
 	switch (type) {
 		case "speaking":
 			const BotSpeaking = ({ stream, small = false }: AudioVisualizerProps) => {
@@ -159,7 +160,7 @@ const BotVisualizer = ({ type = "default", stream, small = false, userSpeaking =
 								? "w-full h-[40px] bg-white relative" 
 								: small
 								? "w-[76px] h-[76px] bg-gradient-to-r from-[#F96D31] to-[#FFBA6A]" 
-								: "w-full h-20 bg-gradient-to-r from-[#F96D31] to-[#FFBA6A]"       
+								: "w-full h-20 bg-gradient-to-r from-[#F96D31] to-[#FFBA6A]" + (longAF ? " h-full" : "")
 							)
 						}
 					>
@@ -194,7 +195,7 @@ const BotVisualizer = ({ type = "default", stream, small = false, userSpeaking =
 				}, [])
 
 				return (
-					<div className={"flex justify-center items-center bg-gradient-to-r from-[#F96D31] to-[#FFBA6A] overflow-hidden relative p-px rounded-lg " + (small ? "w-[76px] h-[76px]" : "w-full h-20")}>
+					<div className={"flex justify-center items-center bg-gradient-to-r from-[#F96D31] to-[#FFBA6A] overflow-hidden relative p-px rounded-lg " + (small ? "w-[76px] h-[76px]" : "w-full h-20" + (longAF ? " h-full" : ""))}>
 						<div ref={lottieRef} className={small ? "w-[76px] h-[76px]" : "w-full h-40"}></div>
 						{userSpeaking && (
 							<span className="text-xs text-muted-foreground absolute bottom-3 right-2">
@@ -226,8 +227,8 @@ const BotVisualizer = ({ type = "default", stream, small = false, userSpeaking =
 				})
 
 				return (
-					<div className={"flex justify-center items-center bg-gradient-to-r from-[#F96D31] to-[#FFBA6A] overflow-hidden p-px rounded-lg " + (small ? "w-[76px] h-[76px]" : "w-full h-20")}>
-						<div ref={lottieRef} className={small ? "w-[76px] h-[76px]" : "w-full h-[306px]"}></div>
+					<div className={"flex justify-center items-center bg-gradient-to-r from-[#F96D31] to-[#FFBA6A] overflow-hidden p-px rounded-lg " + (small ? "w-[76px] h-[76px]" : "w-full h-20" + (longAF ? " h-full" : ""))}>
+						<div ref={lottieRef} className={small ? "w-[76px] h-[76px]" : "w-full h-40"}></div>
 					</div>
 				)
 			}
@@ -260,7 +261,7 @@ const BotVisualizer = ({ type = "default", stream, small = false, userSpeaking =
 		default:
 			const BotDefault = ({ small }: { small?: boolean }) => {
 				return (
-					<div className={"flex justify-center items-center bg-gradient-to-r from-[#F96D31] to-[#FFBA6A] overflow-hidden p-px rounded-lg " + (small ? "w-[76px] h-[76px]" : "w-full h-20")}>
+					<div className={"flex justify-center items-center bg-gradient-to-r from-[#F96D31] to-[#FFBA6A] overflow-hidden p-px rounded-lg " + (small ? "w-[76px] h-[76px]" : "w-full h-20" + (longAF ? " h-full" : ""))}>
 						<div className='w-full border-y-[1px] border-white'></div>
 					</div>
 				)
