@@ -121,7 +121,6 @@ const ChatMode = () => {
     if (selectedConversation) {
       const selectedConvo = conversations.find((c) => c.id === selectedConversation)
       setSelectedConversationType(selectedConvo?.chat_type)
-      setOpenMenu(false)
     }
   }, [selectedConversation, conversations])
 
