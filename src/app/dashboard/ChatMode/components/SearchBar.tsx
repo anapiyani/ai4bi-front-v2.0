@@ -7,9 +7,11 @@ import { useTranslations } from "next-intl"
 import { useEffect } from "react"
 
 export function SearchBar({
-  setPrivateChatResult
+  setPrivateChatResult,
+  onSearch
 }: {
   setPrivateChatResult?: (result: AutoCompleteResponse[] | null) => void
+  onSearch?: (term: string) => void
 }) {
   const t = useTranslations("dashboard")
   const { results, handleSearch } = useAutoComplete();
@@ -19,6 +21,14 @@ export function SearchBar({
       setPrivateChatResult(results.length ? results : null);
     }
   }, [results, setPrivateChatResult]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    if (onSearch) {
+      onSearch(value)
+    }
+    handleSearch(e)
+  }
 
   return (
     <motion.div 
@@ -32,7 +42,7 @@ export function SearchBar({
         className='w-full' 
         type='text'
         icon={Icons.SearchInput()}
-        onChange={handleSearch}
+        onChange={handleInputChange}
       /> 
     </motion.div>
   )
