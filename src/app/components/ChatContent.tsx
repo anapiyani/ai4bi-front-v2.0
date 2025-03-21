@@ -9,6 +9,7 @@ import { getCookie } from "../api/service/cookie"
 import RenderUsers from '../dashboard/TechnicalCouncil/components/RenderUsers'
 import { useGoToMessage } from '../hooks/useGoToMessage'
 import { ChatContentProps, ChatMessage, SelectActions } from "../types/types"
+import FinishTechCouncil from './Alerts/Organizers/FinishTechCouncil'
 import TimeToStartAucTech from './Alerts/Organizers/TimeToStartAucTech'
 import BotVisualizer from './Bot/BotVisualizer'
 import DropZoneModal from './Chat/Files/DropZoneModal'
@@ -61,6 +62,7 @@ const ChatContent = ({
   const [openForwardMessage, setOpenForwardMessage] = useState<boolean>(false);
   const [forwardMessageIds, setForwardMessageIds] = useState<string[] | null>(null);
   const currentChatPopup = popUpsByChat?.[chatId || ""]?.data ?? null;
+  console.log(currentChatPopup)
   const conferenceRoom = conferenceRoomsByChat?.[chatId || ""] ?? null;
   const goToMessage = useGoToMessage();
   const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
@@ -282,7 +284,7 @@ const ChatContent = ({
           }
         </div>
         {
-          currentChatPopup && currentChatPopup.popup_type && (
+          currentChatPopup && currentChatPopup.popup_type === "tech_council_start" && (
             <div className={`absolute top-[${pinnedMessages.length > 0 && conferenceRoom && conferenceRoom.is_active ? "120px" : "70px"}] lg:top-[65px] left-0 right-0 z-50 flex justify-self-center`}>
               <TimeToStartAucTech
                 body={currentChatPopup.body}
@@ -295,6 +297,23 @@ const ChatContent = ({
                 header={currentChatPopup.header}
                 user_id={currentChatPopup.user_id}
                 handlePopUpButtonAction={handlePopUpButtonAction}
+              />
+            </div>
+          )
+        }
+        {
+          currentChatPopup && currentChatPopup.popup_type === "tech_council_end" && (
+            <div className={`absolute top-[${pinnedMessages.length > 0 && conferenceRoom && conferenceRoom.is_active ? "120px" : "70px"}] lg:top-[65px] left-0 right-0 z-50 flex justify-self-center`}>
+              <FinishTechCouncil
+                body={currentChatPopup.body}
+                buttons={currentChatPopup.buttons}
+                chat_id={currentChatPopup.chat_id}
+                created_at={currentChatPopup.created_at}
+                expiration_time={currentChatPopup.expiration_time}
+                header={currentChatPopup.header}
+                user_id={currentChatPopup.user_id}
+                popup_id={currentChatPopup.id}
+                popup_type={currentChatPopup.popup_type}
               />
             </div>
           )
