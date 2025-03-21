@@ -421,7 +421,7 @@ const ChatMode = () => {
         />
       </div>
       {openMenu && selectedConversation && (
-        <div className="w-full lg:block lg:w-[300px] flex-shrink-0 overflow-y-auto px-4 lg:px-0">
+        <div className={`w-full lg:block lg:w-[370px] flex-shrink-0 overflow-y-auto px-4 lg:px-0 ${selectedConversationType === "group" ? "lg:w-[370px]" : "lg:w-[300px]"}`}>
           <ChatMenu
             type={selectedConversationType}
             setOpenMenu={setOpenMenu}

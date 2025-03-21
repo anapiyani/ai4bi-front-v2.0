@@ -43,7 +43,7 @@ const GroupChatMenu = (
 	}
 
 	return (
-		<div className="flex flex-col gap-4">
+		<div className="flex flex-col gap-4 w-full">
 			<div className='flex'>
 				<p className='text-sm font-medium'>{name}</p>
 			</div>
@@ -73,7 +73,7 @@ const GroupChatMenu = (
 							value="participants"
 							className='w-full bg-transparent data-[state=active]:text-primary
 												data-[state=active]:border-b-2 data-[state=active]:border-primary
-												rounded-none data-[state=active]:bg-transparent'>
+												rounded-none data-[state=active]:bg-transparent px-0'>
 							{t("participants")}
 						</TabsTrigger>
 
@@ -81,7 +81,7 @@ const GroupChatMenu = (
 							value="image"
 							className='w-full bg-transparent data-[state=active]:text-primary
 												data-[state=active]:border-b-2 data-[state=active]:border-primary
-												rounded-none data-[state=active]:bg-transparent'>
+												rounded-none data-[state=active]:bg-transparent px-0'>
 							{t("photo-video")}
 						</TabsTrigger>
 
@@ -89,7 +89,7 @@ const GroupChatMenu = (
 							value="file"
 							className='w-full bg-transparent data-[state=active]:text-primary
 												data-[state=active]:border-b-2 data-[state=active]:border-primary
-												rounded-none data-[state=active]:bg-transparent'>
+												rounded-none data-[state=active]:bg-transparent px-0'>
 							{t("file")}
 						</TabsTrigger>
 					</TabsList>
