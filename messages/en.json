@@ -229,7 +229,8 @@
 		"leave-the-call": "Leave the call",
 		"you-can-return-to-the-call": "You can return to the call, while it is in progress.",
 		"you-can-quit-the-call": "You can quit the call, or leave the call without finishing it. Returning to chat mode, you will be able to return while it is in progress.",
-		"finish-the-call": "Finish the call"
+		"finish-the-call": "Finish the call",
+		"error_audio": "Error loading audio"
 	},
 	"dropzone": {
 		"upload_files": "Upload files",
