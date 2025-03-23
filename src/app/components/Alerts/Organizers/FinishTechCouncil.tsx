@@ -2,6 +2,7 @@
 import { Button } from '@/components/ui/button'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
+import { PopUpButtonAction } from '../../../types/types'
 import ChangeDates from '../../Form/ChangeDates'
 import Icons from '../../Icons'
 interface FinishTechCouncilProps {
@@ -19,22 +20,25 @@ interface FinishTechCouncilProps {
 	header: string
 	user_id: string
 	popup_id: string
-	popup_type: "tech_council_end"
+	popup_type: "tech_council_end",
+	handlePopUpButtonAction: (button: PopUpButtonAction) => void
 }
 
 const FinishTechCouncil = ({
 	body,
 	buttons,
 	chat_id,
+	popup_id,
 	created_at,
 	expiration_time,
 	header,
 	user_id,
+	handlePopUpButtonAction
 }: FinishTechCouncilProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const t = useTranslations('dashboard')
 	const [openRescheduleModal, setOpenRescheduleModal] = useState(false)
-	const [rescheduleAction, setRescheduleAction] = useState<"RESCHEDULED_TECH_COUNCIL" | null>(null)
+	const [rescheduleAction, setRescheduleAction] = useState<"RESCHEDULED_TECH_COUNCIL" | "END_TECH_COUNCIL" | null>(null)
 	
   return (
     <div className="flex items-center justify-center w-full mt-3">
@@ -50,23 +54,26 @@ const FinishTechCouncil = ({
 										{t("reschedule-technical-council-description")}
 									</p>
 								</div>
-
 								<div className="flex justify-end gap-3">
 									{
-										buttons.map((button) => (
+										buttons
+										.sort((a, b) => b.order_index - a.order_index)
+										.map((button) => (
 											<Button 
 												key={button.id}
-												variant={`${button.button_style === "primary" ? "outline" : "default"}`}
+												variant={`${button.button_style === "primary" ? "default" : "outline"}`}
 												onClick={() => {
 													if (button.action === "END_TECH_COUNCIL") {
-														setIsExpanded(true)
+														setOpenRescheduleModal(true)
+														setRescheduleAction("END_TECH_COUNCIL")
 													} else {
 														setOpenRescheduleModal(true)
+														setRescheduleAction("RESCHEDULED_TECH_COUNCIL")
 													}
 												}}
 											>
 												{
-													button.action === "END_TECH_COUNCIL" ? t("yes-reschedule") : t("no-plan-the-auction")
+													button.action === "END_TECH_COUNCIL" ? t("no-plan-the-auction") : t("yes-reschedule")
 												}
 											</Button>
 										))
@@ -89,11 +96,18 @@ const FinishTechCouncil = ({
 						<ChangeDates
 							open={openRescheduleModal}
 							onClose={() => setOpenRescheduleModal(false)}
-							rescheduleData={(date, time) => {
-								
+							rescheduleData={(datetime) => {
+								handlePopUpButtonAction({
+									popup_id: popup_id,
+									user_id: user_id,
+									button_id: buttons.find((button) => button.action === rescheduleAction)?.id || '',
+									chatId: chat_id,
+									tech_council_reschedule_date: rescheduleAction === "RESCHEDULED_TECH_COUNCIL" ? datetime : undefined,
+									auction_date: rescheduleAction === "END_TECH_COUNCIL" ? datetime : undefined,
+								})
 							}}
 							rescheduleAction={rescheduleAction}
-							chat_id={""}
+							chat_id={chat_id}
 						/>
 					)}
 

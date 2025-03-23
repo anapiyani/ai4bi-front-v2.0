@@ -314,6 +314,7 @@ const ChatContent = ({
                 user_id={currentChatPopup.user_id}
                 popup_id={currentChatPopup.id}
                 popup_type={currentChatPopup.popup_type}
+                handlePopUpButtonAction={handlePopUpButtonAction}
               />
             </div>
           )
