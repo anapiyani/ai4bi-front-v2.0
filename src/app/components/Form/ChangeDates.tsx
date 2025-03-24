@@ -15,7 +15,7 @@ const ChangeDates = ({
   open: boolean;
   onClose: () => void;
   chat_id: string;
-  rescheduleAction: "RESCHEDULED_TECH_COUNCIL" | "END_TECH_COUNCIL" | null;
+  rescheduleAction: "RESCHEDULED_TECH_COUNCIL" | "END_TECH_COUNCIL" | "RESCHEDULED_TENDER" | null;
   rescheduleData: (datetime: string) => void;
 }) => {
 	const t = useTranslations('dashboard');

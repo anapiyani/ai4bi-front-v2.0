@@ -72,6 +72,7 @@ export const useChatWebSocket = () => {
           });
           break;
         case "conference_room":
+          console.log("conference_room", message.data)
           setConferenceRoomsByChat((prev) => ({
             ...prev,
             [message.data.chat_id]: {

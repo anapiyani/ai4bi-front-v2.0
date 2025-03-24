@@ -346,3 +346,11 @@ export type Protocol = {
 		email: string[];
 	}[];
 }
+
+export type Transcription = {
+	time: string
+	text: string
+	user_id: string
+	name: string
+	mic_on: boolean
+}
