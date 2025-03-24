@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl'
 import { useSearchParams } from 'next/navigation'
-import { useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useChatWebSocket } from '../../hooks/useChatWebSocket'
 import { useWebRTC } from '../../hooks/useWebRTC'
 import { Protocol, TechCouncilUser } from '../../types/types'
@@ -42,6 +42,14 @@ const Auction = ({
     isRTCNotConnected,
     closeRTCConnection,
   } = useWebRTC({ room, isMicrophoneOn })
+
+	const auctionTable = useMemo(() => {
+		return (
+			<div>
+				AUction Table
+			</div>
+		)
+	}, [protocols, chat_id, conference_id])
 	
 	return (
 		<div>
@@ -63,7 +71,7 @@ const Auction = ({
         setOpenMobileChat={setOpenMobileChat}
         messagesEndRef={messagesEndRef}
         protocols={protocols as Protocol}
-        children={<h1>{t("Auction")}</h1>}
+        children={auctionTable}
       />
     </div>
 	)
