@@ -134,7 +134,11 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
         setOpenMobileChat={setOpenMobileChat}
         messagesEndRef={messagesEndRef}
         protocols={protocols as Protocol}
-        children={technicalCouncilTabs}
+        children={
+          <div>
+            {technicalCouncilTabs}
+          </div>
+          }
       />
     </div>
   )

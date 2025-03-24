@@ -71,7 +71,11 @@ const Auction = ({
         setOpenMobileChat={setOpenMobileChat}
         messagesEndRef={messagesEndRef}
         protocols={protocols as Protocol}
-        children={auctionTable}
+        children={
+          <div>
+            {auctionTable}
+          </div>
+        }
       />
     </div>
 	)
