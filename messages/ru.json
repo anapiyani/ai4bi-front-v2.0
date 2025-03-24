@@ -236,7 +236,13 @@
 		"reschedule-technical-council": "Назначить повторный технический совет",
 		"reschedule-technical-council-description": "Вы можете провести повторный звонок для обсуждения технисеского задания перед проведением тендера.",
 		"yes-reschedule": "Да, назначить",
-		"no-plan-the-auction": "Нет, запланировать тендер"
+		"no-plan-the-auction": "Нет, запланировать тендер",
+		"auction_on_progress": "Тендер в процессе",
+		"group_on_progress": "Группа в процессе",
+		"private_on_progress": "Частный чат в процессе",
+		"tech_council_end": "Тех. совет завершен. Вы хотите принять участие в тендере?",
+		"time_to_start_tender": "Время начинать тендер",
+		"start_auction": "Начать тендер"
 	},
 	"dropzone": {
 		"upload_files": "Загрузить файлы",

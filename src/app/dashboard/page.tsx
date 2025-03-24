@@ -109,7 +109,17 @@ export default function Dashboard() {
           }}
     />,
       "auction-results": () => <AuctionResults />,
-      auction: () => <Auction />  
+      auction: () => <Auction 
+        isMicrophoneOn={isMicrophoneOn}
+        toggleMicrophone={toggleMicrophone}
+        closingTechnicalCouncil={(closeFunc) => {
+          closeRTCConnection.current = closeFunc
+        }}
+        onUserUpdate={(user, conferenceId) => {
+          setTechCouncilUser(user)
+          setConferenceId(conferenceId)
+        }}
+      />  
     } as const
     return components[active_tab]?.() ?? components.chat()
   }

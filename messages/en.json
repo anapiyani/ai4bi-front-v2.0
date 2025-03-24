@@ -234,7 +234,10 @@
 		"reschedule-technical-council": "Reschedule technical council",
 		"reschedule-technical-council-description": "You can reschedule the technical council to discuss the technical task before the auction.",
 		"yes-reschedule": "Yes, reschedule",
-		"no-plan-the-auction": "No, plan the auction"
+		"no-plan-the-auction": "No, plan the auction",
+		"auction_on_progress": "Auction in progress",
+		"group_on_progress": "Group in progress",
+		"private_on_progress": "Private chat in progress"
 	},
 	"dropzone": {
 		"upload_files": "Upload files",

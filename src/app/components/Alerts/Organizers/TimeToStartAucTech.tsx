@@ -118,12 +118,12 @@ const TimeToStartAucTech = ({
 							open={openRescheduleModal}
 							onClose={() => setOpenRescheduleModal(false)}
 							chat_id={chat_id}
-							rescheduleData={(date, time) => {
+							rescheduleData={(datetime) => {
 								handlePopUpButtonAction({
 									popup_id: popup_id,
 									user_id: user_id,
 									button_id: buttons.find((button) => button.action === rescheduleAction)?.id || '',
-									tech_council_reschedule_date: date,
+									tech_council_reschedule_date: datetime,
 									chatId: chat_id,
 								})
 							}}

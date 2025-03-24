@@ -45,7 +45,7 @@ export const useChatWebSocket = () => {
       })
       return;
     }
-
+    
     if (message.jsonrpc === "2.0" && message.result) {
       if (message.result.chat_id) {
         handleChatCreated(message.result);
@@ -72,6 +72,7 @@ export const useChatWebSocket = () => {
           });
           break;
         case "conference_room":
+          console.log("conference_room", message.data)
           setConferenceRoomsByChat((prev) => ({
             ...prev,
             [message.data.chat_id]: {
@@ -410,7 +411,8 @@ export const useChatWebSocket = () => {
   }, []);
 
   const handlePopUpButtonAction = useCallback((button: PopUpButtonAction, clicked_user_id?: string) => {
-    const { popup_id, chatId, user_id, button_id, tech_council_reschedule_date }: PopUpButtonAction = button;
+    const { popup_id, chatId, user_id, button_id, tech_council_reschedule_date, auction_date }: PopUpButtonAction = button;
+    console.log("handlePopUpButtonAction", button);
     setStartedUserId(clicked_user_id || null);
     setPopUpsByChat(prev => {
       const updated = { ...prev };
@@ -421,7 +423,8 @@ export const useChatWebSocket = () => {
       popup_id: popup_id,
       user_id: user_id,
       button_id: button_id,
-      tech_council_reschedule_date: tech_council_reschedule_date || null
+      tech_council_reschedule_date: tech_council_reschedule_date || null,
+      auction_date: auction_date || null
     }));
   }, []);
 

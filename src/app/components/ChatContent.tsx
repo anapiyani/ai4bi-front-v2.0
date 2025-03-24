@@ -10,6 +10,7 @@ import RenderUsers from '../dashboard/TechnicalCouncil/components/RenderUsers'
 import { useGoToMessage } from '../hooks/useGoToMessage'
 import { ChatContentProps, ChatMessage, SelectActions } from "../types/types"
 import FinishTechCouncil from './Alerts/Organizers/FinishTechCouncil'
+import StartAuction from './Alerts/Organizers/StartAuction'
 import TimeToStartAucTech from './Alerts/Organizers/TimeToStartAucTech'
 import BotVisualizer from './Bot/BotVisualizer'
 import DropZoneModal from './Chat/Files/DropZoneModal'
@@ -76,10 +77,18 @@ const ChatContent = ({
 
   const handleJoinToCall = () => {
     if (!conferenceRoom) return;
-    if (conferenceRoom.is_active) {
-      const baseUrl = window.location.origin;
-      const url = `${baseUrl}/dashboard?active_tab=technical-council&chat_id=${chatId}&conference_id=${conferenceRoom.conference_id}`;
-      window.location.href = url;
+    if (conferenceRoom.conference_type === "tech_council") {
+      if (conferenceRoom.is_active) {
+        const baseUrl = window.location.origin;
+        const url = `${baseUrl}/dashboard?active_tab=technical-council&chat_id=${chatId}&conference_id=${conferenceRoom.conference_id}`;
+        window.location.href = url;
+      }
+    } else if (conferenceRoom.conference_type === "tender") {
+      if (conferenceRoom.is_active) {
+        const baseUrl = window.location.origin;
+        const url = `${baseUrl}/dashboard?active_tab=auction&chat_id=${chatId}&conference_id=${conferenceRoom.conference_id}`;
+        window.location.href = url;
+      }
     }
   }
 
@@ -278,7 +287,7 @@ const ChatContent = ({
           {
             conferenceRoom && conferenceRoom.is_active && (
               <div className="absolute top-[65px] left-0 right-0 z-50">
-                <OnProgress conference_type={conferenceRoom.conference_type} handleJoinToCall={handleJoinToCall} />
+                <OnProgress conference_type={conferenceRoom.conference_type as "tender" | "tech_council" | "group" | "private"} handleJoinToCall={handleJoinToCall} />
               </div>
             )
           }
@@ -314,6 +323,25 @@ const ChatContent = ({
                 user_id={currentChatPopup.user_id}
                 popup_id={currentChatPopup.id}
                 popup_type={currentChatPopup.popup_type}
+                handlePopUpButtonAction={handlePopUpButtonAction}
+              />
+            </div>
+          )
+        }
+        {
+          currentChatPopup && currentChatPopup.popup_type === "tender_start" && (
+            <div className={`absolute top-[${pinnedMessages.length > 0 && conferenceRoom && conferenceRoom.is_active ? "120px" : "70px"}] lg:top-[65px] left-0 right-0 z-50 flex justify-self-center`}>
+              <StartAuction
+                body={currentChatPopup.body}
+                buttons={currentChatPopup.buttons}
+                chat_id={currentChatPopup.chat_id}
+                created_at={currentChatPopup.created_at}
+                expiration_time={currentChatPopup.expiration_time}
+                header={currentChatPopup.header}
+                user_id={currentChatPopup.user_id}
+                popup_id={currentChatPopup.id}
+                popup_type={currentChatPopup.popup_type}
+                handlePopUpButtonAction={handlePopUpButtonAction}
               />
             </div>
           )

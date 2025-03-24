@@ -316,6 +316,7 @@ export type PopUpButtonAction = {
 	user_id: string;
 	button_id: string;
 	tech_council_reschedule_date?: string;
+	auction_date?: string;
 }
 
 export type Protocol = {
@@ -344,4 +345,12 @@ export type Protocol = {
 		phone_number: string;
 		email: string[];
 	}[];
+}
+
+export type Transcription = {
+	time: string
+	text: string
+	user_id: string
+	name: string
+	mic_on: boolean
 }

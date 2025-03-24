@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, useRef, useState } from 'react'
 import { getCookie } from '../api/service/cookie'
-
+import { Transcription } from '../types/types'
 interface UseWebRTCProps {
   room: string
   isMicrophoneOn: boolean
@@ -10,14 +10,7 @@ interface UseWebRTCProps {
 export const useWebRTC = ({ room, isMicrophoneOn }: UseWebRTCProps) => {
   const [localStream, setLocalStream] = useState<MediaStream | null>(null)
   const [remoteAudios, setRemoteAudios] = useState<HTMLAudioElement[]>([])
-  const [transcription, setTranscription] = useState<{
-    time: string
-    text: string
-    user_id: string
-    name: string
-    mic_on: boolean
-    username: string
-  }[]>([])
+  const [transcription, setTranscription] = useState<Transcription[]>([])
 
   const speakingUsers = useRef<Map<string, boolean>>(new Map())
   const connectedUsers = useRef<Map<string, any>>(new Map())

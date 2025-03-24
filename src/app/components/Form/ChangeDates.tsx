@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { motion } from 'framer-motion'
 import { useTranslations } from 'next-intl'
-import { toast } from 'react-hot-toast'
+import toast from 'react-hot-toast'
 import { useChangeDateForm } from '../../hooks/useChangeDateState'
 import { DateTimeInput } from './components/FormDateTime'
 
@@ -15,18 +15,21 @@ const ChangeDates = ({
   open: boolean;
   onClose: () => void;
   chat_id: string;
-  rescheduleAction: "RESCHEDULED_TECH_COUNCIL" | null;
-  rescheduleData: (date: string, time: string) => void;
+  rescheduleAction: "RESCHEDULED_TECH_COUNCIL" | "END_TECH_COUNCIL" | "RESCHEDULED_TENDER" | null;
+  rescheduleData: (datetime: string) => void;
 }) => {
 	const t = useTranslations('dashboard');
 	const { state, updateState } = useChangeDateForm();
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
-    const date = state.date?.toISOString()
-    const time = state.time
-    if (date && time) {
-      rescheduleAction ? rescheduleData(date, time) : onClose()
+    const date = state.date?.toISOString().split('T')[0] || ''
+    const time = state.time || ''
+    const localDateTimeString = `${date}T${time}:00`
+    const localDate = new Date(localDateTimeString)
+    const utcString = localDate.toISOString()
+    if (utcString) {
+      rescheduleAction ? rescheduleData(utcString) : onClose()
     } else {
       toast.error(t("please-select-date-and-time"))
     }
