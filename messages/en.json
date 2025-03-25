@@ -237,7 +237,16 @@
 		"no-plan-the-auction": "No, plan the auction",
 		"auction_on_progress": "Auction in progress",
 		"group_on_progress": "Group in progress",
-		"private_on_progress": "Private chat in progress"
+		"private_on_progress": "Private chat in progress",
+		"auction_protocol": "Auction protocol",
+		"total": "Total",
+		"partner": "Partner",
+		"product_manufacturer": "Product manufacturer",
+		"materials": "Materials",
+		"work": "Work",
+		"advance": "Advance",
+		"advance_type": "Advance type",
+		"amount_after_auction": "Amount after auction"
 	},
 	"dropzone": {
 		"upload_files": "Upload files",

@@ -7,7 +7,8 @@ import { useChatWebSocket } from '../../hooks/useChatWebSocket'
 import { useWebRTC } from '../../hooks/useWebRTC'
 import { Protocol, TechCouncilUser } from '../../types/types'
 import CallsBaseModel from '../CallsBaseModel/CallsBaseModel'
-
+import Transcriptions from '../TechnicalCouncil/components/Transcriptions'
+import { AuctionProtocol } from './components/AuctionProtocol'
 interface AuctionProps {
   isMicrophoneOn: boolean
   toggleMicrophone: () => void
@@ -45,8 +46,24 @@ const Auction = ({
 
 	const auctionTable = useMemo(() => {
 		return (
-			<div>
-				AUction Table
+			<div className='w-full flex flex-col gap-3'>
+        <div className='w-full h-[500px] overflow-y-auto rounded-lg p-2 flex flex-col gap-2'>
+          <AuctionProtocol t={t} />
+        </div>
+        <div className="w-full h-[280px] overflow-y-auto rounded-lg p-2 flex flex-col gap-2">
+          <h2 className="text-brand-gray text-lg font-semibold">{t("call_transcription")}:</h2>
+            {transcription.map((textObj, index) => {
+              return (
+                <div className='mt-1' key={index} ref={messagesEndRef}>
+                  <Transcriptions
+                    time={textObj.time}
+                    user={textObj.name}
+                    text={textObj.text}
+                  />
+                </div>
+                );
+              })}
+          </div>
 			</div>
 		)
 	}, [protocols, chat_id, conference_id])

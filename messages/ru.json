@@ -242,7 +242,16 @@
 		"private_on_progress": "Частный чат в процессе",
 		"tech_council_end": "Тех. совет завершен. Вы хотите принять участие в тендере?",
 		"time_to_start_tender": "Время начинать тендер",
-		"start_auction": "Начать тендер"
+		"start_auction": "Начать тендер",
+		"auction_protocol": "Протокол тендера",
+		"total": "Итого",
+		"partner": "Партнер",
+		"product_manufacturer": "Производитель продукта",
+		"materials": "Материалы",
+		"work": "Работа",
+		"advance": "Аванс",
+		"advance_type": "Тип аванса",
+		"amount_after_auction": "Сумма после аукциона"
 	},
 	"dropzone": {
 		"upload_files": "Загрузить файлы",
