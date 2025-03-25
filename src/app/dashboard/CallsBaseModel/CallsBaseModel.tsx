@@ -155,7 +155,7 @@ const CallsBaseModel = ({
           className={`${
             openSideMenu ? "lg:basis-[95%] md:basis-[95%]" : "lg:basis-[70%] md:basis-[60%]"
           } basis-full ${openMobileChat ? "h-full pt-2 px-2" : "h-[calc(100vh-8rem)] p-2"} lg:bg-neutrals-primary rounded-lg`}
-        >
+        > 
 					{children}
         </div>
         <div
