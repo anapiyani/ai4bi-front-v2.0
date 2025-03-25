@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useTranslations } from 'next-intl'
 import dynamic from "next/dynamic"
 import { useSearchParams } from 'next/navigation'
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import ProtocolTable from '../../components/Form/ProtocolTable'
 import Icons from '../../components/Icons'
 import { useChatWebSocket } from '../../hooks/useChatWebSocket'
@@ -52,6 +52,12 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
     closeRTCConnection,
   } = useWebRTC({ room, isMicrophoneOn })
 
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [transcription]);
+
   const technicalCouncilTabs = useMemo(() => {
     return (
       <Tabs defaultValue="demonstration">
@@ -94,17 +100,26 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
                 <ScreenShareContent />
                 <div className="w-full h-[280px] overflow-y-auto rounded-lg p-2 flex flex-col gap-2">
                   <h2 className="text-brand-gray text-lg font-semibold">{t("call_transcription")}:</h2>
-                  {transcription.map((textObj, index) => {
-                    return (
-                      <div className='mt-1' key={index} ref={messagesEndRef}>
-                        <Transcriptions
-                          time={textObj.time}
-                          user={textObj.name}
-                          text={textObj.text}
-                        />
-                      </div>
-                    );
-                  })}
+                  {transcription.length > 0 ? (
+                    transcription.map((textObj, index) => {
+                      const isLastItem = index === transcription.length - 1;
+                      return (
+                        <div 
+                          className='mt-1' 
+                          key={index} 
+                          ref={isLastItem ? messagesEndRef : null}
+                        >
+                          <Transcriptions
+                            time={textObj.time}
+                            user={textObj.name}
+                            text={textObj.text}
+                          />
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="text-muted-foreground text-sm">{t("no_transcriptions_yet")}</div>
+                  )}
               </div>
             </div>
           </TabsContent>
@@ -113,7 +128,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
         </TabsContent>
       </Tabs>
     )
-  }, [protocols, chat_id, conference_id])
+  }, [transcription, protocols, t, openMobileChat])
   return (
     <div>
       <CallsBaseModel
@@ -142,4 +157,3 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
 }
 
 export default TechnicalCouncil
-
