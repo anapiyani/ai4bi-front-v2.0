@@ -251,7 +251,8 @@
 		"work": "Работа",
 		"advance": "Аванс",
 		"advance_type": "Тип аванса",
-		"amount_after_auction": "Сумма после аукциона"
+		"amount_after_auction": "Сумма после аукциона",
+		"no_transcriptions_yet": "Нет транскрипций"
 	},
 	"dropzone": {
 		"upload_files": "Загрузить файлы",

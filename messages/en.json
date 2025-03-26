@@ -246,7 +246,8 @@
 		"work": "Work",
 		"advance": "Advance",
 		"advance_type": "Advance type",
-		"amount_after_auction": "Amount after auction"
+		"amount_after_auction": "Amount after auction",
+		"no_transcriptions_yet": "No transcriptions yet"
 	},
 	"dropzone": {
 		"upload_files": "Upload files",
