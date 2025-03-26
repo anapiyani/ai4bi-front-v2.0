@@ -42,19 +42,19 @@ const FinishTechCouncil = ({
 	
   return (
     <div className="flex items-center justify-center w-full mt-3">
-      <div className={`bg-white overflow-hidden ${!isExpanded ? "w-[340px] lg:w-[500px] rounded-lg" : "w-[300px] rounded-full"}`}>
+      <div className={`bg-white overflow-hidden ${!isExpanded ? "w-[320px] md:w-[400px] lg:w-[500px] rounded-lg" : "w-[300px] rounded-full"}`}>
 				{!openRescheduleModal && !isExpanded ? (
-						<div className="w-[340px] lg:w-[500px] bg-white rounded-lg p-6">
+						<div className="w-[320px] md:w-[400px] lg:w-[500px] bg-white rounded-lg p-6">
 							<div className="space-y-4">
 								<div className="flex flex-col gap-2">
-									<h2 className="text-lg font-semibold">
+									<h2 className="text-sm md:text-base lg:text-lg font-semibold">
 										{t("reschedule-technical-council")}
 									</h2>
-									<p className="text-sm text-gray-500">
+									<p className="text-xs md:text-sm lg:text-sm text-gray-500">
 										{t("reschedule-technical-council-description")}
 									</p>
 								</div>
-								<div className="flex justify-end gap-3">
+								<div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3">
 									{
 										buttons
 										.sort((a, b) => b.order_index - a.order_index)
@@ -71,6 +71,7 @@ const FinishTechCouncil = ({
 														setRescheduleAction("RESCHEDULED_TECH_COUNCIL")
 													}
 												}}
+												className='text-xs md:text-sm lg:text-sm w-full sm:w-auto'
 											>
 												{
 													button.action === "END_TECH_COUNCIL" ? t("no-plan-the-auction") : t("yes-reschedule")
