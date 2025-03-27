@@ -34,6 +34,7 @@ type CallsBaseModelProps = {
 	messagesEndRef: React.RefObject<HTMLDivElement>
 	protocols: Protocol
 	children: React.ReactNode
+	auctionMobileChat?: string
 }
 
 const CallsBaseModel = ({
@@ -55,6 +56,7 @@ const CallsBaseModel = ({
 	setOpenMobileChat,
 	messagesEndRef,
 	children,
+	auctionMobileChat
 }: CallsBaseModelProps) => {
 	const router = useRouter()
   const t = useTranslations("dashboard")
@@ -260,6 +262,7 @@ const CallsBaseModel = ({
             technicalCouncilUsers={mergedCouncilUsers}
             onMobileBack={() => setOpenMobileChat(false)}
             openMobileChat={openMobileChat}
+            auctionMobileChat={auctionMobileChat}
           />
         </div>
       )}

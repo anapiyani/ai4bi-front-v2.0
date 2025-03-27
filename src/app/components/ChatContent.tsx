@@ -53,7 +53,8 @@ const ChatContent = ({
   startedUserId,
   technicalCouncilUsers,
   onMobileBack,
-  openMobileChat
+  openMobileChat,
+  auctionMobileChat
 }: ChatContentProps) => {
   const t = useTranslations("dashboard");
   const [editMessage, setEditMessage] = useState<ChatMessage | null>(null);
@@ -63,12 +64,11 @@ const ChatContent = ({
   const [openForwardMessage, setOpenForwardMessage] = useState<boolean>(false);
   const [forwardMessageIds, setForwardMessageIds] = useState<string[] | null>(null);
   const currentChatPopup = popUpsByChat?.[chatId || ""]?.data ?? null;
-  console.log(currentChatPopup)
   const conferenceRoom = conferenceRoomsByChat?.[chatId || ""] ?? null;
   const goToMessage = useGoToMessage();
   const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
   const messagesRef = useRef<HTMLDivElement>(null);
-  const [techCouncilMenuValue, setTechCouncilMenuValue] = useState<"chat" | "participants">("chat");
+  const [techCouncilMenuValue, setTechCouncilMenuValue] = useState<"chat" | "participants">(auctionMobileChat ? auctionMobileChat as "chat" | "participants" : "chat");
   useEffect(() => {
     if (!messagesRef.current) return;
     messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
@@ -244,7 +244,7 @@ const ChatContent = ({
           {
             openSideMenu ? (
               null
-            ) : (
+            ) : !auctionMobileChat && (
               <div className='w-full flex justify-center mr-0 lg:mr-10 gap-2'>
                 {
                   openMobileChat && (
@@ -353,7 +353,7 @@ const ChatContent = ({
       openSideMenu ? (
         null
       ) : (
-        techCouncilMenuValue === "chat" ? (
+        auctionMobileChat === "chat" ? (
           <div className={`flex-grow ${isTechnicalCouncil ? "rounded-lg" : " bg-neutrals-secondary"}`}>
             <div className={`${isTechnicalCouncil ? "h-[calc(90vh-270px)]" : "h-[calc(100dvh-130px)] md:h-[calc(100dvh-180px)] lg:h-[calc(100dvh-240px)]"} overflow-y-auto flex flex-col pb-2`}
             ref={messagesRef}>
@@ -444,13 +444,113 @@ const ChatContent = ({
                 setOpenDropZoneModal={setOpenDropZoneModal}
               />
             </div>
-        </div>
-        ) : (
+          </div>
+        ) : auctionMobileChat === "participants" ? (
           <div className={`${isTechnicalCouncil ? "h-[calc(90vh-50px)]" : "h-[calc(100vh-240px)]"} overflow-y-auto flex flex-col`} ref={messagesRef}>
             {technicalCouncilUsers && 
               <RenderUsers users={technicalCouncilUsers} t={t} />
             }
           </div>
+        ) : (
+          techCouncilMenuValue === "chat" ? (
+            <div className={`flex-grow ${isTechnicalCouncil ? "rounded-lg" : " bg-neutrals-secondary"}`}>
+              <div className={`${isTechnicalCouncil ? "h-[calc(90vh-270px)]" : "h-[calc(100dvh-130px)] md:h-[calc(100dvh-180px)] lg:h-[calc(100dvh-240px)]"} overflow-y-auto flex flex-col pb-2`}
+              ref={messagesRef}>
+                <div className="flex flex-col gap-2 px-4 py-2 w-full mt-auto">
+                  <div className="flex flex-col gap-1">
+                    {messages
+                      .filter((m) => m.chat_id === selectedConversation)
+                      .sort(
+                        (a, b) =>
+                          new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+                      )
+                      .map((message, index, array) => {
+                        const previousMessage = array[index - 1];
+                        const showSender =
+                          !previousMessage || previousMessage.authorId !== message.authorId;
+
+                        const replyToSnippet = message.reply_to
+                          ? messages.find((m) => m.id === message.reply_to)
+                          : null;
+
+                        return (
+                          <Message
+                            key={message.id}
+                            counter={message.counter}
+                            sender_id={message.authorId || null}
+                            goToMessage={goToMessage} 
+                            createPrivateChat={handleCreateOrOpenChat}
+                            message={message.content}
+                            handleSelectMessages={(action: SelectActions) => handleSelectMessages(action, message.id)}
+                            selectedMessages={selectedMessages}
+                            sender={
+                              (message.authorId &&
+                                message.authorId === getCookie("user_id")) ||
+                              message.sender_first_name === "user"
+                                ? "user"
+                                : `${message.sender_first_name} ${message.sender_last_name}`
+                            }
+                            t={t}
+                            messageId={message.id}
+                            timestamp={dayjs(message.timestamp).format("HH:mm")}
+                            showSender={showSender}
+                            handleOpenDeleteMessage={handleOpenDeleteMessage}
+                            handleReplyClick={() => handleReplyClick(message)}
+                            handleEditClick={() => handleEditClick(message)}
+                            forwarded_from={message.forwarded_from}
+                            forwarded_from_first_name={message.forwarded_from_first_name}
+                            forwarded_from_last_name={message.forwarded_from_last_name}
+                            isEdited={message.is_edited || false}
+                            reply_message_id={message.reply_to || null}
+                            handlePin={() => handlePinUnpin(message.id, message.is_pinned || false)}
+                            isPinned={message.is_pinned || false}
+                            handleUnpin={() => handlePinUnpin(message.id, message.is_pinned || false)}
+                            type={message.type}
+                            media={Array.isArray(message.media) ? message.media : message.media ? [message.media] : null}
+                            handleForward={() => handleForwardModal(message.id)}
+                            replyToMessage={
+                              replyToSnippet
+                                ? {
+                                    sender: replyToSnippet.sender_first_name,
+                                    content: replyToSnippet.content,
+                                    has_attachments: replyToSnippet.has_attachements || false,
+                                    media: Array.isArray(replyToSnippet.media) ? replyToSnippet.media : replyToSnippet.media ? [replyToSnippet.media] : null,
+                                  }
+                                : null
+                            }
+                          />
+                        );
+                      })}
+                  </div>
+                </div>
+              </div>
+              <div className={`px-5 w-full mt-auto ${isTechnicalCouncil ? "pb-2" : ""}`}>
+                <MessageInput
+                  t={t}
+                  handleTypingChat={handleTypingChat}
+                  value={newMessage}
+                  setNewMessage={setNewMessage}
+                  isConnected={isConnected}
+                  sendChatMessage={sendChatMessage}
+                  replyTo={replyTo}
+                  participants={participants}
+                  chatId={chatId}
+                  setReplyTo={setReplyTo}
+                  editMessage={editMessage}
+                  setEditMessage={setEditMessage}
+                  handleEdit={handleEdit}
+                  openDropZoneModal={openDropZoneModal}
+                  setOpenDropZoneModal={setOpenDropZoneModal}
+                />
+              </div>
+          </div>
+          ) : (
+            <div className={`${isTechnicalCouncil ? "h-[calc(90vh-50px)]" : "h-[calc(100vh-240px)]"} overflow-y-auto flex flex-col`} ref={messagesRef}>
+              {technicalCouncilUsers && 
+                <RenderUsers users={technicalCouncilUsers} t={t} />
+              }
+            </div>
+          )
         )
       )
     }

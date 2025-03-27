@@ -6,12 +6,12 @@ import Icons from '@/src/app/components/Icons'
 export const AuctionProtocol = ({ t }: { t: any }) => {
   return (
     <div className="w-full flex flex-col gap-2">
-      <div className="flex w-full justify-between">
+      <div className="flex w-full flex-col md:flex-row justify-between">
         <h1 className="text-brand-gray font-semibold text-lg"> 
           {t("auction_protocol")}
         </h1>
         <div className="flex items-center gap-2">
-          <Pagination>
+          <Pagination className='justify-start'>
             <PaginationContent>
               <PaginationItem>
                 <PaginationLink href="#" isActive>
@@ -24,16 +24,16 @@ export const AuctionProtocol = ({ t }: { t: any }) => {
                 </PaginationLink>
               </PaginationItem>
             </PaginationContent>
+						<p className="text-brand-gray text-sm mr-3 flex items-center">{t("total")}</p>
           </Pagination>
-          <p className="text-brand-gray text-sm mr-3">{t("total")}</p>
-          <Button variant="outline" className="p-2 gap-2 text-sm">
-            <Icons.Edit_protocol />
+          <Button variant="outline" className="p-2 gap-2 text-xs md:text-sm lg:text-sm">
+            <Icons.Edit_protocol width="16" height="16" />
             {t("make_changes")}
           </Button>
         </div>
       </div>
       <div className="rounded-lg overflow-auto border border-gray-300">
-        <Table className='table-auto w-full'>
+        <Table className='w-full'>
           <TableHeader>
             <TableRow className="bg-gray-50 border-b border-gray-300">
               <TableHead className="px-4 py-2 text-center">{t("partner")}</TableHead>

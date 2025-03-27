@@ -146,9 +146,9 @@ const Icons = {
 			</svg>
 		)
 	},
-	Edit_protocol: () => {
+	Edit_protocol: ({ width, height }: { width?: string, height?: string }) => {
 		return (
-			<svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<svg width={width || "20"} height={height || "21"} viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
 				<path d="M3.33398 18H16.6673" stroke="#4F4F4F" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
 				<path d="M4.7211 11.4894C4.36566 11.8453 4.16602 12.3278 4.16602 12.8308V15.5H6.85152C7.35503 15.5 7.8379 15.2999 8.19386 14.9437L16.1104 7.02262C16.8512 6.2814 16.8512 5.07998 16.1104 4.33876L15.3284 3.55626C14.5869 2.81438 13.3844 2.81461 12.6432 3.55677L4.7211 11.4894Z" stroke="#4F4F4F" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
 			</svg>
