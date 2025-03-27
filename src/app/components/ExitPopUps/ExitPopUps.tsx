@@ -5,7 +5,6 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import { X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { PopUpHandlers } from '../../types/types'
-import AuctionPopup from './AuctionPopup'
 import ChatModePopup from './ChatModePopup'
 
 type PopUpProps = {
@@ -52,8 +51,6 @@ const PopUp = ({open, title, description, t, handlers}: PopUpProps) => {
 
 const PopUpFactory = ({type, handlers}: PopUpFactoryProps) => {
   switch (type) {
-    case "auction":
-      return <AuctionPopup {...handlers} />
     case "chat":  
       return <ChatModePopup {...handlers} />
     default:
