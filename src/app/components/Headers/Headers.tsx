@@ -2,6 +2,7 @@
 import { Button } from '@/components/ui/button'
 import { useTranslations } from 'next-intl'
 import { activity_status, TechCouncilUser } from '../../types/types'
+import AuctionLeaveButton from '../ExitPopUps/AuctionPopup'
 import TechnicalCouncilLeaveButton from '../ExitPopUps/TechnicalCouncilPopup'
 import Icons from '../Icons'
 import HeaderButtons from './CommonButtons'
@@ -39,10 +40,14 @@ const Header = ({type, t, handlers, isMicrophoneOn, techCouncilUser}: HeaderProp
 						<div className='flex items-center gap-4'>
 							<InfoButton onClick={handlers.infoButtonClick} />
 							<AudioButton onClick={handlers.audioButtonClick} />
-							<ExitButton 
-								text={t("leave-auction")} 
-								variant="destructive"
-								onClick={() => handlers.exitButtonClick(type)}
+							<AuctionLeaveButton
+								handlers={{
+									stayButtonClick: () => {},
+									exitButtonClick: (isFinish?: boolean) => {
+										handlers.exitButtonClick(type, isFinish)
+									},
+								}}
+								techCouncilUser={techCouncilUser}
 							/>
 						</div>
 					</div>
