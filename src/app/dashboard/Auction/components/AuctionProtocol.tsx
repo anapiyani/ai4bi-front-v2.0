@@ -33,7 +33,7 @@ export const AuctionProtocol = ({ t }: { t: any }) => {
         </div>
       </div>
       <div className="rounded-lg overflow-auto border border-gray-300">
-        <Table>
+        <Table className='table-auto w-full'>
           <TableHeader>
             <TableRow className="bg-gray-50 border-b border-gray-300">
               <TableHead className="px-4 py-2 text-center">{t("partner")}</TableHead>
@@ -49,31 +49,31 @@ export const AuctionProtocol = ({ t }: { t: any }) => {
           </TableHeader>
           <TableBody>
             <TableRow className="border-b border-gray-300 last:border-0">
-              <TableCell className="py-2 text-brand-gray text-sm">
+              <TableCell className="py-2 text-brand-gray text-sm text-center">
                 Some super long partner name...
               </TableCell>
-              <TableCell className="px-4 py-2 text-brand-gray text-sm">
+              <TableCell className="px-4 py-2 text-brand-gray text-sm text-center">
                 Manufacturer
               </TableCell>
-              <TableCell className="px-4 py-2 text-brand-gray text-sm">
+              <TableCell className="px-4 py-2 text-brand-gray text-sm text-center">
                 7,000,000 KZT
               </TableCell>
-              <TableCell className="px-4 py-2 text-brand-gray text-sm">
+              <TableCell className="px-4 py-2 text-brand-gray text-sm text-center">
                 3,000,000 KZT
               </TableCell>
-              <TableCell className="px-4 py-2 text-brand-gray text-sm">
+              <TableCell className="px-4 py-2 text-brand-gray text-sm text-center">
                 10,000,000 KZT
               </TableCell>
-              <TableCell className="px-4 py-2 text-brand-gray text-sm">
+              <TableCell className="px-4 py-2 text-brand-gray text-sm text-center">
                 0
               </TableCell>
-              <TableCell className="px-4 py-2 text-brand-gray text-sm">
+              <TableCell className="px-4 py-2 text-brand-gray text-sm text-center">
                 Bank transfer
               </TableCell>
-              <TableCell className="px-4 py-2 text-brand-gray text-sm">
+              <TableCell className="px-4 py-2 text-brand-gray text-sm text-center">
                 13,000,000 KZT
               </TableCell>
-              <TableCell className="px-4 py-2 text-brand-gray text-sm">
+              <TableCell className="px-4 py-2 text-brand-gray text-sm text-center">
                 Some notes...
               </TableCell>
             </TableRow>

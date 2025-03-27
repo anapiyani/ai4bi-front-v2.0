@@ -44,8 +44,8 @@ const Auction = ({
 
   const auctionTable = useMemo(() => {
     return (
-      <div className="flex flex-col gap-4">
-        <div className="p-2 overflow-auto">
+      <div className="flex flex-col gap-4 w-full">
+        <div className="p-2 overflow-x-auto w-full">
           <AuctionProtocol t={t} />
         </div>
         <div className="p-2 overflow-auto">
