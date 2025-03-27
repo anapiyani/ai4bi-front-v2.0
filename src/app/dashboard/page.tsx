@@ -141,6 +141,10 @@ export default function Dashboard() {
   const ExitTo = (type: activity_status) => {
     switch (type) {
       case "auction":
+        if (closeRTCConnection.current) {
+          closeRTCConnection.current()
+        }
+        setIsMicrophoneOn(false)
         router.push('/dashboard?active_tab=chat')
         break
       case "technical-council":
