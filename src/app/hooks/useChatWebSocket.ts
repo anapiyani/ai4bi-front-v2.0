@@ -412,7 +412,6 @@ export const useChatWebSocket = () => {
 
   const handlePopUpButtonAction = useCallback((button: PopUpButtonAction, clicked_user_id?: string) => {
     const { popup_id, chatId, user_id, button_id, tech_council_reschedule_date, auction_date }: PopUpButtonAction = button;
-    console.log("handlePopUpButtonAction", button);
     setStartedUserId(clicked_user_id || null);
     setPopUpsByChat(prev => {
       const updated = { ...prev };

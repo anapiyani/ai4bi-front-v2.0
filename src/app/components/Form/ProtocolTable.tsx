@@ -5,634 +5,498 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import dayjs from "dayjs"
 import "dayjs/locale/en"
 import "dayjs/locale/ru"
+import { PenLine, UserCheck } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
 import { useEffect, useState } from "react"
-import type { Protocol } from "../../types/types"
-import Icons from "../Icons"
+import Icons from '../Icons'
 
-type ProtocolTableProps = {
-  protocols: Protocol | null
+// Define types for our protocol data
+type Material = {
+  name: string
+  technical_characteristics: string
+  manufacturer: string
 }
 
-const ProtocolTable = ({ protocols: initialProtocols }: ProtocolTableProps) => {
+type Expert = {
+  position: string
+  full_name: string
+  signature: string
+}
+
+type Supplier = {
+  company_name: string
+  representative: string
+  phone_number: string
+  email: string | string[]
+}
+
+type Protocol = {
+  project_name: string
+  constructive: string
+  meeting_date: string
+  meeting_time: string
+  location: string
+  materials_decisions: Material[]
+  notes: string[]
+  project_team: Expert[]
+  suppliers: Supplier[]
+}
+
+interface ProtocolTableProps {
+  protocol: Protocol | null
+  onSave?: (protocol: Protocol) => void
+}
+
+export default function ProtocolTable({ protocol: initialProtocol, onSave }: ProtocolTableProps) {
   const t = useTranslations("dashboard")
   const locale = useLocale()
   dayjs.locale(locale)
 
-  const [protocols, setProtocols] = useState<Protocol | null>(initialProtocols)
+  const [protocol, setProtocol] = useState<Protocol | null>(initialProtocol)
   const [isEditing, setIsEditing] = useState<boolean>(false)
-  
+
   useEffect(() => {
-    setProtocols(initialProtocols)
-  }, [initialProtocols])
-
-  const handleProjectNameChange = (value: string) => {
-    if (!protocols) return
-    setProtocols((prev) => (prev ? { ...prev, project_name: value } : null))
-  }
-
-  const handleConstructiveChange = (value: string) => {
-    if (!protocols) return
-    setProtocols((prev) => (prev ? { ...prev, constructive: value } : null))
-  }
-
-  const handleLocationChange = (value: string) => {
-    if (!protocols) return
-    setProtocols((prev) => (prev ? { ...prev, location: value } : null))
-  }
-
-  const handleMaterialChange = (index: number, field: string, value: string) => {
-    if (!protocols) return
-    if (!protocols.materials_decisions) return
-    const updated = [...protocols.materials_decisions]
-    updated[index] = {
-      ...updated[index],
-      [field]: value,
+    if (initialProtocol) {
+      setProtocol(initialProtocol)
+    } else {
+      // Initialize with empty protocol if none provided
+      setProtocol({
+        project_name: "",
+        constructive: "",
+        meeting_date: new Date().toISOString(),
+        meeting_time: new Date().toLocaleTimeString(),
+        location: "",
+        materials_decisions: [],
+        notes: [],
+        project_team: [],
+        suppliers: []
+      })
     }
-    setProtocols((prev) => (prev ? { ...prev, materials_decisions: updated } : null))
+  }, [initialProtocol])
+
+  // Format date to display in the desired format
+  const formatDate = (dateString: string) => {
+    if (!dateString) return ""
+    const date = new Date(dateString)
+    return date.toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" })
   }
 
+  // Format time to display in the desired format
+  const formatTime = (timeString: string) => {
+    if (!timeString) return ""
+    return timeString
+  }
+
+  // Handle changes to the project info
+  const handleProjectInfoChange = (field: keyof Protocol, value: string) => {
+    if (!protocol) return
+    setProtocol((prev) => (prev ? { ...prev, [field]: value } : null))
+  }
+
+  // Handle changes to materials
+  const handleMaterialChange = (index: number, field: keyof Material, value: string) => {
+    if (!protocol?.materials_decisions) return
+    const updatedMaterials = [...protocol.materials_decisions]
+    updatedMaterials[index] = { ...updatedMaterials[index], [field]: value }
+    setProtocol((prev) => (prev ? { ...prev, materials_decisions: updatedMaterials } : null))
+  }
+
+  // Add a new material
   const handleAddMaterial = () => {
-    if (!protocols) return
-    const newMaterial = {
-      name: "",
-      technical_characteristics: "",
-      manufacturer: "",
-    }
-    const updated = protocols.materials_decisions ? [...protocols.materials_decisions, newMaterial] : [newMaterial]
-    setProtocols((prev) => (prev ? { ...prev, materials_decisions: updated } : null))
+    if (!protocol) return
+    const newMaterial = { name: "", technical_characteristics: "", manufacturer: "" }
+    setProtocol((prev) =>
+      prev
+        ? {
+            ...prev,
+            materials_decisions: [...(prev.materials_decisions || []), newMaterial],
+          }
+        : null,
+    )
   }
 
+  // Handle changes to notes
   const handleNoteChange = (index: number, value: string) => {
-    if (!protocols) return
-    if (!protocols.notes) return
-    const updated = [...protocols.notes]
-    updated[index] = value
-    setProtocols((prev) => (prev ? { ...prev, notes: updated } : null))
+    if (!protocol?.notes) return
+    const updatedNotes = [...protocol.notes]
+    updatedNotes[index] = value
+    setProtocol((prev) => (prev ? { ...prev, notes: updatedNotes } : null))
   }
 
+  // Add a new note
   const handleAddNote = () => {
-    if (!protocols) return
-    const updated = protocols.notes ? [...protocols.notes, ""] : [""]
-    setProtocols((prev) => (prev ? { ...prev, notes: updated } : null))
+    if (!protocol) return
+    setProtocol((prev) =>
+      prev
+        ? {
+            ...prev,
+            notes: [...(prev.notes || []), ""],
+          }
+        : null,
+    )
   }
 
-  const handleSupplierChange = (index: number, field: string, value: string) => {
-    if (!protocols) return
-    if (!protocols.suppliers) return
-    const updated = [...protocols.suppliers]
-    updated[index] = {
-      ...updated[index],
-      [field]: value,
-    }
-    setProtocols((prev) => (prev ? { ...prev, suppliers: updated } : null))
+  // Handle changes to suppliers
+  const handleSupplierChange = (index: number, field: keyof Supplier, value: string) => {
+    if (!protocol?.suppliers) return
+    const updatedSuppliers = [...protocol.suppliers]
+    updatedSuppliers[index] = { ...updatedSuppliers[index], [field]: value }
+    setProtocol((prev) => (prev ? { ...prev, suppliers: updatedSuppliers } : null))
   }
 
+  // Add a new supplier
   const handleAddSupplier = () => {
-    if (!protocols) return
-    const newSupplier = {
-      company_name: "",
-      representative: "",
-      phone_number: "",
-      email: "",
-    }
-    const updated = protocols.suppliers ? [...protocols.suppliers, newSupplier] : [newSupplier]
-    setProtocols((prev) => {
-      if (!prev) return null
-      return {
-        ...prev,
-        suppliers: updated.map((supplier) => ({
-          ...supplier,
-          email: Array.isArray(supplier.email) ? supplier.email : [supplier.email].filter(Boolean),
-        })),
-      }
-    })
+    if (!protocol) return
+    const newSupplier = { company_name: "", representative: "", phone_number: "", email: "" }
+    setProtocol((prev) =>
+      prev
+        ? {
+            ...prev,
+            suppliers: [...(prev.suppliers || []), newSupplier],
+          }
+        : null,
+    )
   }
 
+  // Handle save button click
   const handleSave = () => {
-    console.log("Saving updated protocols: ", protocols)
+    if (protocol && onSave) {
+      onSave(protocol)
+    }
+    console.log("Protocol data to be saved:", protocol)
     setIsEditing(false)
   }
 
   return (
-    <div className="h-[calc(100vh-200px)] min-w-[300px] w-full overflow-y-auto">
-      <div className="flex justify-between px-4 py-3 items-center">
-        <h2 className="text-sm md:text-lg font-semibold text-brand-gray">{t("technical_council_protocol")}</h2>
-        {!isEditing ? (
-          <Button
-            onClick={() => setIsEditing(true)}
-            variant="outline"
-            className="gap-2 hover:bg-brand-gray/5"
-            size="sm"
-          >
-            <Icons.Edit_protocol  />
-            <span className="font-medium text-xs md:text-sm text-brand-gray">{t("make_changes")}</span>
+    <div className="w-full">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-medium text-gray-700">{t("technical_council_protocol")}</h2>
+        {isEditing ? (
+          <Button onClick={handleSave} className="bg-orange-500 hover:bg-orange-600 text-white">
+            {t("save_and_share")}
           </Button>
         ) : (
-          <Button onClick={handleSave} variant="default" className="gap-2" size="sm">
-            {t("save_and_share")}
+          <Button
+            variant="outline"
+            className="flex items-center gap-2 border-gray-300"
+            onClick={() => setIsEditing(true)}
+          >
+            <PenLine className="h-4 w-4" />
+            {t("make_changes")}
           </Button>
         )}
       </div>
 
-      {/* PROJECT INFO */}
-      <div className="overflow-hidden rounded-lg border border-gray-300 my-4">
-        <div className="grid grid-cols-1 md:hidden">
-          <div className="bg-gray-50 border-b border-gray-300 px-4 py-2 font-medium text-sm">{t("project_info")}</div>
-          <div className="divide-y divide-gray-300">
-            <div className="grid grid-cols-2 px-4 py-2">
-              <div className="text-sm font-medium">{t("project")}</div>
-              <div className="text-sm">
-                {isEditing ? (
-                  <input
-                    className="border p-1 w-full"
-                    value={protocols?.project_name || ""}
-                    onChange={(e) => handleProjectNameChange(e.target.value)}
-                  />
-                ) : (
-                  protocols?.project_name || "..."
-                )}
-              </div>
-            </div>
-            <div className="grid grid-cols-2 px-4 py-2">
-              <div className="text-sm font-medium">{t("constructive")}</div>
-              <div className="text-sm">
-                {isEditing ? (
-                  <input
-                    className="border p-1 w-full"
-                    value={protocols?.constructive || ""}
-                    onChange={(e) => handleConstructiveChange(e.target.value)}
-                  />
-                ) : (
-                  protocols?.constructive
-                )}
-              </div>
-            </div>
-            <div className="grid grid-cols-2 px-4 py-2">
-              <div className="text-sm font-medium">{t("date")}</div>
-              <div className="text-sm">{dayjs(protocols?.meeting_date).format("DD MMMM YYYY")}</div>
-            </div>
-            <div className="grid grid-cols-2 px-4 py-2">
-              <div className="text-sm font-medium">{t("time")}</div>
-              <div className="text-sm">
-                {protocols?.meeting_time ? dayjs(`1970-01-01 ${protocols?.meeting_time}`).format("HH:mm") : null}
-              </div>
-            </div>
-            <div className="grid grid-cols-2 px-4 py-2">
-              <div className="text-sm font-medium">{t("place")}</div>
-              <div className="text-sm">
-                {isEditing ? (
-                  <input
-                    className="border p-1 w-full"
-                    value={protocols?.location || ""}
-                    onChange={(e) => handleLocationChange(e.target.value)}
-                  />
-                ) : (
-                  protocols?.location
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <Table className="w-full hidden md:table">
-          <TableHeader>
-            <TableRow className="bg-gray-50 border-b border-gray-300">
-              <TableHead className="px-4 py-2">{t("project")}</TableHead>
-              <TableHead className="px-4 py-2">{t("constructive")}</TableHead>
-              <TableHead className="px-4 py-2">{t("date")}</TableHead>
-              <TableHead className="px-4 py-2">{t("time")}</TableHead>
-              <TableHead className="px-4 py-2">{t("place")}</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow className="border-b border-gray-300 last:border-0">
-              <TableCell className="py-2">
-                {isEditing ? (
-                  <input
-                    className="border p-1 w-full"
-                    value={protocols?.project_name || ""}
-                    onChange={(e) => handleProjectNameChange(e.target.value)}
-                  />
-                ) : (
-                  protocols?.project_name || "..."
-                )}
-              </TableCell>
-              <TableCell className="px-4 py-2">
-                {isEditing ? (
-                  <input
-                    className="border p-1 w-full"
-                    value={protocols?.constructive || ""}
-                    onChange={(e) => handleConstructiveChange(e.target.value)}
-                  />
-                ) : (
-                  protocols?.constructive
-                )}
-              </TableCell>
-              <TableCell className="px-4 py-2">{dayjs(protocols?.meeting_date).format("DD MMMM YYYY")}</TableCell>
-              <TableCell className="px-4 py-2">
-                {protocols?.meeting_time ? dayjs(`1970-01-01 ${protocols?.meeting_time}`).format("HH:mm") : null}
-              </TableCell>
-              <TableCell className="px-4 py-2">
-                {isEditing ? (
-                  <input
-                    className="border p-1 w-full"
-                    value={protocols?.location || ""}
-                    onChange={(e) => handleLocationChange(e.target.value)}
-                  />
-                ) : (
-                  protocols?.location
-                )}
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </div>
-
-      {/* MATERIALS AND TECHNICAL SOLUTIONS */}
-      <div className="overflow-hidden rounded-lg border border-gray-300 my-4">
-        <div className="md:hidden">
-          <div className="bg-neutrals-secondary w-full py-3 px-4">
-            <div className="flex justify-between items-center w-full">
-              <div className="flex gap-2 text-brand-gray text-sm font-medium items-center">
-                <Icons.Tool />
-                {t("materials_and_technical_solutions")}
-              </div>
-              {isEditing && (
-                <span className="text-xs cursor-pointer text-brand-darkOrange" onClick={handleAddMaterial}>
-                  {t("add_material/solution")}
-                </span>
-              )}
-            </div>
-          </div>
-
-          {protocols?.materials_decisions?.map((decision, idx) => (
-            <div key={idx} className="border-t border-gray-300 p-4">
-              <div className="space-y-3">
-                <div>
-                  <div className="text-xs text-gray-500 mb-1">{t("name")}</div>
-                  <div>
-                    {isEditing ? (
-                      <input
-                        className="border p-1 w-full"
-                        value={decision.name}
-                        onChange={(e) => handleMaterialChange(idx, "name", e.target.value)}
-                      />
-                    ) : (
-                      <span className="text-sm">{decision.name}</span>
-                    )}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-xs text-gray-500 mb-1">{t("technical_characteristics")}</div>
-                  <div>
-                    {isEditing ? (
-                      <input
-                        className="border p-1 w-full"
-                        value={decision.technical_characteristics}
-                        onChange={(e) => handleMaterialChange(idx, "technical_characteristics", e.target.value)}
-                      />
-                    ) : (
-                      <span className="text-sm">{decision.technical_characteristics}</span>
-                    )}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-xs text-gray-500 mb-1">{t("made_by")}</div>
-                  <div>
-                    {isEditing ? (
-                      <input
-                        className="border p-1 w-full"
-                        value={decision.manufacturer}
-                        onChange={(e) => handleMaterialChange(idx, "manufacturer", e.target.value)}
-                      />
-                    ) : (
-                      <span className="text-sm">{decision.manufacturer}</span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <Table className="w-full hidden md:table">
-          <TableHeader>
-            <TableRow className="bg-neutrals-secondary w-full">
-              <TableCell colSpan={5} className="py-3 px-4">
-                <div className="flex justify-between items-center w-full">
-                  <div className="flex gap-2 text-brand-gray text-sm font-medium items-center">
-                    <Icons.Tool />
-                    {t("materials_and_technical_solutions")}
-                  </div>
-                  {isEditing && (
-                    <span className="text-sm cursor-pointer text-brand-darkOrange" onClick={handleAddMaterial}>
-                      {t("add_material/solution")}
-                    </span>
-                  )}
-                </div>
-              </TableCell>
-            </TableRow>
-            <TableRow className="bg-gray-50 border-b border-gray-300">
-              <TableHead className="px-4 py-2">{t("name")}</TableHead>
-              <TableHead className="px-4 py-2">{t("technical_characteristics")}</TableHead>
-              <TableHead className="px-4 py-2">{t("made_by")}</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {protocols?.materials_decisions?.map((decision, idx) => (
-              <TableRow key={idx} className="border-b border-gray-300 last:border-0">
-                <TableCell className="px-4 py-2">
+      {/* Project Info Table */}
+      <div className="mb-6 border rounded-lg overflow-hidden">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{t("project")}</TableHead>
+                <TableHead>{t("constructive")}</TableHead>
+                <TableHead>{t("date")}</TableHead>
+                <TableHead>{t("time")}</TableHead>
+                <TableHead>{t("place")}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow>
+                <TableCell>
                   {isEditing ? (
                     <input
-                      className="border p-1 w-full"
-                      value={decision.name}
-                      onChange={(e) => handleMaterialChange(idx, "name", e.target.value)}
+                      type="text"
+                      className="w-full p-2 border rounded"
+                      value={protocol?.project_name || ""}
+                      onChange={(e) => handleProjectInfoChange("project_name", e.target.value)}
                     />
                   ) : (
-                    decision.name
+                    protocol?.project_name
                   )}
                 </TableCell>
-                <TableCell className="px-4 py-2">
+                <TableCell>
                   {isEditing ? (
                     <input
-                      className="border p-1 w-full"
-                      value={decision.technical_characteristics}
-                      onChange={(e) => handleMaterialChange(idx, "technical_characteristics", e.target.value)}
+                      type="text"
+                      className="w-full p-2 border rounded"
+                      value={protocol?.constructive || ""}
+                      onChange={(e) => handleProjectInfoChange("constructive", e.target.value)}
                     />
                   ) : (
-                    decision.technical_characteristics
+                    protocol?.constructive
                   )}
                 </TableCell>
-                <TableCell className="px-4 py-2">
+                <TableCell>{formatDate(protocol?.meeting_date || "")}</TableCell>
+                <TableCell>{formatTime(protocol?.meeting_time || "")}</TableCell>
+                <TableCell>
                   {isEditing ? (
                     <input
-                      className="border p-1 w-full"
-                      value={decision.manufacturer}
-                      onChange={(e) => handleMaterialChange(idx, "manufacturer", e.target.value)}
+                      type="text"
+                      className="w-full p-2 border rounded"
+                      value={protocol?.location || ""}
+                      onChange={(e) => handleProjectInfoChange("location", e.target.value)}
                     />
                   ) : (
-                    decision.manufacturer
+                    protocol?.location
                   )}
                 </TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableBody>
+          </Table>
+        </div>
       </div>
 
-      {/* NOTES */}
-      <div className="overflow-hidden rounded-lg border border-gray-300 my-4">
-        <div className="bg-neutrals-secondary w-full py-3 px-4">
-          <div className="flex justify-between items-center w-full">
-            <div className="flex gap-2 text-brand-gray text-sm font-medium items-center justify-start">
-              <Icons.Message_plus />
-              {t("notes")}
-            </div>
-            {isEditing && (
-              <span className="text-sm cursor-pointer text-brand-darkOrange" onClick={handleAddNote}>
-                {t("add_note")}
-              </span>
-            )}
+      {/* Materials and Technical Solutions */}
+      <div className="mb-6 border rounded-lg overflow-hidden">
+        <div className="bg-gray-50 p-3 flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <Icons.Tool />
+            <span className="font-medium text-gray-700">{t("materials_and_technical_solutions")}</span>
           </div>
+          {isEditing && (
+            <Button
+              variant="ghost"
+              className="text-orange-500 hover:text-orange-600 p-0 h-auto"
+              onClick={handleAddMaterial}
+            >
+              {t("add_material_solution")}
+            </Button>
+          )}
         </div>
-
-        <div className="divide-y divide-gray-300">
-          {protocols?.notes?.map((note, idx) => (
-            <div key={idx} className="px-4 py-3">
-              {isEditing ? (
-                <input
-                  className="border p-1 w-full"
-                  placeholder={t("add_note")}
-                  value={note}
-                  onChange={(e) => handleNoteChange(idx, e.target.value)}
-                />
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{t("name")}</TableHead>
+                <TableHead>{t("technical_characteristics")}</TableHead>
+                <TableHead>{t("manufacturer")}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {protocol?.materials_decisions && protocol.materials_decisions.length > 0 ? (
+                protocol.materials_decisions.map((material, index) => (
+                  <TableRow key={index}>
+                    <TableCell>
+                      {isEditing ? (
+                        <input
+                          type="text"
+                          className="w-full p-2 border rounded"
+                          value={material.name || ""}
+                          onChange={(e) => handleMaterialChange(index, "name", e.target.value)}
+                        />
+                      ) : (
+                        material.name
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {isEditing ? (
+                        <input
+                          type="text"
+                          className="w-full p-2 border rounded"
+                          value={material.technical_characteristics || ""}
+                          onChange={(e) => handleMaterialChange(index, "technical_characteristics", e.target.value)}
+                        />
+                      ) : (
+                        material.technical_characteristics
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {isEditing ? (
+                        <input
+                          type="text"
+                          className="w-full p-2 border rounded"
+                          value={material.manufacturer || ""}
+                          onChange={(e) => handleMaterialChange(index, "manufacturer", e.target.value)}
+                        />
+                      ) : (
+                        material.manufacturer
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))
               ) : (
-                <p className="text-sm">{note}</p>
+                <TableRow>
+                  <TableCell colSpan={3} className="text-center py-4 text-gray-500">
+                    {t("no_data")}
+                  </TableCell>
+                </TableRow>
               )}
-            </div>
-          ))}
+            </TableBody>
+          </Table>
         </div>
       </div>
 
-      {/* TECHNICAL EXPERTS */}
-      <div className="overflow-hidden rounded-lg border border-gray-300 my-4">
-        <div className="md:hidden">
-          <div className="bg-neutrals-secondary w-full py-3 px-4">
-            <div className="flex gap-2 text-brand-gray text-sm font-medium items-center justify-start w-full">
-              <Icons.User_check  />
-              {t("technical_experts")}
-            </div>
+      {/* Notes */}
+      <div className="mb-6 border rounded-lg overflow-hidden">
+        <div className="bg-gray-50 p-3 flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <Icons.Message_plus />
+            <span className="font-medium text-gray-700">{t("notes")}</span>
           </div>
-
-          {protocols?.project_team?.map((expert, idx) => (
-            <div key={idx} className="border-t border-gray-300 p-4">
-              <div className="space-y-3">
-                <div>
-                  <div className="text-xs text-gray-500 mb-1">{t("position")}</div>
-                  <div className="text-sm">{expert.position}</div>
-                </div>
-                <div>
-                  <div className="text-xs text-gray-500 mb-1">{t("full_name_short")}</div>
-                  <div className="text-sm">{expert.full_name}</div>
-                </div>
-                <div>
-                  <div className="text-xs text-gray-500 mb-1">{t("signature")}</div>
-                  <div className="text-sm">{expert.signature}</div>
-                </div>
-              </div>
-            </div>
-          ))}
+          {isEditing && (
+            <Button
+              variant="ghost"
+              className="text-orange-500 hover:text-orange-600 p-0 h-auto"
+              onClick={handleAddNote}
+            >
+              {t("add_note")}
+            </Button>
+          )}
         </div>
-
-        <Table className="w-full hidden md:table">
-          <TableHeader>
-            <TableRow className="bg-neutrals-secondary w-full">
-              <TableCell colSpan={5} className="py-3 px-4">
-                <div className="flex gap-2 text-brand-gray text-sm font-medium items-center justify-start w-full">
-                  <Icons.User_check />
-                  {t("technical_experts")}
-                </div>
-              </TableCell>
-            </TableRow>
-            <TableRow className="bg-gray-50 border-b border-gray-300">
-              <TableHead className="px-4 py-2">{t("position")}</TableHead>
-              <TableHead className="px-4 py-2">{t("full_name_short")}</TableHead>
-              <TableHead className="px-4 py-2">{t("signature")}</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {protocols?.project_team?.map((expert, idx) => (
-              <TableRow key={idx} className="border-b border-gray-300 last:border-0">
-                <TableCell className="px-4 py-2">{expert.position}</TableCell>
-                <TableCell className="px-4 py-2">{expert.full_name}</TableCell>
-                <TableCell className="px-4 py-2">{expert.signature}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <div className="p-3 space-y-2">
+          {protocol?.notes && protocol.notes.length > 0 ? (
+            protocol.notes.map((note, index) => (
+              <div key={index} className="py-1">
+                {isEditing ? (
+                  <input
+                    type="text"
+                    className="w-full p-2 border rounded"
+                    value={note || ""}
+                    placeholder="Введите ваш комментарий"
+                    onChange={(e) => handleNoteChange(index, e.target.value)}
+                  />
+                ) : (
+                  <p>{note}</p>
+                )}
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-500 text-center py-4">{t("no_notes")}</p>
+          )}
+        </div>
       </div>
 
-      {/* SUPPLIERS */}
-      <div className="overflow-hidden rounded-lg border border-gray-300 my-4">
-        <div className="md:hidden">
-          <div className="bg-neutrals-secondary w-full py-3 px-4">
-            <div className="flex justify-between items-center w-full">
-              <div className="flex gap-2 text-brand-gray text-sm font-medium items-center justify-start">
-                <Icons.Users_group />
-                {t("suppliers")}
-              </div>
-              {isEditing && (
-                <span className="text-xs cursor-pointer text-brand-darkOrange" onClick={handleAddSupplier}>
-                  {t("add_supplier")}
-                </span>
-              )}
-            </div>
+      {/* Technical Experts */}
+      <div className="mb-6 border rounded-lg overflow-hidden">
+        <div className="bg-gray-50 p-3">
+          <div className="flex items-center gap-2">
+            <UserCheck className="h-5 w-5 text-gray-600" />
+            <span className="font-medium text-gray-700">{t("technical_experts")}</span>
           </div>
-
-          {protocols?.suppliers?.map((supplier, idx) => (
-            <div key={idx} className="border-t border-gray-300 p-4">
-              <div className="space-y-3">
-                <div>
-                  <div className="text-xs text-gray-500 mb-1">{t("company")}</div>
-                  <div>
-                    {isEditing ? (
-                      <input
-                        className="border p-1 w-full"
-                        value={supplier.company_name}
-                        onChange={(e) => handleSupplierChange(idx, "company_name", e.target.value)}
-                      />
-                    ) : (
-                      <span className="text-sm">{supplier.company_name}</span>
-                    )}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-xs text-gray-500 mb-1">{t("full_name_short")}</div>
-                  <div>
-                    {isEditing ? (
-                      <input
-                        className="border p-1 w-full"
-                        value={supplier.representative}
-                        onChange={(e) => handleSupplierChange(idx, "representative", e.target.value)}
-                      />
-                    ) : (
-                      <span className="text-sm">{supplier.representative}</span>
-                    )}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-xs text-gray-500 mb-1">{t("contacts")}</div>
-                  <div>
-                    {isEditing ? (
-                      <input
-                        className="border p-1 w-full"
-                        value={supplier.phone_number}
-                        onChange={(e) => handleSupplierChange(idx, "phone_number", e.target.value)}
-                      />
-                    ) : (
-                      <span className="text-sm">{supplier.phone_number}</span>
-                    )}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-xs text-gray-500 mb-1">{t("mail")}</div>
-                  <div>
-                    {isEditing ? (
-                      <input
-                        className="border p-1 w-full"
-                        value={supplier.email}
-                        onChange={(e) => handleSupplierChange(idx, "email", e.target.value)}
-                      />
-                    ) : (
-                      <span className="text-sm">{supplier.email}</span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
         </div>
-
-        <Table className="w-full hidden md:table">
-          <TableHeader>
-            <TableRow className="bg-neutrals-secondary w-full">
-              <TableCell colSpan={5} className="py-3 px-4">
-                <div className="flex justify-between items-center w-full">
-                  <div className="flex gap-2 text-brand-gray text-sm font-medium items-center justify-start">
-                    <Icons.Users_group />
-                    {t("suppliers")}
-                  </div>
-                  {isEditing && (
-                    <span className="text-sm cursor-pointer text-brand-darkOrange" onClick={handleAddSupplier}>
-                      {t("add_supplier")}
-                    </span>
-                  )}
-                </div>
-              </TableCell>
-            </TableRow>
-            <TableRow className="bg-gray-50 border-b border-gray-300">
-              <TableHead className="px-4 py-2">{t("company")}</TableHead>
-              <TableHead className="px-4 py-2">{t("full_name_short")}</TableHead>
-              <TableHead className="px-4 py-2">{t("contacts")}</TableHead>
-              <TableHead className="px-4 py-2">{t("mail")}</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {protocols?.suppliers?.map((supplier, idx) => (
-              <TableRow key={idx} className="border-b border-gray-300 last:border-0">
-                <TableCell className="px-4 py-2">
-                  {isEditing ? (
-                    <input
-                      className="border p-1 w-full"
-                      value={supplier.company_name}
-                      onChange={(e) => handleSupplierChange(idx, "company_name", e.target.value)}
-                    />
-                  ) : (
-                    supplier.company_name
-                  )}
-                </TableCell>
-                <TableCell className="px-4 py-2">
-                  {isEditing ? (
-                    <input
-                      className="border p-1 w-full"
-                      value={supplier.representative}
-                      onChange={(e) => handleSupplierChange(idx, "representative", e.target.value)}
-                    />
-                  ) : (
-                    supplier.representative
-                  )}
-                </TableCell>
-                <TableCell className="px-4 py-2">
-                  {isEditing ? (
-                    <input
-                      className="border p-1 w-full"
-                      value={supplier.phone_number}
-                      onChange={(e) => handleSupplierChange(idx, "phone_number", e.target.value)}
-                    />
-                  ) : (
-                    supplier.phone_number
-                  )}
-                </TableCell>
-                <TableCell className="px-4 py-2">
-                  {isEditing ? (
-                    <input
-                      className="border p-1 w-full"
-                      value={supplier.email}
-                      onChange={(e) => handleSupplierChange(idx, "email", e.target.value)}
-                    />
-                  ) : (
-                    supplier.email
-                  )}
-                </TableCell>
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{t("position")}</TableHead>
+                <TableHead>{t("full_name_short")}</TableHead>
+                <TableHead>{t("signature")}</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {protocol?.project_team?.map((expert, index) => (
+                <TableRow key={index}>
+                  <TableCell>{expert.position}</TableCell>
+                  <TableCell>{expert.full_name}</TableCell>
+                  <TableCell>{expert.signature}</TableCell>
+                </TableRow>
+              ))}
+              {(!protocol?.project_team || protocol.project_team.length === 0) && (
+                <TableRow>
+                  <TableCell colSpan={3} className="text-center py-4 text-gray-500">
+                    {t("no_data")}
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+
+      {/* Suppliers */}
+      <div className="mb-6 border rounded-lg overflow-hidden">
+        <div className="bg-gray-50 p-3 flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <Icons.Users_group />
+            <span className="font-medium text-gray-700">{t("suppliers")}</span>
+          </div>
+          {isEditing && (
+            <Button
+              variant="ghost"
+              className="text-orange-500 hover:text-orange-600 p-0 h-auto"
+              onClick={handleAddSupplier}
+            >
+              {t("add_supplier")}
+            </Button>
+          )}
+        </div>
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{t("company")}</TableHead>
+                <TableHead>{t("full_name_short")}</TableHead>
+                <TableHead>{t("contacts")}</TableHead>
+                <TableHead>{t("mail")}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {protocol?.suppliers && protocol.suppliers.length > 0 ? (
+                protocol.suppliers.map((supplier, index) => (
+                  <TableRow key={index}>
+                    <TableCell>
+                      {isEditing ? (
+                        <input
+                          type="text"
+                          className="w-full p-2 border rounded"
+                          value={supplier.company_name || ""}
+                          onChange={(e) => handleSupplierChange(index, "company_name", e.target.value)}
+                        />
+                      ) : (
+                        supplier.company_name
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {isEditing ? (
+                        <input
+                          type="text"
+                          className="w-full p-2 border rounded"
+                          value={supplier.representative || ""}
+                          onChange={(e) => handleSupplierChange(index, "representative", e.target.value)}
+                        />
+                      ) : (
+                        supplier.representative
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {isEditing ? (
+                        <input
+                          type="text"
+                          className="w-full p-2 border rounded"
+                          value={supplier.phone_number || ""}
+                          onChange={(e) => handleSupplierChange(index, "phone_number", e.target.value)}
+                        />
+                      ) : (
+                        supplier.phone_number
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {isEditing ? (
+                        <input
+                          type="text"
+                          className="w-full p-2 border rounded"
+                          value={Array.isArray(supplier.email) ? supplier.email.join(", ") : supplier.email || ""}
+                          onChange={(e) => handleSupplierChange(index, "email", e.target.value)}
+                        />
+                      ) : Array.isArray(supplier.email) ? (
+                        supplier.email.join(", ")
+                      ) : (
+                        supplier.email
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center py-4 text-gray-500">
+                    {t("no_data")}
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
     </div>
   )
 }
-
-export default ProtocolTable
-

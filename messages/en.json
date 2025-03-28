@@ -185,7 +185,7 @@
 		"materials_and_technical_solutions": "Materials and technical solutions",
 		"name": "Name",
 		"technical_characteristics": "Technical characteristics",
-		"made_by": "Made by",
+		"manufacturer": "Manufacturer",
 		"notes": "Notes",
 		"technical_experts": "Technical experts",
 		"position": "Position",
@@ -199,7 +199,7 @@
 		"error-creating-chat": "Error creating chat",
 		"error-uploading-media": "Error uploading media, please try again",
 		"save_and_share": "Save and share",
-		"add_material/solution": "Add material/solution",
+		"add_material_solution": "Add material/solution",
 		"add_note": "Add note",
 		"add_supplier": "Add supplier",
 		"interest_added_successfully": "Construct added successfully",
@@ -247,7 +247,9 @@
 		"advance": "Advance",
 		"advance_type": "Advance type",
 		"amount_after_auction": "Amount after auction",
-		"no_transcriptions_yet": "No transcriptions yet"
+		"no_transcriptions_yet": "No transcriptions yet",
+		"no_data": "No data",
+		"no_notes": "No notes"
 	},
 	"dropzone": {
 		"upload_files": "Upload files",

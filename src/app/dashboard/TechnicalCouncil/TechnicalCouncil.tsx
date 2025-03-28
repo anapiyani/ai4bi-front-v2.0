@@ -41,6 +41,8 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
   const {
     protocols,
   } = useChatWebSocket()
+
+  console.log("[TechnicalCouncil] protocols:", protocols);
   
   const {
     localStream,
@@ -124,7 +126,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
             </div>
           </TabsContent>
           <TabsContent className={`${openMobileChat ? "hidden md:block lg:block" : ""}`} value="protocol_table">
-          <ProtocolTable protocols={protocols} />
+          <ProtocolTable protocol={protocols} />
         </TabsContent>
       </Tabs>
     )
