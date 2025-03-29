@@ -8,6 +8,7 @@ import "dayjs/locale/ru"
 import { PenLine, UserCheck } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
 import { useEffect, useState } from "react"
+import { Protocol } from '../../types/types'
 import Icons from '../Icons'
 
 // Define types for our protocol data
@@ -30,18 +31,6 @@ type Supplier = {
   email: string | string[]
 }
 
-type Protocol = {
-  project_name: string
-  constructive: string
-  meeting_date: string
-  meeting_time: string
-  location: string
-  materials_decisions: Material[]
-  notes: string[]
-  project_team: Expert[]
-  suppliers: Supplier[]
-}
-
 interface ProtocolTableProps {
   protocol: Protocol | null
   onSave?: (protocol: Protocol) => void
@@ -61,6 +50,9 @@ export default function ProtocolTable({ protocol: initialProtocol, onSave }: Pro
     } else {
       // Initialize with empty protocol if none provided
       setProtocol({
+        id: "",
+        auction_chat_id: "",
+        is_tech_council: false,
         project_name: "",
         constructive: "",
         meeting_date: new Date().toISOString(),
@@ -147,7 +139,7 @@ export default function ProtocolTable({ protocol: initialProtocol, onSave }: Pro
   // Add a new supplier
   const handleAddSupplier = () => {
     if (!protocol) return
-    const newSupplier = { company_name: "", representative: "", phone_number: "", email: "" }
+    const newSupplier = { company_name: "", representative: "", phone_number: "", email: [] as string[] }
     setProtocol((prev) =>
       prev
         ? {
@@ -163,7 +155,6 @@ export default function ProtocolTable({ protocol: initialProtocol, onSave }: Pro
     if (protocol && onSave) {
       onSave(protocol)
     }
-    console.log("Protocol data to be saved:", protocol)
     setIsEditing(false)
   }
 

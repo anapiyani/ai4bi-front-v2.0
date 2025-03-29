@@ -120,12 +120,10 @@ export function useWebSocket(url: string): UseWebSocketReturn {
 
   const sendMessage = useCallback(
     (msg: WebSocketMessage) => {
-      console.log("socket and isConnected", socket, isConnected);
       if (!socket || !isConnected) {
         console.warn("[useWebSocket] Cannot send message, socket not connected");
         return;
       }
-      console.log("[useWebSocket] sending message to socket:", socket);
       socket.send(JSON.stringify(msg));
     },
     [socket, isConnected]
