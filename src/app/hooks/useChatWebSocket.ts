@@ -185,7 +185,6 @@ export const useChatWebSocket = () => {
   const [newMessage, setNewMessage] = useState("");
   const [protocols, setProtocols] = useState<Protocol | null>(null); 
 
-
   // Refs
   const typingTimeoutsRef = useRef<{ [chatId: string]: ReturnType<typeof setTimeout> }>({});
   const notificationAudioRef = useRef(new Audio("/assets/sounds/notification.mp3"));
@@ -412,7 +411,6 @@ export const useChatWebSocket = () => {
 
   const handlePopUpButtonAction = useCallback((button: PopUpButtonAction, clicked_user_id?: string) => {
     const { popup_id, chatId, user_id, button_id, tech_council_reschedule_date, auction_date }: PopUpButtonAction = button;
-    console.log("handlePopUpButtonAction", button);
     setStartedUserId(clicked_user_id || null);
     setPopUpsByChat(prev => {
       const updated = { ...prev };
@@ -681,6 +679,15 @@ export const useChatWebSocket = () => {
     sendMessage(request);
   };
 
+  const updateTechnicalMeetingProtocol = (protocol: Protocol) => {
+    if (!selectedConversation) return;
+    console.log("updateTechnicalMeetingProtocol sending request to update protocol", protocol);
+    sendMessage(createRpcRequest("update_technical_meeting_protocol", {
+      protocol_id: protocol.id,
+      updates: protocol
+    }));
+  }
+
   const addAuctionChatParticipant = (user_id: string) => {
     if (!selectedConversation) return;
     sendMessage(createRpcRequest("addParticipant", {
@@ -714,7 +721,7 @@ export const useChatWebSocket = () => {
     sendMessage(request);
   }
 
-  const handleGetProtocolUpdates = () => {
+  const handleGetProtocolUpdates = useCallback(() => {
     if (!selectedConversation) return;
     console.log("handleGetProtocolUpdates sending request to get protocol updates");
     const request = createRpcRequest("get_technical_meeting_protocol", {
@@ -722,7 +729,7 @@ export const useChatWebSocket = () => {
       tech_council_protocol: true
     })
     sendMessage(request);
-  }
+  }, [selectedConversation, sendMessage]);
 
   const handleReadMessage = (counter: number) => {
     if (!selectedConversation) return;
@@ -906,6 +913,8 @@ export const useChatWebSocket = () => {
     conferenceRoomsByChat,
     handlePopUpButtonAction,
     startedUserId,
-    protocols
+    protocols,
+    handleGetProtocolUpdates,
+    updateTechnicalMeetingProtocol
   };
 };

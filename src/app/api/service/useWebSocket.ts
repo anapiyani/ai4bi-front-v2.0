@@ -78,12 +78,12 @@ export function useWebSocket(url: string): UseWebSocketReturn {
     const ws = new WebSocket(url);
 
     ws.onopen = () => {
-      console.log("[useWebSocket] WebSocket connected");
+      console.info("[useWebSocket] WebSocket connected");
       try {
         setIsConnected(true);
         if (token) {
           const authMsg = { type: "auth", token };
-          console.log("[useWebSocket] Sending auth message:", authMsg);
+          console.info("[useWebSocket] Sending auth message:", authMsg);
           ws.send(JSON.stringify(authMsg));
         }
       } catch (err) {

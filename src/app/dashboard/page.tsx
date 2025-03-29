@@ -49,8 +49,7 @@ export default function Dashboard() {
 
   const handleExitType = (type: activity_status, isFinish?: boolean) => {
     if (type === "auction-results") {
-      console.log("exiting auction results")
-    } else if (type === "technical-council") {
+    } else if (type === "technical-council" || type === "auction") {
       if (isFinish) {
         if (conferenceId) {
           finishAuction(conferenceId)

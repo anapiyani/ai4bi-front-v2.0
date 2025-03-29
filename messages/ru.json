@@ -187,7 +187,7 @@
 		"materials_and_technical_solutions": "Перечень материалов и технических решений",
 		"name": "Наименование",
 		"technical_characteristics": "Технические характеристики",
-		"made_by": "Производитель",
+		"manufacturer": "Производитель",
 		"notes": "Примечания",
 		"technical_experts": "Технические эксперты",
 		"position": "Должность",
@@ -201,7 +201,7 @@
 		"error-creating-chat": "Ошибка при создании чата",
 		"error-uploading-media": "Ошибка при загрузке медиа",
 		"save_and_share": "Сохранить и поделиться",
-		"add_material/solution": "Добавить материал/решение",
+		"add_material_solution": "Добавить материал/решение",
 		"add_note": "Добавить примечание",
 		"add_supplier": "Добавить поставщика",
 		"interest_added_successfully": "Конструктив добавлен успешно",
@@ -252,7 +252,9 @@
 		"advance": "Аванс",
 		"advance_type": "Тип аванса",
 		"amount_after_auction": "Сумма после аукциона",
-		"no_transcriptions_yet": "Нет транскрипций"
+		"no_transcriptions_yet": "Нет транскрипций",
+		"no_data": "Нет данных",
+		"no_notes": "Нет примечаний"
 	},
 	"dropzone": {
 		"upload_files": "Загрузить файлы",

@@ -185,7 +185,7 @@
 		"materials_and_technical_solutions": "Материалдар мен техникалық шешімдер",
 		"name": "Атауы",
 		"technical_characteristics": "Тех. сипаттамалары",
-		"made_by": "Өндіруші",
+		"manufacturer": "Өндіруші",
 		"notes": "Ескертулер",
 		"technical_experts": "Тех. эксперттер",
 		"position": "Лауазымы",
@@ -199,7 +199,7 @@
 		"error-creating-chat": "Чатты ашуда қате орнады",
 		"error-uploading-media": "Медиа файлын жүктеуде қате, қайтадан қайталаңыз",
 		"save_and_share": "Сақтау және бөлісу",
-		"add_material/solution": "Материал/шешім қосу",
+		"add_material_solution": "Материал/шешім қосу",
 		"add_note": "Ескерту қосу",
 		"add_supplier": "Жеткізуші қосу",
 		"interest_added_successfully": "Конструктив қосылды",
@@ -247,7 +247,9 @@
 		"advance": "Аванс",
 		"advance_type": "Аванс түрі",
 		"amount_after_auction": "Аукциондан кейінгі сома",
-		"no_transcriptions_yet": "Транскрипция жоқ"
+		"no_transcriptions_yet": "Транскрипция жоқ",
+		"no_data": "Деректер жоқ",
+		"no_notes": "Ескертулер жоқ"
 	},
 	"dropzone": {
 		"upload_files": "Файлдарды жүктеу",

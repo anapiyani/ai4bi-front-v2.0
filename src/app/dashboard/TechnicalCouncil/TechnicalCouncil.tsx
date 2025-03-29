@@ -40,8 +40,24 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
 
   const {
     protocols,
+    handleGetProtocolUpdates,
+    updateTechnicalMeetingProtocol,
+    setSelectedConversation,
+    selectedConversation
   } = useChatWebSocket()
-  
+
+  useEffect(() => {
+    if (chat_id) {
+      setSelectedConversation(chat_id)
+    }
+  }, [chat_id, setSelectedConversation])
+
+  useEffect(() => {
+    if (selectedConversation) {
+      handleGetProtocolUpdates();
+    }
+  }, [selectedConversation, handleGetProtocolUpdates]);
+
   const {
     localStream,
     remoteAudios,
@@ -58,6 +74,10 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
     }
   }, [transcription]);
 
+  const onProtocolSave = (protocol: Protocol) => {
+    updateTechnicalMeetingProtocol(protocol);
+  }
+
   const technicalCouncilTabs = useMemo(() => {
     return (
       <Tabs defaultValue="demonstration">
@@ -71,9 +91,9 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
                 {t("demonstration")}
               </TabsTrigger>
               <TabsTrigger
-                disabled={openMobileChat}
                 className="data-[state=active]:bg-white data-[state=active]:text-black"
                 value="protocol_table"
+                disabled={protocols === null || openMobileChat}
               >
                 {t("protocol_table")}
               </TabsTrigger>
@@ -124,11 +144,14 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
             </div>
           </TabsContent>
           <TabsContent className={`${openMobileChat ? "hidden md:block lg:block" : ""}`} value="protocol_table">
-          <ProtocolTable protocols={protocols} />
-        </TabsContent>
-      </Tabs>
-    )
-  }, [transcription, protocols, t, openMobileChat])
+            <ProtocolTable 
+              onSave={onProtocolSave} 
+              protocol={protocols} 
+            />
+          </TabsContent>
+        </Tabs>
+      )
+    }, [transcription, protocols, t, openMobileChat])
   return (
     <div>
       <CallsBaseModel
