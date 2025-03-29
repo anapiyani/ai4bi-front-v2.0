@@ -23,7 +23,9 @@ const ChangeDates = ({
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
-    const date = state.date?.toISOString().split('T')[0] || ''
+    const dateObj = state.date ? new Date(state.date) : null
+    if (dateObj) dateObj.setDate(dateObj.getDate() + 1)
+    const date = dateObj?.toISOString().split('T')[0] || ''
     const time = state.time || ''
     const localDateTimeString = `${date}T${time}:00`
     const localDate = new Date(localDateTimeString)

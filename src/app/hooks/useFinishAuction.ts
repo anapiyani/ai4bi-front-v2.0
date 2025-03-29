@@ -6,7 +6,7 @@ export const finishAuction = async (auctionId: string) => {
 				'Content-Type': 'application/json',
 			},
 		})
-		return response.json()
+		return response
 	} catch (error) {
 		console.error(error)
 	}
