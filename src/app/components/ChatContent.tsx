@@ -104,7 +104,7 @@ const ChatContent = ({
     let lastSeenCounter = 0;
     let scrollTimer: NodeJS.Timeout | null = null;
     let readTimer: NodeJS.Timeout | null = null;
-
+    
     const checkVisibleMessages = () => {
       if (!messagesRef.current) return;
       const messageElems = messagesRef.current.querySelectorAll<HTMLDivElement>(".message-item");

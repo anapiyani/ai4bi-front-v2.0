@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useTranslations } from 'next-intl'
 import dynamic from 'next/dynamic'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useRef, useState } from 'react'
+import {MutableRefObject, useEffect, useRef, useState} from 'react'
 import { Toaster } from "react-hot-toast"
 import { get } from '../api/service/api'
 import { deleteCookie, getCookie, setCookie } from '../api/service/cookie'
@@ -27,7 +27,7 @@ export default function Dashboard() {
   const authHeader = useAuthHeader()
   const chatId = searchParams.get("id")
   let active_tab = searchParams.get("active_tab") as activity_status
-  const closeRTCConnection = useRef<(() => void) | null>(null)
+  const closeRTCConnection  = useRef<(() => void) | null>(null)
   const [techCouncilUser, setTechCouncilUser] = useState<TechCouncilUser | null>(null)
   const [conferenceId, setConferenceId] = useState<string | null>(null)
 
@@ -41,8 +41,11 @@ export default function Dashboard() {
   const [exitType, setExitType] = useState<string | null>(null)
   const [isMicrophoneOn, setIsMicrophoneOn] = useState(false)
 
-  useEffect(() => {
-    if (typeof window !== 'undefined' && active_tab === "technical-council") {
+  useEffect((): void => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    if (active_tab === "technical-council") {
       setIsMicrophoneOn(false)
     }
   }, [active_tab])
@@ -54,7 +57,8 @@ export default function Dashboard() {
         if (conferenceId) {
           finishAuction(conferenceId)
         }
-        if (closeRTCConnection.current) {
+        if (!closeRTCConnection.current) {
+        } else {
           closeRTCConnection.current()
         }
         setConferenceId(null)
@@ -73,7 +77,7 @@ export default function Dashboard() {
     }
   }
 
-  const toggleMicrophone = () => {
+  const toggleMicrophone: () => void = () => {
     if (typeof window !== 'undefined') {
       setIsMicrophoneOn(prev => !prev)
     }
@@ -102,7 +106,7 @@ export default function Dashboard() {
           closingTechnicalCouncil={(closeFunc) => {
             closeRTCConnection.current = closeFunc
           }}
-          onUserUpdate={(user, conferenceId) => {
+          onUserUpdate={(user: TechCouncilUser, conferenceId: string | null) => {
             setTechCouncilUser(user)
             setConferenceId(conferenceId)
           }}
