@@ -2,12 +2,12 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useTranslations } from 'next-intl'
-import { useSearchParams } from 'next/navigation'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import {ReadonlyURLSearchParams, useSearchParams} from 'next/navigation'
+import {RefObject, useEffect, useMemo, useRef, useState} from 'react'
 import BotVisualizer from '../../components/Bot/BotVisualizer'
 import { useChatWebSocket } from '../../hooks/useChatWebSocket'
 import { useWebRTC } from '../../hooks/useWebRTC'
-import { Protocol, TechCouncilUser } from '../../types/types'
+import {Protocol, TechCouncilUser, Transcription} from '../../types/types'
 import CallsBaseModel from '../CallsBaseModel/CallsBaseModel'
 import Transcriptions from '../TechnicalCouncil/components/Transcriptions'
 import { AuctionProtocol } from './components/AuctionProtocol'
@@ -26,13 +26,13 @@ const Auction = ({
   onUserUpdate,
 }: AuctionProps) => {
   const t = useTranslations("dashboard")
-  const searchParams = useSearchParams()
-  const chat_id = searchParams.get("chat_id")
-  const conference_id = searchParams.get("conference_id")
-  const room = conference_id || "default"
+  const searchParams: ReadonlyURLSearchParams = useSearchParams()
+  const chat_id: string | null = searchParams.get("chat_id")
+  const conference_id: string | null = searchParams.get("conference_id")
+  const room: string = conference_id || "default"
   const [auctionMobileChat, setAuctionMobileChat] = useState<string>("protocol") 
   const [openMobileChat, setOpenMobileChat] = useState<boolean>(true)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const messagesEndRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null)
 
   const { protocols } = useChatWebSocket()
   const {
@@ -88,8 +88,8 @@ const Auction = ({
               <div className="p-2">
                 <h2 className="text-brand-gray text-lg font-semibold">{t("call_transcription")}:</h2>
                 {transcription.length > 0 ? (
-                  transcription.map((textObj, index) => {
-                    const isLastItem = index === transcription.length - 1;
+                  transcription.map((textObj: Transcription, index: number) => {
+                    const isLastItem: boolean = index === transcription.length - 1;
                     return (
                       <div 
                         className="mt-1" 
@@ -141,7 +141,7 @@ const Auction = ({
           </div>
       </div>
     )
-  }, [transcription, t, auctionMobileChat, openMobileChat])
+  }, [transcription, t, auctionMobileChat])
 
   return (
     <CallsBaseModel
