@@ -5,7 +5,6 @@ import Icons from '@/src/app/components/Icons'
 import {LegacyRef, useEffect, useRef, useState} from "react";
 import { auctionTableHeaders } from "./data"
 
-// Sample row data structure
 const rowData = {
   partner: 'Some super long partner name...',
   product_manufacturer: 'Manufacturer',
@@ -31,7 +30,6 @@ export const AuctionProtocol = ({ t }: { t: any }) => {
     );
   };
 
-  // Calculate left offsets for sticky positioning
   useEffect(() => {
     const newOffsets: { [key: string]: number } = {};
     let cumulativeLeft = 0;
@@ -47,7 +45,6 @@ export const AuctionProtocol = ({ t }: { t: any }) => {
     setLeftOffsets(newOffsets);
   }, [lockedHeaders]);
 
-  // Create ordered headers array
   const orderedHeaders = [
     ...lockedHeaders,
     ...auctionTableHeaders.filter(h => !lockedHeaders.includes(h))
@@ -97,7 +94,7 @@ export const AuctionProtocol = ({ t }: { t: any }) => {
                           style={{
                             left: isLocked ? leftOffsets[headerName] : undefined,
                             minWidth: '150px',
-                            zIndex: isLocked ? 30 : 20 // Higher z-index for locked columns
+                            zIndex: isLocked ? 30 : 20
                           }}
                       >
                         {t(headerName)}
@@ -118,7 +115,7 @@ export const AuctionProtocol = ({ t }: { t: any }) => {
                             left: isLocked ? leftOffsets[headerName] : undefined,
                             minWidth: '150px',
                             position: isLocked ? 'sticky' : 'relative',
-                            zIndex: isLocked ? 25 : 1 // Proper z-index for body cells
+                            zIndex: isLocked ? 25 : 1
                           }}
                       >
                         {rowData[headerName as keyof typeof rowData]}

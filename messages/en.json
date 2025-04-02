@@ -249,7 +249,20 @@
 		"amount_after_auction": "Amount after auction",
 		"no_transcriptions_yet": "No transcriptions yet",
 		"no_data": "No data",
-		"no_notes": "No notes"
+		"no_notes": "No notes",
+		"back_to_chat": "Back to chat",
+		"technical-council-protocol": "Technical council protocol",
+		"auction-protocol": "Auction protocol",
+		"rating": "Rating",
+		"proposal_edit_time_remaining": "The additional time for making changes to participants' proposals has not expired yet. Time left: {hours} hours {minutes} minutes.",
+		"lot": "lot",
+		"partner_name": "Supplier name",
+		"overall_rating": "Overall rating",
+		"execution_time": "Execution time",
+		"work_cost": "Cost of work",
+		"post_tender_amount": "Amount after tender",
+		"advance_payment": "Advance payment",
+		"the_best_rating": "The best rating"
 	},
 	"dropzone": {
 		"upload_files": "Upload files",

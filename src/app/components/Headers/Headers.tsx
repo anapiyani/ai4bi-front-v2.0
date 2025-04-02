@@ -107,7 +107,6 @@ const Header = ({type, t, handlers, isMicrophoneOn, techCouncilUser}: HeaderProp
 							</h2>
 						</div>
 						<div className='flex items-center gap-4'>
-							<InfoButton onClick={handlers.infoButtonClick} />
 							<Button className='flex items-center gap-2' variant='ghost' onClick={() => handlers.exitButtonClick(type)}>
 								{t("go-back-chat-mode")}
 								<Icons.Exit />

@@ -254,7 +254,20 @@
 		"amount_after_auction": "Сумма после аукциона",
 		"no_transcriptions_yet": "Нет транскрипций",
 		"no_data": "Нет данных",
-		"no_notes": "Нет примечаний"
+		"no_notes": "Нет примечаний",
+		"back_to_chat": "Назад к чату",
+		"technical-council-protocol": "Протокол тех. совета",
+		"auction-protocol": "Протокол тендера",
+		"rating": "Рейтинг",
+		"proposal_edit_time_remaining": "Дополнительное время для внесения изменений в предложения участников еще не истекло. Осталось: {hours} часов {minutes} минут.",
+		"lot": "Лот",
+		"partner_name": "Наименование поставщика",
+		"overall_rating": "Общий рейтинг",
+		"execution_time": "Срок выполнения",
+		"work_cost": "Стоимость работ",
+		"post_tender_amount": "Сумма после тендера",
+		"advance_payment": "Аванс",
+		"the_best_rating": "Наивысший балл"
 	},
 	"dropzone": {
 		"upload_files": "Загрузить файлы",
