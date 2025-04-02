@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Pagination, PaginationContent, PaginationItem, PaginationLink } from '@/components/ui/pagination'
 import {Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow} from '@/components/ui/table'
 import Icons from '@/src/app/components/Icons'
-import {useEffect, useRef, useState} from "react";
+import {LegacyRef, useEffect, useRef, useState} from "react";
 import { auctionTableHeaders } from "./data"
 
 // Sample row data structure
@@ -90,7 +90,9 @@ export const AuctionProtocol = ({ t }: { t: any }) => {
                   return (
                       <TableHead
                           key={headerName}
-                          ref={(el) => (headersRef.current[headerName] = el)}
+                          ref={(el) => {
+                              headersRef.current[headerName] = el;
+                          }}
                           className={`px-4 py-2 text-center sticky bg-white z-20`}
                           style={{
                             left: isLocked ? leftOffsets[headerName] : undefined,
