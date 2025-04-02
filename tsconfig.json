@@ -21,6 +21,9 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/hooks/RenderMediaItems"],
-  "exclude": ["node_modules"]
+  "include": [
+    "../../AI4BI/ai4bi-front-v2.0/next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/hooks/RenderMediaItems"],
+  "exclude": [
+    "../../AI4BI/ai4bi-front-v2.0/node_modules"
+  ]
 }

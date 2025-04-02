@@ -242,9 +242,7 @@ const ChatContent = ({
             }
           </div>
           {
-            openSideMenu ? (
-              null
-            ) : !auctionMobileChat && (
+            openSideMenu ? null : !auctionMobileChat && (
               <div className='w-full flex justify-center mr-0 lg:mr-10 gap-2'>
                 {
                   openMobileChat && (
@@ -350,9 +348,7 @@ const ChatContent = ({
       )
     }
     {
-      openSideMenu ? (
-        null
-      ) : (
+      openSideMenu ? null : (
         auctionMobileChat === "chat" ? (
           <div className={`flex-grow ${isTechnicalCouncil ? "rounded-lg" : " bg-neutrals-secondary"}`}>
             <div className={`${isTechnicalCouncil ? "h-[calc(90vh-270px)]" : "h-[calc(100dvh-130px)] md:h-[calc(100dvh-180px)] lg:h-[calc(100dvh-240px)]"} overflow-y-auto flex flex-col pb-2`}
