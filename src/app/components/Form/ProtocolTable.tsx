@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import dayjs from "dayjs"
 import "dayjs/locale/en"
 import "dayjs/locale/ru"
-import { PenLine, UserCheck } from "lucide-react"
+import {PenLine, TableRowsSplitIcon, UserCheck} from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
 import { useEffect, useState } from "react"
 import { Protocol } from '../../types/types'
@@ -150,8 +150,7 @@ export default function ProtocolTable({ protocol: initialProtocol, onSave }: Pro
     )
   }
 
-  // Handle save button click
-  const handleSave = () => {
+  const handleSave: () => void = () => {
     if (protocol && onSave) {
       onSave(protocol)
     }

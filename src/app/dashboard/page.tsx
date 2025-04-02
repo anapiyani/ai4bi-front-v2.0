@@ -24,9 +24,9 @@ export default function Dashboard() {
   const t = useTranslations("dashboard")
   const searchParams = useSearchParams()
   const router = useRouter()
-  const authHeader = useAuthHeader()
-  const chatId = searchParams.get("id")
-  let active_tab = searchParams.get("active_tab") as activity_status
+  const authHeader: Record<string, string> = useAuthHeader()
+  const chatId: string | null = searchParams.get("id")
+  let active_tab: activity_status = searchParams.get("active_tab") as activity_status
   const closeRTCConnection  = useRef<(() => void) | null>(null)
   const [techCouncilUser, setTechCouncilUser] = useState<TechCouncilUser | null>(null)
   const [conferenceId, setConferenceId] = useState<string | null>(null)
