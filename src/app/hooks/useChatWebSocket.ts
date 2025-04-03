@@ -417,6 +417,11 @@ export const useChatWebSocket = () => {
       delete updated[chatId];
       return updated;
     });
+    console.log("sending message: ", {
+      popup_id: popup_id,
+      user_id: user_id,
+      button_id: button_id,
+    })
     sendMessage(createRpcRequest("respond_to_popup", {
       popup_id: popup_id,
       user_id: user_id,

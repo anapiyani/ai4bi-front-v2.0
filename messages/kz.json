@@ -249,7 +249,22 @@
 		"amount_after_auction": "Аукциондан кейінгі сома",
 		"no_transcriptions_yet": "Транскрипция жоқ",
 		"no_data": "Деректер жоқ",
-		"no_notes": "Ескертулер жоқ"
+		"no_notes": "Ескертулер жоқ",
+		"back_to_chat": "Чатқа қайту",
+		"technical-council-protocol": "Тех. совет протоколы",
+		"auction-protocol": "Тендер протоколы",
+		"rating": "Рейтинг",
+		"proposal_edit_time_remaining": "Қатысушылардың ұсыныстарына өзгерістер енгізу үшін қосымша уақыт әлі аяқталған жоқ. Қалған уақыт: {hours} сағат {minutes} минут.",
+		"lot": "Лот",
+		"partner_name": "Жеткізушінің атауы",
+		"overall_rating": "Жалпы рейтинг",
+		"execution_time": "Орындалу мерзімі",
+		"work_cost": "Жұмыс құны",
+		"post_tender_amount": "Тендерден кейінгі сома",
+		"advance_payment": "Алдын ала төлем",
+		"the_best_rating": "Ен жогары балл",
+		"choose_winner_and_reserve_winner": "Әр лот бойынша жеңімпазды және резервтік жеңімпазды таңдаңыз.",
+		"approve_results": "Нәтижелерді бекіту"
 	},
 	"dropzone": {
 		"upload_files": "Файлдарды жүктеу",

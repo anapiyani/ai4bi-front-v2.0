@@ -52,6 +52,7 @@ export default function Dashboard() {
 
   const handleExitType = (type: activity_status, isFinish?: boolean) => {
     if (type === "auction-results") {
+      router.push('/dashboard?active_tab=chat')
     } else if (type === "technical-council" || type === "auction") {
       if (isFinish) {
         if (conferenceId) {
@@ -111,7 +112,7 @@ export default function Dashboard() {
             setConferenceId(conferenceId)
           }}
     />,
-      "auction-results": () => <AuctionResults />,
+      "auction-results": () => <AuctionResults goBack={() => handleExitType("auction-results")} />,
       auction: () => <Auction 
         isMicrophoneOn={isMicrophoneOn}
         toggleMicrophone={toggleMicrophone}
@@ -155,6 +156,9 @@ export default function Dashboard() {
           closeRTCConnection.current()
         }
         setIsMicrophoneOn(false)
+        router.push('/dashboard?active_tab=chat')
+        break
+      case "auction-results":
         router.push('/dashboard?active_tab=chat')
         break
       case "chat":
