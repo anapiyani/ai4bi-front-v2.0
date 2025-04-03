@@ -267,7 +267,9 @@
 		"work_cost": "Стоимость работ",
 		"post_tender_amount": "Сумма после тендера",
 		"advance_payment": "Аванс",
-		"the_best_rating": "Наивысший балл"
+		"the_best_rating": "Наивысший балл",
+		"choose_winner_and_reserve_winner": "Выберите победителя и резервного победителя по каждому лоту.",
+		"approve_results": "Утвердить результаты"
 	},
 	"dropzone": {
 		"upload_files": "Загрузить файлы",

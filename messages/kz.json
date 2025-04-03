@@ -262,7 +262,9 @@
 		"work_cost": "Жұмыс құны",
 		"post_tender_amount": "Тендерден кейінгі сома",
 		"advance_payment": "Алдын ала төлем",
-		"the_best_rating": "Ен жогары балл"
+		"the_best_rating": "Ен жогары балл",
+		"choose_winner_and_reserve_winner": "Әр лот бойынша жеңімпазды және резервтік жеңімпазды таңдаңыз.",
+		"approve_results": "Нәтижелерді бекіту"
 	},
 	"dropzone": {
 		"upload_files": "Файлдарды жүктеу",

@@ -1,3 +1,4 @@
+import {Radio} from "lucide-react";
 
 type Props = {
     name: string,
@@ -20,10 +21,10 @@ const RateItem = ({name, overall_rating, execution_time, work_cost, post_tender_
                 <h1 className={`${the_best_score ? "text-green-600" : "text-neutrals-muted"} text-3xl font-bold`}>{overall_rating}</h1>
                 {the_best_score && <p className={"text-green-600"}>{t("the_best_rating")}</p>}
             </div>
-            <div className={"col-span-2"}>
+            <div className={"col-span-1"}>
                 <p className={"text-brand-gray"}>{execution_time}</p>
             </div>
-            <div className={"col-span-2"}>
+            <div className={"col-span-1"}>
                 <p className={"text-brand-gray"}>{work_cost}</p>
             </div>
             <div className={"col-span-2"}>
@@ -31,6 +32,8 @@ const RateItem = ({name, overall_rating, execution_time, work_cost, post_tender_
             </div>
             <div className={"col-span-1"}>
                 <p className={"text-brand-gray"}>{advance_payment}</p>
+            </div>
+            <div className={"col-span-3"}>
             </div>
         </div>
     )

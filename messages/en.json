@@ -262,7 +262,9 @@
 		"work_cost": "Cost of work",
 		"post_tender_amount": "Amount after tender",
 		"advance_payment": "Advance payment",
-		"the_best_rating": "The best rating"
+		"the_best_rating": "The best rating",
+		"choose_winner_and_reserve_winner": "Choose a winner and a reserve winner for each lot.",
+		"approve_results": "Approve results"
 	},
 	"dropzone": {
 		"upload_files": "Upload files",
