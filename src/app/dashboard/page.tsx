@@ -156,6 +156,7 @@ export default function Dashboard() {
     return <Loading />
   }
 
+
   const ExitTo = (type: activity_status) => {
     switch (type) {
       case "auction":
