@@ -264,7 +264,8 @@
 		"advance_payment": "Алдын ала төлем",
 		"the_best_rating": "Ен жогары балл",
 		"choose_winner_and_reserve_winner": "Әр лот бойынша жеңімпазды және резервтік жеңімпазды таңдаңыз.",
-		"approve_results": "Нәтижелерді бекіту"
+		"approve_results": "Нәтижелерді бекіту",
+		"error_occurred_please_try_again": "Қате, бетті қайта жүктеңіз"
 	},
 	"dropzone": {
 		"upload_files": "Файлдарды жүктеу",

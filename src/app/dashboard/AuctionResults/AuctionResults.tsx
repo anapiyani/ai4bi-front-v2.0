@@ -34,7 +34,7 @@ const AuctionResults = ({goBack}: {goBack: () => void}) => {
 						<AuctionProtocol t={t} />
 					</TabsContent>
 					<TabsContent value={"auction-results"}>
-						<AuctionResultProtocol/>
+						<AuctionResultProtocol />
 					</TabsContent>
 				</Tabs>
 			</div>

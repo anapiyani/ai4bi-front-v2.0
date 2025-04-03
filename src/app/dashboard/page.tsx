@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl'
 import dynamic from 'next/dynamic'
 import { useRouter, useSearchParams } from 'next/navigation'
 import {MutableRefObject, useEffect, useRef, useState} from 'react'
-import { Toaster } from "react-hot-toast"
+import toast, { Toaster } from "react-hot-toast"
 import { get } from '../api/service/api'
 import { deleteCookie, getCookie, setCookie } from '../api/service/cookie'
 import BlockNavigation from '../components/BlockNavigation/BlockNavigation'
@@ -14,11 +14,25 @@ import Header from '../components/Headers/Headers'
 import { useAuthHeader } from '../hooks/useAuthHeader'
 import { finishAuction } from '../hooks/useFinishAuction'
 import { activity_status, MyData, TechCouncilUser } from '../types/types'
+import { Spinner } from "@/components/ui/Spinner";
+import {Loading} from "@/src/app/components/Spinner";
 
 const Auction = dynamic(() => import('./Auction/Auction'), { ssr: false })
 const AuctionResults = dynamic(() => import('./AuctionResults/AuctionResults'), { ssr: false })
 const ChatMode = dynamic(() => import('./ChatMode/ChatMode'), { ssr: false })
 const TechnicalCouncil = dynamic(() => import('./TechnicalCouncil/TechnicalCouncil'), { ssr: false })
+
+const setUserCookies = (user: MyData) => {
+  setCookie('user_id', user.uuid);
+  setCookie('role', user.role);
+  setCookie('first_name', user.first_name);
+};
+
+const redirectToLoginIfUnauthorized = () => {
+  if (!getCookie('access_token')) {
+    window.location.href = '/login';
+  }
+};
 
 export default function Dashboard() {
   const t = useTranslations("dashboard")
@@ -50,7 +64,7 @@ export default function Dashboard() {
     }
   }, [active_tab])
 
-  const handleExitType = (type: activity_status, isFinish?: boolean) => {
+  const handleExitType = (type: activity_status, isFinish?: boolean): void => {
     if (type === "auction-results") {
       router.push('/dashboard?active_tab=chat')
     } else if (type === "technical-council" || type === "auction") {
@@ -129,19 +143,20 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
-    if (typeof window === 'undefined' || !userData) return
+    if (typeof window === 'undefined' || !userData) return;
     try {
-      setCookie('user_id', userData.uuid)
-      setCookie('role', userData.role)
-      setCookie('first_name', userData.first_name)
-      if (!getCookie('access_token')) {
-        window.location.href = '/login'
-      }
+      setUserCookies(userData);
+      redirectToLoginIfUnauthorized();
     } catch (error) {
-      console.error('Error accessing Cookies:', error)
+      toast.error(t("error_occurred_please_try_again"));
     }
-  }, [userData])
-  
+  }, [t, userData, isLoading]);
+
+  if (isLoading || getCookie('access_token') === null || getCookie('user_id') === null) {
+    return <Loading />
+  }
+
+
   const ExitTo = (type: activity_status) => {
     switch (type) {
       case "auction":
@@ -179,7 +194,7 @@ export default function Dashboard() {
     <div className="flex w-full h-full flex-col">
       <BlockNavigation />
       <div className={`w-full ${chatId ? "hidden lg:block" : "block"}`}>
-        <Header 
+        <Header
           type={active_tab} 
           t={t} 
           handlers={{

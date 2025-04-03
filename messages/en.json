@@ -264,7 +264,8 @@
 		"advance_payment": "Advance payment",
 		"the_best_rating": "The best rating",
 		"choose_winner_and_reserve_winner": "Choose a winner and a reserve winner for each lot.",
-		"approve_results": "Approve results"
+		"approve_results": "Approve results",
+		"error_occurred_please_try_again": "Error occurred, please refresh the page"
 	},
 	"dropzone": {
 		"upload_files": "Upload files",
