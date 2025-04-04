@@ -66,6 +66,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
     connectedUsers,
     isRTCNotConnected,
     closeRTCConnection,
+    stopUsingAudio
   } = useWebRTC({ room, isMicrophoneOn })
 
   useEffect(() => {
@@ -76,6 +77,13 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
 
   const onProtocolSave = (protocol: Protocol) => {
     updateTechnicalMeetingProtocol(protocol);
+  }
+
+  const closeCouncil = () => {
+    closingTechnicalCouncil(() => {
+      stopUsingAudio();
+      closeRTCConnection();
+    })
   }
 
   const technicalCouncilTabs = useMemo(() => {
@@ -157,7 +165,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
       <CallsBaseModel
         isMicrophoneOn={isMicrophoneOn}
         toggleMicrophone={toggleMicrophone}
-        closingTechnicalCouncil={closingTechnicalCouncil}
+        closingTechnicalCouncil={closeCouncil}
         onUserUpdate={onUserUpdate}
         chat_id={chat_id}
         conference_id={conference_id}
