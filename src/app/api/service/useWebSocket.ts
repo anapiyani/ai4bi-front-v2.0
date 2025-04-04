@@ -131,6 +131,7 @@ export function useWebSocket(url: string): UseWebSocketReturn {
     ws.onmessage = (event) => {
       try {
         const parsed = JSON.parse(event.data)
+        console.log("[useWebSocket] Received message:", parsed)
         messageQueueRef.current.push(parsed)
         processMessageQueue()
       } catch (err) {

@@ -265,7 +265,9 @@
 		"the_best_rating": "Ен жогары балл",
 		"choose_winner_and_reserve_winner": "Әр лот бойынша жеңімпазды және резервтік жеңімпазды таңдаңыз.",
 		"approve_results": "Нәтижелерді бекіту",
-		"error_occurred_please_try_again": "Қате, бетті қайта жүктеңіз"
+		"error_occurred_please_try_again": "Қате, бетті қайта жүктеңіз",
+		"time_to_start_tender": "Тендерді бастайтын уақыт",
+		"start_auction": "Тендерді бастау"
 	},
 	"dropzone": {
 		"upload_files": "Файлдарды жүктеу",
