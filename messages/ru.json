@@ -270,7 +270,7 @@
 		"the_best_rating": "Наивысший балл",
 		"choose_winner_and_reserve_winner": "Выберите победителя и резервного победителя по каждому лоту.",
 		"approve_results": "Утвердить результаты",
-		"error_occured_please_try_again": "Ошибка, пожалуйста перезагрузите страницу"
+		"error_occured_please_try_again": "Ошибка, пожалуйста перезагрузите страницу",
 	},
 	"dropzone": {
 		"upload_files": "Загрузить файлы",
