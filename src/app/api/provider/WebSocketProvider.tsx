@@ -4,6 +4,8 @@ import { type ReactNode, createContext, useContext, useEffect, useState } from "
 import { type WebSocketMessage, useWebSocket } from "../service/useWebSocket"
 import {Button} from "@/components/ui/button";
 import {useMutation} from "@tanstack/react-query";
+import {post} from "../service/api";
+import toast from "react-hot-toast";
 
 interface WebSocketContextValue {
   isConnected: boolean
@@ -13,20 +15,25 @@ interface WebSocketContextValue {
   removeListener: (listener: (msg: WebSocketMessage) => void) => void
 }
 
-// const createNewAuction = (id: string) => post(`/test/create_auction_via_fsm?portal_id=${id}`)
-// const useCreateAuction = () => {
-//   useMutation({
-//     mutationFn: createNewAuction,
-//     onSuccess: () => {
-//     }
-//   })
-// }
+const createNewAuction = (id: string) => post(`/test/create_auction_via_fsm?portal_id=${id}`)
+const useCreateAuction = () => {
+  return useMutation({
+    mutationFn: (id: string) => createNewAuction(id),
+    onSuccess: () => {
+      toast.success("Auction created")
+    },
+    onError: (error: any) => {
+      toast.error(error.message)
+    }
+  })
+}
 
 const WebSocketContext = createContext<WebSocketContextValue | undefined>(undefined)
 
 const WS_URL = process.env.NEXT_PUBLIC_WS_URL || "wss://staging.ai4bi.kz/ws/"
 
 export function WebSocketProvider({ children }: { children: ReactNode }) {
+  const { mutate } = useCreateAuction()
   const [connectionStatus, setConnectionStatus] = useState<string>("connecting")
   const { isConnected, lastMessage, sendMessage, addListener, removeListener } = useWebSocket(WS_URL)
 
@@ -36,7 +43,9 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
 
   const createNewAuction = () => {
     const portal_id = prompt("Enter portal id: ")
-
+    if (portal_id) {
+      mutate(portal_id)
+    }
   }
 
   return (
