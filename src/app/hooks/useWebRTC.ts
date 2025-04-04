@@ -37,6 +37,15 @@ export const useWebRTC = ({ room, isMicrophoneOn }: UseWebRTCProps) => {
     }
   }, [isMicrophoneOn])
 
+  const stopUsingAudio = () => {
+    if (localStream) {
+      localStream.getAudioTracks().forEach((track) => {
+        track.enabled = false
+        track.stop()
+      })
+    }
+  }
+
   const updateAudioElements = () => {
     connectedUsers.current.forEach((user) => {
       const audio = document.createElement('audio')
@@ -269,6 +278,7 @@ export const useWebRTC = ({ room, isMicrophoneOn }: UseWebRTCProps) => {
     speakingUsers,
     connectedUsers,
     isRTCNotConnected,
-    closeRTCConnection
+    closeRTCConnection,
+    stopUsingAudio
   }
 }
