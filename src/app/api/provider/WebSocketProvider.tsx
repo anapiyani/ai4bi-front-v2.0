@@ -50,7 +50,7 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
 
   return (
       <WebSocketContext.Provider value={{ isConnected, lastMessage, sendMessage, addListener, removeListener }}>
-        {process.env.NODE_ENV === "development" && (
+        {/*{process.env.NODE_ENV === "development" && (*/}
             <div
                 className="fixed top-1 left-2 z-50 px-2 py-1 text-xs rounded-full bg-opacity-80"
                 style={{
@@ -63,7 +63,7 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
               {/*test for creating chats*/}
               <Button onClick={createNewAuction} variant={"ghost"} className={"rounded-xl hover:text-primary hover:bg-transparent py-0 h-full m-0"}>+</Button>
             </div>
-        )}
+        {/*)}*/}
         {children}
       </WebSocketContext.Provider>
   )
