@@ -31,7 +31,9 @@ const ChatMenu = ({type, setOpenMenu, name, participants, addParticipantsToAucti
           </Button>
         </div>
         {type === "private" ? 
-        <PrivateChatMenu  t={t} participants={participants} chatId={chatId} /> 
+        <div className={"w-full"}>
+          <PrivateChatMenu  t={t} participants={participants} chatId={chatId} />
+        </div>
         : type === "auction_chat" ? 
         <AuctionChatMenu 
           t={t}
