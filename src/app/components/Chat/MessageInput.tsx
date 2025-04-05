@@ -379,7 +379,7 @@ const MessageInput = ({
               value={editMessage ? editText : message}
               onChange={editMessage ? handleEditChange : handleNewMessageChange}
               onKeyDown={handleKeyDown}
-              className="w-full focus:ring-0 focus:border-none border-none focus:outline-none"
+              className="w-full h-10 md:h-9 lg:h-9 focus:ring-0 focus:border-none border-none focus:outline-none"
               icon={<Icons.Choose_files />}
             />
           </div>
