@@ -1,12 +1,13 @@
-import React, { useEffect } from "react"
+import React, {useEffect} from "react"
 import Icons from '../components/Icons'
-import { Media } from "../types/types"
-import { ImageMedia } from './RenderMediaItems/Image'
+import {Media} from "../types/types"
+import {ImageMedia} from './RenderMediaItems/Image'
 
-import { Skeleton } from '@/components/ui/skeleton'
+import {Skeleton} from '@/components/ui/skeleton'
 import toast from 'react-hot-toast'
 import AudioMedia from './RenderMediaItems/Audio'
-import { useDownloadMedia } from './useUploadMedia'
+import {useDownloadMedia} from './useUploadMedia'
+
 export function useRenderMediaContent(
   media: string[] | string | Media[] | Media | null | undefined,
   t: (key: string) => string,
@@ -65,26 +66,24 @@ export function useRenderMediaContent(
         }
       }
     },
-    [t, isUser, small]
+    [t, small, isUser, isDownloading, downloadMedia]
   )
 
-  const renderMedia = React.useMemo(() => {
+  return React.useMemo(() => {
     if (!media) return null
     if (Array.isArray(media)) {
       return (
-        <>
-          {media.map((item, index) => (
-            <React.Fragment key={index}>
-              {renderSingleMedia(item)}
-            </React.Fragment>
-          ))}
-        </>
+          <>
+            {media.map((item, index) => (
+                <React.Fragment key={index}>
+                  {renderSingleMedia(item)}
+                </React.Fragment>
+            ))}
+          </>
       )
     }
     return renderSingleMedia(media)
   }, [media, renderSingleMedia])
-
-  return renderMedia
 }
 
 export default useRenderMediaContent
