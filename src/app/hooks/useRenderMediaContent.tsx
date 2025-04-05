@@ -50,7 +50,7 @@ export function useRenderMediaContent(
                     { type === "file" && <Icons.PDF className='w-6 h-6 text-neutrals-muted' />}
 										{media_type === "video" && <Icons.Video className='w-6 h-6 text-neutrals-muted' fill='#0891b2' />}
 									</div>
-									<div className="flex flex-col gap-1 py-1">
+									<div className="flex flex-col gap-1 py-1 text-start">
 											<p className={`${isUser ? "text-white" : "text-neutrals-muted"} text-sm`}>{name.length > 40 ? name.slice(0, 40) + "..." : name}</p>
 											<p className={`${isUser ? "text-white" : "text-neutrals-muted"} text-xs`}>
 												{size > 1024000 
