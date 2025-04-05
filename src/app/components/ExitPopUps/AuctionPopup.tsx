@@ -41,7 +41,7 @@ const AuctionLeaveButton = ({handlers, techCouncilUser}: TechnicalCouncilLeaveBu
 		</Button>	
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-2 w-[450px] bg-white rounded-lg shadow-lg overflow-hidden z-50">
+        <div className="absolute top-full right-0 mt-2 w-[320px] lg:w-[450px] md:w-[400px] bg-white rounded-lg shadow-lg overflow-hidden z-50">
 			<div className="px-6 pt-6 pb-3">
 				<h2 className="text-xl font-medium">{userRole === "project_team" || userRole === "admin" ? t("leave-the-call") : t("quit-the-call")}</h2>
 				<p className="text-sm text-slate-500 mt-2">{userRole === "project_team" || userRole === "admin" ? t("you-can-quit-the-call") : t("you-can-return-to-the-call")}</p>
