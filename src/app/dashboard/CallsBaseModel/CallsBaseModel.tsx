@@ -18,7 +18,7 @@ const BotVisualizer = dynamic(() => import("../../components/Bot/BotVisualizer")
 type CallsBaseModelProps = {
 	isMicrophoneOn: boolean
   toggleMicrophone: () => void
-  closingTechnicalCouncil: (closeFunc: () => void) => void,
+  close: (closeFunc: () => void) => void,
   onUserUpdate?: (user: TechCouncilUser, conferenceId: string | null) => void
 	chat_id: string | null
 	conference_id: string | null
@@ -34,13 +34,14 @@ type CallsBaseModelProps = {
 	messagesEndRef: React.RefObject<HTMLDivElement>
 	protocols: Protocol
 	children: React.ReactNode
-	auctionMobileChat?: string
+	auctionMobileChat?: string,
+    type?: "auction" | "technical-council"
 }
 
 const CallsBaseModel = ({
 	isMicrophoneOn,
   toggleMicrophone,
-  closingTechnicalCouncil,
+  close,
   onUserUpdate,
 	chat_id,
 	conference_id,
@@ -56,7 +57,8 @@ const CallsBaseModel = ({
 	setOpenMobileChat,
 	messagesEndRef,
 	children,
-	auctionMobileChat
+	auctionMobileChat,
+    type
 }: CallsBaseModelProps) => {
 	const router = useRouter()
   const t = useTranslations("dashboard")
@@ -96,12 +98,12 @@ const CallsBaseModel = ({
   const userId = getCookie("user_id")
 
   useEffect(() => {
-    closingTechnicalCouncil(() => closeRTCConnection)
+      close(() => closeRTCConnection)
 
     if (chat_id) {
       setSelectedConversation(chat_id)
     }
-  }, [chat_id, setSelectedConversation, closingTechnicalCouncil, closeRTCConnection])
+  }, [chat_id, setSelectedConversation, close, closeRTCConnection])
 
   useEffect(() => {
     if (chat_id) {
@@ -148,7 +150,7 @@ const CallsBaseModel = ({
     if (!messagesEndRef.current?.scrollTop) {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
-  }, [transcription]);
+  }, [messagesEndRef, transcription]);
 
   return (
     <div className="w-full flex flex-col lg:flex-row bg-neutral-secondary justify-center px-0 lg:px-4">
@@ -217,8 +219,10 @@ const CallsBaseModel = ({
         <Dialog open={isRTCNotConnected}>
           <DialogContent className="w-full flex justify-center items-center flex-col gap-2 bg-white">
             <DialogHeader>
-              <DialogTitle className="text-brand-orange text-base font-bold">
-                {t("rtc_not_connected_please_try_later")}
+              <DialogTitle className="text-brand-orange text-base font-bold text-center">
+                  {
+                     t("process_not_connected", {type: type === "auction" ? t("auction-lowercase") : t("technical-council-lowercase") })
+                  }
               </DialogTitle>
             </DialogHeader>
             <DialogFooter>

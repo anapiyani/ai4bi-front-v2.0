@@ -1,12 +1,13 @@
-import React, { useEffect } from "react"
+import React, {useEffect} from "react"
 import Icons from '../components/Icons'
-import { Media } from "../types/types"
-import { ImageMedia } from './RenderMediaItems/Image'
+import {Media} from "../types/types"
+import {ImageMedia} from './RenderMediaItems/Image'
 
-import { Skeleton } from '@/components/ui/skeleton'
+import {Skeleton} from '@/components/ui/skeleton'
 import toast from 'react-hot-toast'
 import AudioMedia from './RenderMediaItems/Audio'
-import { useDownloadMedia } from './useUploadMedia'
+import {useDownloadMedia} from './useUploadMedia'
+
 export function useRenderMediaContent(
   media: string[] | string | Media[] | Media | null | undefined,
   t: (key: string) => string,
@@ -50,7 +51,7 @@ export function useRenderMediaContent(
                     { type === "file" && <Icons.PDF className='w-6 h-6 text-neutrals-muted' />}
 										{media_type === "video" && <Icons.Video className='w-6 h-6 text-neutrals-muted' fill='#0891b2' />}
 									</div>
-									<div className="flex flex-col gap-1 py-1">
+									<div className="flex flex-col gap-1 py-1 text-start">
 											<p className={`${isUser ? "text-white" : "text-neutrals-muted"} text-sm`}>{name.length > 40 ? name.slice(0, 40) + "..." : name}</p>
 											<p className={`${isUser ? "text-white" : "text-neutrals-muted"} text-xs`}>
 												{size > 1024000 
@@ -65,26 +66,24 @@ export function useRenderMediaContent(
         }
       }
     },
-    [t, isUser, small]
+    [t, small, isUser, isDownloading, downloadMedia]
   )
 
-  const renderMedia = React.useMemo(() => {
+  return React.useMemo(() => {
     if (!media) return null
     if (Array.isArray(media)) {
       return (
-        <>
-          {media.map((item, index) => (
-            <React.Fragment key={index}>
-              {renderSingleMedia(item)}
-            </React.Fragment>
-          ))}
-        </>
+          <>
+            {media.map((item, index) => (
+                <React.Fragment key={index}>
+                  {renderSingleMedia(item)}
+                </React.Fragment>
+            ))}
+          </>
       )
     }
     return renderSingleMedia(media)
   }, [media, renderSingleMedia])
-
-  return renderMedia
 }
 
 export default useRenderMediaContent

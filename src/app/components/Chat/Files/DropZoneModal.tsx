@@ -21,6 +21,8 @@ const DropZoneModal = ({
   chatId,
   value,
   setNewMessage,
+  filesUploaded,
+  setFilesUploaded,
 }: {
   open: boolean
   setOpen: (open: boolean) => void
@@ -29,8 +31,9 @@ const DropZoneModal = ({
   value: string,
   chatId: string,
   setNewMessage: (value: string) => void
+  filesUploaded: File[];
+  setFilesUploaded: React.Dispatch<React.SetStateAction<File[]>>;
 }) => {
-  const [filesUploaded, setFilesUploaded] = useState<File[]>([])
   const [message, setMessage] = useState<string>('')
 
   const {
@@ -69,7 +72,11 @@ const DropZoneModal = ({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open}
+            onOpenChange={(open) => {
+              setOpen(open);
+              if (!open) setFilesUploaded([]);
+            }}>
       <DialogContent className="w-full max-w-2xl bg-primary-foreground">
         <DialogHeader>
           <DialogTitle>{t("upload_files")}</DialogTitle>
@@ -81,7 +88,7 @@ const DropZoneModal = ({
             showFilesList={true}
             showErrorMessage={true}
             onDrop={(acceptedFiles) => {
-              setFilesUploaded((prev) => [...prev, ...acceptedFiles])
+              setFilesUploaded((prev) => [...prev, ...acceptedFiles]);
             }}
           />
 

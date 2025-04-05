@@ -60,14 +60,11 @@ const Message = ({
     } 
     if (isUser) {
       return; 
-    } 
-    if (typeof sender === "string") {
-      const nameParts = sender.split(" ");
-      return nameParts.length >= 2
+    }
+    const nameParts = sender.split(" ");
+    return nameParts.length >= 2
         ? `${nameParts[0][0]}${nameParts[1][0]}`
         : `${nameParts[0][0]}`.toUpperCase();
-    }
-    return "?"; 
   }, [sender, t, isBot, isUser]);
 
   const contextMenuItems = useContextMenuItems({

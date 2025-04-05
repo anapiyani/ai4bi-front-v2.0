@@ -11,6 +11,7 @@ import NotificationBell from '../../Alerts/Notification/NotificationBell'
 import Icons from '../../Icons'
 import useAutoComplete from './hooks/useAutocomplete'
 import { useGetChatMedia } from './hooks/useGetChatMedia'
+import {ParticipantSelector} from "@/src/app/components/Chat/ChatMenu/ParticipantSelector";
 type AuctionChatMenuProps = {
 	name: string;
 	status: string;
@@ -30,7 +31,6 @@ type AuctionChatMenuProps = {
 const AuctionChatMenu = (
 	{name, status, region, construction, project_name, portal_id, lot_information, auction_date, technical_council_date, participants, t, addParticipantsToAuctionChat, chatId}
 	: AuctionChatMenuProps) => {
-	const queryClient = useQueryClient();
 	const [openAddParticipant, setOpenAddParticipant] = useState<boolean>(false);
 	const { results, handleSearch, setResults, setSearch } = useAutoComplete();
 	const [selectedParticipants, setSelectedParticipants] = useState<AutoCompleteResponse[]>([]);
@@ -53,39 +53,39 @@ const AuctionChatMenu = (
 				<p className='text-sm font-medium'>{name}</p>
 			</div>
 			<div className='flex flex-col gap-0.5'>
-				<p className='text-xs text-muted-foreground'>{t("status")}</p>
-				<p className='text-xs text-green-500'>{status}</p>
+				<p className='text-sm lg:text-xs text-muted-foreground'>{t("status")}</p>
+				<p className='text-sm lg:text-xs text-green-500'>{status}</p>
 			</div>	
 			<div className='flex flex-col gap-0.5'>
-				<p className='text-xs text-muted-foreground'>{t("region")}</p>
-				<p className='text-xs'>{region}</p>
+				<p className='text-sm lg:text-xs text-muted-foreground'>{t("region")}</p>
+				<p className='text-sm lg:text-xs'>{region}</p>
 			</div>
 			<div className='flex flex-col gap-0.5'>
-				<p className='text-xs text-muted-foreground'>{t("construction")}</p>
-				<p className='text-xs'>{construction}</p>
+				<p className='text-sm lg:text-xs text-muted-foreground'>{t("construction")}</p>
+				<p className='text-sm lg:text-xs'>{construction}</p>
 			</div>
 			<div className='flex flex-col gap-0.5'>
-				<p className='text-xs text-muted-foreground'>{t("project-name")}</p>
-				<p className='text-xs'>{project_name}</p>
+				<p className='text-sm lg:text-xs text-muted-foreground'>{t("project-name")}</p>
+				<p className='text-sm lg:text-xs'>{project_name}</p>
 			</div>
 			<div className='flex flex-col gap-0.5'>
-				<p className='text-xs text-muted-foreground'>{t("portal-id")}</p>
-				<p className='text-xs'>{portal_id}</p>
+				<p className='text-sm lg:text-xs text-muted-foreground'>{t("portal-id")}</p>
+				<p className='text-sm lg:text-xs'>{portal_id}</p>
 			</div>
 			<div className='flex flex-col gap-0.5'>
-				<p className='text-xs text-muted-foreground'>{t("lot-information")}</p>
-				<a href='#' className='text-xs text-primary'>{t("go to the table")}</a>
+				<p className='text-sm lg:text-xs text-muted-foreground'>{t("lot-information")}</p>
+				<a href='#' className='text-sm lg:text-xs text-primary'>{t("go to the table")}</a>
 			</div>
 			<div className='flex'>
 				<NotificationBell />
 			</div>
 			<div className='flex flex-col gap-0.5'>
-				<p className='text-xs text-muted-foreground'>{t("technical-council-date")}</p>
-				<p className='text-xs'>{technical_council_date}</p>
+				<p className='text-sm lg:text-xs text-muted-foreground'>{t("technical-council-date")}</p>
+				<p className='text-sm lg:text-xs'>{technical_council_date}</p>
 			</div>
 			<div className='flex flex-col gap-0.5'>
-				<p className='text-xs text-muted-foreground'>{t("auction-date")}</p>
-				<p className='text-xs'>{auction_date}</p>
+				<p className='text-sm lg:text-xs text-muted-foreground'>{t("auction-date")}</p>
+				<p className='text-sm lg:text-xs'>{auction_date}</p>
 			</div>
 			<div>
 				<Tabs value={openedTab}
@@ -142,47 +142,14 @@ const AuctionChatMenu = (
 							) : (
 								<div className='flex flex-col gap-2 w-full justify-center items-start'>
 									<div className="flex gap-2 items-center w-full">
-										<Input onChange={handleSearch} placeholder={t("search-by-name/email")} />
-										<Button disabled={selectedParticipants.length === 0} onClick={handleAddParticipants} className='bg-primary text-white hover:bg-primary/90'>
-											<Icons.Plus fill='white' />
+										<Input onChange={handleSearch} placeholder={t("search-by-name/email")}/>
+										<Button disabled={selectedParticipants.length === 0}
+												onClick={handleAddParticipants}
+												className='bg-primary text-white hover:bg-primary/90'>
+											<Icons.Check fill='white'/>
 										</Button>
 									</div>
-									<div className='flex flex-col w-full justify-center items-start'>
-										{
-											selectedParticipants.map((participant) => (
-												<div className='flex items-center gap-2 mt-1' key={participant.uuid}>
-													<Checkbox checked={true} onCheckedChange={(checked) => {
-														if (checked) {
-															setSelectedParticipants([...selectedParticipants, participant]);
-														} else {
-															setSelectedParticipants(selectedParticipants.filter((p) => p.uuid !== participant.uuid));
-														}
-													}} />
-													<p>{participant.first_name} {participant.last_name}</p>
-												</div>
-											))
-										}
-										{results.map((result) => (
-											<div className='flex items-center mt-1' key={result.uuid}>
-												{
-													selectedParticipants.some((participant) => participant.uuid === result.uuid) ? (
-														null
-													) : (
-														<div className='flex items-center gap-2'>
-															<Checkbox checked={selectedParticipants.some((participant) => participant.uuid === result.uuid)} onCheckedChange={(checked) => {
-																if (checked) {
-																	setSelectedParticipants([...selectedParticipants, result]);
-																} else {
-																	setSelectedParticipants(selectedParticipants.filter((participant) => participant.uuid !== result.uuid));
-																}
-															}} />
-															<p>{result.first_name} {result.last_name}</p>
-														</div>
-													)
-												}
-											</div>
-										))}
-									</div>
+									{ParticipantSelector(selectedParticipants, setSelectedParticipants, results)}
 									<div className='flex flex-col gap-2 w-full justify-center items-start mt-2'>
 										<Button variant='outline' onClick={() => {
 											setOpenAddParticipant(false);

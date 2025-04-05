@@ -24,7 +24,7 @@ const PrivateChatMenu = ({t, participants, chatId}: {t: any, participants: ChatP
 		<>
 		 <div 
       className='flex flex-col gap-2'>
-          <div className='flex flex-col '>
+          <div className='flex flex-col gap-1'>
             <p className='text-sm text-muted-foreground'>{t("contact-info")}</p>
             {/* here will be email but for now it's just username */}
             <p className='text-sm'>{participants.find((p) => p.user_id !== getCookie("user_id"))?.username}@gmail.com</p> 

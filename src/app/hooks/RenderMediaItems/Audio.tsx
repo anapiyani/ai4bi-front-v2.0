@@ -9,24 +9,34 @@ import Icons from "../../components/Icons"
 import { useShowInlineAudio } from "../useUploadMedia"
 
 const AudioMedia = ({
-  mediaId,
-  name,
-  small,
-  t,
-  isUser,
-}: {
+                      mediaId,
+                      name,
+                      small,
+                      t,
+                      isUser,
+                    }: {
   mediaId: string
   name: string
   small: boolean | undefined
   t: any
   isUser: boolean
 }) => {
-  const { data: audioBlob, isLoading } = useShowInlineAudio(mediaId)
-  const audioUrl = useMemo(() => {
+  const { data: audioBlob, isLoading, refetch } = useShowInlineAudio(mediaId)
+  const [audioUrl, setAudioUrl] = useState<string | null>(null)
+  const [retryCount, setRetryCount] = useState(0)
+
+  // Manage audio URL lifecycle
+  useEffect(() => {
     if (audioBlob instanceof Blob) {
-      return URL.createObjectURL(audioBlob)
+      const url = URL.createObjectURL(audioBlob)
+      setAudioUrl(url)
+
+      return () => {
+        URL.revokeObjectURL(url)
+      }
+    } else {
+      setAudioUrl(null)
     }
-    return null
   }, [audioBlob])
 
   const waveformRef = useRef<HTMLDivElement>(null)
@@ -34,22 +44,16 @@ const AudioMedia = ({
   const [duration, setDuration] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
   const waveSurferRef = useRef<WaveSurfer | null>(null)
-  const abortControllerRef = useRef<AbortController | null>(null)
   const [loadError, setLoadError] = useState(false)
 
   const cleanupResources = useCallback(() => {
     if (waveSurferRef.current) {
       try {
         waveSurferRef.current.destroy()
-        waveSurferRef.current = null
       } catch (err) {
         console.error("Error destroying WaveSurfer:", err)
       }
-    }
-
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort()
-      abortControllerRef.current = null
+      waveSurferRef.current = null
     }
   }, [])
 
@@ -60,107 +64,86 @@ const AudioMedia = ({
   }, [])
 
   const reloadAudio = useCallback(() => {
-    
-  }, [])
+    cleanupResources()
+    setLoadError(false)
+    setRetryCount(prev => prev + 1)
+    refetch()
+  }, [cleanupResources, refetch])
 
+  // Initialize WaveSurfer
   useEffect(() => {
+    if (!audioUrl || !waveformRef.current) return
+
     setIsPlaying(false)
     setDuration(0)
     setCurrentTime(0)
-    setLoadError(false)
 
-    cleanupResources()
+    const waveSurfer = WaveSurfer.create({
+      container: waveformRef.current,
+      waveColor: isUser ? "#ffffff80" : "#00000040",
+      progressColor: isUser ? "#F97316" : "#F97316",
+      height: 30,
+      barWidth: 4,
+      barGap: 3,
+      barRadius: 3,
+      cursorWidth: 0,
+      normalize: true,
+      fillParent: true,
+    })
 
-    abortControllerRef.current = new AbortController()
+    waveSurferRef.current = waveSurfer
 
-    if (!audioUrl || !waveformRef.current) return
-
-    let waveSurfer: WaveSurfer | null = null
-    try {
-      waveSurfer = WaveSurfer.create({
-        container: waveformRef.current,
-        waveColor: isUser ? "#ffffff80" : "#00000040",
-        progressColor: isUser ? "#F97316" : "#F97316",
-        height: 30,
-        barWidth: 4,
-        barGap: 3,
-        barRadius: 3,
-        cursorWidth: 0,
-        normalize: true,
-        fillParent: true,
-        fetchParams: {
-          signal: abortControllerRef.current.signal,
-        },
-      })
-
-      waveSurferRef.current = waveSurfer
-
-      waveSurfer.on("ready", () => {
-        try {
-          setDuration(waveSurfer?.getDuration() || 0)
-          setLoadError(false)
-        } catch (err) {
-          toast.error(t("error_audio"))
-          setDuration(0)
-
-        }
-      })
-
-      waveSurfer.on("error", (err) => {
-        toast.error(t("error_audio"))
+    const handleReady = () => {
+      try {
+        setDuration(waveSurfer.getDuration() || 0)
+        setLoadError(false)
+      } catch (err) {
+        console.error("Error getting duration:", err)
         setLoadError(true)
-      })
-
-      waveSurfer.on("audioprocess", (time) => {
-        try {
-          setCurrentTime(time)
-        } catch (err) {
-          toast.error(t("error_audio"))
-        }
-      })
-
-      waveSurfer.on("finish", () => {
-        setIsPlaying(false)
-      })
-
-      waveSurfer.load(audioUrl)
-
-      const waveformEl = waveformRef.current
-      if (waveformEl) {
-        waveformEl.addEventListener("click", togglePlay)
+        toast.error(t("error_audio"))
       }
+    }
 
-      return () => {
-        if (waveformEl) {
-          waveformEl.removeEventListener("click", togglePlay)
-        }
-
-        cleanupResources()
-
-        if (audioUrl) {
-          URL.revokeObjectURL(audioUrl)
-        }
-      }
-    } catch (err) {
-      console.error("Error initializing WaveSurfer:", err)
+    const handleError = (err: Error) => {
+      console.error("WaveSurfer error:", err)
       setLoadError(true)
-      return () => {
-        cleanupResources()
-        if (audioUrl) {
-          URL.revokeObjectURL(audioUrl)
-        }
-      }
+      toast.error(t("error_audio"))
     }
-  }, [audioUrl, isUser, togglePlay, cleanupResources, mediaId])
 
-  useEffect(() => {
-    return () => {
-      cleanupResources()
-      if (audioUrl) {
-        URL.revokeObjectURL(audioUrl)
+    const handleAudioProcess = (time: number) => {
+      setCurrentTime(time)
+    }
+
+    const handleFinish = () => {
+      setIsPlaying(false)
+    }
+
+    waveSurfer.on('ready', handleReady)
+    waveSurfer.on('error', handleError)
+    waveSurfer.on('audioprocess', handleAudioProcess)
+    waveSurfer.on('finish', handleFinish)
+
+    // Load the audio with error handling
+    const loadAudio = async () => {
+      try {
+        await waveSurfer.load(audioUrl)
+      } catch (err) {
+        console.error("Error loading audio:", err)
+        setLoadError(true)
+        toast.error(t("error_audio"))
       }
     }
-  }, [cleanupResources, audioUrl])
+
+    loadAudio()
+
+    return () => {
+      waveSurfer.un('ready', handleReady)
+      waveSurfer.un('error', handleError)
+      waveSurfer.un('audioprocess', handleAudioProcess)
+      waveSurfer.un('finish', handleFinish)
+      cleanupResources()
+    }
+  }, [audioUrl, isUser, t, retryCount])
 
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60)
@@ -170,64 +153,58 @@ const AudioMedia = ({
 
   if (isLoading) {
     return (
-      <div className="flex items-center gap-3 mb-2 rounded-lg p-2 w-fit min-w-[300px] max-w-[400px]">
-        <Skeleton className="w-20 h-10 rounded-full" />
-        <Skeleton className="w-[50px] h-[30px]" />
-        <Skeleton className="w-full h-[30px]" />
-      </div>
+        <div className="flex items-center gap-3 mb-2 rounded-lg p-2 w-fit min-w-[300px] max-w-[400px]">
+          <Skeleton className="w-20 h-10 rounded-full" />
+          <Skeleton className="w-[50px] h-[30px]" />
+          <Skeleton className="w-full h-[30px]" />
+        </div>
     )
   }
 
-  if (loadError) {
+  if (loadError || !audioUrl) {
     return (
-      <div className="flex items-center gap-3 mb-2 rounded-lg p-2 w-fit">
-        <Button
-          onClick={() => {
-            setLoadError(false)
-            reloadAudio()
-          }}
-          variant="outline"
-          className={`rounded-full p-2 ${isUser ? "bg-white hover:bg-white/80" : "bg-neutrals-muted hover:bg-neutrals-muted/80"}`}
-          size="icon"
-        >
-          <Icons.RefreshCcw className="w-6 h-6" stroke={isUser ? "#64748b" : "white"} />
-        </Button>
-        <div className={`text-xs ${isUser ? "text-white/60" : "text-black/60"}`}>
-          {
-            t("error_audio")
-          }
+        <div className="flex items-center gap-3 mb-2 rounded-lg p-2 w-fit">
+          <Button
+              onClick={reloadAudio}
+              variant="outline"
+              className={`rounded-full p-2 ${isUser ? "bg-white hover:bg-white/80" : "bg-neutrals-muted hover:bg-neutrals-muted/80"}`}
+              size="icon"
+          >
+            <Icons.RefreshCcw className="w-6 h-6" stroke={isUser ? "#64748b" : "white"} />
+          </Button>
+          <div className={`text-xs ${isUser ? "text-white/60" : "text-black/60"}`}>
+            {t("error_audio")}
+          </div>
         </div>
-      </div>
     )
   }
 
   return (
-    <div className="flex items-center gap-3 mb-2 rounded-lg p-2 w-fit">
-      <Button
-        onClick={togglePlay}
-        variant="outline"
-        className={`rounded-full p-2 ${isUser ? "bg-white hover:bg-white/80" : "bg-neutrals-muted hover:bg-neutrals-muted/80"}`}
-        size="icon"
-      >
-        {isPlaying ? (
-          <Icons.Pause className="w-6 h-6" stroke={isUser ? "#64748b" : "white"} />
-        ) : (
-          <Icons.Play className="w-6 h-6" stroke={isUser ? "#64748b" : "white"} />
-        )}
-      </Button>
-      <div className={`text-xs mt-1 ${isUser ? "text-white/60" : "text-black/60"}`}>
-        {isPlaying && currentTime > 0
-          ? `${formatTime(currentTime)} / ${formatTime(duration)}`
-          : `${formatTime(duration)}`}
-      </div>
-      <div className="flex flex-col">
-        <div className="flex-grow" style={{ minWidth: "200px", maxWidth: "200px" }}>
-          <div ref={waveformRef} className="w-full" />
+      <div className="flex items-center gap-3 mb-2 rounded-lg p-2 w-fit">
+        <Button
+            onClick={togglePlay}
+            variant="outline"
+            className={`rounded-full p-2 ${isUser ? "bg-white hover:bg-white/80" : "bg-neutrals-muted hover:bg-neutrals-muted/80"}`}
+            size="icon"
+        >
+          {isPlaying ? (
+              <Icons.Pause className="w-6 h-6" stroke={isUser ? "#64748b" : "white"} />
+          ) : (
+              <Icons.Play className="w-6 h-6" stroke={isUser ? "#64748b" : "white"} />
+          )}
+        </Button>
+        <div className={`text-xs mt-1 ${isUser ? "text-white/60" : "text-black/60"}`}>
+          {isPlaying && currentTime > 0
+              ? `${formatTime(currentTime)} / ${formatTime(duration)}`
+              : `${formatTime(duration)}`}
+        </div>
+        <div className="flex flex-col">
+          <div className="flex-grow" style={{ minWidth: "200px", maxWidth: "200px" }}>
+            <div ref={waveformRef} className="w-full" />
+          </div>
         </div>
       </div>
-    </div>
   )
 }
 
 export default AudioMedia
-

@@ -57,6 +57,11 @@ export const useChatWebSocket = () => {
         handleMessagesReceived(message.result.messages);
       } else if (message.result.events === "protocol") {
         handleProtocolReceived(message.result.result);
+      } else if (message.result.event === "popups") {
+        const { result, event, chat_id } = message.result;
+        if (Array.isArray(result) && result.length === 0) {
+          delete popUpsByChat[chat_id];
+        }
       }
       return;
     }

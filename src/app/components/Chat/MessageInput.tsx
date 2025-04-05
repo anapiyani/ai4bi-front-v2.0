@@ -33,6 +33,7 @@ type MessageInputProps = {
   handleTypingChat: (status: "typing" | "recording" | "stopped") => void;
   chatId: string;
   participants: ChatParticipants[];
+  setFilesUploaded: React.Dispatch<React.SetStateAction<File[]>>;
 };
 
 const MessageInput = ({
@@ -50,7 +51,8 @@ const MessageInput = ({
   openDropZoneModal,
   handleTypingChat,
   setOpenDropZoneModal,
-  chatId
+  chatId,
+  setFilesUploaded
 }: MessageInputProps) => {
   const [message, setMessage] = useState<string>("");
   
@@ -135,6 +137,15 @@ const MessageInput = ({
     setEditText(text);
     handleMentions(text);
     trackUserTyping();
+  };
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    const pastedFiles = Array.from(e.clipboardData.files);
+    if (pastedFiles.length > 0) {
+      e.preventDefault();
+      setFilesUploaded(pastedFiles); // Set pasted files
+      setOpenDropZoneModal(true); // Open modal
+    }
   };
 
   const handleMentions = (text: string) => {
@@ -375,11 +386,11 @@ const MessageInput = ({
               }}
               ref={inputRef}
               placeholder={t("type-your-message-here")}
-              // If editing, use editText; else use message
+              onPaste={handlePaste}
               value={editMessage ? editText : message}
               onChange={editMessage ? handleEditChange : handleNewMessageChange}
               onKeyDown={handleKeyDown}
-              className="w-full focus:ring-0 focus:border-none border-none focus:outline-none"
+              className="w-full h-10 md:h-9 lg:h-9 focus:ring-0 focus:border-none border-none focus:outline-none"
               icon={<Icons.Choose_files />}
             />
           </div>
