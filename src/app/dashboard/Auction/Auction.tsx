@@ -15,14 +15,13 @@ import { AuctionProtocol } from './components/AuctionProtocol'
 interface AuctionProps {
   isMicrophoneOn: boolean
   toggleMicrophone: () => void
-  closingTechnicalCouncil: (closeFunc: () => void) => void
+  close: (closeFunc: () => void) => void
   onUserUpdate?: (user: TechCouncilUser, conferenceId: string | null) => void
 }
 
 const Auction = ({
   isMicrophoneOn,
-  toggleMicrophone,
-  closingTechnicalCouncil,
+  toggleMicrophone, close,
   onUserUpdate,
 }: AuctionProps) => {
   const t = useTranslations("dashboard")
@@ -147,7 +146,7 @@ const Auction = ({
     <CallsBaseModel
       isMicrophoneOn={isMicrophoneOn}
       toggleMicrophone={toggleMicrophone}
-      closingTechnicalCouncil={closingTechnicalCouncil}
+      close={close}
       onUserUpdate={onUserUpdate}
       chat_id={chat_id}
       conference_id={conference_id}
@@ -163,6 +162,7 @@ const Auction = ({
       messagesEndRef={messagesEndRef}
       protocols={protocols as Protocol}
       auctionMobileChat={auctionMobileChat}
+      type={"auction"}
     >
       {auctionTable}
     </CallsBaseModel>

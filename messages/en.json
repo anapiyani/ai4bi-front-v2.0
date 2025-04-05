@@ -267,7 +267,10 @@
 		"approve_results": "Approve results",
 		"error_occurred_please_try_again": "Error occurred, please refresh the page",
 		"time_to_start_tender": "Time to start auction",
-		"start_auction": "Start auction"
+		"start_auction": "Start auction",
+		"process_not_connected": "This audio conference {type} has ended.",
+		"auction-lowercase": "auction",
+		"technical-council-lowercase": "technical council"
 	},
 	"dropzone": {
 		"upload_files": "Upload files",

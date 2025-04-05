@@ -118,7 +118,7 @@ export default function Dashboard() {
         <TechnicalCouncil
           isMicrophoneOn={isMicrophoneOn}
           toggleMicrophone={toggleMicrophone}
-          closingTechnicalCouncil={(closeFunc) => {
+          close={(closeFunc) => {
             closeRTCConnection.current = closeFunc
           }}
           onUserUpdate={(user: TechCouncilUser, conferenceId: string | null) => {
@@ -130,7 +130,7 @@ export default function Dashboard() {
       auction: () => <Auction 
         isMicrophoneOn={isMicrophoneOn}
         toggleMicrophone={toggleMicrophone}
-        closingTechnicalCouncil={(closeFunc) => {
+        close={(closeFunc) => {
           closeRTCConnection.current = closeFunc
         }}
         onUserUpdate={(user, conferenceId) => {

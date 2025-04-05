@@ -20,14 +20,13 @@ const CallsBaseModel = dynamic(() => import("../CallsBaseModel/CallsBaseModel"),
 interface TechnicalCouncilProps {
   isMicrophoneOn: boolean
   toggleMicrophone: () => void
-  closingTechnicalCouncil: (closeFunc: () => void) => void,
+  close: (closeFunc: () => void) => void,
   onUserUpdate?: (user: TechCouncilUser, conferenceId: string | null) => void
 }
 
 const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
   isMicrophoneOn,
-  toggleMicrophone,
-  closingTechnicalCouncil,
+  toggleMicrophone, close,
   onUserUpdate,
 }) => {
   const t = useTranslations("dashboard")
@@ -80,7 +79,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
   }
 
   const closeCouncil = () => {
-    closingTechnicalCouncil(() => {
+    close(() => {
       stopUsingAudio();
       closeRTCConnection();
     })
@@ -165,7 +164,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
       <CallsBaseModel
         isMicrophoneOn={isMicrophoneOn}
         toggleMicrophone={toggleMicrophone}
-        closingTechnicalCouncil={closeCouncil}
+        close={closeCouncil}
         onUserUpdate={onUserUpdate}
         chat_id={chat_id}
         conference_id={conference_id}
@@ -179,6 +178,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
         openMobileChat={openMobileChat}
         setOpenMobileChat={setOpenMobileChat}
         messagesEndRef={messagesEndRef}
+        type={"technical-council"}
         protocols={protocols as Protocol}
       >
         {technicalCouncilTabs}
