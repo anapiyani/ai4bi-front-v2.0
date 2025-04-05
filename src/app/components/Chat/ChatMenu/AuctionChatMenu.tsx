@@ -53,39 +53,39 @@ const AuctionChatMenu = (
 				<p className='text-sm font-medium'>{name}</p>
 			</div>
 			<div className='flex flex-col gap-0.5'>
-				<p className='text-xs text-muted-foreground'>{t("status")}</p>
-				<p className='text-xs text-green-500'>{status}</p>
+				<p className='text-sm lg:text-xs text-muted-foreground'>{t("status")}</p>
+				<p className='text-sm lg:text-xs text-green-500'>{status}</p>
 			</div>	
 			<div className='flex flex-col gap-0.5'>
-				<p className='text-xs text-muted-foreground'>{t("region")}</p>
-				<p className='text-xs'>{region}</p>
+				<p className='text-sm lg:text-xs text-muted-foreground'>{t("region")}</p>
+				<p className='text-sm lg:text-xs'>{region}</p>
 			</div>
 			<div className='flex flex-col gap-0.5'>
-				<p className='text-xs text-muted-foreground'>{t("construction")}</p>
-				<p className='text-xs'>{construction}</p>
+				<p className='text-sm lg:text-xs text-muted-foreground'>{t("construction")}</p>
+				<p className='text-sm lg:text-xs'>{construction}</p>
 			</div>
 			<div className='flex flex-col gap-0.5'>
-				<p className='text-xs text-muted-foreground'>{t("project-name")}</p>
-				<p className='text-xs'>{project_name}</p>
+				<p className='text-sm lg:text-xs text-muted-foreground'>{t("project-name")}</p>
+				<p className='text-sm lg:text-xs'>{project_name}</p>
 			</div>
 			<div className='flex flex-col gap-0.5'>
-				<p className='text-xs text-muted-foreground'>{t("portal-id")}</p>
-				<p className='text-xs'>{portal_id}</p>
+				<p className='text-sm lg:text-xs text-muted-foreground'>{t("portal-id")}</p>
+				<p className='text-sm lg:text-xs'>{portal_id}</p>
 			</div>
 			<div className='flex flex-col gap-0.5'>
-				<p className='text-xs text-muted-foreground'>{t("lot-information")}</p>
-				<a href='#' className='text-xs text-primary'>{t("go to the table")}</a>
+				<p className='text-sm lg:text-xs text-muted-foreground'>{t("lot-information")}</p>
+				<a href='#' className='text-sm lg:text-xs text-primary'>{t("go to the table")}</a>
 			</div>
 			<div className='flex'>
 				<NotificationBell />
 			</div>
 			<div className='flex flex-col gap-0.5'>
-				<p className='text-xs text-muted-foreground'>{t("technical-council-date")}</p>
-				<p className='text-xs'>{technical_council_date}</p>
+				<p className='text-sm lg:text-xs text-muted-foreground'>{t("technical-council-date")}</p>
+				<p className='text-sm lg:text-xs'>{technical_council_date}</p>
 			</div>
 			<div className='flex flex-col gap-0.5'>
-				<p className='text-xs text-muted-foreground'>{t("auction-date")}</p>
-				<p className='text-xs'>{auction_date}</p>
+				<p className='text-sm lg:text-xs text-muted-foreground'>{t("auction-date")}</p>
+				<p className='text-sm lg:text-xs'>{auction_date}</p>
 			</div>
 			<div>
 				<Tabs value={openedTab}
