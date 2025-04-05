@@ -56,6 +56,7 @@ const ChatContent = ({
   openMobileChat,
   auctionMobileChat
 }: ChatContentProps) => {
+  const [filesUploaded, setFilesUploaded] = useState<File[]>([]);
   const t = useTranslations("dashboard");
   const [editMessage, setEditMessage] = useState<ChatMessage | null>(null);
   const [replyTo, setReplyTo] = useState<ChatMessage | null>(null);
@@ -438,6 +439,7 @@ const ChatContent = ({
                 handleEdit={handleEdit}
                 openDropZoneModal={openDropZoneModal}
                 setOpenDropZoneModal={setOpenDropZoneModal}
+                setFilesUploaded={setFilesUploaded}
               />
             </div>
           </div>
@@ -537,6 +539,7 @@ const ChatContent = ({
                   handleEdit={handleEdit}
                   openDropZoneModal={openDropZoneModal}
                   setOpenDropZoneModal={setOpenDropZoneModal}
+                  setFilesUploaded={setFilesUploaded}
                 />
               </div>
           </div>
@@ -560,6 +563,8 @@ const ChatContent = ({
           value={newMessage}
           setNewMessage={setNewMessage}
           chatId={chatId}
+          filesUploaded={filesUploaded}
+          setFilesUploaded={setFilesUploaded}
         />
       )
     }
