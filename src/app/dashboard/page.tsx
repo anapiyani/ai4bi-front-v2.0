@@ -23,7 +23,7 @@ const ChatMode = dynamic(() => import('./ChatMode/ChatMode'), { ssr: false })
 const TechnicalCouncil = dynamic(() => import('./TechnicalCouncil/TechnicalCouncil'), { ssr: false })
 
 const setUserCookies = (user: MyData) => {
-  setCookie('user_id', user.uuid);
+  setCookie('user_id', user.id);
   setCookie('role', user.role);
   setCookie('first_name', user.first_name);
 };

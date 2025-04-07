@@ -44,7 +44,7 @@ export type MyData = {
 	phone: string
 	role: string
 	updated_at: string
-	uuid: string
+	id: string
 }
 
 export type Media = {
