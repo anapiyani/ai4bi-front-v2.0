@@ -18,7 +18,6 @@ const ChangeDates = ({
   rescheduleAction: "RESCHEDULED_TECH_COUNCIL" | "END_TECH_COUNCIL" | "RESCHEDULED_TENDER" | null;
   rescheduleData: (datetime: string) => void;
 }) => {
-    console.log(rescheduleAction)
 	const t = useTranslations('dashboard');
 	const { state, updateState } = useChangeDateForm();
 
