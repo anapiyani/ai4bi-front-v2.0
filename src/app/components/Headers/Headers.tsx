@@ -38,8 +38,8 @@ const Header = ({type, t, handlers, isMicrophoneOn, techCouncilUser}: HeaderProp
 							</h2>
 						</div>
 						<div className='flex items-center gap-4'>
-							<InfoButton onClick={handlers.infoButtonClick} />
 							<AudioButton onClick={handlers.audioButtonClick} />
+							<LocaleSwitcher fill={"#64748b"} />
 							<AuctionLeaveButton
 								handlers={{
 									stayButtonClick: () => {},
@@ -64,6 +64,7 @@ const Header = ({type, t, handlers, isMicrophoneOn, techCouncilUser}: HeaderProp
 						</div>
 						<div className='flex items-center gap-4'>
 							<AudioButton onClick={handlers.audioButtonClick} />
+							<LocaleSwitcher fill={"#64748b"} />
 							<TechnicalCouncilLeaveButton
 								handlers={{
 									stayButtonClick: () => {},
@@ -88,7 +89,7 @@ const Header = ({type, t, handlers, isMicrophoneOn, techCouncilUser}: HeaderProp
 						</div>
 						<div className='flex items-center gap-2'>
 							<Notifications t={t} />
-							<LocaleSwitcher />
+							<LocaleSwitcher fill={"white"} />
 							<Button className='flex items-center gap-2' variant='secondary' onClick={() => handlers.exitButtonClick(type)}>
 								<p className='hidden lg:block md:block'>{t("exit-chat-mode")}</p>
 								<Icons.Exit />

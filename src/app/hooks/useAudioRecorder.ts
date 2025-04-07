@@ -110,14 +110,13 @@ export function useAudioRecorder({ handleTypingChat, onSendAudio, chatId, output
     mediaRecorder.addEventListener("stop", async () => {
       try {
         const webmBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
-        
         const convertedBlob = await convertAudio(webmBlob);
-        
+
         const fileExtension = outputFormat === 'mp3' ? 'mp3' : 'wav';
         const audioFile = new File(
-          [convertedBlob], 
-          `audio.${fileExtension}`, 
-          { type: convertedBlob.type }
+            [convertedBlob],
+            `audio.${fileExtension}`,
+            { type: convertedBlob.type }
         );
 
         uploadMedia({ chat_id: chatId, files: [audioFile] }, {
@@ -129,27 +128,23 @@ export function useAudioRecorder({ handleTypingChat, onSendAudio, chatId, output
             }
           },
         });
-
-        mediaStream?.getTracks().forEach((track) => track.stop());
-        setMediaRecorder(null);
-        setMediaStream(null);
-        setIsRecording(false);
-        setAudioBlob(null);
-        setIsPaused(false);
-        setRecordingDuration(0);
-        audioChunksRef.current = [];
-        startTimeRef.current = null;
-        handleTypingChat("stopped");
       } catch (error) {
         console.error('Error processing audio:', error);
       }
     }, { once: true });
 
+    mediaRecorder.stop();
+    mediaStream?.getTracks().forEach(track => track.stop());
+
     window.clearTimeout(recordingTimeoutRef.current!);
     window.clearInterval(durationIntervalRef.current!);
-    mediaRecorder.stop();
+    setIsRecording(false);
+    setIsPaused(false);
+    setMediaRecorder(null);
+    setMediaStream(null);
+    setRecordingDuration(0);
+    handleTypingChat("stopped");
   };
-
 
   const handleStopRecording = () => {
     if (!mediaRecorder) return;

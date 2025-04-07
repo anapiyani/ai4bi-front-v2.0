@@ -23,7 +23,6 @@ const HeaderButtons = ({isMicrophoneOn}: {isMicrophoneOn: boolean}) => {
 			onClick={onClick}
 		>
 			{isMicrophoneOn ? <Icons.MicrophoneOn /> : <Icons.MicrophoneOff />}
-			<p className='text-[10px] text-muted-foreground'>{t("audio")}</p>
 		</Button>
 	)
 	

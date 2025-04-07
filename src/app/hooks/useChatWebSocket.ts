@@ -45,7 +45,6 @@ export const useChatWebSocket = () => {
       })
       return;
     }
-    
     if (message.jsonrpc === "2.0" && message.result) {
       if (message.result.chat_id) {
         handleChatCreated(message.result);
@@ -161,6 +160,15 @@ export const useChatWebSocket = () => {
       return;
     } else if (message.type === "notifications") {
       handleShowNotification(message);
+    } else if (message.event === "updated_popups") {
+      const chatId = message.chat_id;
+      if (Array.isArray(message.data) && message.data.length === 0) {
+        setPopUpsByChat(prev => {
+          const updated = { ...prev };
+          delete updated[chatId];
+          return updated;
+        });
+      }
     }
     if (message.type === "message_received") {
       console.log("[handleWebSocketMessage] message_received ack:", message);
