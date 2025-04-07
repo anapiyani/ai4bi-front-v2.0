@@ -12,12 +12,14 @@ type Props = {
   defaultValue: string;
   items: Array<{ value: string; label: string }>;
   label: string;
+  fill: string
 };
 
 export default function LocaleSwitcherSelect({
   defaultValue,
   items,
   label,
+  fill
 }: Props) {
   const [isPending, startTransition] = useTransition();
   const t = useTranslations("dashboard");
@@ -40,7 +42,7 @@ export default function LocaleSwitcherSelect({
         >
           <Select.Icon>
             <div className="flex items-center justify-center gap-1 flex-col">
-              <Icons.Globe />
+              <Icons.Globe fill={fill} />
             </div>
           </Select.Icon>
         </Select.Trigger>
