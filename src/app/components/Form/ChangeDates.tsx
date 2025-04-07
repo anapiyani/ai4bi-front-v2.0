@@ -54,8 +54,8 @@ const ChangeDates = ({
         </div>
         <form onSubmit={handleSubmit} className='w-full'>
           <DateTimeInput
-            dateLabel={rescheduleAction ? t("new-date-technical-council") : t("date-of-auction")}
-            timeLabel={rescheduleAction ? t("new-time-technical-council") : t("time-of-auction")}
+            dateLabel={rescheduleAction === "RESCHEDULED_TECH_COUNCIL" ? t("new-date-technical-council") : t("date-of-auction")}
+            timeLabel={rescheduleAction === "RESCHEDULED_TECH_COUNCIL" ? t("new-time-technical-council") : t("time-of-auction")}
             locale={state.locale}
 						newDate={true}
             dateValue={state.date}
