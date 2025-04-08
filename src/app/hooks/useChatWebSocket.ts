@@ -605,7 +605,7 @@ export const useChatWebSocket = () => {
     if (type === "audio") {
       pendingMedia = [{
         extension: "mp3",
-        media_id: media?.[0] ?? "",
+        id: media?.[0] ?? "",
         media_type: "audio",
         mime_type: "audio/mpeg",
         name: "audio",
