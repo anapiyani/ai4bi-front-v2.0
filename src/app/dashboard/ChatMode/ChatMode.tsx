@@ -281,7 +281,7 @@ const ChatMode = () => {
                   <div className="flex flex-col gap-2">
                     {privateChatResult.map((result) => {
                       const chatItemData = {
-                        id: result.uuid,
+                        id: result.id,
                         name: `${result.first_name} ${result.last_name}`,
                         lastMessage: null,
                         unread_count: 0,
@@ -290,11 +290,11 @@ const ChatMode = () => {
 
                       return (
                         <ChatListItem
-                          key={result.uuid}
+                          key={result.id}
                           data={chatItemData as ReceivedChats}
                           typingStatuses={typingStatuses}
                           t={t}
-                          onClick={() => handleCreateOrOpenChat(result.uuid)}
+                          onClick={() => handleCreateOrOpenChat(result.id)}
                           isSelected={false}
                           index={0}
                         />
