@@ -123,7 +123,6 @@ const ChatContent = ({
         lastSeenCounter = maxVisibleCounter;
       }
     };
-
     const handleScroll = () => {
       if (scrollTimer) clearTimeout(scrollTimer);
       scrollTimer = setTimeout(() => {

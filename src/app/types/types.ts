@@ -288,7 +288,7 @@ export type ReplyToMessage = {
     has_attachments: boolean;
     media: string[] | null | {
       extension: string;
-      media_id: string;
+      id: string;
       media_type: "image" | "video" | "audio" | "file";
       mime_type: string;
       name: string;
