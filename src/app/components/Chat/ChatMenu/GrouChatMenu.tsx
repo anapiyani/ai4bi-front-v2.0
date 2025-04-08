@@ -38,7 +38,7 @@ const GroupChatMenu = (
 	const renderedMedia = useRenderMediaContent(chatMedia?.media, t, false, true);
 	
 	const handleAddParticipants = () => {
-		addParticipantsToAuctionChat(selectedParticipants.map((participant) => participant.uuid));
+		addParticipantsToAuctionChat(selectedParticipants.map((participant) => participant.id));
 		setOpenAddParticipant(false);
 		setSelectedParticipants([]);
 	}

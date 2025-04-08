@@ -44,12 +44,12 @@ export type MyData = {
 	phone: string
 	role: string
 	updated_at: string
-	uuid: string
+	id: string
 }
 
 export type Media = {
 	extension: string;
-	media_id: string;
+	id: string;
 	media_type: "image" | "video" | "audio" | "file";
 	mime_type: string;
 	name: string;
@@ -252,7 +252,7 @@ export type AutoCompleteResponse = {
 	role: string;
 	updated_at: string | null;
 	username: string;
-	uuid: string;
+	id: string;
 }
 
 export type TypingStatus = {
@@ -288,7 +288,7 @@ export type ReplyToMessage = {
     has_attachments: boolean;
     media: string[] | null | {
       extension: string;
-      media_id: string;
+      id: string;
       media_type: "image" | "video" | "audio" | "file";
       mime_type: string;
       name: string;

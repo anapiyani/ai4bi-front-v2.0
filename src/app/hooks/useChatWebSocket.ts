@@ -381,7 +381,7 @@ export const useChatWebSocket = () => {
     const transformedMessages: ChatMessage[] = msgs
       .sort((a, b) => new Date(a.send_at).getTime() - new Date(b.send_at).getTime())
       .map((message: any) => ({
-        id: message.message_id,
+        id: message.id,
         sender_first_name: message.sender_first_name,
         sender_last_name: message.sender_last_name,
         content: message.content,
@@ -605,7 +605,7 @@ export const useChatWebSocket = () => {
     if (type === "audio") {
       pendingMedia = [{
         extension: "mp3",
-        media_id: media?.[0] ?? "",
+        id: media?.[0] ?? "",
         media_type: "audio",
         mime_type: "audio/mpeg",
         name: "audio",

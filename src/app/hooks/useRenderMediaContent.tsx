@@ -33,19 +33,19 @@ export function useRenderMediaContent(
           </div>
         )
       } else {
-        const { media_id, media_type, name, size, type } = item;
+        const { id, media_type, name, size, type } = item;
         switch (media_type || type) {
           case "image":
-            return <ImageMedia t={t} mediaId={media_id} name={name} small={small} />
+            return <ImageMedia t={t} mediaId={id} name={name} small={small} />
 
           case "audio":
-            return <AudioMedia name={name} small={small} isUser={isUser} t={t} mediaId={media_id} />
+            return <AudioMedia name={name} small={small} isUser={isUser} t={t} mediaId={id} />
           case "file":
           case "video":
           default:
             return (
               <div className="flex justify-between gap-2 items-start mb-2 rounded-lg w-full">
-								<button onClick={() => downloadMedia({uuid: media_id, name: name})} disabled={isDownloading} rel="noopener noreferrer" className="flex gap-2 h-full w-full">
+								<button onClick={() => downloadMedia({uuid: id, name: name})} disabled={isDownloading} rel="noopener noreferrer" className="flex gap-2 h-full w-full">
 									<div className='flex justify-center items-center bg-neutrals-secondary rounded px-3 py-3'>
 										{media_type === "file" && <Icons.PDF className='w-6 h-6 text-neutrals-muted' />}
                     { type === "file" && <Icons.PDF className='w-6 h-6 text-neutrals-muted' />}

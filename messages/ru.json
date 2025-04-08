@@ -273,7 +273,8 @@
 		"error_occurred_please_try_again": "Ошибка, пожалуйста перезагрузите страницу",
 		"process_not_connected": "Данная аудио конференция {type}а была заверешена.",
 		"auction-lowercase": "тендер",
-		"technical-council-lowercase": "технический совет"
+		"technical-council-lowercase": "технический совет",
+		"try-again": "Перезагрузить"
 	},
 	"dropzone": {
 		"upload_files": "Загрузить файлы",

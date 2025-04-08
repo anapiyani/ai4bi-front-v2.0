@@ -51,7 +51,12 @@ export const useUploadMedia = () => {
 export const useShowInlineImage = (uuid: string) => {
   return useQuery({
     queryKey: ["media", uuid],
-    queryFn: () => get<{ image: string }>(`/media/show_inline/${uuid}`),
+    queryFn: () =>
+        get<{ image: string }>(`/media/show_inline/${uuid}`, {
+          headers: {
+            'ngrok-skip-browser-warning': 'true',
+          },
+        }),
     staleTime: Infinity,
     gcTime: 1000 * 60 * 5,
   });
@@ -61,7 +66,9 @@ export const useShowInlineAudio = (uuid: string) => {
   return useQuery({
     queryKey: ["media", uuid],
     queryFn: () =>
-      get<Blob>(`/media/show_inline/${uuid}`, { responseType: "blob" }),
+      get<Blob>(`/media/show_inline/${uuid}`, { responseType: "blob", headers: {
+          'ngrok-skip-browser-warning': 'true',
+        }}),
     staleTime: Infinity,
     gcTime: 1000 * 60 * 5,
   });
