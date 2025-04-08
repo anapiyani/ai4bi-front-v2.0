@@ -7,7 +7,12 @@ import { useEffect, useState } from 'react'
 const autoCompleteKey = createQueryKeys("autoComplete");
 
 const autoCompleteReq = (input: string): Promise<AutoCompleteResponse[]> => {
-  return get(`/user/search?query=${input}`);
+  return get(`/user/search?query=${input}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'ngrok-skip-browser-warning': 'true'
+    }
+  });
 }
 
 const useAutoComplete = () => {

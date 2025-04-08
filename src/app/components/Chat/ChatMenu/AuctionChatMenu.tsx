@@ -42,7 +42,7 @@ const AuctionChatMenu = (
 	const renderedMedia = useRenderMediaContent(chatMedia?.media, t, false, true);
 	
 	const handleAddParticipants = () => {
-		addParticipantsToAuctionChat(selectedParticipants.map((participant) => participant.uuid), true);
+		addParticipantsToAuctionChat(selectedParticipants.map((participant) => participant.id), true);
 		setOpenAddParticipant(false);
 		setSelectedParticipants([]);
 	}
@@ -127,8 +127,8 @@ const AuctionChatMenu = (
 							!openAddParticipant ? (
 								<div className='flex flex-col gap-2 w-full justify-center items-start'>
 							{
-								participants.map((participant) => (
-									<div className='flex flex-col gap-0.5' key={participant.chat_participant_id}>
+								participants.map((participant, index) => (
+									<div className='flex flex-col gap-0.5' key={participant.user_id}>
 										<div className='flex items-center gap-2 my-1 justify-center'>
 											<div className='w-6 h-6 rounded-full bg-transparent border border-border bg-muted flex items-center justify-center'>
 												{participant.username.charAt(0).toUpperCase()}

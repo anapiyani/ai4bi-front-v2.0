@@ -2,7 +2,6 @@ import {AutoCompleteResponse} from "@/src/app/types/types";
 import {Checkbox} from "@/components/ui/Checkbox";
 
 export function ParticipantSelector(selectedParticipants: AutoCompleteResponse[], setSelectedParticipants: (value: (((prevState: AutoCompleteResponse[]) => AutoCompleteResponse[]) | AutoCompleteResponse[])) => void, results: AutoCompleteResponse[]) {
-    console.log(results);
     return <div className='flex flex-col w-full justify-center items-start'>
         {
             selectedParticipants.map((participant) => (
