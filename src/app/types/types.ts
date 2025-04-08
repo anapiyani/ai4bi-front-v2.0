@@ -252,7 +252,7 @@ export type AutoCompleteResponse = {
 	role: string;
 	updated_at: string | null;
 	username: string;
-	uuid: string;
+	id: string;
 }
 
 export type TypingStatus = {
