@@ -112,6 +112,18 @@ export const useChatWebSocket = () => {
         case "read_message":
           console.log("read_message")
           break;
+        case "conference_room_stop":
+          setConferenceRoomsByChat((prev) => ({
+            ...prev,
+            [message.data.chat_id]: {
+              chat_id: message.data.chat_id,
+              conference_id: message.data.conference_id,
+              conference_type: message.data.conference_type,
+              created_at: message.data.created_at,
+              is_active: message.data.is_active,
+            }
+          }));
+          break;
         case "new_message":
           const msgData = message.data.message;
           const chatId = message.chat_id || message.data.chat_id;
