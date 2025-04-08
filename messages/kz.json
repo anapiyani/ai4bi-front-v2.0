@@ -270,7 +270,8 @@
 		"start_auction": "Тендерді бастау",
 		"auction-lowercase": "тендер",
 		"technical-council-lowercase": "тех. кеңес",
-		"process_not_connected": "Бұл {type} аудиоконференциясы аяқталды."
+		"process_not_connected": "Бұл {type} аудиоконференциясы аяқталды.",
+		"try-again": "Кайталау"
 	},
 	"dropzone": {
 		"upload_files": "Файлдарды жүктеу",

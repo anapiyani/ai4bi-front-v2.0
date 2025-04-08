@@ -49,7 +49,7 @@ export type MyData = {
 
 export type Media = {
 	extension: string;
-	media_id: string;
+	id: string;
 	media_type: "image" | "video" | "audio" | "file";
 	mime_type: string;
 	name: string;
