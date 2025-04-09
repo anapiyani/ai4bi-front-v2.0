@@ -26,14 +26,14 @@ const Notification = ({ muted, chatId, chatName, event }: NotificationProps) => 
 
 		if (checked) {
 			muteMutation.mutate({
-				chat_id: chatId,
-				chat_name: chatName,
-				event,
+				chat_id: chatId || "",
+				chat_name: chatName || "",
+				event: event || "",
 			})
 		} else {
 			unmuteMutation.mutate({
-				chat_id: chatId,
-				event,
+				chat_id: chatId || "",
+				event: event || "",
 			})
 		}
 	}
