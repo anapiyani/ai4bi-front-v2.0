@@ -724,6 +724,14 @@ export const useChatWebSocket = () => {
     sendMessage(request);
   };
 
+  const PostponeTechAuction = ({type, chat_id, reschedule_date}: {type: "reschedule_tender_date" | "reschedule_tech_council_date", chat_id: string, reschedule_date: string}) => {
+    const request = createRpcRequest(type, {
+      chat_id: chat_id,
+      reschedule_date: reschedule_date,
+    })
+    sendMessage(request);
+  }
+
   const updateTechnicalMeetingProtocol = (protocol: Protocol) => {
     if (!selectedConversation) return;
     console.log("updateTechnicalMeetingProtocol sending request to update protocol", protocol);
@@ -961,6 +969,7 @@ export const useChatWebSocket = () => {
     protocols,
     handleGetProtocolUpdates,
     updateTechnicalMeetingProtocol,
-    chatInfo
+    chatInfo,
+    PostponeTechAuction
   };
 };

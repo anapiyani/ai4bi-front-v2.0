@@ -316,8 +316,9 @@ export type PopUpButtonAction = {
 	chatId: string;
 	user_id: string;
 	button_id: string;
-	tech_council_reschedule_date?: string;
+	tech_council_reschedule_date?: string | null;
 	auction_date?: string;
+	auction_reschedule_date?: string | null;
 }
 
 export type Protocol = {
@@ -384,7 +385,7 @@ export type Chat_Entity = {
 	unread_count: number;
 	updated_at: string | null;
 }
-
+export type Statuses =  "Start" | "CreateTenderChat" | "TechCouncilPlanning" | "TechCouncilActive" | "TechCouncilFinished" | "AuctionPlanning" | "AuctionActive" | "AuctionEnd" | "AuctionEditing" | "AuctionFinished" | "WinnerSelected";
 export type MenuChat = {
 	auction_chat_id: string;
 	auction_end_time: string | null;
@@ -395,7 +396,7 @@ export type MenuChat = {
 	show_auction_protocol: boolean;
 	show_tech_protocol: boolean;
 	state_hash: string;
-	status: "Start" | "CreateTenderChat" | "TechCouncilPlanning" | "TechCouncilFinished" | "AuctionPlanning" | "AuctionActive" | "AuctionEnd" | "AuctionEditing" | "AuctionFinished" | "WinnerSelected";
+	status: Statuses;
 	tech_council_end_time: string | null;
 	tech_council_start_time: string | null;
 }

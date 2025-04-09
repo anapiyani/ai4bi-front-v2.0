@@ -16,11 +16,12 @@ interface ChatMenuProps {
   addParticipantsToAuctionChat: (user_ids: string[], is_auction_participant?: boolean) => void;
   chatId: string;
   chatInfo: ChatInfo | null;
+  PostponeTechAuction: ({type, chat_id, reschedule_date}: {type: "reschedule_tender_date" | "reschedule_tech_council_date", chat_id: string, reschedule_date: string}) => void;
 }
 
-const ChatMenu = ({type, setOpenMenu, name, participants, addParticipantsToAuctionChat, chatId, chatInfo}: ChatMenuProps) => {
+const ChatMenu = ({type, setOpenMenu, name, participants, addParticipantsToAuctionChat, chatId, chatInfo, PostponeTechAuction}: ChatMenuProps) => {
 	const t = useTranslations("dashboard");
-  console.log(chatInfo)
+
   return (
     <div  
       className="w-full h-[calc(100vh-100px)] overflow-y-auto flex">
@@ -39,7 +40,7 @@ const ChatMenu = ({type, setOpenMenu, name, participants, addParticipantsToAucti
         <AuctionChatMenu 
           t={t}
           name={chatInfo?.chat.chat_entity.name || name}
-          status={chatInfo?.chat.status || "no-data"}
+          status={chatInfo?.chat.status}
           region={chatInfo?.auction.auction_division || t("no-data")}
           construction={chatInfo?.auction.auction_constructive || t("no-data")}
           project_name={chatInfo?.auction.name || name}
@@ -51,6 +52,7 @@ const ChatMenu = ({type, setOpenMenu, name, participants, addParticipantsToAucti
           addParticipantsToAuctionChat={addParticipantsToAuctionChat} 
           chatId={chatId}
           muted={chatInfo?.muted || false}
+          PostponeTechAuction={PostponeTechAuction}
         />
         : 
         <GroupChatMenu 

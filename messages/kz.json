@@ -288,7 +288,12 @@
 		"AuctionEditing": "Тендердің хаттамасын өңдеу",
 		"AuctionFinished": "Тендер аяқталды",
 		"WinnerSelected": "Жеңімпаз таңдалды",
-		"auction_division": "Дивизион"
+		"auction_division": "Дивизион",
+		"postpone": "Уақытын өзгерту",
+		"finished": "Аяқталған",
+		"in_progress": "Болып жатыр",
+		"postpone-date": "Датаны өзгерту",
+		"postpone-time": "Уақытын өзгерту"
 	},
 	"dropzone": {
 		"upload_files": "Файлдарды жүктеу",

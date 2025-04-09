@@ -114,7 +114,8 @@ const TimeToFinishAuction = ({
                                 popup_id: popup_id,
                                 user_id: user_id,
                                 button_id: buttons.find((button) => button.action === rescheduleAction)?.id || '',
-                                tech_council_reschedule_date: datetime,
+                                tech_council_reschedule_date: rescheduleAction === "RESCHEDULED_TECH_COUNCIL" ? datetime : null,
+                                auction_reschedule_date: rescheduleAction === "RESCHEDULED_TENDER" ? datetime : null,
                                 chatId: chat_id,
                             })
                         }}
