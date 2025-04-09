@@ -291,7 +291,12 @@
 		"AuctionEditing": "Редактирование протокола тендера",
 		"AuctionFinished": "Тендер завершён",
 		"WinnerSelected": "Выбран победитель",
-		"auction_division": "Дивизион"
+		"auction_division": "Дивизион",
+		"postpone": "Перенести",
+		"finished": "Завершен",
+		"in_progress": "В прогрессе",
+		"postpone-date": "Перенести дату",
+		"postpone-time": "Перенести время"
 	},
 	"dropzone": {
 		"upload_files": "Загрузить файлы",

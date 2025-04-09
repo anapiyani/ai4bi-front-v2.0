@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useRenderMediaContent } from '@/src/app/hooks/useRenderMediaContent'
-import { AutoCompleteResponse, ChatParticipants } from '@/src/app/types/types'
+import {AutoCompleteResponse, ChatParticipants, Statuses} from '@/src/app/types/types'
 import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import NotificationBell from '../../Alerts/Notification/NotificationBell'
@@ -13,9 +13,11 @@ import useAutoComplete from './hooks/useAutocomplete'
 import { useGetChatMedia } from './hooks/useGetChatMedia'
 import {ParticipantSelector} from "@/src/app/components/Chat/ChatMenu/ParticipantSelector";
 import {getCookie} from "@/src/app/api/service/cookie";
+import ChangeDates from "@/src/app/components/Form/ChangeDates";
+import {Dialog, DialogContent, DialogTitle} from "@/components/ui/dialog";
 type AuctionChatMenuProps = {
 	name: string;
-	status: string;
+	status: Statuses | undefined;
 	region: string;
 	construction: string;
 	project_name: string;
@@ -27,11 +29,12 @@ type AuctionChatMenuProps = {
 	t: any;
 	addParticipantsToAuctionChat: (user_ids: string[], is_auction_participant?: boolean) => void;
 	chatId: string;
-	muted: boolean
+	muted: boolean,
+	PostponeTechAuction: ({type, chat_id, reschedule_date}: {type: "reschedule_tender_date" | "reschedule_tech_council_date", chat_id: string, reschedule_date: string}) => void;
 }
 
 const AuctionChatMenu = (
-	{name, status, region, construction, project_name, portal_id, lot_information, auction_date, technical_council_date, participants, t, addParticipantsToAuctionChat, chatId, muted}
+	{name, status, region, construction, project_name, portal_id, lot_information, auction_date, technical_council_date, participants, t, addParticipantsToAuctionChat, chatId, muted, PostponeTechAuction}
 	: AuctionChatMenuProps) => {
 	const [openAddParticipant, setOpenAddParticipant] = useState<boolean>(false);
 	const { results, handleSearch, setResults, setSearch } = useAutoComplete();
@@ -42,6 +45,8 @@ const AuctionChatMenu = (
 		openedTab === "file" ? "file" : "image"
 	);
 	const renderedMedia = useRenderMediaContent(chatMedia?.media, t, false, true);
+	const [openModal, setOpenModal] = useState(false);
+	const [postponse, setPostponse] = useState<"reschedule_tender_date" | "reschedule_tech_council_date" | null>(null);
 	
 	const handleAddParticipants = () => {
 		addParticipantsToAuctionChat(selectedParticipants.map((participant) => participant.id), true);
@@ -56,7 +61,7 @@ const AuctionChatMenu = (
 			</div>
 			<div className='flex flex-col gap-0.5'>
 				<p className='text-sm lg:text-xs text-muted-foreground'>{t("status")}</p>
-				<p className='text-sm lg:text-xs text-green-500'>{t(status)}</p>
+				<p className='text-sm lg:text-xs text-green-500'>{t(status || "no-data")}</p>
 			</div>	
 			<div className='flex flex-col gap-0.5'>
 				<p className='text-sm lg:text-xs text-muted-foreground'>{t("auction_division")}</p>
@@ -81,13 +86,55 @@ const AuctionChatMenu = (
 			<div className='flex'>
 				<NotificationBell muted={muted} chatId={chatId} chatName={name} event={"chat_new_message"} />
 			</div>
-			<div className='flex flex-col gap-0.5'>
-				<p className='text-sm lg:text-xs text-muted-foreground'>{t("technical-council-date")}</p>
-				<p className='text-sm lg:text-xs'>{technical_council_date}</p>
+			<div className='flex justify-between items-center gap-4'>
+				<div className={"flex flex-col gap-0.5"}>
+					<p className='text-sm lg:text-xs text-muted-foreground'>{t("technical-council-date")}</p>
+					{
+						status === "TechCouncilActive" ? <div className={"text-xs text-blue-600"}>{t("in_progress")}</div> : <p className='text-sm lg:text-xs'>{technical_council_date}</p>
+					}
+				</div>
+				{
+					status === "TechCouncilActive"
+						? null
+						: status === "TechCouncilFinished" || status === "AuctionEnd" || status === "AuctionFinished"
+							? (
+								<div className={"flex gap-2 items-center"}>
+									<p className={"text-xs"}>{t("finished")}</p>
+								</div>
+							)
+							: (
+								<Button onClick={() => {
+									setOpenModal(true)
+									setPostponse("reschedule_tech_council_date")
+								}} variant={"secondary"} className={"px-2 m-0 text-xs h-6"}>
+									{t("postpone")}
+								</Button>
+							)
+				}
 			</div>
-			<div className='flex flex-col gap-0.5'>
-				<p className='text-sm lg:text-xs text-muted-foreground'>{t("auction-date")}</p>
-				<p className='text-sm lg:text-xs'>{auction_date}</p>
+			<div className='flex justify-between items-center gap-4'>
+				<div className={"flex flex-col gap-0.5"}>
+					<p className='text-sm lg:text-xs text-muted-foreground'>{t("auction-date")}</p>
+					{status === "AuctionActive" ? <div className={"text-xs text-blue-600"}>{t("in_progress")}</div> : <p className='text-sm lg:text-xs'>{auction_date}</p>}
+				</div>
+				{
+					status === "AuctionActive"
+						? null
+						: status === "AuctionEnd" || status === "AuctionFinished"
+							? (
+								<div className={"flex gap-2 items-center"}>
+									<p className={"text-xs"}>{t("finished")}</p>
+								</div>
+							)
+							: (
+								<Button onClick={() => {
+									setOpenModal(true)
+									setPostponse("reschedule_tender_date")
+								}} variant={"secondary"} className={"px-2 m-0 text-xs h-6"}>
+									{t("postpone")}
+								</Button>
+							)
+				}
 			</div>
 			<div>
 				<Tabs value={openedTab}
@@ -219,6 +266,29 @@ const AuctionChatMenu = (
 							{t("leave-chat")}
 						</Button>
 					</div>
+				)
+			}
+			{
+				postponse && (
+					<Dialog open={openModal}  onOpenChange={(isOpen) => {
+						setOpenModal(isOpen)
+						if (!isOpen) {
+							setPostponse(null)
+						}
+					}}>
+						<DialogContent className={"bg-white w-fit"}>
+							<DialogTitle>.</DialogTitle>
+							<ChangeDates open={openModal} onClose={() => setOpenModal(false)} chat_id={chatId} rescheduleAction={postponse === "reschedule_tech_council_date" ? "RESCHEDULED_TECH_COUNCIL" : "RESCHEDULED_TENDER"}  rescheduleData={(datetime) => {
+								PostponeTechAuction({
+									type: postponse,
+									chat_id: chatId,
+									reschedule_date: datetime
+								})
+								setPostponse(null)
+								setOpenModal(false)
+							}} />
+						</DialogContent>
+					</Dialog>
 				)
 			}
 		</div>

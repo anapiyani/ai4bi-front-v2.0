@@ -288,7 +288,12 @@
 		"AuctionEditing": "Auction protocol editing",
 		"AuctionFinished": "Auction finished",
 		"WinnerSelected": "Winner selected",
-		"auction_division": "Division"
+		"auction_division": "Division",
+		"postpone": "Postpone",
+		"finished": "Finished",
+		"in_progress": "In progress",
+		"postpone-date": "Postpone date",
+		"postpone-time": "Postpone time"
 	},
 	"dropzone": {
 		"upload_files": "Upload files",

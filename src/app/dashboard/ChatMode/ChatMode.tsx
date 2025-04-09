@@ -58,7 +58,8 @@ const ChatMode = () => {
     handlePopUpButtonAction,
     conferenceRoomsByChat,
     startedUserId,
-    chatInfo
+    chatInfo,
+    PostponeTechAuction
   } = useChatWebSocket()
   const {
     openMenu,
@@ -430,6 +431,7 @@ const ChatMode = () => {
             addParticipantsToAuctionChat={addParticipantsToAuctionChat}
             chatId={selectedConversation}
             chatInfo={chatInfo}
+            PostponeTechAuction={PostponeTechAuction}
           />
         </div>
       )}
