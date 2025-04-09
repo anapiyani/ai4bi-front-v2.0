@@ -271,7 +271,13 @@
 		"auction-lowercase": "тендер",
 		"technical-council-lowercase": "тех. кеңес",
 		"process_not_connected": "Бұл {type} аудиоконференциясы аяқталды.",
-		"try-again": "Кайталау"
+		"try-again": "Кайталау",
+		"schedule_a_repeat_tech_council": "Қайта техникалық кеңес тағайындау",
+		"schedule_a_repeat_auction": "Қайта аукцион тағайындау",
+		"end_auction": "Аукционды аяқтау",
+		"auction_finish_modal_description": "Тендер аяқталғаннан кейін сіз жеңімпазды анықтай аласыз.",
+		"are-you-finishing-the-auction": "Сіз тендерді аяқтағыңыз келе ме?"
+
 	},
 	"dropzone": {
 		"upload_files": "Файлдарды жүктеу",

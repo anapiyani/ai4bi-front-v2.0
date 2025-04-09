@@ -12,7 +12,7 @@ interface TimeToStartAucTechProps {
         id: string
         label: string
         button_style: 'primary' | 'secondary' | string,
-        action: "RESCHEDULED_TECH_COUNCIL" | "STARTED_TECH_COUNCIL" | "ACCEPTED_PARTICIPATION_TECH_COUNCIL" | "REJECTED_PARTICIPATION_TECH_COUNCIL",
+        action: "ENDED_TENDER" | "RESCHEDULED_TENDER" | "RESCHEDULED_TECH_COUNCIL",
         order_index: number,
     }[]
     chat_id: string
@@ -21,11 +21,11 @@ interface TimeToStartAucTechProps {
     header: string
     user_id: string
     popup_id: string
-    popup_type: "participation_question_tech_council" | "tech_council_start",
+    popup_type: "tender_end"
     handlePopUpButtonAction: (button: PopUpButtonAction, user_id?: string) => void
 }
 
-const TimeToStartAucTech = ({
+const TimeToFinishAuction = ({
                                 body,
                                 buttons,
                                 user_id,
@@ -40,7 +40,7 @@ const TimeToStartAucTech = ({
     const [isExpanded, setIsExpanded] = useState(false)
     const t = useTranslations('dashboard')
     const [openRescheduleModal, setOpenRescheduleModal] = useState(false)
-    const [rescheduleAction, setRescheduleAction] = useState<"RESCHEDULED_TECH_COUNCIL" | null>(null)
+    const [rescheduleAction, setRescheduleAction] = useState<"RESCHEDULED_TECH_COUNCIL" | "RESCHEDULED_TENDER" | null>(null)
 
     return (
         <div className="flex items-center justify-center w-full mt-3">
@@ -49,14 +49,16 @@ const TimeToStartAucTech = ({
                     <div className="w-[340px] lg:w-[500px] bg-white rounded-lg p-6">
                         <div className="space-y-4">
                             <div className="flex flex-col gap-2">
-                                <h2 className="text-lg font-semibold">{popup_type === "tech_council_start" ? t("its-time-to-start-the-technical-council") : popup_type === "participation_question_tech_council" ? t("would-you-like-to-participate-in-the-technical-council") : t("its-time-to-start-the-auction")}</h2>
+                                <h2 className="text-lg font-semibold">{t("are-you-finishing-the-auction")}</h2>
                                 <p className="text-sm text-gray-500">
-                                    {dayjs(created_at).format('DD.MM.YYYY')}
+                                    {t("auction_finish_modal_description")}
                                 </p>
                             </div>
 
-                            <div className="flex justify-end gap-3">
-                                {buttons.map((button) => (
+                            <div className="flex justify-end flex-col gap-3">
+                                {buttons
+                                    .sort((a, b) => b.order_index - a.order_index)
+                                    .map((button) => (
                                     <Button
                                         key={button.id}
                                         variant={button.button_style === 'primary' ? 'default' : 'outline'}
@@ -64,21 +66,10 @@ const TimeToStartAucTech = ({
                                             if (button.action === "RESCHEDULED_TECH_COUNCIL") {
                                                 setOpenRescheduleModal(true)
                                                 setRescheduleAction(button.action)
-                                            } else if (button.action === "STARTED_TECH_COUNCIL") {
-                                                handlePopUpButtonAction({ // TODO: rewrite
-                                                    popup_id: popup_id,
-                                                    user_id: user_id,
-                                                    button_id: button.id,
-                                                    chatId: chat_id,
-                                                }, user_id)
-                                            } else if (button.action === "ACCEPTED_PARTICIPATION_TECH_COUNCIL") {
-                                                handlePopUpButtonAction({
-                                                    popup_id: popup_id,
-                                                    user_id: user_id,
-                                                    button_id: button.id,
-                                                    chatId: chat_id,
-                                                })
-                                            } else if (button.action === "REJECTED_PARTICIPATION_TECH_COUNCIL") {
+                                            } else if (button.action === "RESCHEDULED_TENDER") {
+                                                setOpenRescheduleModal(true)
+                                                setRescheduleAction(button.action)
+                                            } else if (button.action === "ENDED_TENDER") {
                                                 handlePopUpButtonAction({
                                                     popup_id: popup_id,
                                                     user_id: user_id,
@@ -88,15 +79,15 @@ const TimeToStartAucTech = ({
                                             }
                                         }}
                                     >
-                                        {button.action === "RESCHEDULED_TECH_COUNCIL" //! rewrite
-                                            ? t("reschedule")
-                                            : button.action === "ACCEPTED_PARTICIPATION_TECH_COUNCIL"
-                                                ? t("accept")
-                                                : button.action === "REJECTED_PARTICIPATION_TECH_COUNCIL"
-                                                    ? t("reject")
-                                                    : button.action === "STARTED_TECH_COUNCIL"
-                                                        ? t("start")
-                                                        : t("start")}
+                                        {
+                                            button.action === "RESCHEDULED_TECH_COUNCIL" ?
+                                                t("schedule_a_repeat_tech_council") :
+                                                button.action === "RESCHEDULED_TENDER" ?
+                                                    t("schedule_a_repeat_auction") :
+                                                        button.action === "ENDED_TENDER" ?
+                                                            t("end_auction") :
+                                                                null
+                                        }
                                     </Button>
                                 ))}
                             </div>
@@ -136,7 +127,7 @@ const TimeToStartAucTech = ({
                         <div className="flex justify-between items-center">
                             <div className="flex gap-2 items-center">
                                 <Icons.DangerNigger />
-                                <p className="text-xs text-secondary-foreground">{popup_type === "tech_council_start" ? t("technical-council") : popup_type === "participation_question_tech_council" ? t("technical-council") : t("its-time-to-start-the-auction")}</p>
+                                <p className="text-xs text-secondary-foreground">{t("end_auction")}</p>
                             </div>
                             <Button
                                 onClick={() => setIsExpanded(false)}
@@ -154,4 +145,4 @@ const TimeToStartAucTech = ({
     )
 }
 
-export default TimeToStartAucTech
+export default TimeToFinishAuction

@@ -274,7 +274,12 @@
 		"process_not_connected": "Данная аудио конференция {type}а была заверешена.",
 		"auction-lowercase": "тендер",
 		"technical-council-lowercase": "технический совет",
-		"try-again": "Перезагрузить"
+		"try-again": "Перезагрузить",
+		"schedule_a_repeat_tech_council": "Назначить повторный тех. совет",
+		"schedule_a_repeat_auction": "Назначить повторный тендер",
+		"end_auction": "Завершить тендер",
+		"auction_finish_modal_description": "После завершения тендера, вы сможете определить победителя.",
+		"are-you-finishing-the-auction": "Вы завершаете тендер?"
 	},
 	"dropzone": {
 		"upload_files": "Загрузить файлы",

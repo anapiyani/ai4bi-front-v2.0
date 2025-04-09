@@ -21,6 +21,7 @@ import OnProgress from './Chat/OnProgress'
 import PinnedMessages from './Chat/PinnedMessages'
 import SelectChat from './Chat/SelectChat'
 import Icons from './Icons'
+import TimeToFinishAuction from "@/src/app/components/Alerts/Organizers/FinishAuction";
 
 const ChatContent = ({
   chatId,
@@ -345,6 +346,24 @@ const ChatContent = ({
             </div>
           )
         }
+          {
+            currentChatPopup && currentChatPopup.popup_type === "tender_end" && (
+                  <div className={`absolute top-[${pinnedMessages.length > 0 && conferenceRoom && conferenceRoom.is_active ? "120px" : "70px"}] lg:top-[65px] left-0 right-0 z-50 flex justify-self-center`}>
+                    <TimeToFinishAuction
+                        body={currentChatPopup.body}
+                        buttons={currentChatPopup.buttons}
+                        chat_id={currentChatPopup.chat_id}
+                        created_at={currentChatPopup.created_at}
+                        expiration_time={currentChatPopup.expiration_time}
+                        header={currentChatPopup.header}
+                        user_id={currentChatPopup.user_id}
+                        popup_id={currentChatPopup.id}
+                        popup_type={currentChatPopup.popup_type}
+                        handlePopUpButtonAction={handlePopUpButtonAction}
+                    />
+                  </div>
+              )
+          }
         </div>
       )
     }
