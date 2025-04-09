@@ -12,6 +12,7 @@ import Icons from '../../Icons'
 import useAutoComplete from './hooks/useAutocomplete'
 import { useGetChatMedia } from './hooks/useGetChatMedia'
 import {ParticipantSelector} from "@/src/app/components/Chat/ChatMenu/ParticipantSelector";
+import {getCookie} from "@/src/app/api/service/cookie";
 type AuctionChatMenuProps = {
 	name: string;
 	status: string;
@@ -26,10 +27,11 @@ type AuctionChatMenuProps = {
 	t: any;
 	addParticipantsToAuctionChat: (user_ids: string[], is_auction_participant?: boolean) => void;
 	chatId: string;
+	muted: boolean
 }
 
 const AuctionChatMenu = (
-	{name, status, region, construction, project_name, portal_id, lot_information, auction_date, technical_council_date, participants, t, addParticipantsToAuctionChat, chatId}
+	{name, status, region, construction, project_name, portal_id, lot_information, auction_date, technical_council_date, participants, t, addParticipantsToAuctionChat, chatId, muted}
 	: AuctionChatMenuProps) => {
 	const [openAddParticipant, setOpenAddParticipant] = useState<boolean>(false);
 	const { results, handleSearch, setResults, setSearch } = useAutoComplete();
@@ -54,10 +56,10 @@ const AuctionChatMenu = (
 			</div>
 			<div className='flex flex-col gap-0.5'>
 				<p className='text-sm lg:text-xs text-muted-foreground'>{t("status")}</p>
-				<p className='text-sm lg:text-xs text-green-500'>{status}</p>
+				<p className='text-sm lg:text-xs text-green-500'>{t(status)}</p>
 			</div>	
 			<div className='flex flex-col gap-0.5'>
-				<p className='text-sm lg:text-xs text-muted-foreground'>{t("region")}</p>
+				<p className='text-sm lg:text-xs text-muted-foreground'>{t("auction_division")}</p>
 				<p className='text-sm lg:text-xs'>{region}</p>
 			</div>
 			<div className='flex flex-col gap-0.5'>
@@ -77,7 +79,7 @@ const AuctionChatMenu = (
 				<a href='#' className='text-sm lg:text-xs text-primary'>{t("go to the table")}</a>
 			</div>
 			<div className='flex'>
-				<NotificationBell />
+				<NotificationBell muted={muted} chatId={chatId} chatName={name} event={"chat_new_message"} />
 			</div>
 			<div className='flex flex-col gap-0.5'>
 				<p className='text-sm lg:text-xs text-muted-foreground'>{t("technical-council-date")}</p>

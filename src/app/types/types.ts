@@ -355,3 +355,53 @@ export type Transcription = {
 	name: string
 	mic_on: boolean
 }
+
+export type MenuAuction = {
+	auction_constructive: string
+	auction_division: string;
+	auction_id: string
+	auction_organizator: string;
+	auction_update_scheduled: boolean
+	comments: string;
+	created_at: string;
+	current_lot_number: string;
+	date: string;
+	doc_guid: string;
+	lots: any[]
+	name: string;
+}
+
+export type Chat_Entity = {
+	chat_id: string;
+	chat_type: string;
+	constructive_interest_id: string | null;
+	created_at: string;
+	last_message: LastMessage | null;
+	last_read_counter: number;
+	name: string;
+	participants: ChatParticipants[]
+	participants_hash: string | null;
+	unread_count: number;
+	updated_at: string | null;
+}
+
+export type MenuChat = {
+	auction_chat_id: string;
+	auction_end_time: string | null;
+	auction_id: string;
+	auction_start_time: string | null;
+	chat_entity: Chat_Entity;
+	chat_id: string;
+	show_auction_protocol: boolean;
+	show_tech_protocol: boolean;
+	state_hash: string;
+	status: "Start" | "CreateTenderChat" | "TechCouncilPlanning" | "TechCouncilFinished" | "AuctionPlanning" | "AuctionActive" | "AuctionEnd" | "AuctionEditing" | "AuctionFinished" | "WinnerSelected";
+	tech_council_end_time: string | null;
+	tech_council_start_time: string | null;
+}
+
+export type ChatInfo = {
+	auction: MenuAuction
+	chat: MenuChat
+	muted: boolean;
+}

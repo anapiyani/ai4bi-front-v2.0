@@ -21,6 +21,7 @@ import OnProgress from './Chat/OnProgress'
 import PinnedMessages from './Chat/PinnedMessages'
 import SelectChat from './Chat/SelectChat'
 import Icons from './Icons'
+import TimeToFinishAuction from "@/src/app/components/Alerts/Organizers/FinishAuction";
 
 const ChatContent = ({
   chatId,
@@ -81,13 +82,13 @@ const ChatContent = ({
     if (conferenceRoom.conference_type === "tech_council") {
       if (conferenceRoom.is_active) {
         const baseUrl = window.location.origin;
-        const url = `${baseUrl}/dashboard?active_tab=technical-council&chat_id=${chatId}&conference_id=${conferenceRoom.conference_id}`;
+        const url = `${baseUrl}/dashboard?active=technical-council&chat_id=${chatId}&conference_id=${conferenceRoom.conference_id}`;
         window.location.href = url;
       }
     } else if (conferenceRoom.conference_type === "tender") {
       if (conferenceRoom.is_active) {
         const baseUrl = window.location.origin;
-        const url = `${baseUrl}/dashboard?active_tab=auction&chat_id=${chatId}&conference_id=${conferenceRoom.conference_id}`;
+        const url = `${baseUrl}/dashboard?active=auction&chat_id=${chatId}&conference_id=${conferenceRoom.conference_id}`;
         window.location.href = url;
       }
     }
@@ -185,7 +186,7 @@ const ChatContent = ({
     handleForwardMessage({message_ids: Array.isArray(message_id) ? message_id : [message_id], source_chat_id: chatId, target_chat_id: target_chat_id});
     setOpenForwardMessage(false);
     setForwardMessageIds(null);
-    window.location.href = `/dashboard?active_tab=chat&id=${target_chat_id}`;
+    window.location.href = `/dashboard?active=chat&id=${target_chat_id}`;
   }
 
   const handleTypingChat = (status: "typing" | "recording" | "stopped") => {
@@ -345,6 +346,24 @@ const ChatContent = ({
             </div>
           )
         }
+          {
+            currentChatPopup && currentChatPopup.popup_type === "tender_end" && (
+                  <div className={`absolute top-[${pinnedMessages.length > 0 && conferenceRoom && conferenceRoom.is_active ? "120px" : "70px"}] lg:top-[65px] left-0 right-0 z-50 flex justify-self-center`}>
+                    <TimeToFinishAuction
+                        body={currentChatPopup.body}
+                        buttons={currentChatPopup.buttons}
+                        chat_id={currentChatPopup.chat_id}
+                        created_at={currentChatPopup.created_at}
+                        expiration_time={currentChatPopup.expiration_time}
+                        header={currentChatPopup.header}
+                        user_id={currentChatPopup.user_id}
+                        popup_id={currentChatPopup.id}
+                        popup_type={currentChatPopup.popup_type}
+                        handlePopUpButtonAction={handlePopUpButtonAction}
+                    />
+                  </div>
+              )
+          }
         </div>
       )
     }

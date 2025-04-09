@@ -32,7 +32,6 @@ const ChatMode = () => {
   const [privateChatResult, setPrivateChatResult] = useState<AutoCompleteResponse[] | null>(null)
   const [auctionChatResult, setAuctionChatResult] = useState<Conversation[] | null>(null)
   const [constructChatResult, setConstructChatResult] = useState<Conversation[] | null>(null)
-  const { mutate: createPrivateChatMutation, isPending: isCreatingPrivateChat } = useCreatePrivateChat()
   const [isProcessingChatSelection, setIsProcessingChatSelection] = useState(false)
 
   const {
@@ -59,6 +58,7 @@ const ChatMode = () => {
     handlePopUpButtonAction,
     conferenceRoomsByChat,
     startedUserId,
+    chatInfo
   } = useChatWebSocket()
   const {
     openMenu,
@@ -83,7 +83,7 @@ const ChatMode = () => {
 
       setIsProcessingChatSelection(true)
       try {
-        await router.push(`/dashboard?active_tab=chat&id=${id}`)
+        router.push(`/dashboard?active=chat&id=${id}`)
         setOpenMenu(false)
       } finally {
         setTimeout(() => {
@@ -429,6 +429,7 @@ const ChatMode = () => {
             participants={conversations.find((c) => c.id === selectedConversation)?.participants || []}
             addParticipantsToAuctionChat={addParticipantsToAuctionChat}
             chatId={selectedConversation}
+            chatInfo={chatInfo}
           />
         </div>
       )}
