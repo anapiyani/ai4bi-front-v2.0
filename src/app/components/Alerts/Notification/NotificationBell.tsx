@@ -8,10 +8,10 @@ import {useMuteChatEvent, useUnmuteChatEvent} from "@/src/app/components/Alerts/
 import {getCookie} from "@/src/app/api/service/cookie";
 
 interface NotificationProps {
-	muted: boolean
-	chatId: string
-	chatName: string
-	event: string
+	muted?: boolean
+	chatId?: string
+	chatName?: string
+	event?: string
 }
 
 const Notification = ({ muted, chatId, chatName, event }: NotificationProps) => {
