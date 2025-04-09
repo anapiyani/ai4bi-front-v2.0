@@ -40,7 +40,7 @@ export default function Dashboard() {
   const router = useRouter()
   const authHeader: Record<string, string> = useAuthHeader()
   const chatId: string | null = searchParams.get("id")
-  let active_tab: activity_status = searchParams.get("active_tab") as activity_status
+  let active_tab: activity_status = searchParams.get("active") as activity_status
   const closeRTCConnection  = useRef<(() => void) | null>(null)
   const [techCouncilUser, setTechCouncilUser] = useState<TechCouncilUser | null>(null)
   const [conferenceId, setConferenceId] = useState<string | null>(null)
@@ -66,7 +66,7 @@ export default function Dashboard() {
 
   const handleExitType = (type: activity_status, isFinish?: boolean): void => {
     if (type === "auction-results") {
-      router.push('/dashboard?active_tab=chat')
+      router.push('/dashboard?active=chat')
     } else if (type === "technical-council" || type === "auction") {
       if (isFinish) {
         if (conferenceId) {
@@ -79,13 +79,13 @@ export default function Dashboard() {
         setConferenceId(null)
         setTechCouncilUser(null)
         setIsMicrophoneOn(false)
-        router.push('/dashboard?active_tab=chat')
+        router.push('/dashboard?active=chat')
       } else {
         if (closeRTCConnection.current) {
           closeRTCConnection.current()
         }
         setIsMicrophoneOn(false)
-        router.push('/dashboard?active_tab=chat')
+        router.push('/dashboard?active=chat')
       }
     } else {
       setExitType(type)
@@ -164,17 +164,17 @@ export default function Dashboard() {
           closeRTCConnection.current()
         }
         setIsMicrophoneOn(false)
-        router.push('/dashboard?active_tab=chat')
+        router.push('/dashboard?active=chat')
         break
       case "technical-council":
         if (closeRTCConnection.current) {
           closeRTCConnection.current()
         }
         setIsMicrophoneOn(false)
-        router.push('/dashboard?active_tab=chat')
+        router.push('/dashboard?active=chat')
         break
       case "auction-results":
-        router.push('/dashboard?active_tab=chat')
+        router.push('/dashboard?active=chat')
         break
       case "chat":
         if (typeof window !== 'undefined') {

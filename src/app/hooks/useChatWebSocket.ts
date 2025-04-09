@@ -7,7 +7,19 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast as HotToast } from 'react-hot-toast'
 import { v4 as uuidv4 } from 'uuid'
 import { getCookie } from '../api/service/cookie'
-import { ChatMessage, Conversation, ForwardData, LastMessage, Media, MessagesRecord, PopUpButtonAction, Protocol, ReceivedChats, TypingStatus } from '../types/types'
+import {
+  ChatInfo,
+  ChatMessage,
+  Conversation,
+  ForwardData,
+  LastMessage,
+  Media,
+  MessagesRecord,
+  PopUpButtonAction,
+  Protocol,
+  ReceivedChats,
+  TypingStatus
+} from '../types/types'
 
 export type PopUpsRecord = {
   [chatId: string]: {
@@ -61,6 +73,8 @@ export const useChatWebSocket = () => {
         if (Array.isArray(result) && result.length === 0) {
           delete popUpsByChat[chat_id];
         }
+      } else if (message.result.auction && message.result.chat) {
+        setChatInfo(message.result);
       }
       return;
     }
@@ -208,7 +222,8 @@ export const useChatWebSocket = () => {
   const [conferenceRoomsByChat, setConferenceRoomsByChat] = useState<ConferenceRoomsRecord>({});
   const [typingStatuses, setTypingStatuses] = useState<TypingStatus[]>([]);
   const [newMessage, setNewMessage] = useState("");
-  const [protocols, setProtocols] = useState<Protocol | null>(null); 
+  const [protocols, setProtocols] = useState<Protocol | null>(null);
+  const [chatInfo, setChatInfo] = useState<ChatInfo | null>(null)
 
   // Refs
   const typingTimeoutsRef = useRef<{ [chatId: string]: ReturnType<typeof setTimeout> }>({});
@@ -945,6 +960,7 @@ export const useChatWebSocket = () => {
     startedUserId,
     protocols,
     handleGetProtocolUpdates,
-    updateTechnicalMeetingProtocol
+    updateTechnicalMeetingProtocol,
+    chatInfo
   };
 };

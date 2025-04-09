@@ -82,13 +82,13 @@ const ChatContent = ({
     if (conferenceRoom.conference_type === "tech_council") {
       if (conferenceRoom.is_active) {
         const baseUrl = window.location.origin;
-        const url = `${baseUrl}/dashboard?active_tab=technical-council&chat_id=${chatId}&conference_id=${conferenceRoom.conference_id}`;
+        const url = `${baseUrl}/dashboard?active=technical-council&chat_id=${chatId}&conference_id=${conferenceRoom.conference_id}`;
         window.location.href = url;
       }
     } else if (conferenceRoom.conference_type === "tender") {
       if (conferenceRoom.is_active) {
         const baseUrl = window.location.origin;
-        const url = `${baseUrl}/dashboard?active_tab=auction&chat_id=${chatId}&conference_id=${conferenceRoom.conference_id}`;
+        const url = `${baseUrl}/dashboard?active=auction&chat_id=${chatId}&conference_id=${conferenceRoom.conference_id}`;
         window.location.href = url;
       }
     }
@@ -186,7 +186,7 @@ const ChatContent = ({
     handleForwardMessage({message_ids: Array.isArray(message_id) ? message_id : [message_id], source_chat_id: chatId, target_chat_id: target_chat_id});
     setOpenForwardMessage(false);
     setForwardMessageIds(null);
-    window.location.href = `/dashboard?active_tab=chat&id=${target_chat_id}`;
+    window.location.href = `/dashboard?active=chat&id=${target_chat_id}`;
   }
 
   const handleTypingChat = (status: "typing" | "recording" | "stopped") => {
