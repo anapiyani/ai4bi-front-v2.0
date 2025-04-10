@@ -34,7 +34,7 @@ const redirectToLoginIfUnauthorized = () => {
 }
 
 export default function Dashboard() {
-  const t = useTranslations("dashboard")
+  const t = useTranslations('dashboard');
   const searchParams = useSearchParams()
   const router = useRouter()
   const authHeader: Record<string, string> = useAuthHeader()
