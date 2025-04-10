@@ -19,7 +19,11 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "AI 4 BI v2.0",
   description: "Портал для создания и управления тендерами",
-  viewport: "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no",
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
 };
 
 export default async function RootLayout({
@@ -28,7 +32,14 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const locale = await getLocale();
-  const messages = await getMessages();
+  let messages;
+
+  try {
+    messages = await getMessages({ locale });
+  } catch (e) {
+    console.error("Missing translations for locale:", locale);
+    throw e;
+  }
 
   return (
     <html lang={locale}>
