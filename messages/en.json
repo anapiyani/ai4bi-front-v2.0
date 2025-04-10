@@ -293,7 +293,9 @@
 		"finished": "Finished",
 		"in_progress": "In progress",
 		"postpone-date": "Postpone date",
-		"postpone-time": "Postpone time"
+		"postpone-time": "Postpone time",
+		"loading": "Loading",
+		"no-data": "No data"
 	},
 	"dropzone": {
 		"upload_files": "Upload files",

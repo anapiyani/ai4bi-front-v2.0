@@ -296,7 +296,9 @@
 		"finished": "Завершен",
 		"in_progress": "В прогрессе",
 		"postpone-date": "Перенести дату",
-		"postpone-time": "Перенести время"
+		"postpone-time": "Перенести время",
+		"loading": "Загрузка",
+		"no-data": "Нет данных"
 	},
 	"dropzone": {
 		"upload_files": "Загрузить файлы",

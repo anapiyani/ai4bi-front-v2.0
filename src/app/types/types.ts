@@ -406,3 +406,32 @@ export type ChatInfo = {
 	chat: MenuChat
 	muted: boolean;
 }
+
+export type TAuctionProtocol = {
+	advance: string
+	amount_materials: number
+	amount_work: number
+	auction_id: string
+	bespoke_deadline: string
+	biin: string
+	comments: string
+	commercial_offer_id: string
+	commercial_offer_name: string
+	email: string[]
+	final_rating: number
+	guarantee: string
+	info: string
+	is_fixed: boolean
+	lot_id: string
+	nds_materials: boolean
+	nds_work: boolean
+	phone_number: number[]
+	price_after: number
+	rating: number
+	rating_advance: number
+	rating_deadline: number
+	rating_price: number
+	recommended_winner: boolean
+	studied_VKU: boolean
+	total_price: number
+}

@@ -293,7 +293,9 @@
 		"finished": "Аяқталған",
 		"in_progress": "Болып жатыр",
 		"postpone-date": "Датаны өзгерту",
-		"postpone-time": "Уақытын өзгерту"
+		"postpone-time": "Уақытын өзгерту",
+		"loading": "Жуктелуде",
+		"no-data": "Акпарат жок"
 	},
 	"dropzone": {
 		"upload_files": "Файлдарды жүктеу",
