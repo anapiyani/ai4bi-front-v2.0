@@ -7,7 +7,7 @@ import {RefObject, useEffect, useMemo, useRef, useState} from 'react'
 import BotVisualizer from '../../components/Bot/BotVisualizer'
 import { useChatWebSocket } from '../../hooks/useChatWebSocket'
 import { useWebRTC } from '../../hooks/useWebRTC'
-import {Protocol, TechCouncilUser, Transcription} from '../../types/types'
+import {Protocol, TAuctionProtocol, TechCouncilUser, Transcription} from '../../types/types'
 import CallsBaseModel from '../CallsBaseModel/CallsBaseModel'
 import Transcriptions from '../TechnicalCouncil/components/Transcriptions'
 import { AuctionProtocol } from './components/AuctionProtocol'
@@ -33,7 +33,26 @@ const Auction = ({
   const [openMobileChat, setOpenMobileChat] = useState<boolean>(true)
   const messagesEndRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null)
 
-  const { protocols } = useChatWebSocket()
+  const {
+    protocols,
+    handleGetProtocolUpdates,
+    updateTechnicalMeetingProtocol,
+    setSelectedConversation,
+    selectedConversation
+  } = useChatWebSocket()
+
+  useEffect(() => {
+    if (chat_id) {
+      setSelectedConversation(chat_id)
+    }
+  }, [chat_id, setSelectedConversation])
+
+  useEffect(() => {
+    if (selectedConversation) {
+      handleGetProtocolUpdates(false);
+    }
+  }, [selectedConversation, handleGetProtocolUpdates]);
+
   const {
     localStream,
     remoteAudios,
@@ -90,7 +109,7 @@ const Auction = ({
             </div>            
             <TabsContent value="protocol" className={`${auctionMobileChat === "protocol" ? "mt-2" : "hidden"}`}>
               <div className="p-2 w-full">
-                <AuctionProtocol t={t} />
+                <AuctionProtocol t={t} protocols={protocols as TAuctionProtocol[]} />
               </div>
               <div className="p-2">
                 <h2 className="text-brand-gray text-lg font-semibold">{t("call_transcription")}:</h2>
@@ -120,7 +139,7 @@ const Auction = ({
         </div>
         <div className="hidden lg:flex md:flex flex-col w-full">
           <div className="p-2 w-full">
-            <AuctionProtocol t={t} />
+            <AuctionProtocol t={t} protocols={protocols as TAuctionProtocol[]} />
           </div>
           <div className="p-2">
             <h2 className="text-brand-gray text-lg font-semibold">{t("call_transcription")}:</h2> 
@@ -148,7 +167,7 @@ const Auction = ({
           </div>
       </div>
     )
-  }, [transcription, t, auctionMobileChat])
+  }, [auctionMobileChat, t, protocols, transcription])
 
   return (
     <CallsBaseModel

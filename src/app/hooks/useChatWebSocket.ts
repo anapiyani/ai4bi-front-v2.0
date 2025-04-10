@@ -8,6 +8,7 @@ import { toast as HotToast } from 'react-hot-toast'
 import { v4 as uuidv4 } from 'uuid'
 import { getCookie } from '../api/service/cookie'
 import {
+  TAuctionProtocol,
   ChatInfo,
   ChatMessage,
   Conversation,
@@ -222,7 +223,7 @@ export const useChatWebSocket = () => {
   const [conferenceRoomsByChat, setConferenceRoomsByChat] = useState<ConferenceRoomsRecord>({});
   const [typingStatuses, setTypingStatuses] = useState<TypingStatus[]>([]);
   const [newMessage, setNewMessage] = useState("");
-  const [protocols, setProtocols] = useState<Protocol | null>(null);
+  const [protocols, setProtocols] = useState<Protocol | TAuctionProtocol[] | null>(null);
   const [chatInfo, setChatInfo] = useState<ChatInfo | null>(null)
 
   // Refs
@@ -774,11 +775,11 @@ export const useChatWebSocket = () => {
     sendMessage(request);
   }
 
-  const handleGetProtocolUpdates = useCallback(() => {
+  const handleGetProtocolUpdates = useCallback((tech_council_protocol?: boolean) => {
     if (!selectedConversation) return;
     const request = createRpcRequest("get_protocol", {
       chat_id: selectedConversation,
-      tech_council_protocol: true
+      tech_council_protocol: tech_council_protocol
     })
     sendMessage(request);
   }, [selectedConversation, sendMessage]);
@@ -916,7 +917,6 @@ export const useChatWebSocket = () => {
   useEffect(() => {
     if (selectedConversation) {
       getPopUps();
-      handleGetProtocolUpdates();
     }
   }, [selectedConversation]);
 

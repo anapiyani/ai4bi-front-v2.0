@@ -110,7 +110,6 @@ const CallsBaseModel = ({
       setSelectedConversation(chat_id)
     }
   }, [chat_id, setSelectedConversation])
-
   const councilConversation = conversations.find((c) => c.id === selectedConversation)
   const allParticipants = councilConversation?.participants || []
 

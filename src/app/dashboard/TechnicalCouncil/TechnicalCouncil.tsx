@@ -53,7 +53,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
 
   useEffect(() => {
     if (selectedConversation) {
-      handleGetProtocolUpdates();
+      handleGetProtocolUpdates(true);
     }
   }, [selectedConversation, handleGetProtocolUpdates]);
 
@@ -153,7 +153,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
           <TabsContent className={`${openMobileChat ? "hidden md:block lg:block" : ""}`} value="protocol_table">
             <ProtocolTable 
               onSave={onProtocolSave} 
-              protocol={protocols} 
+              protocol={protocols as Protocol}
             />
           </TabsContent>
         </Tabs>
