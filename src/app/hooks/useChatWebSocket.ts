@@ -579,6 +579,7 @@ export const useChatWebSocket = () => {
       return updated;
     });
     setConversations((prev) => prev.map((c) => c.id === message.chat_id ? { ...c, lastMessage: null } : c));
+    getChats()
   }, []);
 
   const handleTypingStatus = (data: TypingStatus) => {
