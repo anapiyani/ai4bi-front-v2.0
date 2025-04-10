@@ -20,7 +20,7 @@ const CallsBaseModel = dynamic(() => import("../CallsBaseModel/CallsBaseModel"),
 interface TechnicalCouncilProps {
   isMicrophoneOn: boolean
   toggleMicrophone: () => void
-  close: (closeFunc: () => void) => void,
+  close: (closeFunc: () => void, chatId?: string | null) => void,
   onUserUpdate?: (user: TechCouncilUser, conferenceId: string | null) => void
 }
 
@@ -82,7 +82,7 @@ const TechnicalCouncil: React.FC<TechnicalCouncilProps> = ({
     close(() => {
       stopUsingAudio();
       closeRTCConnection();
-    })
+    }, chat_id)
   }
 
   const technicalCouncilTabs = useMemo(() => {

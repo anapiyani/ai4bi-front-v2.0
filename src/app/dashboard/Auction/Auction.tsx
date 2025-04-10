@@ -15,7 +15,7 @@ import { AuctionProtocol } from './components/AuctionProtocol'
 interface AuctionProps {
   isMicrophoneOn: boolean
   toggleMicrophone: () => void
-  close: (closeFunc: () => void) => void
+  close: (closeFunc: () => void, chatId?: string | null) => void
   onUserUpdate?: (user: TechCouncilUser, conferenceId: string | null) => void
 }
 
@@ -42,6 +42,7 @@ const Auction = ({
     connectedUsers,
     isRTCNotConnected,
     closeRTCConnection,
+    stopUsingAudio,
   } = useWebRTC({ room, isMicrophoneOn })
 
   useEffect(() => {
@@ -49,6 +50,13 @@ const Auction = ({
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [transcription]);
+
+  const closeCouncil = () => {
+    close(() => {
+      stopUsingAudio();
+      closeRTCConnection();
+    }, chat_id)
+  }
 
   const auctionTable = useMemo(() => {
     return (
@@ -146,7 +154,7 @@ const Auction = ({
     <CallsBaseModel
       isMicrophoneOn={isMicrophoneOn}
       toggleMicrophone={toggleMicrophone}
-      close={close}
+      close={closeCouncil}
       onUserUpdate={onUserUpdate}
       chat_id={chat_id}
       conference_id={conference_id}

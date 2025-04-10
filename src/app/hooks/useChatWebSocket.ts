@@ -776,8 +776,7 @@ export const useChatWebSocket = () => {
 
   const handleGetProtocolUpdates = useCallback(() => {
     if (!selectedConversation) return;
-    console.log("handleGetProtocolUpdates sending request to get protocol updates");
-    const request = createRpcRequest("get_technical_meeting_protocol", {
+    const request = createRpcRequest("get_protocol", {
       chat_id: selectedConversation,
       tech_council_protocol: true
     })
