@@ -51,7 +51,7 @@ const TimeToStartAucTech = ({
 								<div className="flex flex-col gap-2">
 									<h2 className="text-lg font-semibold">{popup_type === "tech_council_start" ? t("its-time-to-start-the-technical-council") : popup_type === "participation_question_tech_council" ? t("would-you-like-to-participate-in-the-technical-council") : t("its-time-to-start-the-auction")}</h2>
 									<p className="text-sm text-gray-500">
-										{dayjs(created_at).format('DD.MM.YYYY')}
+										{expiration_time && dayjs(expiration_time).format('DD.MM.YYYY')}
 									</p>
 								</div>
 
