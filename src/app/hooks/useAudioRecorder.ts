@@ -31,6 +31,12 @@ export function useAudioRecorder({ handleTypingChat, onSendAudio, chatId, output
   const { mutate: uploadMedia } = useUploadMedia()
 
   const handleStartRecording = async () => {
+    if (typeof window !== 'undefined' && window.AudioContext) {
+      const audioContext = new AudioContext();
+      if (audioContext.state === 'suspended') {
+        await audioContext.resume();
+      }
+    }
     try {
       handleTypingChat("recording");
       

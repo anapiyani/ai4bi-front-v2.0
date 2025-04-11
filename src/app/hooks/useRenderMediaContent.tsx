@@ -26,6 +26,7 @@ export function useRenderMediaContent(
 
   const renderSingleMedia = React.useCallback(
     (item: string | Media) => {
+
       if (typeof item === "string") {
         return (
           <div className='flex justify-center gap-2 items-center mb-2 rounded'>
@@ -33,13 +34,13 @@ export function useRenderMediaContent(
           </div>
         )
       } else {
-        const { id, media_type, name, size, type } = item;
+        const { id, media_id, media_type, name, size, type } = item;
         switch (media_type || type) {
           case "image":
-            return <ImageMedia t={t} mediaId={id} name={name} small={small} />
+            return <ImageMedia t={t} mediaId={id || media_id || ""} name={name} small={small} />
 
           case "audio":
-            return <AudioMedia name={name} small={small} isUser={isUser} t={t} mediaId={id} />
+            return <AudioMedia name={name} small={small} isUser={isUser} t={t} mediaId={id || media_id || ""} />
           case "file":
           case "video":
           default:
