@@ -92,8 +92,8 @@ const MessageInput = ({
    * Decide whether we show the "Send" icon or "Mic" icon.
    */
   const isSendMode = editMessage
-    ? (!isConnected || !editText.trim()) === false
-    : (!isConnected || !message.trim()) === false
+    ? !(!isConnected || !editText.trim())
+    : !(!isConnected || !message.trim())
 
   useEffect(() => {
     if (editMessage) {
@@ -482,8 +482,10 @@ const MessageInput = ({
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.7, opacity: 0 }}
               transition={{ duration: 0.2 }}
-              onClick={handleStartRecording}
-              onTouchStart={handleStartRecording}
+              onTouchStart={(e) => {
+                e.preventDefault();
+                handleStartRecording();
+              }}
             >
               <Icons.ChatMicrophone size={24} />
             </motion.button>
