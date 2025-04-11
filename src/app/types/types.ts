@@ -55,6 +55,7 @@ export type Media = {
 	name: string;
 	type?: "image" | "file";
 	size: number;
+	media_id?: string;
 	media_metadata?: {
 		original_filename: string;
 	};

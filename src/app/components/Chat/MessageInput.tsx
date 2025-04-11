@@ -482,6 +482,10 @@ const MessageInput = ({
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.7, opacity: 0 }}
               transition={{ duration: 0.2 }}
+              onClick={(e) => {
+                e.preventDefault();
+                handleStartRecording();
+              }}
               onTouchStart={(e) => {
                 e.preventDefault();
                 handleStartRecording();
