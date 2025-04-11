@@ -114,6 +114,9 @@ const MessageInput = ({
   useEffect(() => {
     handleStopRecording();
     setMessage("")
+    setEditText("")
+    setReplyTo(null)
+
   }, [chatId]);
 
   const handleSend = (e: React.FormEvent) => {
