@@ -111,6 +111,11 @@ const MessageInput = ({
     }
   }, [replyTo, editMessage]);
 
+  useEffect(() => {
+    handleStopRecording();
+    setMessage("")
+  }, [chatId]);
+
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim()) {
