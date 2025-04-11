@@ -116,7 +116,7 @@ const GroupChatMenu = (
 									<div className="flex gap-2 items-center w-full">
 										<Input onChange={handleSearch} placeholder={t("search-by-name/email")} />
 										<Button disabled={selectedParticipants.length === 0} onClick={handleAddParticipants} className='bg-primary text-white hover:bg-primary/90'>
-											<Icons.Plus fill='white' />
+											<Icons.Check fill='white'/>
 										</Button>
 									</div>
 									{ParticipantSelector(selectedParticipants, setSelectedParticipants, results)}
